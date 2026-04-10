@@ -31,7 +31,16 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- **Code Quality**: Describe the simplest viable design, affected modules, and any
+  complexity that requires explicit justification.
+- **Testing**: List the unit, integration, and regression tests required for this
+  change. State how failing tests will be observed before implementation begins.
+- **User Experience Consistency**: Identify affected user flows, reused patterns,
+  and required states for loading, empty, success, and error behavior.
+- **Performance**: Define measurable targets for the change, the validation method,
+  and the expected regression risk on critical paths.
+- **Exceptions**: Any unmet gate MUST be documented in Complexity Tracking with
+  rationale, impact, and approval path.
 
 ## Project Structure
 

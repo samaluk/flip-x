@@ -69,8 +69,9 @@
 
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
+  Fill them out with the right edge cases, including failure states,
+  empty/loading states, and degraded-performance scenarios when relevant.
+ -->
 
 - What happens when [boundary condition]?
 - How does system handle [error scenario]?
@@ -89,6 +90,23 @@
 - **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
 - **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
 - **FR-005**: System MUST [behavior, e.g., "log all security events"]
+
+### User Experience Consistency Requirements
+
+- **UX-001**: The feature MUST use established product patterns for navigation,
+  naming, and interaction unless the spec explicitly approves a new pattern.
+- **UX-002**: The feature MUST define loading, empty, success, and error states for
+  each affected user flow.
+- **UX-003**: The feature MUST maintain accessibility and responsive behavior for
+  supported contexts.
+
+### Performance Requirements
+
+- **PR-001**: The feature MUST define measurable performance targets relevant to the
+  user journey or system path being changed.
+- **PR-002**: The feature MUST identify how those targets will be validated.
+- **PR-003**: The feature MUST call out expected risks to latency, throughput,
+  rendering, memory, or other constrained resources.
 
 *Example of marking unclear requirements:*
 
@@ -113,6 +131,9 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+Success criteria MUST include at least one measurable outcome for user-facing quality
+and one for performance when the feature changes a user journey or a critical path.
 
 ## Assumptions
 
