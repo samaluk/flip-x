@@ -2,10 +2,7 @@ import type { MatchSnapshot } from "@/lib/game/view-models";
 
 type Translate = (key: string, values?: Record<string, string | number>) => string;
 
-function actionKindLabel(
-  actionKind: unknown,
-  tCards: Translate,
-): string {
+function actionKindLabel(actionKind: unknown, tCards: Translate): string {
   if (actionKind === "flip_three" || actionKind === "freeze" || actionKind === "second_chance") {
     return tCards(`action.${actionKind}`);
   }

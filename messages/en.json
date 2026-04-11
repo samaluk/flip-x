@@ -120,8 +120,6 @@
     "noneYet": "No table event has been logged yet."
   },
   "Cards": {
-    "brand": "Flip7",
-    "cardGame": "Card Game",
     "kindNumber": "Number",
     "kindModifier": "Bonus",
     "kindAction": "Action",

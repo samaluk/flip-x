@@ -1,0 +1,16 @@
+/* VRT only: freeze card motion classes at their end keyframes (matches app/globals.css). */
+[data-vrt-snapshot] .flip7-card-deal {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0) rotate(0deg) scale(1) !important;
+}
+
+[data-vrt-snapshot] .flip7-card-bust {
+  animation: none !important;
+  transform: translate3d(0, 10px, 0) rotate(0deg) !important;
+}
+
+[data-vrt-snapshot] .flip7-card-stay {
+  animation: none !important;
+  transform: translate3d(0, 2px, 0) scale(1) !important;
+}

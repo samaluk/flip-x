@@ -37,6 +37,9 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Visual regression (Vitest browser, Linux Docker)
+        run: pnpm test:vrt
+
       - name: Build
         run: pnpm build
 

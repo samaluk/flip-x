@@ -9,28 +9,28 @@ describe("match flow UI", () => {
     render(
       withIntlEn(
         <ScoreSummary
-        players={[
-          {
-            playerId: "p1",
-            displayName: "Alex",
-            seatIndex: 0,
-            totalScore: 42,
-            isClaimed: true,
-            roundStatus: "completed",
-            pointsAtRisk: 30,
-            numberCards: [],
-            modifierCards: [],
-            heldActionCards: [],
-            scoreBreakdown: {
-              additiveModifierTotal: 4,
-              finalRoundScore: 30,
-              flip7Bonus: 0,
-              multipliedTotal: 26,
-              multiplierApplied: true,
-              numberCardTotal: 13,
+          players={[
+            {
+              playerId: "p1",
+              displayName: "Alex",
+              seatIndex: 0,
+              totalScore: 42,
+              isClaimed: true,
+              roundStatus: "completed",
+              pointsAtRisk: 30,
+              numberCards: [],
+              modifierCards: [],
+              heldActionCards: [],
+              scoreBreakdown: {
+                additiveModifierTotal: 4,
+                finalRoundScore: 30,
+                flip7Bonus: 0,
+                multipliedTotal: 26,
+                multiplierApplied: true,
+                numberCardTotal: 13,
+              },
             },
-          },
-        ]}
+          ]}
         />,
       ),
     );

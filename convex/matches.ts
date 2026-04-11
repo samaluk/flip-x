@@ -180,7 +180,7 @@ export const joinMatch = mutation({
 
     const players = await getPlayersByMatch(ctx, args.matchId);
 
-    const existingNames = new Set(players.map(p => p.displayName.toLowerCase()));
+    const existingNames = new Set(players.map((p) => p.displayName.toLowerCase()));
     if (existingNames.has(playerName.toLowerCase())) {
       throw new Error("NAME_ALREADY_TAKEN");
     }
@@ -198,7 +198,7 @@ export const joinMatch = mutation({
     }
 
     const afterUnclaim = await getPlayersByMatch(ctx, args.matchId);
-    const availableSeat = afterUnclaim.find(p => !p.claimedBySessionId);
+    const availableSeat = afterUnclaim.find((p) => !p.claimedBySessionId);
 
     if (availableSeat) {
       await ctx.db.patch(availableSeat._id, {
@@ -210,9 +210,7 @@ export const joinMatch = mutation({
       });
     } else {
       const nextSeat =
-        afterUnclaim.length === 0
-          ? 0
-          : Math.max(...afterUnclaim.map((p) => p.seatIndex)) + 1;
+        afterUnclaim.length === 0 ? 0 : Math.max(...afterUnclaim.map((p) => p.seatIndex)) + 1;
       await ctx.db.insert("players", {
         matchId: args.matchId,
         displayName: playerName,

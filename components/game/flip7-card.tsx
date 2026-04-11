@@ -120,6 +120,8 @@ type Flip7CardProps = {
   dealing?: boolean;
   stateAnimation?: "bust" | "stay" | null;
   className?: string;
+  /** Skip 3D flip; use for VRT — headless browsers can screenshot the wrong face with preserve-3d. */
+  disableFlip3d?: boolean;
 } & (
   | { kind: "number"; numberValue: number }
   | { kind: "modifier"; modifierValue: ModifierCard["modifierValue"] }
@@ -165,17 +167,74 @@ export function Flip7Card(props: Flip7CardProps) {
         ? t("scoreLine")
         : t("numberLine", { label: props.label });
 
+  const shellClass = cn(
+    "flip7-card-shell w-[4.9rem] shrink-0 sm:w-[5.6rem]",
+    props.dealing && "flip7-card-deal",
+    props.stateAnimation === "bust" && "flip7-card-bust",
+    props.stateAnimation === "stay" && "flip7-card-stay",
+    props.className,
+  );
+
+  const faceUp = (
+    <div
+      className={cn(
+        "absolute inset-0 overflow-hidden rounded-2xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] [backface-visibility:hidden] sm:p-3",
+        style.shell,
+      )}
+    >
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2 text-center">
+        <div
+          className={cn(
+            "font-heading text-4xl leading-none tracking-[-0.06em] sm:text-5xl",
+            style.ink,
+            props.kind !== "number" && "text-2xl tracking-[0.08em] uppercase sm:text-3xl",
+          )}
+        >
+          {centerLabel}
+        </div>
+      </div>
+      <div className="absolute inset-x-2 bottom-2 flex items-end justify-between sm:inset-x-3 sm:bottom-3">
+        <div className={cn("font-heading text-[0.7rem] tracking-[0.28em] uppercase", style.corner)}>
+          {kindCorner}
+        </div>
+        <div
+          className={cn("font-heading text-[0.72rem] tracking-[0.18em] uppercase", style.corner)}
+        >
+          {subCorner}
+        </div>
+      </div>
+      <div className="pointer-events-none absolute inset-2 rounded-xl border border-white/18" />
+    </div>
+  );
+
+  const faceDown = (
+    <div className="absolute inset-0 overflow-hidden rounded-2xl border border-border bg-card p-3 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_30px_rgba(0,0,0,0.24)]">
+      <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
+      <div className="pointer-events-none absolute inset-4 rounded-lg border border-primary/10" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-70" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(45deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-60" />
+      <div className="pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2 bg-primary/15" />
+      <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/15" />
+    </div>
+  );
+
+  if (props.disableFlip3d) {
+    return (
+      <motion.div
+        whileHover={{ scale: 1.04, y: -2 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        className={shellClass}
+      >
+        <div className="relative aspect-[5/7] w-full">{props.faceDown ? faceDown : faceUp}</div>
+      </motion.div>
+    );
+  }
+
   return (
     <motion.div
       whileHover={{ scale: 1.04, y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={cn(
-        "flip7-card-shell w-[4.9rem] shrink-0 sm:w-[5.6rem]",
-        props.dealing && "flip7-card-deal",
-        props.stateAnimation === "bust" && "flip7-card-bust",
-        props.stateAnimation === "stay" && "flip7-card-stay",
-        props.className,
-      )}
+      className={shellClass}
     >
       <div
         className={cn(
@@ -183,65 +242,9 @@ export function Flip7Card(props: Flip7CardProps) {
           props.faceDown && "[transform:rotateY(180deg)]",
         )}
       >
-        <div
-          className={cn(
-            "absolute inset-0 overflow-hidden rounded-2xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] [backface-visibility:hidden] sm:p-3",
-            style.shell,
-          )}
-        >
-          <div className="absolute inset-x-2 top-2 flex items-start justify-between sm:inset-x-3 sm:top-3">
-            <div
-              className={cn("font-heading text-[0.7rem] tracking-[0.24em] uppercase", style.corner)}
-            >
-              {t("brand")}
-            </div>
-            <div className={cn("font-heading text-[0.75rem]", style.corner)}>{centerLabel}</div>
-          </div>
-          <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2 text-center">
-            <div
-              className={cn(
-                "font-heading text-4xl leading-none tracking-[-0.06em] sm:text-5xl",
-                style.ink,
-                props.kind !== "number" && "text-2xl tracking-[0.08em] uppercase sm:text-3xl",
-              )}
-            >
-              {centerLabel}
-            </div>
-          </div>
-          <div className="absolute inset-x-2 bottom-2 flex items-end justify-between sm:inset-x-3 sm:bottom-3">
-            <div
-              className={cn("font-heading text-[0.7rem] tracking-[0.28em] uppercase", style.corner)}
-            >
-              {kindCorner}
-            </div>
-            <div
-              className={cn(
-                "font-heading text-[0.72rem] tracking-[0.18em] uppercase",
-                style.corner,
-              )}
-            >
-              {subCorner}
-            </div>
-          </div>
-          <div className="pointer-events-none absolute inset-2 rounded-xl border border-white/18" />
-          <div className="pointer-events-none absolute inset-x-4 top-4 h-px bg-white/24" />
-          <div className="pointer-events-none absolute inset-x-4 bottom-4 h-px bg-black/12" />
-        </div>
-
+        {faceUp}
         <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-          <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-border bg-card p-3 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_30px_rgba(0,0,0,0.24)]">
-            <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
-            <div className="pointer-events-none absolute inset-4 rounded-lg border border-primary/10" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-70" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(45deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-60" />
-            <div className="pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2 bg-primary/15" />
-            <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/15" />
-            <div className="font-heading text-2xl tracking-[0.34em] uppercase">Flip</div>
-            <div className="font-heading text-5xl leading-none tracking-[-0.08em]">7</div>
-            <div className="mt-2 font-heading text-[0.72rem] tracking-[0.32em] uppercase text-muted-foreground">
-              {t("cardGame")}
-            </div>
-          </div>
+          {faceDown}
         </div>
       </div>
     </motion.div>
