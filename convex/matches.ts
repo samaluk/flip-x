@@ -297,7 +297,7 @@ export const startMatch = mutation({
 
     const players = await getPlayersByMatch(ctx, args.matchId);
     const claimedPlayers = players.filter((p) => p.claimedBySessionId);
-    if (claimedPlayers.length < 3) {
+    if (claimedPlayers.length < 2) {
       throw new Error("INSUFFICIENT_PLAYERS");
     }
 
