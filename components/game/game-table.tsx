@@ -27,6 +27,10 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
   );
+  const activePlayer = snapshot.players.find(
+    (player) => player.playerId === snapshot.activePlayerId,
+  );
+  const isViewerTurn = snapshot.activePlayerId === snapshot.viewerPlayerId;
 
   function runAction(action: () => Promise<unknown>) {
     startTransition(() => {
@@ -36,20 +40,12 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
     });
   }
 
-  const dealerPlayer =
-    snapshot.players.find((player) => player.seatIndex === snapshot.dealerSeat) ??
-    snapshot.players[0];
-  const tablePlayers = snapshot.players.filter(
-    (player) => player.playerId !== dealerPlayer?.playerId,
-  );
-  const activePlayer = snapshot.players.find(
-    (player) => player.playerId === snapshot.activePlayerId,
-  );
+  const sortedPlayers = getSortedPlayers(snapshot);
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="overflow-hidden rounded-[2rem] border border-[#f3d48a]/20 bg-[linear-gradient(180deg,rgba(12,31,46,0.97)_0%,rgba(6,17,26,0.98)_100%)] text-white shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-        <div className="flex flex-wrap items-start justify-between gap-6 border-b border-white/10 px-5 py-5 sm:px-6">
+      <section className="overflow-hidden rounded-[1.5rem] border border-[#f3d48a]/20 bg-[linear-gradient(180deg,rgba(12,31,46,0.97)_0%,rgba(6,17,26,0.98)_100%)] text-white shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 px-4 py-3">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="font-heading text-2xl tracking-[0.08em] uppercase text-[#f8ead0]">
@@ -77,7 +73,7 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
           </div>
         </div>
 
-        <div className="grid gap-6 px-5 py-5 sm:px-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="grid gap-4 px-3 py-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-[#f3d48a]/20 bg-[#0c2031]/70 px-4 py-4">
               <div className="space-y-1">
@@ -141,14 +137,14 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
               />
             </div>
 
-            <section className="table-felt rounded-[2rem] border border-[#f3d48a]/18 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_60px_rgba(0,0,0,0.3)] sm:p-5">
+            <section className="table-felt rounded-[1.5rem] border border-[#f3d48a]/18 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_60px_rgba(0,0,0,0.3)]">
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
                 <div>
                   <div className="font-heading text-[0.72rem] tracking-[0.28em] uppercase text-[#a7c6d5]">
                     Table layout
                   </div>
                   <div className="text-sm text-[#e5eef3]">
-                    The dealer sits at the bottom, with every other seat arrayed around the felt.
+                    Your lane stays pinned above. Scroll to see others in turn order.
                   </div>
                 </div>
                 {snapshot.status !== "completed" && snapshot.roundStatus === "player_turns" ? (
@@ -162,34 +158,37 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
                 ) : null}
               </div>
 
-              <div className="grid gap-4 [grid-template-columns:repeat(auto-fit,minmax(18rem,1fr))]">
-                {tablePlayers.map((player) => (
-                  <PlayerLane
-                    key={player.playerId}
-                    player={player}
-                    isActive={snapshot.activePlayerId === player.playerId}
-                    isViewer={snapshot.viewerPlayerId === player.playerId}
-                  />
-                ))}
-              </div>
+              
 
-              {dealerPlayer ? (
-                <div className="mt-5 border-t border-white/10 pt-5">
-                  <div className="mb-3 font-heading text-[0.72rem] tracking-[0.28em] uppercase text-[#a7c6d5]">
-                    Dealer position
-                  </div>
-                  <PlayerLane
-                    player={dealerPlayer}
-                    isActive={snapshot.activePlayerId === dealerPlayer.playerId}
-                    isDealer
-                    isViewer={snapshot.viewerPlayerId === dealerPlayer.playerId}
-                  />
-                </div>
-              ) : null}
+              <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-2">
+                {sortedPlayers.sorted
+                  .filter((p) => p.playerId !== snapshot.viewerPlayerId)
+                  .map((player) => (
+                    <PlayerLane
+                      key={player.playerId}
+                      player={player}
+                      isActive={snapshot.activePlayerId === player.playerId}
+                      isViewer={snapshot.viewerPlayerId === player.playerId}
+                    />
+                  ))}
+              </div>
             </section>
           </div>
 
           <aside className="space-y-4">
+            {viewerPlayer && (
+              <section className="rounded-[1.5rem] border border-emerald-400/30 bg-[linear-gradient(180deg,rgba(16,48,35,0.95)_0%,rgba(10,30,22,0.98)_100%)] p-4 text-white shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
+                <div className="mb-3 font-heading text-[0.72rem] tracking-[0.24em] uppercase text-emerald-300">
+                  Your hand
+                </div>
+                <PlayerLane
+                  player={viewerPlayer}
+                  isActive={isViewerTurn}
+                  isViewer
+                  compact
+                />
+              </section>
+            )}
             <InfoPanel
               title="Latest resolution"
               body={snapshot.latestEvent?.summary ?? "No table event has been logged yet."}
@@ -225,6 +224,32 @@ function TablePill({ children }: { children: ReactNode }) {
       {children}
     </div>
   );
+}
+
+function getSortedPlayers(snapshot: MatchSnapshot) {
+  const viewerId = snapshot.viewerPlayerId;
+  const activeId = snapshot.activePlayerId;
+  const dealerSeat = snapshot.dealerSeat;
+
+  const players = [...snapshot.players];
+
+  if (activeId) {
+    const active = players.find((p) => p.playerId === activeId);
+    const others = players.filter((p) => p.playerId !== activeId);
+    return { active, others, sorted: [active!, ...others] };
+  }
+
+  if (viewerId) {
+    const dealer = players.find((p) => p.seatIndex === dealerSeat) ?? players[0];
+    const withoutDealer = players.filter((p) => p.playerId !== dealer?.playerId);
+    withoutDealer.sort((a, b) => a.seatIndex - b.seatIndex);
+    return { active: null, others: withoutDealer, sorted: withoutDealer };
+  }
+
+  const dealer = players.find((p) => p.seatIndex === dealerSeat) ?? players[0];
+  const withoutDealer = players.filter((p) => p.playerId !== dealer?.playerId);
+  withoutDealer.sort((a, b) => a.seatIndex - b.seatIndex);
+  return { active: null, others: withoutDealer, sorted: withoutDealer };
 }
 
 function InfoPanel({ title, body, icon }: { title: string; body: string; icon?: ReactNode }) {

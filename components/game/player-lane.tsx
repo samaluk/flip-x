@@ -28,11 +28,15 @@ export function PlayerLane({
   isActive,
   isDealer = false,
   isViewer = false,
+  isPinned = false,
+  compact = false,
 }: {
   player: MatchSnapshot["players"][number];
   isActive: boolean;
   isDealer?: boolean;
   isViewer?: boolean;
+  isPinned?: boolean;
+  compact?: boolean;
 }) {
   const previousCardIds = useRef<string[]>([]);
   const previousStatus = useRef(player.roundStatus);
@@ -89,9 +93,11 @@ export function PlayerLane({
   return (
     <section
       className={cn(
-        "rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(11,28,41,0.92)_0%,rgba(8,18,28,0.96)_100%)] p-4 text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)]",
+        "rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(11,28,41,0.92)_0%,rgba(8,18,28,0.96)_100%)] text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)]",
         isActive && "ring-2 ring-[#f3d48a]/80 ring-offset-2 ring-offset-[#0e2233]",
         isDealer && "border-[#f3d48a]/40",
+        isPinned && "border-emerald-400/50 bg-[linear-gradient(180deg,rgba(16,48,35,0.95)_0%,rgba(10,30,22,0.98)_100%)] shadow-[0_8px_30px_rgba(16,185,129,0.15)]",
+        compact ? "p-3" : "p-4",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -122,93 +128,31 @@ export function PlayerLane({
           <div className="text-sm text-[#cfd9df]">Total score {player.totalScore}</div>
         </div>
 
-        <div className="grid min-w-[10rem] gap-1 text-right text-sm">
-          <div className="font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
-            {statusCopy(player.roundStatus)}
+        {!compact && (
+          <div className="grid min-w-[10rem] gap-1 text-right text-sm">
+            <div className="font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
+              {statusCopy(player.roundStatus)}
+            </div>
+            <div className="text-2xl font-semibold text-[#fff5d7]">{player.pointsAtRisk}</div>
+            <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">Points at risk</div>
           </div>
-          <div className="text-2xl font-semibold text-[#fff5d7]">{player.pointsAtRisk}</div>
-          <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">Points at risk</div>
-        </div>
+        )}
       </div>
 
-      <div className="mt-5 flex flex-col gap-4">
-        <div className="space-y-2">
-          <div className="font-heading text-[0.72rem] tracking-[0.28em] uppercase text-[#8cb1c4]">
-            Bonus cards
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {player.modifierCards.length > 0 ? (
-              player.modifierCards.map((card) => (
-                <Flip7Card
-                  key={card.id}
-                  kind="modifier"
-                  label={card.label}
-                  dealing={dealingIds.includes(card.id)}
-                  stateAnimation={stateAnimation}
-                />
-              ))
-            ) : (
-              <EmptySlot label="No modifiers" />
-            )}
-          </div>
-        </div>
+      <div className={cn("mt-3 flex flex-wrap gap-3", compact ? "gap-2" : "gap-4")}>
+        {player.modifierCards.map((card) => (
+          <Flip7Card key={card.id} kind="modifier" label={card.label} dealing={dealingIds.includes(card.id)} stateAnimation={stateAnimation} />
+        ))}
 
-        <div className="space-y-2">
-          <div className="font-heading text-[0.72rem] tracking-[0.28em] uppercase text-[#8cb1c4]">
-            Number row
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {player.numberCards.length > 0 ? (
-              player.numberCards.map((card) => (
-                <Flip7Card
-                  key={card.id}
-                  kind="number"
-                  numberValue={card.numberValue}
-                  label={card.label}
-                  dealing={dealingIds.includes(card.id)}
-                  stateAnimation={stateAnimation}
-                />
-              ))
-            ) : (
-              <EmptySlot label="No numbers revealed" />
-            )}
-          </div>
-        </div>
+        {player.numberCards.map((card) => (
+          <Flip7Card key={card.id} kind="number" numberValue={card.numberValue} label={card.label} dealing={dealingIds.includes(card.id)} stateAnimation={stateAnimation} />
+        ))}
 
-        <div className="space-y-2">
-          <div className="font-heading text-[0.72rem] tracking-[0.28em] uppercase text-[#8cb1c4]">
-            Held action cards
-          </div>
-          <div className="flex flex-wrap gap-3">
-            {player.heldActionCards.length > 0 ? (
-              player.heldActionCards.map((card) => {
-                const key = `${player.playerId}-${card.actionKind}-${card.label}`;
-
-                return (
-                  <Flip7Card
-                    key={key}
-                    kind="action"
-                    actionKind={card.actionKind}
-                    label={card.label}
-                    dealing={dealingIds.includes(key)}
-                    stateAnimation={stateAnimation}
-                  />
-                );
-              })
-            ) : (
-              <EmptySlot label="No held actions" />
-            )}
-          </div>
-        </div>
+        {player.heldActionCards.map((card) => {
+          const key = `${player.playerId}-${card.actionKind}-${card.label}`;
+          return <Flip7Card key={key} kind="action" actionKind={card.actionKind} label={card.label} dealing={dealingIds.includes(key)} stateAnimation={stateAnimation} />;
+        })}
       </div>
     </section>
-  );
-}
-
-function EmptySlot({ label }: { label: string }) {
-  return (
-    <div className="rounded-2xl border border-dashed border-white/15 bg-white/4 px-4 py-5 text-sm text-[#8cb1c4]">
-      {label}
-    </div>
   );
 }
