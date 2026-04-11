@@ -181,13 +181,11 @@
     "srFinalScore": "Puntuación final de la ronda: {score}"
   },
   "PlayerLane": {
-    "seat": "Sitio {n}",
     "dealer": "Mano",
     "you": "Tú",
     "claimed": "Ocupado",
     "totalScore": "Puntuación total {score}",
     "pointsAtRisk": "Puntos en juego",
-    "statusActive": "En la ronda",
     "statusBusted": "Eliminado",
     "statusStayed": "Asegurado",
     "statusFrozen": "Congelado",

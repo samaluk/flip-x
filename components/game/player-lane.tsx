@@ -8,10 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 import { cn } from "@/lib/utils";
 
-function statusKey(status: MatchSnapshot["players"][number]["roundStatus"]) {
+function statusLabelKey(
+  status: MatchSnapshot["players"][number]["roundStatus"],
+): string | null {
   switch (status) {
     case "active":
-      return "statusActive";
+      return null;
     case "busted":
       return "statusBusted";
     case "stayed":
@@ -38,6 +40,18 @@ function statusVariant(status: MatchSnapshot["players"][number]["roundStatus"]) 
   }
 }
 
+function poseFromStatus(
+  status: MatchSnapshot["players"][number]["roundStatus"],
+): "bust" | "stay" | null {
+  if (status === "busted") {
+    return "bust";
+  }
+  if (status === "stayed" || status === "frozen") {
+    return "stay";
+  }
+  return null;
+}
+
 export function PlayerLane({
   player,
   isActive,
@@ -45,6 +59,7 @@ export function PlayerLane({
   isViewer = false,
   isPinned = false,
   compact = false,
+  disableCardFlip3d = false,
 }: {
   player: MatchSnapshot["players"][number];
   isActive: boolean;
@@ -52,9 +67,12 @@ export function PlayerLane({
   isViewer?: boolean;
   isPinned?: boolean;
   compact?: boolean;
+  /** No CSS 3D flip (reliable faces in headless screenshots). */
+  disableCardFlip3d?: boolean;
 }) {
   const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
+  const initialCardSyncDone = useRef(false);
   const previousStatus = useRef(player.roundStatus);
   const [dealingIds, setDealingIds] = useState<string[]>([]);
   const [stateAnimation, setStateAnimation] = useState<"bust" | "stay" | null>(null);
@@ -71,6 +89,12 @@ export function PlayerLane({
   );
 
   useEffect(() => {
+    if (!initialCardSyncDone.current) {
+      initialCardSyncDone.current = true;
+      previousCardIds.current = cardIds;
+      return;
+    }
+
     const newIds = cardIds.filter((id) => !previousCardIds.current.includes(id));
 
     if (newIds.length > 0) {
@@ -106,6 +130,9 @@ export function PlayerLane({
     }
   }, [player.roundStatus]);
 
+  const cardStateAnimation = stateAnimation ?? poseFromStatus(player.roundStatus);
+  const roundStatusLabelKey = statusLabelKey(player.roundStatus);
+
   return (
     <section
       className={cn(
@@ -122,9 +149,6 @@ export function PlayerLane({
             <h3 className="font-heading text-base font-medium tracking-tight text-foreground">
               {player.displayName}
             </h3>
-            <Badge variant="outline" className="text-[0.65rem]">
-              {t("seat", { n: player.seatIndex + 1 })}
-            </Badge>
             {isDealer ? (
               <Badge variant="default" className="text-[0.65rem]">
                 {t("dealer")}
@@ -151,16 +175,26 @@ export function PlayerLane({
 
         {!compact && (
           <div className="grid min-w-[9rem] gap-0.5 text-right text-sm">
-            <Badge variant={statusVariant(player.roundStatus)} className="justify-end text-[0.65rem]">
-              {t(statusKey(player.roundStatus))}
-            </Badge>
+            {roundStatusLabelKey ? (
+              <Badge
+                variant={statusVariant(player.roundStatus)}
+                className="justify-end text-[0.65rem]"
+              >
+                {t(roundStatusLabelKey)}
+              </Badge>
+            ) : null}
             <div className="text-2xl font-semibold text-foreground tabular-nums">{player.pointsAtRisk}</div>
             <div className="text-xs text-muted-foreground">{t("pointsAtRisk")}</div>
           </div>
         )}
       </div>
 
-      <div className={cn("mt-3 flex flex-wrap", compact ? "gap-2" : "gap-3")}>
+      <div
+        className={cn(
+          "mt-3 flex flex-row flex-wrap items-start",
+          compact ? "gap-1.5" : "gap-3",
+        )}
+      >
         {player.modifierCards.map((card) => (
           <Flip7Card
             key={card.id}
@@ -168,7 +202,9 @@ export function PlayerLane({
             modifierValue={card.modifierValue}
             label={card.label}
             dealing={dealingIds.includes(card.id)}
-            stateAnimation={stateAnimation}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
           />
         ))}
 
@@ -179,7 +215,9 @@ export function PlayerLane({
             numberValue={card.numberValue}
             label={card.label}
             dealing={dealingIds.includes(card.id)}
-            stateAnimation={stateAnimation}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
           />
         ))}
 
@@ -192,7 +230,9 @@ export function PlayerLane({
               actionKind={card.actionKind}
               label={card.label}
               dealing={dealingIds.includes(key)}
-              stateAnimation={stateAnimation}
+              stateAnimation={cardStateAnimation}
+              compact={compact}
+              disableFlip3d={disableCardFlip3d}
             />
           );
         })}

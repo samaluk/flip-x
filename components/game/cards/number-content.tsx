@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useId } from "react";
 
 import { CardFrame } from "@/components/game/cards/card-frame";
+import { cardTw } from "@/lib/game/card-responsive";
 import { CARD_NAVY, NUMBER_CARD_PALETTES } from "@/components/game/cards/card-palettes";
 const NUMBER_FRAME = {
   border: CARD_NAVY,
@@ -34,12 +35,14 @@ function OutlinedDigit({
   fill,
   stroke,
   gradientId,
+  compact,
 }: {
   value: number;
   fill: string;
   stroke: string;
   /** Unique id suffix for SVG defs when value is 0 */
   gradientId: string;
+  compact?: boolean;
 }) {
   const text = String(value);
 
@@ -47,7 +50,11 @@ function OutlinedDigit({
     const gid = `flip7-zero-grad-${gradientId}`;
     return (
       <svg
-        className="h-[4.75rem] w-[3.1rem] shrink-0 sm:h-[7.25rem] sm:w-[4.85rem]"
+        className={cardTw(
+          compact,
+          "h-[4.75rem] w-[3.1rem] shrink-0",
+          "sm:h-[7.25rem] sm:w-[4.85rem]",
+        )}
         viewBox="0 0 56 76"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden
@@ -81,7 +88,11 @@ function OutlinedDigit({
 
   return (
     <span
-      className="inline-block font-heading text-[4.25rem] font-black leading-none tracking-tighter sm:text-[6.75rem]"
+      className={cardTw(
+        compact,
+        "inline-block font-heading text-[4.25rem] font-black leading-none tracking-tighter",
+        "sm:text-[6.75rem]",
+      )}
       style={{
         color: fill,
         WebkitTextStroke: `3.5px ${stroke}`,
@@ -93,7 +104,13 @@ function OutlinedDigit({
   );
 }
 
-export function NumberCardContent({ numberValue }: { numberValue: number }) {
+export function NumberCardContent({
+  numberValue,
+  compact = false,
+}: {
+  numberValue: number;
+  compact?: boolean;
+}) {
   const t = useTranslations("Cards");
   const uid = useId().replace(/:/g, "");
   const gradSuffix = uid;
@@ -103,15 +120,19 @@ export function NumberCardContent({ numberValue }: { numberValue: number }) {
       borderColor={NUMBER_FRAME.border}
       backgroundColor={NUMBER_FRAME.background}
       className="h-full"
+      compact={compact}
     >
       <div className="relative min-h-0 w-full flex-1">
         <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
-          <div className="-translate-y-3 sm:-translate-y-5">
+          <div
+            className={cardTw(compact, "-translate-y-3", "sm:-translate-y-5")}
+          >
             <OutlinedDigit
               value={numberValue}
               fill={palette.fill}
               stroke={CARD_NAVY}
               gradientId={gradSuffix}
+              compact={compact}
             />
           </div>
         </div>
@@ -119,10 +140,20 @@ export function NumberCardContent({ numberValue }: { numberValue: number }) {
         <div className="relative z-[1] flex h-full min-h-0 flex-col justify-end">
           <div className="relative z-[2] flex justify-center pb-1 pt-0.5">
             <div
-              className="w-[min(100%,11rem)] rounded-md border-2 px-1.5 py-0.5 text-center sm:px-2 sm:py-1"
+              className={cardTw(
+                compact,
+                "w-[min(100%,11rem)] rounded-md border-2 px-1.5 py-0.5 text-center",
+                "sm:px-2 sm:py-1",
+              )}
               style={{ borderColor: CARD_NAVY, backgroundColor: "#fff9e0" }}
             >
-              <span className="font-heading text-[0.55rem] font-bold uppercase leading-tight tracking-wide text-[#2D368E] sm:text-[0.65rem]">
+              <span
+                className={cardTw(
+                  compact,
+                  "font-heading text-[0.55rem] font-bold uppercase leading-tight tracking-wide text-[#2D368E]",
+                  "sm:text-[0.65rem]",
+                )}
+              >
                 {t(numberNameId(numberValue))}
               </span>
             </div>

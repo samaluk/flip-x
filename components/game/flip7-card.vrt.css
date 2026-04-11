@@ -5,9 +5,12 @@
   transform: translate3d(0, 0, 0) rotate(0deg) scale(1) !important;
 }
 
+/* Freeze near the animation's low point so multi-card bust rows read clearly in screenshots. */
 [data-vrt-snapshot] .flip7-card-bust {
   animation: none !important;
-  transform: translate3d(0, 10px, 0) rotate(0deg) !important;
+  transform: translate3d(-2px, 8px, 0) rotate(-3deg) !important;
+  opacity: 0.9 !important;
+  filter: saturate(0.82) brightness(0.94) !important;
 }
 
 [data-vrt-snapshot] .flip7-card-stay {

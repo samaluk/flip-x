@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 
+import { cardTw } from "@/lib/game/card-responsive";
 import { cn } from "@/lib/utils";
 
 export type CardFrameProps = {
@@ -11,6 +12,8 @@ export type CardFrameProps = {
   backgroundOverlay?: string;
   /** Subtle grain */
   showNoise?: boolean;
+  /** Locked mobile padding for scaled sidebar cards */
+  compact?: boolean;
   children: ReactNode;
   className?: string;
 };
@@ -23,6 +26,7 @@ export function CardFrame({
   backgroundColor,
   backgroundOverlay,
   showNoise = true,
+  compact = false,
   children,
   className,
 }: CardFrameProps) {
@@ -55,7 +59,9 @@ export function CardFrame({
         />
       ) : null}
 
-      <div className="relative z-[1] flex h-full min-h-0 flex-col p-2 sm:px-2.5">
+      <div
+        className={cardTw(compact, "relative z-[1] flex h-full min-h-0 flex-col p-2", "sm:px-2.5")}
+      >
         {children}
       </div>
     </div>

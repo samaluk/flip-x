@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
+import type { ReactNode } from "react";
 
 import { ActionCardContent } from "@/components/game/cards/action-content";
 import { ModifierCardContent } from "@/components/game/cards/modifier-content";
@@ -9,12 +10,17 @@ import { NumberCardContent } from "@/components/game/cards/number-content";
 import type { ModifierCard } from "@/lib/game/card-types";
 import { cn } from "@/lib/utils";
 
+/** Scales the default 8×10rem face to fit narrow sidebars without reflowing inner SVGs. */
+const COMPACT_CARD_SCALE = 0.46;
+
 type Flip7CardProps = {
   label: string;
   faceDown?: boolean;
   dealing?: boolean;
   stateAnimation?: "bust" | "stay" | null;
   className?: string;
+  /** Smaller footprint for the viewer hand / narrow columns (row of cards). */
+  compact?: boolean;
   /** Skip 3D flip; use for VRT — headless browsers can screenshot the wrong face with preserve-3d. */
   disableFlip3d?: boolean;
 } & (
@@ -24,13 +30,14 @@ type Flip7CardProps = {
 );
 
 function FaceContent(props: Flip7CardProps) {
+  const compact = props.compact === true;
   if (props.kind === "number") {
-    return <NumberCardContent numberValue={props.numberValue} />;
+    return <NumberCardContent numberValue={props.numberValue} compact={compact} />;
   }
   if (props.kind === "modifier") {
-    return <ModifierCardContent modifierValue={props.modifierValue} />;
+    return <ModifierCardContent modifierValue={props.modifierValue} compact={compact} />;
   }
-  return <ActionCardContent actionKind={props.actionKind} />;
+  return <ActionCardContent actionKind={props.actionKind} compact={compact} />;
 }
 
 function ScreenReaderSummary(props: Flip7CardProps) {
@@ -62,13 +69,30 @@ function ScreenReaderSummary(props: Flip7CardProps) {
 }
 
 export function Flip7Card(props: Flip7CardProps) {
+  const isCompact = props.compact === true;
+
   const shellClass = cn(
-    "flip7-card-shell w-32 shrink-0 sm:w-48",
+    "flip7-card-shell shrink-0",
+    isCompact
+      ? "h-[4.75rem] w-[3.68rem] overflow-visible"
+      : "w-32 sm:w-48",
     props.dealing && "flip7-card-deal",
     props.stateAnimation === "bust" && "flip7-card-bust",
     props.stateAnimation === "stay" && "flip7-card-stay",
     props.className,
   );
+
+  const compactScaleWrap = (node: ReactNode) =>
+    isCompact ? (
+      <div
+        className="w-32 origin-top-left"
+        style={{ transform: `scale(${COMPACT_CARD_SCALE})` }}
+      >
+        {node}
+      </div>
+    ) : (
+      node
+    );
 
   const faceUp = (
     <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden]">
@@ -89,34 +113,37 @@ export function Flip7Card(props: Flip7CardProps) {
   );
 
   if (props.disableFlip3d) {
+    /* Plain div: Motion would set its own transform and override bust/stay/deal CSS (bad for VRT). */
     return (
-      <motion.div
-        whileHover={{ scale: 1.04, y: -2 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className={shellClass}
-      >
-        <div className="relative aspect-[4/5] w-full">{props.faceDown ? faceDown : faceUp}</div>
-      </motion.div>
+      <div className={shellClass}>
+        {compactScaleWrap(
+          <div className="relative aspect-[4/5] w-full">{props.faceDown ? faceDown : faceUp}</div>,
+        )}
+      </div>
     );
   }
 
   return (
     <motion.div
-      whileHover={{ scale: 1.04, y: -2 }}
+      whileHover={
+        isCompact ? { scale: 1.03, y: -1 } : { scale: 1.04, y: -2 }
+      }
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={shellClass}
     >
-      <div
-        className={cn(
-          "relative aspect-[4/5] transition-transform duration-700 [transform-style:preserve-3d]",
-          props.faceDown && "[transform:rotateY(180deg)]",
-        )}
-      >
-        {faceUp}
-        <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-          {faceDown}
-        </div>
-      </div>
+      {compactScaleWrap(
+        <div
+          className={cn(
+            "relative aspect-[4/5] transition-transform duration-700 [transform-style:preserve-3d]",
+            props.faceDown && "[transform:rotateY(180deg)]",
+          )}
+        >
+          {faceUp}
+          <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+            {faceDown}
+          </div>
+        </div>,
+      )}
     </motion.div>
   );
 }

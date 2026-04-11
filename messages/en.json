@@ -181,13 +181,11 @@
     "srFinalScore": "Final round score: {score}"
   },
   "PlayerLane": {
-    "seat": "Seat {n}",
     "dealer": "Dealer",
     "you": "You",
     "claimed": "Claimed",
     "totalScore": "Total score {score}",
     "pointsAtRisk": "Points at risk",
-    "statusActive": "In the round",
     "statusBusted": "Busted",
     "statusStayed": "Banked",
     "statusFrozen": "Frozen",
