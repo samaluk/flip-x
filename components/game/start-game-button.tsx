@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useMutation } from "convex/react";
 import { PlayIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -49,14 +50,16 @@ export function StartGameButton({ matchId, sessionId, isHost, playerCount }: Sta
   }
 
   return (
-    <Button
-      onClick={handleStart}
-      disabled={isSubmitting || playerCount < 3}
-      size="lg"
-      className="gap-2"
-    >
-      <PlayIcon className="h-5 w-5" />
-      {isSubmitting ? "Starting..." : "Start Game"}
-    </Button>
+    <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+      <Button
+        onClick={handleStart}
+        disabled={isSubmitting || playerCount < 3}
+        size="lg"
+        className="gap-2 rounded-full px-6"
+      >
+        <PlayIcon className="h-4 w-4" />
+        {isSubmitting ? "Starting..." : "Start Game"}
+      </Button>
+    </motion.div>
   );
 }

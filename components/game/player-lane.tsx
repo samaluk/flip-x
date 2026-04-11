@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { Flip7Card } from "@/components/game/flip7-card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
@@ -20,6 +21,19 @@ function statusCopy(status: MatchSnapshot["players"][number]["roundStatus"]) {
       return "Scored";
     default:
       return "Waiting";
+  }
+}
+
+function statusVariant(status: MatchSnapshot["players"][number]["roundStatus"]) {
+  switch (status) {
+    case "busted":
+      return "destructive" as const;
+    case "stayed":
+    case "frozen":
+    case "completed":
+      return "secondary" as const;
+    default:
+      return "outline" as const;
   }
 }
 
@@ -93,54 +107,45 @@ export function PlayerLane({
   return (
     <section
       className={cn(
-        "rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(11,28,41,0.92)_0%,rgba(8,18,28,0.96)_100%)] text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)]",
-        isActive && "ring-2 ring-[#f3d48a]/80 ring-offset-2 ring-offset-[#0e2233]",
-        isDealer && "border-[#f3d48a]/40",
-        isPinned &&
-          "border-emerald-400/50 bg-[linear-gradient(180deg,rgba(16,48,35,0.95)_0%,rgba(10,30,22,0.98)_100%)] shadow-[0_8px_30px_rgba(16,185,129,0.15)]",
+        "rounded-xl border border-border bg-card text-card-foreground transition-shadow duration-300",
+        isActive && "ring-2 ring-primary/50 ring-offset-2 ring-offset-background",
+        isDealer && "border-primary/30",
+        isPinned && "border-primary/30 bg-primary/[0.03]",
         compact ? "p-3" : "p-4",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-heading text-lg tracking-[0.08em] uppercase text-[#f8ead0]">
+            <h3 className="font-heading text-base font-medium tracking-tight text-foreground">
               {player.displayName}
             </h3>
-            <div className="rounded-full border border-[#f3d48a]/35 bg-[#f3d48a]/10 px-2.5 py-1 text-[0.65rem] font-medium tracking-[0.2em] uppercase text-[#f3d48a]">
-              Seat {player.seatIndex + 1}
-            </div>
+            <Badge variant="outline" className="text-[0.65rem]">Seat {player.seatIndex + 1}</Badge>
             {isDealer ? (
-              <div className="rounded-full border border-[#f3d48a]/35 bg-[#f3d48a]/10 px-2.5 py-1 text-[0.65rem] font-medium tracking-[0.2em] uppercase text-[#f3d48a]">
-                Dealer
-              </div>
+              <Badge variant="default" className="text-[0.65rem]">Dealer</Badge>
             ) : null}
             {isViewer ? (
-              <div className="rounded-full border border-emerald-400/35 bg-emerald-400/10 px-2.5 py-1 text-[0.65rem] font-medium tracking-[0.2em] uppercase text-emerald-300">
-                You
-              </div>
+              <Badge variant="default" className="text-[0.65rem] bg-primary/15 text-primary border-primary/30">You</Badge>
             ) : null}
             {player.isClaimed && !isViewer ? (
-              <div className="rounded-full border border-white/15 bg-white/5 px-2.5 py-1 text-[0.65rem] font-medium tracking-[0.2em] uppercase text-[#cfd9df]">
-                Claimed
-              </div>
+              <Badge variant="secondary" className="text-[0.65rem]">Claimed</Badge>
             ) : null}
           </div>
-          <div className="text-sm text-[#cfd9df]">Total score {player.totalScore}</div>
+          <div className="text-sm text-muted-foreground">Total score {player.totalScore}</div>
         </div>
 
         {!compact && (
-          <div className="grid min-w-[10rem] gap-1 text-right text-sm">
-            <div className="font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
+          <div className="grid min-w-[9rem] gap-0.5 text-right text-sm">
+            <Badge variant={statusVariant(player.roundStatus)} className="justify-end text-[0.65rem]">
               {statusCopy(player.roundStatus)}
-            </div>
-            <div className="text-2xl font-semibold text-[#fff5d7]">{player.pointsAtRisk}</div>
-            <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">Points at risk</div>
+            </Badge>
+            <div className="text-2xl font-semibold text-foreground tabular-nums">{player.pointsAtRisk}</div>
+            <div className="text-xs text-muted-foreground">Points at risk</div>
           </div>
         )}
       </div>
 
-      <div className={cn("mt-3 flex flex-wrap gap-3", compact ? "gap-2" : "gap-4")}>
+      <div className={cn("mt-3 flex flex-wrap", compact ? "gap-2" : "gap-3")}>
         {player.modifierCards.map((card) => (
           <Flip7Card
             key={card.id}

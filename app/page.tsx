@@ -1,13 +1,30 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useQuery } from "convex/react";
 import { use } from "react";
 
 import { api } from "@/convex/_generated/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { JoinLobbyDialog } from "@/components/game/join-lobby-dialog";
 import { MatchSetup } from "@/components/game/match-setup";
 import { Skeleton } from "@/components/ui/skeleton";
+
+const stagger = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.1 },
+  },
+} as const;
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 16 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 100, damping: 20 },
+  },
+};
 
 export default function Home({ searchParams }: { searchParams: Promise<{ code?: string }> }) {
   const { code } = use(searchParams);
@@ -19,69 +36,150 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
   if (codeParam && !getMatchByCode) {
     return (
       <div className="flex flex-1 items-center justify-center min-h-[100dvh]">
-        <Skeleton className="h-40 w-full max-w-md rounded-2xl" />
+        <div className="w-full max-w-md space-y-4 px-6">
+          <Skeleton className="h-8 w-48 rounded-lg" />
+          <Skeleton className="h-4 w-72 rounded-lg" />
+          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-10 w-32 rounded-lg" />
+        </div>
       </div>
     );
   }
 
   if (codeParam && getMatchByCode) {
     return (
-      <main className="flex flex-1 min-h-[100dvh] bg-zinc-950 text-zinc-50 selection:bg-zinc-800">
-        <MatchSetup joinCode={codeParam} existingMatchId={getMatchByCode.matchId} />
+      <main className="flex flex-1 min-h-[100dvh] items-center justify-center selection:bg-primary/20">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ type: "spring", stiffness: 100, damping: 20 }}
+          className="w-full max-w-md px-6"
+        >
+          <h2 className="font-heading text-2xl tracking-tight text-foreground mb-2">
+            Join the table
+          </h2>
+          <p className="text-muted-foreground text-sm mb-8">
+            Code <span className="font-mono text-foreground tracking-widest">{codeParam}</span> is ready. Enter your name to claim a seat.
+          </p>
+          <MatchSetup joinCode={codeParam} existingMatchId={getMatchByCode.matchId} />
+        </motion.div>
       </main>
     );
   }
 
   return (
-    <main className="flex flex-1 min-h-[100dvh] items-center justify-center bg-zinc-950 text-zinc-50 selection:bg-zinc-800 relative overflow-hidden">
-      {/* Ambient background noise/texture */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }}></div>
-      
-      {/* Subtle radial gradient for depth */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(255,255,255,0.04),_transparent_50%)]"></div>
+    <main className="flex flex-1 min-h-[100dvh] items-center selection:bg-primary/20 relative overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
 
-      <div className="z-10 w-full max-w-5xl px-6 py-16 md:py-24">
-        <div className="mb-16 max-w-2xl">
-          <h1 className="text-4xl font-medium tracking-tight text-zinc-100 sm:text-5xl md:text-6xl mb-6">
-            Flip 7, fully scored<br />and fully shared.
-          </h1>
-          <p className="text-lg text-zinc-400 leading-relaxed max-w-xl">
-            Start a shared-table match that handles dealing, action cards, score modifiers, and the race to 200 without a paper score sheet.
-          </p>
-        </div>
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_oklch(0.72_0.14_160_/_0.04),_transparent_60%)]" />
 
-        <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] items-start">
-          <Card className="border-0 bg-zinc-900/50 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            <CardHeader className="pb-8 pt-8 px-8">
-              <CardTitle className="text-2xl font-medium tracking-tight text-zinc-100">Create a match</CardTitle>
-              <CardDescription className="text-zinc-400 text-base mt-2">
-                Start a new lobby and invite friends to join.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-8 pb-8">
+      <div className="z-10 w-full max-w-[1400px] mx-auto px-6 py-16 md:py-24">
+        <div className="grid gap-16 lg:grid-cols-[1.4fr_1fr] lg:gap-24 items-start">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            animate="show"
+            className="max-w-xl"
+          >
+            <motion.h1
+              variants={fadeUp}
+              className="text-4xl md:text-6xl font-medium tracking-tighter leading-none text-foreground mb-6"
+            >
+              Flip 7, fully scored
+              <br />
+              and fully shared.
+            </motion.h1>
+            <motion.p
+              variants={fadeUp}
+              className="text-base text-muted-foreground leading-relaxed max-w-[50ch] mb-12"
+            >
+              Start a shared-table match that handles dealing, action cards,
+              score modifiers, and the race to 200 without a paper score sheet.
+            </motion.p>
+
+            <motion.div variants={fadeUp}>
+              <div className="mb-3">
+                <h2 className="font-heading text-lg tracking-tight text-foreground">
+                  Create a match
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Start a new lobby and invite friends to join.
+                </p>
+              </div>
               <MatchSetup />
-            </CardContent>
-          </Card>
+            </motion.div>
+          </motion.div>
 
-          <JoinLobbyDialog
-            trigger={
-              <Card className="cursor-pointer border border-zinc-800/50 bg-zinc-900/20 backdrop-blur-sm transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-800/40 active:scale-[0.98] group">
-                <CardHeader className="pb-6 pt-8 px-8">
-                  <CardTitle className="text-xl font-medium text-zinc-300 group-hover:text-zinc-100 transition-colors">Join an existing game</CardTitle>
-                  <CardDescription className="text-zinc-500 mt-2">
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.3 }}
+            className="hidden lg:flex flex-col gap-6 pt-8"
+          >
+            <JoinLobbyDialog
+              trigger={
+                <button
+                  type="button"
+                  className="group w-full text-left surface-elevated rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
+                >
+                  <h3 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors tracking-tight">
+                    Join an existing game
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1.5">
                     Have a code? Enter it here to jump in.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="px-8 pb-8">
-                  <div className="inline-flex items-center justify-center rounded-lg bg-zinc-950/50 px-4 py-3 border border-zinc-800/50 font-mono text-xl tracking-[0.2em] text-zinc-500 group-hover:text-zinc-300 transition-colors shadow-inner">
+                  </p>
+                  <div className="mt-5 inline-flex items-center justify-center rounded-xl bg-muted/50 px-5 py-3 border border-border font-mono text-xl tracking-[0.25em] text-muted-foreground group-hover:text-foreground transition-colors">
                     ABCD
                   </div>
-                </CardContent>
-              </Card>
+                </button>
+              }
+            />
+
+            <div className="surface-elevated rounded-2xl p-8">
+              <h3 className="text-sm font-medium text-muted-foreground tracking-tight uppercase">How it works</h3>
+              <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+                <p className="flex items-start gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">1</span>
+                  <span>Seven unique number cards ends the round with a Flip 7 bonus.</span>
+                </p>
+                <p className="flex items-start gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">2</span>
+                  <span>Freeze banks points. Flip Three forces three more cards.</span>
+                </p>
+                <p className="flex items-start gap-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">3</span>
+                  <span>Second Chance discards one future duplicate instead of busting.</span>
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="mt-8 lg:hidden"
+        >
+          <JoinLobbyDialog
+            trigger={
+              <button
+                type="button"
+                className="group w-full text-left surface-elevated rounded-2xl p-6 cursor-pointer transition-all duration-300 active:scale-[0.99]"
+              >
+                <h3 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
+                  Join an existing game
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Have a code? Enter it here.
+                </p>
+                <div className="mt-4 inline-flex items-center justify-center rounded-lg bg-muted/50 px-4 py-2.5 border border-border font-mono text-lg tracking-[0.25em] text-muted-foreground">
+                  ABCD
+                </div>
+              </button>
             }
           />
-        </div>
+        </motion.div>
       </div>
     </main>
   );

@@ -7,7 +7,6 @@ import { startTransition, type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
 import { api } from "@/convex/_generated/api";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
@@ -83,10 +82,10 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-6">
+    <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
-          <label htmlFor="hostName" className="text-sm font-medium text-zinc-300">
+          <label htmlFor="hostName" className="text-sm font-medium text-foreground">
             Your name
           </label>
           <Input
@@ -97,37 +96,37 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
             placeholder="Enter your name"
             maxLength={20}
             required
-            className="bg-zinc-900/50 border-zinc-800 focus-visible:ring-zinc-700 text-zinc-100 placeholder:text-zinc-600 transition-all"
+            className="transition-all"
           />
         </div>
 
-        <div className="mt-2">
+        <div className="mt-1">
           <Dialog>
             <DialogTrigger render={
-              <Button type="button" variant="ghost" className="text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50 transition-colors justify-start w-full">
+              <Button type="button" variant="ghost" className="justify-start w-full text-muted-foreground hover:text-foreground transition-colors">
                 <SparklesIcon className="mr-2 h-4 w-4" />
                 Rules help
               </Button>
             } />
-            <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-100">
+            <DialogContent>
               <DialogHeader>
                 <DialogTitle className="text-xl font-medium">How this table plays Flip 7</DialogTitle>
-                <DialogDescription className="text-zinc-400">
+                <DialogDescription>
                   Hit to reveal another card, stay to bank what you have, and avoid duplicate
                   numbers unless a Second Chance saves you.
                 </DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4 text-sm text-zinc-300 mt-4">
+              <div className="flex flex-col gap-4 text-sm text-muted-foreground mt-4">
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-100">1</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">1</span>
                   <span>Seven unique number cards ends the round immediately with a Flip 7 bonus.</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-100">2</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">2</span>
                   <span>Freeze banks a player&apos;s current total. Flip Three forces three more cards.</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-xs font-medium text-zinc-100">3</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">3</span>
                   <span>Second Chance discards one future duplicate instead of busting the player.</span>
                 </p>
               </div>
@@ -135,19 +134,18 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
           </Dialog>
         </div>
       </div>
-      <Alert className="mt-2 border-zinc-800 bg-zinc-900/30 text-zinc-300">
-        <AlertTitle className="text-zinc-100 font-medium">Shared table note</AlertTitle>
-        <AlertDescription className="text-zinc-400 mt-1">
-          Share the match URL after setup. Each player enters their own name when joining, and
-          refresh reconnects to the latest committed turn.
-        </AlertDescription>
-      </Alert>
-      <div className="pt-2">
+
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        Share the match URL after setup. Each player enters their own name when joining, and
+        refresh reconnects to the latest committed turn.
+      </p>
+
+      <div>
         <button
           type="submit"
           className={cn(
-            buttonVariants({ variant: "default", size: "default" }),
-            "w-full sm:w-auto bg-zinc-100 text-zinc-950 hover:bg-white active:scale-[0.98] transition-all font-medium px-8",
+            buttonVariants({ variant: "default", size: "lg" }),
+            "w-full sm:w-auto px-8 font-medium",
           )}
           disabled={isSubmitting || !hostName.trim() || !sessionId}
         >

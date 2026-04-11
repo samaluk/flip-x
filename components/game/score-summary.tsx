@@ -1,49 +1,58 @@
+"use client";
+
+import { motion } from "motion/react";
+
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
 export function ScoreSummary({ players }: { players: MatchSnapshot["players"] }) {
   return (
-    <section className="rounded-[2rem] border border-[#f3d48a]/16 bg-[linear-gradient(180deg,rgba(12,31,46,0.96)_0%,rgba(8,18,28,0.98)_100%)] p-5 text-white shadow-[0_24px_60px_rgba(0,0,0,0.3)]">
+    <motion.section
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.1 }}
+      className="surface-elevated rounded-2xl p-5 text-card-foreground"
+    >
       <div className="space-y-1">
-        <h2 className="font-heading text-xl tracking-[0.08em] uppercase text-[#f8ead0]">
+        <h2 className="font-heading text-lg tracking-tight font-medium text-foreground">
           Round breakdown
         </h2>
-        <p className="text-sm text-[#cfd9df]">
+        <p className="text-sm text-muted-foreground">
           Number totals, multiplier effects, bonus cards, and the final score each seat carries out
           of the round.
         </p>
       </div>
 
       <div className="mt-5 overflow-x-auto">
-        <table className="w-full min-w-[42rem] border-separate border-spacing-y-3 text-left">
+        <table className="w-full min-w-[42rem] text-left">
           <thead>
-            <tr className="text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
-              <th className="px-3 py-2 font-medium">Player</th>
-              <th className="px-3 py-2 font-medium">Numbers</th>
-              <th className="px-3 py-2 font-medium">x2</th>
-              <th className="px-3 py-2 font-medium">Bonus</th>
-              <th className="px-3 py-2 font-medium">Flip 7</th>
-              <th className="px-3 py-2 font-medium">Round total</th>
+            <tr className="border-b border-border text-xs font-medium tracking-wide uppercase text-muted-foreground">
+              <th className="px-3 py-2.5">Player</th>
+              <th className="px-3 py-2.5">Numbers</th>
+              <th className="px-3 py-2.5">x2</th>
+              <th className="px-3 py-2.5">Bonus</th>
+              <th className="px-3 py-2.5">Flip 7</th>
+              <th className="px-3 py-2.5">Round total</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {players.map((player) => (
               <tr
                 key={player.playerId}
-                className="overflow-hidden rounded-2xl bg-white/4 text-sm text-[#d9e5eb]"
+                className="text-sm text-foreground"
               >
-                <td className="rounded-l-2xl px-3 py-3 font-medium text-[#fff5d7]">
+                <td className="px-3 py-3 font-medium">
                   {player.displayName}
                 </td>
-                <td className="px-3 py-3">{player.scoreBreakdown.numberCardTotal}</td>
-                <td className="px-3 py-3">
+                <td className="px-3 py-3 tabular-nums text-muted-foreground">{player.scoreBreakdown.numberCardTotal}</td>
+                <td className="px-3 py-3 text-muted-foreground">
                   {player.scoreBreakdown.multiplierApplied ? "Yes" : "No"}
                   <span className="sr-only">
                     Multiplier: {player.scoreBreakdown.multiplierApplied ? "x2" : "none"}
                   </span>
                 </td>
-                <td className="px-3 py-3">{player.scoreBreakdown.additiveModifierTotal}</td>
-                <td className="px-3 py-3">{player.scoreBreakdown.flip7Bonus}</td>
-                <td className="rounded-r-2xl px-3 py-3 text-base font-semibold text-[#f3d48a]">
+                <td className="px-3 py-3 tabular-nums text-muted-foreground">{player.scoreBreakdown.additiveModifierTotal}</td>
+                <td className="px-3 py-3 tabular-nums text-muted-foreground">{player.scoreBreakdown.flip7Bonus}</td>
+                <td className="px-3 py-3 text-base font-semibold tabular-nums text-primary">
                   {player.scoreBreakdown.finalRoundScore}
                   <span className="sr-only">
                     Final round score: {player.scoreBreakdown.finalRoundScore}
@@ -54,6 +63,6 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
           </tbody>
         </table>
       </div>
-    </section>
+    </motion.section>
   );
 }

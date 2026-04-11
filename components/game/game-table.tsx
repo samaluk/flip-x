@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence } from "motion/react";
 import { useMutation } from "convex/react";
 import { AlertTriangleIcon, RefreshCwIcon, TrophyIcon, UserRoundIcon } from "lucide-react";
 import { type ReactNode, useTransition } from "react";
@@ -10,8 +11,26 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { PlayerLane } from "@/components/game/player-lane";
 import { ScoreSummary } from "@/components/game/score-summary";
 import { TurnControls } from "@/components/game/turn-controls";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { MatchSnapshot } from "@/lib/game/view-models";
+
+const listStagger = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
+} as const;
+
+const listItem = {
+  hidden: { opacity: 0, y: 10 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { type: "spring" as const, stiffness: 120, damping: 20 },
+  },
+};
 
 export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; sessionId: string }) {
   const [isPending, startTransition] = useTransition();
@@ -38,43 +57,43 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="overflow-hidden rounded-[1.5rem] border border-[#f3d48a]/20 bg-[linear-gradient(180deg,rgba(12,31,46,0.97)_0%,rgba(6,17,26,0.98)_100%)] text-white shadow-[0_30px_80px_rgba(0,0,0,0.35)]">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 px-4 py-3">
-          <div className="space-y-2">
+      <section className="surface-elevated overflow-hidden rounded-2xl text-foreground">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border px-5 py-4">
+          <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="font-heading text-2xl tracking-[0.08em] uppercase text-[#f8ead0]">
+              <h1 className="font-heading text-xl tracking-tight font-medium text-foreground">
                 Match {snapshot.matchId.slice(0, 8)}
               </h1>
               {snapshot.status === "completed" ? (
-                <TrophyIcon className="size-5 text-[#f3d48a]" />
+                <TrophyIcon className="size-5 text-primary" />
               ) : null}
             </div>
-            <div className="text-sm text-[#cfd9df]">
+            <div className="text-sm text-muted-foreground">
               Round {snapshot.currentRoundNumber} of a race to {snapshot.targetScore} points.
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <TablePill>Dealer seat {snapshot.dealerSeat + 1}</TablePill>
-            <TablePill>{snapshot.status.replace("_", " ")}</TablePill>
-            {activePlayer ? <TablePill>Turn: {activePlayer.displayName}</TablePill> : null}
+            <Badge variant="outline">Dealer seat {snapshot.dealerSeat + 1}</Badge>
+            <Badge variant="outline">{snapshot.status.replace("_", " ")}</Badge>
+            {activePlayer ? <Badge variant="default">Turn: {activePlayer.displayName}</Badge> : null}
             {isPending ? (
-              <TablePill>
-                <RefreshCwIcon className="size-3.5 animate-spin" />
+              <Badge variant="secondary">
+                <RefreshCwIcon className="size-3 animate-spin" />
                 Updating
-              </TablePill>
+              </Badge>
             ) : null}
           </div>
         </div>
 
-        <div className="grid gap-4 px-3 py-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-[#f3d48a]/20 bg-[#0c2031]/70 px-4 py-4">
+        <div className="grid gap-5 px-5 py-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
+          <div className="space-y-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-4">
               <div className="space-y-1">
-                <div className="font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
+                <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
                   Table call
                 </div>
-                <div className="text-sm text-[#d9e5eb]">
+                <div className="text-sm text-foreground">
                   {snapshot.roundStatus === "completed"
                     ? "The round is scored and ready for the next deal."
                     : activePlayer
@@ -82,11 +101,11 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
                       : "Waiting for the next resolution."}
                 </div>
                 {viewerPlayer ? (
-                  <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">
+                  <div className="text-xs text-muted-foreground">
                     You are playing as {viewerPlayer.displayName}
                   </div>
                 ) : (
-                  <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">
+                  <div className="text-xs text-muted-foreground">
                     Claim a seat on this device to take turns.
                   </div>
                 )}
@@ -131,46 +150,56 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
               />
             </div>
 
-            <section className="table-felt rounded-[1.5rem] border border-[#f3d48a]/18 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_24px_60px_rgba(0,0,0,0.3)]">
+            <section className="rounded-xl border border-border bg-card p-4">
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
                 <div>
-                  <div className="font-heading text-[0.72rem] tracking-[0.28em] uppercase text-[#a7c6d5]">
+                  <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
                     Table layout
                   </div>
-                  <div className="text-sm text-[#e5eef3]">
+                  <div className="text-sm text-muted-foreground">
                     Your lane stays pinned above. Scroll to see others in turn order.
                   </div>
                 </div>
                 {snapshot.status !== "completed" && snapshot.roundStatus === "player_turns" ? (
-                  <Button
-                    variant="ghost"
-                    className="rounded-full border border-white/10 bg-black/10 px-4 text-[#f8ead0] hover:bg-white/8 hover:text-white"
-                  >
-                    <UserRoundIcon />
+                  <Badge variant="outline">
+                    <UserRoundIcon className="size-3.5" />
                     {activePlayer?.displayName ?? "Waiting"}
-                  </Button>
+                  </Badge>
                 ) : null}
               </div>
 
-              <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-2">
-                {sortedPlayers.sorted
-                  .filter((p) => p.playerId !== snapshot.viewerPlayerId)
-                  .map((player) => (
-                    <PlayerLane
-                      key={player.playerId}
-                      player={player}
-                      isActive={snapshot.activePlayerId === player.playerId}
-                      isViewer={snapshot.viewerPlayerId === player.playerId}
-                    />
-                  ))}
-              </div>
+              <motion.div
+                variants={listStagger}
+                initial="hidden"
+                animate="show"
+                className="max-h-[60vh] space-y-3 overflow-y-auto pr-1"
+              >
+                <AnimatePresence>
+                  {sortedPlayers.sorted
+                    .filter((p) => p.playerId !== snapshot.viewerPlayerId)
+                    .map((player) => (
+                      <motion.div
+                        key={player.playerId}
+                        variants={listItem}
+                        layout
+                        layoutId={player.playerId}
+                      >
+                        <PlayerLane
+                          player={player}
+                          isActive={snapshot.activePlayerId === player.playerId}
+                          isViewer={snapshot.viewerPlayerId === player.playerId}
+                        />
+                      </motion.div>
+                    ))}
+                </AnimatePresence>
+              </motion.div>
             </section>
           </div>
 
-          <aside className="space-y-4">
+          <aside className="space-y-5">
             {viewerPlayer && (
-              <section className="rounded-[1.5rem] border border-emerald-400/30 bg-[linear-gradient(180deg,rgba(16,48,35,0.95)_0%,rgba(10,30,22,0.98)_100%)] p-4 text-white shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
-                <div className="mb-3 font-heading text-[0.72rem] tracking-[0.24em] uppercase text-emerald-300">
+              <section className="rounded-xl border border-primary/20 bg-primary/[0.03] p-4">
+                <div className="mb-3 text-xs font-medium tracking-wide uppercase text-primary">
                   Your hand
                 </div>
                 <PlayerLane player={viewerPlayer} isActive={isViewerTurn} isViewer compact />
@@ -179,7 +208,7 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
             <InfoPanel
               title="Latest resolution"
               body={snapshot.latestEvent?.summary ?? "No table event has been logged yet."}
-              icon={<AlertTriangleIcon className="size-4 text-[#f3d48a]" />}
+              icon={<AlertTriangleIcon className="size-4 text-muted-foreground" />}
               subtext={snapshot.latestEvent?.playerNames}
             />
           </aside>
@@ -187,14 +216,6 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
       </section>
 
       <ScoreSummary players={snapshot.players} />
-    </div>
-  );
-}
-
-function TablePill({ children }: { children: ReactNode }) {
-  return (
-    <div className="inline-flex items-center gap-2 rounded-full border border-[#f3d48a]/30 bg-[#f3d48a]/10 px-3 py-1.5 text-xs font-medium tracking-[0.18em] uppercase text-[#f3d48a]">
-      {children}
     </div>
   );
 }
@@ -237,13 +258,13 @@ function InfoPanel({
   subtext?: string;
 }) {
   return (
-    <section className="rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(12,31,46,0.97)_0%,rgba(8,18,28,0.96)_100%)] p-4 text-white shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
-      <div className="flex items-center gap-2 font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
+    <section className="rounded-xl border border-border bg-card p-4">
+      <div className="flex items-center gap-2 text-xs font-medium tracking-wide uppercase text-muted-foreground">
         {icon}
         {title}
       </div>
-      <div className="mt-2 text-sm leading-6 text-[#d9e5eb]">{body}</div>
-      {subtext && <div className="mt-1 text-xs text-[#8cb1c4]">{subtext}</div>}
+      <div className="mt-2 text-sm leading-6 text-foreground">{body}</div>
+      {subtext && <div className="mt-1 text-xs text-muted-foreground">{subtext}</div>}
     </section>
   );
 }

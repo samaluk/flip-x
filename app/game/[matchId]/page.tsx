@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import { useMutation, useQuery } from "convex/react";
 import { LinkIcon } from "lucide-react";
 import { use, type FormEvent } from "react";
@@ -13,7 +14,6 @@ import { LobbyCodeDisplay } from "@/components/game/lobby-code-display";
 import { StartGameButton } from "@/components/game/start-game-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnonymousSessionId } from "@/lib/anonymous-session";
@@ -31,13 +31,13 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
 
   async function handleJoin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    
+
     const trimmedName = playerName.trim();
     if (!trimmedName) {
       toast.error("Please enter your name.");
       return;
     }
-    
+
     if (trimmedName.length > 20) {
       toast.error("Name must be 20 characters or less.");
       return;
@@ -77,9 +77,22 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
 
   if (snapshot === undefined) {
     return (
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-8 sm:px-6 lg:px-8">
-        <Skeleton className="h-40 w-full" />
-        <Skeleton className="h-64 w-full" />
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-12 w-36 rounded-xl" />
+            <Skeleton className="h-10 w-28 rounded-lg" />
+          </div>
+          <Skeleton className="h-9 w-36 rounded-lg" />
+        </div>
+        <Skeleton className="h-48 w-full rounded-2xl" />
+        <div className="grid gap-4 lg:grid-cols-[1fr_22rem]">
+          <div className="space-y-3">
+            <Skeleton className="h-32 w-full rounded-2xl" />
+            <Skeleton className="h-32 w-full rounded-2xl" />
+          </div>
+          <Skeleton className="h-48 w-full rounded-2xl" />
+        </div>
       </div>
     );
   }
@@ -102,7 +115,12 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ type: "spring", stiffness: 120, damping: 20 }}
+        className="flex flex-wrap items-center justify-between gap-4"
+      >
         <div className="flex items-center gap-4">
           {isSetup && snapshot.lobbyCode && <LobbyCodeDisplay code={snapshot.lobbyCode} />}
           {isSetup && (
@@ -118,38 +136,51 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
           <LinkIcon />
           Copy invite link
         </Button>
-      </div>
+      </motion.div>
 
-      {!snapshot.viewerPlayerId && isSetup ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Join the game</CardTitle>
-            <CardDescription>
+      <AnimatePresence mode="wait">
+        {!snapshot.viewerPlayerId && isSetup ? (
+          <motion.div
+            key="join-form"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ type: "spring", stiffness: 120, damping: 20 }}
+            className="surface-elevated rounded-2xl p-6"
+          >
+            <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
+              Join the game
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1 mb-4">
               Enter your name to claim a seat at the table.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
+            </p>
             <form onSubmit={handleJoin} className="flex gap-3">
               <Input
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder="Your name"
                 maxLength={20}
-                className="max-w-xs bg-zinc-900/50 border-zinc-800 focus-visible:ring-zinc-700 text-zinc-100 placeholder:text-zinc-600"
+                className="max-w-xs"
               />
-              <Button 
-                type="submit" 
+              <Button
+                type="submit"
                 disabled={isJoining || !playerName.trim()}
-                className="bg-zinc-100 text-zinc-950 hover:bg-white active:scale-[0.98] transition-all font-medium"
+                className="font-medium"
               >
                 Join Game
               </Button>
             </form>
-          </CardContent>
-        </Card>
-      ) : null}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
 
-      <GameTable snapshot={snapshot} sessionId={sessionId} />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.15 }}
+      >
+        <GameTable snapshot={snapshot} sessionId={sessionId} />
+      </motion.div>
     </main>
   );
 }

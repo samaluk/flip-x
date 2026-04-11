@@ -1,8 +1,8 @@
 "use client";
 
+import { AlertCircleIcon } from "lucide-react";
 import { useEffect } from "react";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 
 export default function GamePageError({ error, reset }: { error: Error; reset: () => void }) {
@@ -11,16 +11,23 @@ export default function GamePageError({ error, reset }: { error: Error; reset: (
   }, [error]);
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
-      <Alert>
-        <AlertTitle>Could not load the match</AlertTitle>
-        <AlertDescription className="flex flex-col gap-3">
-          <span>{error.message}</span>
-          <Button variant="outline" onClick={reset}>
-            Try again
-          </Button>
-        </AlertDescription>
-      </Alert>
+    <div className="flex flex-1 items-center justify-center min-h-[60dvh] px-4">
+      <div className="w-full max-w-md text-center space-y-6">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+          <AlertCircleIcon className="h-6 w-6 text-destructive" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
+            Could not load the match
+          </h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            {error.message}
+          </p>
+        </div>
+        <Button variant="outline" onClick={reset} className="mx-auto">
+          Try again
+        </Button>
+      </div>
     </div>
   );
 }

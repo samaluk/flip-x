@@ -1,3 +1,7 @@
+"use client";
+
+import { motion } from "motion/react";
+
 import { cn } from "@/lib/utils";
 
 const NUMBER_CARD_STYLES: Record<number, { shell: string; ink: string; corner: string }> = {
@@ -136,7 +140,9 @@ export function Flip7Card(props: Flip7CardProps) {
   const style = getCardStyle(props);
 
   return (
-    <div
+    <motion.div
+      whileHover={{ scale: 1.04, y: -2 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={cn(
         "flip7-card-shell w-[4.9rem] shrink-0 sm:w-[5.6rem]",
         props.dealing && "flip7-card-deal",
@@ -153,7 +159,7 @@ export function Flip7Card(props: Flip7CardProps) {
       >
         <div
           className={cn(
-            "absolute inset-0 overflow-hidden rounded-[1.25rem] border p-2.5 [backface-visibility:hidden] sm:p-3",
+            "absolute inset-0 overflow-hidden rounded-2xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] [backface-visibility:hidden] sm:p-3",
             style.shell,
           )}
         >
@@ -195,27 +201,27 @@ export function Flip7Card(props: Flip7CardProps) {
                   : `No. ${props.label}`}
             </div>
           </div>
-          <div className="pointer-events-none absolute inset-2 rounded-[1rem] border border-white/18" />
+          <div className="pointer-events-none absolute inset-2 rounded-xl border border-white/18" />
           <div className="pointer-events-none absolute inset-x-4 top-4 h-px bg-white/24" />
           <div className="pointer-events-none absolute inset-x-4 bottom-4 h-px bg-black/12" />
         </div>
 
         <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
-          <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-[1.25rem] border border-[#f0d48b]/40 bg-[linear-gradient(180deg,#162b42_0%,#0a1627_100%)] p-3 text-[#f2d58b] shadow-[0_14px_30px_rgba(0,0,0,0.32)]">
-            <div className="pointer-events-none absolute inset-2 rounded-[1rem] border border-[#f0d48b]/45" />
-            <div className="pointer-events-none absolute inset-4 rounded-[0.9rem] border border-[#f0d48b]/25" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_43%,rgba(240,212,139,0.16)_43%,rgba(240,212,139,0.16)_57%,transparent_57%,transparent_100%)] opacity-70" />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(45deg,transparent_0%,transparent_43%,rgba(240,212,139,0.16)_43%,rgba(240,212,139,0.16)_57%,transparent_57%,transparent_100%)] opacity-60" />
-            <div className="pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2 bg-[#f0d48b]/30" />
-            <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-[#f0d48b]/30" />
+          <div className="relative flex h-full flex-col items-center justify-center overflow-hidden rounded-2xl border border-border bg-card p-3 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_30px_rgba(0,0,0,0.24)]">
+            <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
+            <div className="pointer-events-none absolute inset-4 rounded-lg border border-primary/10" />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-70" />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(45deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-60" />
+            <div className="pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2 bg-primary/15" />
+            <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/15" />
             <div className="font-heading text-2xl tracking-[0.34em] uppercase">Flip</div>
             <div className="font-heading text-5xl leading-none tracking-[-0.08em]">7</div>
-            <div className="mt-2 font-heading text-[0.72rem] tracking-[0.32em] uppercase text-[#f8e7b9]">
-              Art Deco Deck
+            <div className="mt-2 font-heading text-[0.72rem] tracking-[0.32em] uppercase text-muted-foreground">
+              Card Game
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

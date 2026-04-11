@@ -1,10 +1,10 @@
 "use client";
 
+import { motion } from "motion/react";
 import { BanIcon, HandIcon, SparklesIcon, WandSparklesIcon } from "lucide-react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
 type PendingAction = NonNullable<MatchSnapshot["pendingAction"]>;
@@ -35,14 +35,17 @@ export function TurnControls({
   if (snapshot.roundStatus === "completed") {
     return (
       <div className="flex flex-wrap items-center gap-3">
-        <Button
-          onClick={onStartNextRound}
-          disabled={!snapshot.viewerPlayerId}
-          className="h-11 rounded-full bg-[#f3d48a] px-5 text-[#142230] hover:bg-[#f8e3aa]"
-        >
-          <SparklesIcon />
-          Start next round
-        </Button>
+        <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+          <Button
+            onClick={onStartNextRound}
+            disabled={!snapshot.viewerPlayerId}
+            size="lg"
+            className="rounded-full px-6"
+          >
+            <SparklesIcon />
+            Start next round
+          </Button>
+        </motion.div>
       </div>
     );
   }
@@ -51,12 +54,12 @@ export function TurnControls({
     const pendingAction: PendingAction = snapshot.pendingAction;
 
     return (
-      <div className="flex flex-col gap-4 rounded-[1.5rem] border border-[#f3d48a]/30 bg-[#081521]/70 p-4 text-white">
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-muted/30 p-4">
         <div className="space-y-1">
-          <div className="font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
+          <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
             Action card in play
           </div>
-          <div className="text-sm text-[#d9e5eb]">
+          <div className="text-sm text-foreground">
             {pendingAction.actionKind === "freeze"
               ? "Choose who banks their points and freezes out of the round."
               : "Choose who must keep drawing until three cards resolve."}
@@ -66,16 +69,17 @@ export function TurnControls({
           {snapshot.players
             .filter((player) => pendingAction.eligibleTargetIds.includes(player.playerId))
             .map((player) => (
-              <Button
-                key={player.playerId}
-                variant="outline"
-                disabled={!viewerCanResolveAction}
-                onClick={() => onResolveAction(player.playerId as Id<"players">)}
-                className="h-10 rounded-full border-[#f3d48a]/35 bg-transparent px-4 text-[#f8ead0] hover:bg-[#f3d48a]/10"
-              >
-                <WandSparklesIcon />
-                {player.displayName}
-              </Button>
+              <motion.div key={player.playerId} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+                <Button
+                  variant="outline"
+                  disabled={!viewerCanResolveAction}
+                  onClick={() => onResolveAction(player.playerId as Id<"players">)}
+                  className="rounded-full"
+                >
+                  <WandSparklesIcon />
+                  {player.displayName}
+                </Button>
+              </motion.div>
             ))}
         </div>
       </div>
@@ -88,32 +92,35 @@ export function TurnControls({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button
-        onClick={onHit}
-        disabled={!viewerControlsTurn}
-        className={cn(
-          "h-11 rounded-full px-5 text-[#142230] shadow-[0_14px_30px_rgba(243,212,138,0.24)]",
-          "bg-[#f3d48a] hover:bg-[#f8e3aa]",
-        )}
-      >
-        <HandIcon />
-        Hit for {activePlayer.displayName}
-      </Button>
-      <Button
-        variant="outline"
-        onClick={onStay}
-        disabled={!viewerControlsTurn}
-        className="h-11 rounded-full border-[#8cb1c4]/45 bg-transparent px-5 text-[#d9e5eb] hover:bg-white/6 hover:text-white"
-      >
-        <BanIcon />
-        Stay for {activePlayer.displayName}
-      </Button>
+      <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+        <Button
+          onClick={onHit}
+          disabled={!viewerControlsTurn}
+          size="lg"
+          className="rounded-full px-6"
+        >
+          <HandIcon />
+          Hit for {activePlayer.displayName}
+        </Button>
+      </motion.div>
+      <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+        <Button
+          variant="outline"
+          onClick={onStay}
+          disabled={!viewerControlsTurn}
+          size="lg"
+          className="rounded-full px-6"
+        >
+          <BanIcon />
+          Stay for {activePlayer.displayName}
+        </Button>
+      </motion.div>
       {!snapshot.viewerPlayerId ? (
-        <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">
+        <div className="text-xs text-muted-foreground">
           Claim a seat to play from this device.
         </div>
       ) : !viewerControlsTurn ? (
-        <div className="text-xs tracking-[0.18em] uppercase text-[#8cb1c4]">
+        <div className="text-xs text-muted-foreground">
           Waiting for {activePlayer.displayName}.
         </div>
       ) : null}
