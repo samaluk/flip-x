@@ -52,7 +52,7 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
         <div className="grid gap-6 md:grid-cols-[1.2fr_0.8fr] items-start">
           <Card className="border-0 bg-zinc-900/50 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
             <CardHeader className="pb-8 pt-8 px-8">
               <CardTitle className="text-2xl font-medium tracking-tight text-zinc-100">Create a match</CardTitle>
               <CardDescription className="text-zinc-400 text-base mt-2">
