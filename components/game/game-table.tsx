@@ -12,7 +12,6 @@ import { PlayerLane } from "@/components/game/player-lane";
 import { ScoreSummary } from "@/components/game/score-summary";
 import { TurnControls } from "@/components/game/turn-controls";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
 const listStagger = {
