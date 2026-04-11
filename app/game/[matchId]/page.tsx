@@ -2,7 +2,8 @@
 
 import { useMutation, useQuery } from "convex/react";
 import { LinkIcon } from "lucide-react";
-import { use } from "react";
+import { use, type FormEvent } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { api } from "@/convex/_generated/api";
@@ -13,32 +14,52 @@ import { StartGameButton } from "@/components/game/start-game-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAnonymousSessionId } from "@/lib/anonymous-session";
 
 export default function GamePage({ params }: { params: Promise<{ matchId: string }> }) {
   const { matchId } = use(params);
   const sessionId = useAnonymousSessionId();
-  const claimSeat = useMutation(api.matches.claimSeat);
+  const joinMatch = useMutation(api.matches.joinMatch);
+  const [playerName, setPlayerName] = useState("");
+  const [isJoining, setIsJoining] = useState(false);
   const snapshot = useQuery(api.matches.getMatchSnapshot, {
     matchId: matchId as Id<"matches">,
     sessionId: sessionId || undefined,
   });
 
-  async function handleClaimSeat(playerId: string) {
-    if (!sessionId) {
+  async function handleJoin(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    
+    const trimmedName = playerName.trim();
+    if (!trimmedName) {
+      toast.error("Please enter your name.");
+      return;
+    }
+    
+    if (trimmedName.length > 20) {
+      toast.error("Name must be 20 characters or less.");
       return;
     }
 
+    if (!sessionId) {
+      toast.error("Session not available.");
+      return;
+    }
+
+    setIsJoining(true);
     try {
-      await claimSeat({
+      await joinMatch({
         matchId: matchId as Id<"matches">,
-        playerId: playerId as Id<"players">,
+        playerName: trimmedName,
         sessionId,
       });
-      toast.success("Seat claimed.");
+      setPlayerName("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not claim that seat.");
+      toast.error(error instanceof Error ? error.message : "Could not join the game.");
+    } finally {
+      setIsJoining(false);
     }
   }
 
@@ -99,32 +120,31 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
         </Button>
       </div>
 
-      {!snapshot.viewerPlayerId ? (
+      {!snapshot.viewerPlayerId && isSetup ? (
         <Card>
           <CardHeader>
-            <CardTitle>Claim your seat</CardTitle>
+            <CardTitle>Join the game</CardTitle>
             <CardDescription>
-              Pick an open player seat on this device. No login is required.
+              Enter your name to claim a seat at the table.
             </CardDescription>
           </CardHeader>
-          <CardContent className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            {snapshot.players.map((player) => (
-              <Button
-                key={player.playerId}
-                variant={player.isClaimed ? "outline" : "default"}
-                disabled={player.isClaimed || !sessionId}
-                onClick={() => handleClaimSeat(player.playerId)}
-                className="h-auto justify-between gap-3 px-4 py-4"
+          <CardContent>
+            <form onSubmit={handleJoin} className="flex gap-3">
+              <Input
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                placeholder="Your name"
+                maxLength={20}
+                className="max-w-xs bg-zinc-900/50 border-zinc-800 focus-visible:ring-zinc-700 text-zinc-100 placeholder:text-zinc-600"
+              />
+              <Button 
+                type="submit" 
+                disabled={isJoining || !playerName.trim()}
+                className="bg-zinc-100 text-zinc-950 hover:bg-white active:scale-[0.98] transition-all font-medium"
               >
-                <span className="text-left">
-                  <span className="block text-sm font-semibold">{player.displayName}</span>
-                  <span className="block text-xs opacity-70">Seat {player.seatIndex + 1}</span>
-                </span>
-                <span className="text-xs uppercase tracking-[0.18em]">
-                  {player.isClaimed ? "Claimed" : "Join"}
-                </span>
+                Join Game
               </Button>
-            ))}
+            </form>
           </CardContent>
         </Card>
       ) : null}
