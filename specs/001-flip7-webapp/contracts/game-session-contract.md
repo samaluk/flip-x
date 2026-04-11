@@ -55,15 +55,17 @@ Creates a new match in setup state.
 
 ```ts
 {
-  playerNames: string[]
+  hostName: string;
+  sessionId: string;
 }
 ```
 
 #### Rules
 
-- Requires 3-8 non-empty unique player names
+- `hostName` must be non-empty (max length enforced server-side)
+- Creates the host at seat 0 only; each joiner claims an open seat or adds a new seat row (no fixed capacity)
 - Initializes cumulative scores to zero
-- Does not start round one automatically until setup succeeds
+- Does not start round one automatically until the host starts from setup
 
 #### Returns
 
@@ -187,7 +189,6 @@ type GameActionError = {
   code:
     | "MATCH_NOT_FOUND"
     | "INVALID_MATCH_STATE"
-    | "INVALID_PLAYER_COUNT"
     | "INVALID_TURN"
     | "INVALID_ACTION"
     | "INVALID_TARGET"
@@ -198,7 +199,7 @@ type GameActionError = {
 
 ## Contract Test Priorities
 
-- Match creation rejects duplicate or out-of-range player counts
+- Match creation rejects invalid host name; lobby grows as players join
 - Initial dealing handles action-card interruptions correctly
 - `takeTurnAction` rejects out-of-turn actions
 - Duplicate-number resolution respects Second Chance before busting

@@ -21,15 +21,17 @@ Creates a new match in setup state with a generated lobby code.
 
 ```ts
 {
-  playerNames: string[];
+  hostName: string;
+  sessionId: string;
 }
 ```
 
 #### Rules
 
-- Requires 3-8 non-empty unique player names
+- `hostName` must be non-empty; duplicate display names are rejected at `joinMatch`
+- Creates only the host row at seat 0; additional players are added when they join (no fixed seat cap)
 - Generates a unique 4-character alphanumeric lobby code
-- Sets the creating session as the host
+- Sets the creating session as the host (seat 0, pre-claimed)
 - Initializes status to "setup"
 
 #### Returns
@@ -88,6 +90,7 @@ Starts the game (transitions from setup to in_progress).
 - Only allowed when match status is "setup"
 - Only the host (matching hostSessionId) can start
 - Minimum 3 players must have claimed seats
+- Round one includes **only** claimed seats; empty placeholders are not dealt in
 
 #### Returns
 

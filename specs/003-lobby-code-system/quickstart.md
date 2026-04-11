@@ -28,7 +28,7 @@
 ### Create Game Flow
 
 1. On the homepage, click "Create Game".
-2. Enter 3-8 player names and claim your seat.
+2. Enter your name as host (only the host seat exists until others join).
 3. Verify a 4-character lobby code is displayed prominently.
 4. Copy the lobby code or share the invite link.
 5. Open the app in a new browser/device and verify you can:
@@ -65,7 +65,7 @@ pnpm build
 
 1. Create a new game and verify the lobby code appears within 1 second.
 2. Join a game by code and verify you reach the lobby within 1 second.
-3. Start the game with 8 players and verify no additional loading delays.
+3. Start the game with several players and verify no additional loading delays.
 
 ## CI Expectation
 

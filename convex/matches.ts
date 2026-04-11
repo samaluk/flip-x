@@ -24,18 +24,12 @@ import { generateLobbyCode } from "./lib/lobby_code";
 
 export const createMatch = mutation({
   args: {
-    playerCount: v.number(),
     hostName: v.string(),
     sessionId: v.string(),
   },
   handler: async (ctx, args) => {
-    const playerCount = args.playerCount;
     const hostName = args.hostName.trim();
     const sessionId = args.sessionId;
-
-    if (playerCount < 3 || playerCount > 8) {
-      throw new Error("INVALID_PLAYER_COUNT");
-    }
 
     if (!hostName || hostName.length > 20) {
       throw new Error("INVALID_HOST_NAME");
@@ -72,20 +66,17 @@ export const createMatch = mutation({
       updatedAt: timestamp,
     });
 
-    for (let seatIndex = 0; seatIndex < playerCount; seatIndex++) {
-      const displayName = seatIndex === 0 ? hostName : `Player ${seatIndex + 1}`;
-      await ctx.db.insert("players", {
-        matchId,
-        displayName,
-        seatIndex,
-        totalScore: 0,
-        hasWon: false,
-        claimedBySessionId: seatIndex === 0 ? sessionId : undefined,
-        claimedAt: seatIndex === 0 ? timestamp : undefined,
-        connected: seatIndex === 0,
-        lastSeenAt: timestamp,
-      });
-    }
+    await ctx.db.insert("players", {
+      matchId,
+      displayName: hostName,
+      seatIndex: 0,
+      totalScore: 0,
+      hasWon: false,
+      claimedBySessionId: sessionId,
+      claimedAt: timestamp,
+      connected: true,
+      lastSeenAt: timestamp,
+    });
 
     const match = await ctx.db.get(matchId);
 
@@ -184,11 +175,6 @@ export const joinMatch = mutation({
       throw new Error("NAME_ALREADY_TAKEN");
     }
 
-    const availableSeat = players.find(p => !p.claimedBySessionId);
-    if (!availableSeat) {
-      throw new Error("NO_AVAILABLE_SEAT");
-    }
-
     const timestamp = Date.now();
 
     for (const currentPlayer of players) {
@@ -201,13 +187,34 @@ export const joinMatch = mutation({
       }
     }
 
-    await ctx.db.patch(availableSeat._id, {
-      claimedBySessionId: sessionId,
-      claimedAt: timestamp,
-      connected: true,
-      lastSeenAt: timestamp,
-      displayName: playerName,
-    });
+    const afterUnclaim = await getPlayersByMatch(ctx, args.matchId);
+    const availableSeat = afterUnclaim.find(p => !p.claimedBySessionId);
+
+    if (availableSeat) {
+      await ctx.db.patch(availableSeat._id, {
+        claimedBySessionId: sessionId,
+        claimedAt: timestamp,
+        connected: true,
+        lastSeenAt: timestamp,
+        displayName: playerName,
+      });
+    } else {
+      const nextSeat =
+        afterUnclaim.length === 0
+          ? 0
+          : Math.max(...afterUnclaim.map((p) => p.seatIndex)) + 1;
+      await ctx.db.insert("players", {
+        matchId: args.matchId,
+        displayName: playerName,
+        seatIndex: nextSeat,
+        totalScore: 0,
+        hasWon: false,
+        claimedBySessionId: sessionId,
+        claimedAt: timestamp,
+        connected: true,
+        lastSeenAt: timestamp,
+      });
+    }
 
     const round = await getLatestRound(ctx, args.matchId);
     return await buildSnapshot(ctx, match, round, sessionId);
@@ -291,7 +298,8 @@ export const startMatch = mutation({
       connected: true,
       lastSeenAt: Date.now(),
     });
-    const orderedPlayers = buildOrderedPlayers(players);
+    // Only claimed seats participate in the round (empty placeholders are ignored).
+    const orderedPlayers = buildOrderedPlayers(claimedPlayers);
     const playerStates = createPlayerRoundStates(orderedPlayers);
     const baseRound = createRoundRuntime(orderedPlayers, 1, match.dealerSeat);
     const resolved = continueRound(orderedPlayers, baseRound, playerStates);
@@ -325,7 +333,7 @@ export const startMatch = mutation({
       startedAt: Date.now(),
     });
 
-    const playerIdMap = buildPlayerIdMap(players);
+    const playerIdMap = buildPlayerIdMap(claimedPlayers);
     await persistPlayerStates(ctx, roundId, resolved.playerStates, playerIdMap);
     await persistEvents(ctx, roundId, resolved.events, playerIdMap);
 

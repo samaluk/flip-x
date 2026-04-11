@@ -31,12 +31,10 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   const sessionId = useAnonymousSessionId();
   const createMatch = useMutation(api.matches.createMatch);
   const [hostName, setHostName] = useState("");
-  const [playerCount, setPlayerCount] = useState(3);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function submitMatch(formData: FormData) {
     const name = formData.get("hostName") as string;
-    const count = parseInt(formData.get("playerCount") as string, 10);
 
     const trimmedName = name?.trim();
     if (!trimmedName) {
@@ -60,8 +58,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
       let targetMatchId = existingMatchId;
 
       if (!targetMatchId) {
-        const match = await createMatch({ 
-          playerCount: count, 
+        const match = await createMatch({
           hostName: trimmedName,
           sessionId,
         });
@@ -104,22 +101,6 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
           />
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="playerCount" className="text-sm font-medium text-zinc-300">
-            Number of seats
-          </label>
-          <Input
-            id="playerCount"
-            name="playerCount"
-            type="number"
-            min={3}
-            max={8}
-            value={playerCount}
-            onChange={(e) => setPlayerCount(Math.max(3, Math.min(8, parseInt(e.target.value, 10) || 3)))}
-            className="bg-zinc-900/50 border-zinc-800 focus-visible:ring-zinc-700 text-zinc-100 transition-all w-24"
-          />
-        </div>
-        
         <div className="mt-2">
           <Dialog>
             <DialogTrigger render={
