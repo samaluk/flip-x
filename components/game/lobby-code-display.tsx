@@ -1,6 +1,7 @@
 "use client";
 
 import { CopyIcon, CheckIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -12,15 +13,16 @@ interface LobbyCodeDisplayProps {
 
 export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
   const [copied, setCopied] = useState(false);
+  const t = useTranslations("LobbyCodeDisplay");
 
   async function copyCode() {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
-      toast.success("Lobby code copied!");
+      toast.success(t("toastCopied"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Could not copy the code.");
+      toast.error(t("toastFailed"));
     }
   }
 
@@ -29,7 +31,7 @@ export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
       <span className="font-mono text-3xl font-bold tracking-[0.3em] text-foreground">{code}</span>
       <Button variant="outline" size="sm" onClick={copyCode} className="gap-2">
         {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
-        {copied ? "Copied" : "Copy"}
+        {copied ? t("copied") : t("copy")}
       </Button>
     </div>
   );

@@ -1,5 +1,4 @@
 import {
-  ACTION_LABELS,
   type ActionCard,
   type ActionKind,
   type Card,
@@ -56,9 +55,18 @@ export type RoundEvent = {
   eventType: string;
   actorPlayerId: string | null;
   targetPlayerId: string | null;
-  summary: string;
-  payload?: Record<string, unknown>;
+  payload: Record<string, unknown>;
 };
+
+export function cardEventPayload(card: Card): Record<string, unknown> {
+  if (isNumberCard(card)) {
+    return { cardKind: "number", numberValue: card.numberValue };
+  }
+  if (isModifierCard(card)) {
+    return { cardKind: "modifier", modifierValue: card.modifierValue };
+  }
+  return { cardKind: "action", actionKind: card.actionKind };
+}
 
 export type ResolveResult = {
   round: RoundRuntime;
@@ -171,7 +179,7 @@ function createPendingTargetAction(
     eventType: "pending_action",
     actorPlayerId: sourcePlayerId,
     targetPlayerId: null,
-    summary: `${ACTION_LABELS[actionKind]} is waiting for a target.`,
+    payload: { actionKind },
   });
 
   return null;
@@ -200,7 +208,6 @@ function applyHeldSecondChance(
     eventType: "second_chance_used",
     actorPlayerId: playerState.playerId,
     targetPlayerId: playerState.playerId,
-    summary: "Second Chance discarded a duplicate number instead of busting the player.",
     payload: { duplicate: duplicateCard.numberValue },
   });
 
@@ -230,7 +237,7 @@ function applyResolvedTargetAction(
       eventType: "freeze_applied",
       actorPlayerId: sourcePlayerId,
       targetPlayerId,
-      summary: "Frozen! Points banked and out of round.",
+      payload: {},
     });
     return;
   }
@@ -239,7 +246,7 @@ function applyResolvedTargetAction(
     eventType: "flip_three_started",
     actorPlayerId: sourcePlayerId,
     targetPlayerId,
-    summary: "Hit by Flip Three!",
+    payload: {},
   });
 
   const queuedActions: PendingAction["actionKind"][] = [];
@@ -261,7 +268,7 @@ function applyResolvedTargetAction(
         eventType: "deferred_action",
         actorPlayerId: targetPlayerId,
         targetPlayerId,
-        summary: `${card.label} was queued until Flip Three finished.`,
+        payload: { actionKind: card.actionKind },
       });
       discardCard(round, card);
       continue;
@@ -343,7 +350,6 @@ function applyCardToPlayer(
           eventType: "duplicate_bust",
           actorPlayerId: playerId,
           targetPlayerId: playerId,
-          summary: `Drew duplicate ${card.numberValue} — bust!`,
           payload: { duplicate: card.numberValue },
         });
       }
@@ -359,7 +365,7 @@ function applyCardToPlayer(
       eventType: "number_drawn",
       actorPlayerId: playerId,
       targetPlayerId: playerId,
-      summary: `Revealed number ${card.numberValue}.`,
+      payload: { numberValue: card.numberValue },
     });
 
     if (playerState.hasFlip7) {
@@ -370,7 +376,7 @@ function applyCardToPlayer(
         eventType: "flip7",
         actorPlayerId: playerId,
         targetPlayerId: playerId,
-        summary: "Triggered Flip 7!",
+        payload: {},
       });
     }
 
@@ -384,7 +390,7 @@ function applyCardToPlayer(
       eventType: "modifier_drawn",
       actorPlayerId: playerId,
       targetPlayerId: playerId,
-      summary: `Player revealed modifier ${card.label}.`,
+      payload: { modifierValue: card.modifierValue },
     });
     return { pending: false };
   }
@@ -400,7 +406,7 @@ function applyCardToPlayer(
         eventType: "second_chance_held",
         actorPlayerId: playerId,
         targetPlayerId: playerId,
-        summary: "Player stored a Second Chance card.",
+        payload: {},
       });
       return { pending: false };
     }
@@ -419,7 +425,7 @@ function applyCardToPlayer(
         eventType: "second_chance_discarded",
         actorPlayerId: playerId,
         targetPlayerId: null,
-        summary: "Extra Second Chance was discarded because no eligible recipient existed.",
+        payload: {},
       });
       return { pending: false };
     }
@@ -430,7 +436,7 @@ function applyCardToPlayer(
       eventType: "second_chance_passed",
       actorPlayerId: playerId,
       targetPlayerId: recipient,
-      summary: "Extra Second Chance was passed to another active player.",
+      payload: {},
     });
     return { pending: false };
   }
@@ -554,7 +560,7 @@ export function continueRound(
       eventType: "initial_deal",
       actorPlayerId: player.playerId,
       targetPlayerId: player.playerId,
-      summary: `Initial deal revealed ${card.label} for the player.`,
+      payload: cardEventPayload(card),
     });
 
     applyCardToPlayer(round, players, playerStates, player.playerId, card, "dealing", events);
@@ -608,7 +614,7 @@ export function takeTurnAction(
       eventType: "stay",
       actorPlayerId: playerId,
       targetPlayerId: playerId,
-      summary: "Stayed and banked points.",
+      payload: {},
     });
   } else {
     const card = drawCard(round);
@@ -620,7 +626,7 @@ export function takeTurnAction(
         eventType: "hit",
         actorPlayerId: playerId,
         targetPlayerId: playerId,
-        summary: `Hit and revealed ${card.label}.`,
+        payload: cardEventPayload(card),
       });
 
       applyCardToPlayer(round, players, playerStates, playerId, card, "turns", events);
@@ -730,7 +736,7 @@ export function finalizeRound(
       eventType: "round_scored",
       actorPlayerId: playerState.playerId,
       targetPlayerId: playerState.playerId,
-      summary: `Round scored at ${breakdown.finalRoundScore} points.`,
+      payload: { finalRoundScore: breakdown.finalRoundScore },
     });
   }
 

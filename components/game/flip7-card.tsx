@@ -1,7 +1,9 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useTranslations } from "next-intl";
 
+import type { ModifierCard } from "@/lib/game/card-types";
 import { cn } from "@/lib/utils";
 
 const NUMBER_CARD_STYLES: Record<number, { shell: string; ink: string; corner: string }> = {
@@ -120,7 +122,7 @@ type Flip7CardProps = {
   className?: string;
 } & (
   | { kind: "number"; numberValue: number }
-  | { kind: "modifier" }
+  | { kind: "modifier"; modifierValue: ModifierCard["modifierValue"] }
   | { kind: "action"; actionKind: "freeze" | "flip_three" | "second_chance" }
 );
 
@@ -138,6 +140,30 @@ function getCardStyle(props: Flip7CardProps) {
 
 export function Flip7Card(props: Flip7CardProps) {
   const style = getCardStyle(props);
+  const t = useTranslations("Cards");
+
+  const centerLabel =
+    props.kind === "number"
+      ? String(props.numberValue)
+      : props.kind === "modifier"
+        ? props.modifierValue === "x2"
+          ? t("modifier.x2")
+          : t("modifier.plus", { value: props.modifierValue as number })
+        : t(`action.${props.actionKind}`);
+
+  const kindCorner =
+    props.kind === "number"
+      ? t("kindNumber")
+      : props.kind === "modifier"
+        ? t("kindModifier")
+        : t("kindAction");
+
+  const subCorner =
+    props.kind === "action"
+      ? t(`action.${props.actionKind}`)
+      : props.kind === "modifier"
+        ? t("scoreLine")
+        : t("numberLine", { label: props.label });
 
   return (
     <motion.div
@@ -167,9 +193,9 @@ export function Flip7Card(props: Flip7CardProps) {
             <div
               className={cn("font-heading text-[0.7rem] tracking-[0.24em] uppercase", style.corner)}
             >
-              Flip7
+              {t("brand")}
             </div>
-            <div className={cn("font-heading text-[0.75rem]", style.corner)}>{props.label}</div>
+            <div className={cn("font-heading text-[0.75rem]", style.corner)}>{centerLabel}</div>
           </div>
           <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2 text-center">
             <div
@@ -179,14 +205,14 @@ export function Flip7Card(props: Flip7CardProps) {
                 props.kind !== "number" && "text-2xl tracking-[0.08em] uppercase sm:text-3xl",
               )}
             >
-              {props.label}
+              {centerLabel}
             </div>
           </div>
           <div className="absolute inset-x-2 bottom-2 flex items-end justify-between sm:inset-x-3 sm:bottom-3">
             <div
               className={cn("font-heading text-[0.7rem] tracking-[0.28em] uppercase", style.corner)}
             >
-              {props.kind === "number" ? "Number" : props.kind === "modifier" ? "Bonus" : "Action"}
+              {kindCorner}
             </div>
             <div
               className={cn(
@@ -194,11 +220,7 @@ export function Flip7Card(props: Flip7CardProps) {
                 style.corner,
               )}
             >
-              {props.kind === "action"
-                ? props.actionKind.replace("_", " ")
-                : props.kind === "modifier"
-                  ? "Score"
-                  : `No. ${props.label}`}
+              {subCorner}
             </div>
           </div>
           <div className="pointer-events-none absolute inset-2 rounded-xl border border-white/18" />
@@ -217,7 +239,7 @@ export function Flip7Card(props: Flip7CardProps) {
             <div className="font-heading text-2xl tracking-[0.34em] uppercase">Flip</div>
             <div className="font-heading text-5xl leading-none tracking-[-0.08em]">7</div>
             <div className="mt-2 font-heading text-[0.72rem] tracking-[0.32em] uppercase text-muted-foreground">
-              Card Game
+              {t("cardGame")}
             </div>
           </div>
         </div>

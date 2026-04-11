@@ -2,15 +2,15 @@
 
 import { motion } from "motion/react";
 import { useQuery } from "convex/react";
+import { useTranslations } from "next-intl";
 import { use } from "react";
-
-import { api } from "@/convex/_generated/api";
-import Link from "next/link";
 
 import { JoinLobbyDialog } from "@/components/game/join-lobby-dialog";
 import { MatchSetup } from "@/components/game/match-setup";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import { Link } from "@/i18n/navigation";
 
 const stagger = {
   hidden: { opacity: 0 },
@@ -32,6 +32,8 @@ const fadeUp = {
 export default function Home({ searchParams }: { searchParams: Promise<{ code?: string }> }) {
   const { code } = use(searchParams);
   const codeParam = code?.toUpperCase();
+  const t = useTranslations("Home");
+  const tLobby = useTranslations("Lobby");
   const getMatchByCode = useQuery(
     api.matches.getMatchByCode,
     codeParam ? { lobbyCode: codeParam } : "skip",
@@ -56,12 +58,10 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
         <div className="w-full max-w-md text-center space-y-6">
           <div>
             <h2 className="font-heading text-2xl tracking-tight text-foreground mb-2">
-              Lobby not found
+              {t("lobbyNotFoundTitle")}
             </h2>
             <p className="text-muted-foreground text-sm">
-              There is no open lobby for code{" "}
-              <span className="font-mono text-foreground tracking-widest">{codeParam}</span>. It may
-              have expired or the game may have started.
+              {t("lobbyNotFoundBody", { code: codeParam })}
             </p>
           </div>
           <Button
@@ -70,7 +70,7 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
             variant="default"
             className="w-full sm:w-auto"
           >
-            Back to home
+            {t("backHome")}
           </Button>
         </div>
       </main>
@@ -87,11 +87,9 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
           className="w-full max-w-md px-6"
         >
           <h2 className="font-heading text-2xl tracking-tight text-foreground mb-2">
-            Join the table
+            {t("joinTableTitle")}
           </h2>
-          <p className="text-muted-foreground text-sm mb-8">
-            Code <span className="font-mono text-foreground tracking-widest">{codeParam}</span> is ready. Enter your name to claim a seat.
-          </p>
+          <p className="text-muted-foreground text-sm mb-8">{t("joinTableBody", { code: codeParam })}</p>
           <MatchSetup joinCode={codeParam} existingMatchId={getMatchByCode.matchId} />
         </motion.div>
       </main>
@@ -100,42 +98,40 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
   return (
     <main className="flex flex-1 min-h-[100dvh] items-center selection:bg-primary/20 relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")',
+        }}
+      />
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_oklch(0.72_0.14_160_/_0.04),_transparent_60%)]" />
 
       <div className="z-10 w-full max-w-[1400px] mx-auto px-6 py-16 md:py-24">
         <div className="grid gap-16 lg:grid-cols-[1.4fr_1fr] lg:gap-24 items-start">
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="show"
-            className="max-w-xl"
-          >
+          <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-xl">
             <motion.h1
               variants={fadeUp}
               className="text-4xl md:text-6xl font-medium tracking-tighter leading-none text-foreground mb-6"
             >
-              Flip 7, fully scored
+              {t("heroLine1")}
               <br />
-              and fully shared.
+              {t("heroLine2")}
             </motion.h1>
             <motion.p
               variants={fadeUp}
               className="text-base text-muted-foreground leading-relaxed max-w-[50ch] mb-12"
             >
-              Start a shared-table match that handles dealing, action cards,
-              score modifiers, and the race to 200 without a paper score sheet.
+              {t("heroBody")}
             </motion.p>
 
             <motion.div variants={fadeUp}>
               <div className="mb-3">
                 <h2 className="font-heading text-lg tracking-tight text-foreground">
-                  Create a match
+                  {t("createTitle")}
                 </h2>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Start a new lobby and invite friends to join.
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">{t("createSubtitle")}</p>
               </div>
               <MatchSetup />
             </motion.div>
@@ -154,32 +150,38 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
                   className="group w-full text-left surface-elevated rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
                 >
                   <h3 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors tracking-tight">
-                    Join an existing game
+                    {t("joinExistingTitle")}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1.5">
-                    Have a code? Enter it here to jump in.
-                  </p>
+                  <p className="text-sm text-muted-foreground mt-1.5">{t("joinExistingSubtitleDesktop")}</p>
                   <div className="mt-5 inline-flex items-center justify-center rounded-xl bg-muted/50 px-5 py-3 border border-border font-mono text-xl tracking-[0.25em] text-muted-foreground group-hover:text-foreground transition-colors">
-                    ABCD
+                    {tLobby("codePlaceholder")}
                   </div>
                 </button>
               }
             />
 
             <div className="surface-elevated rounded-2xl p-8">
-              <h3 className="text-sm font-medium text-muted-foreground tracking-tight uppercase">How it works</h3>
+              <h3 className="text-sm font-medium text-muted-foreground tracking-tight uppercase">
+                {t("howItWorks")}
+              </h3>
               <div className="mt-4 space-y-3 text-sm text-muted-foreground">
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">1</span>
-                  <span>Seven unique number cards ends the round with a Flip 7 bonus.</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    1
+                  </span>
+                  <span>{t("step1")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">2</span>
-                  <span>Freeze banks points. Flip Three forces three more cards.</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    2
+                  </span>
+                  <span>{t("step2")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">3</span>
-                  <span>Second Chance discards one future duplicate instead of busting.</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    3
+                  </span>
+                  <span>{t("step3")}</span>
                 </p>
               </div>
             </div>
@@ -199,13 +201,11 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
                 className="group w-full text-left surface-elevated rounded-2xl p-6 cursor-pointer transition-all duration-300 active:scale-[0.99]"
               >
                 <h3 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
-                  Join an existing game
+                  {t("joinExistingTitle")}
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Have a code? Enter it here.
-                </p>
+                <p className="text-sm text-muted-foreground mt-1">{t("joinExistingSubtitleMobile")}</p>
                 <div className="mt-4 inline-flex items-center justify-center rounded-lg bg-muted/50 px-4 py-2.5 border border-border font-mono text-lg tracking-[0.25em] text-muted-foreground">
-                  ABCD
+                  {tLobby("codePlaceholder")}
                 </div>
               </button>
             }

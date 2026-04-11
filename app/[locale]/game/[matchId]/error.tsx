@@ -1,11 +1,14 @@
 "use client";
 
 import { AlertCircleIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 
 export default function GamePageError({ error, reset }: { error: Error; reset: () => void }) {
+  const t = useTranslations("Game");
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -18,14 +21,12 @@ export default function GamePageError({ error, reset }: { error: Error; reset: (
         </div>
         <div className="space-y-2">
           <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
-            Could not load the match
+            {t("errorTitle")}
           </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {error.message}
-          </p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{error.message}</p>
         </div>
         <Button variant="outline" onClick={reset} className="mx-auto">
-          Try again
+          {t("tryAgain")}
         </Button>
       </div>
     </div>

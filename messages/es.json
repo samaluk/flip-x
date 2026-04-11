@@ -1,0 +1,213 @@
+{
+  "Metadata": {
+    "title": "Flip 7",
+    "description": "Aplicación web de mesa compartida para jugar Flip 7 con puntuación en vivo."
+  },
+  "LanguageSwitcher": {
+    "english": "English",
+    "spanish": "Español",
+    "aria": "Idioma"
+  },
+  "Common": {
+    "waiting": "Esperando",
+    "playerArrow": "{from} → {to}"
+  },
+  "Home": {
+    "heroLine1": "Flip 7, puntuación",
+    "heroLine2": "compartida al completo.",
+    "heroBody": "Crea una partida en mesa compartida que reparte cartas, cartas de acción, modificadores de puntuación y la carrera a 200 sin hoja de papel.",
+    "createTitle": "Crear una partida",
+    "createSubtitle": "Abre un lobby e invita a tus amigos.",
+    "joinExistingTitle": "Unirse a una partida",
+    "joinExistingSubtitleDesktop": "¿Tienes un código? Introdúcelo aquí para entrar.",
+    "joinExistingSubtitleMobile": "¿Tienes un código? Introdúcelo aquí.",
+    "howItWorks": "Cómo funciona",
+    "step1": "Siete cartas numéricas distintas cierran la ronda con bonus Flip 7.",
+    "step2": "Congelar guarda puntos. Tres más obliga a robar tres cartas más.",
+    "step3": "Segunda oportunidad descarta un duplicado futuro en lugar de eliminarte.",
+    "lobbyNotFoundTitle": "Lobby no encontrado",
+    "lobbyNotFoundBody": "No hay lobby abierto para el código {code}. Puede haber caducado o la partida ya haber empezado.",
+    "backHome": "Volver al inicio",
+    "joinTableTitle": "Únete a la mesa",
+    "joinTableBody": "El código {code} está listo. Escribe tu nombre para ocupar un sitio."
+  },
+  "Lobby": {
+    "codePlaceholder": "ABCD"
+  },
+  "MatchSetup": {
+    "yourName": "Tu nombre",
+    "namePlaceholder": "Escribe tu nombre",
+    "rulesHelp": "Ayuda de reglas",
+    "rulesTitle": "Cómo juega esta mesa a Flip 7",
+    "rulesIntro": "Pide carta para revelar otra, planta para asegurar lo que llevas y evita números duplicados salvo que una Segunda oportunidad te salve.",
+    "rulesStep1": "Siete cartas numéricas distintas terminan la ronda al instante con bonus Flip 7.",
+    "rulesStep2": "Congelar guarda el total actual del jugador. Tres más obliga a robar tres cartas más.",
+    "rulesStep3": "Segunda oportunidad descarta un duplicado futuro en lugar de eliminar al jugador.",
+    "footnote": "Comparte la URL de la partida al terminar la configuración. Cada jugador pone su nombre al unirse; al recargar se reconecta al último turno confirmado.",
+    "joinLobby": "Entrar al lobby",
+    "createLobby": "Crear lobby",
+    "toastNameRequired": "Escribe tu nombre.",
+    "toastNameLength": "El nombre debe tener 20 caracteres o menos.",
+    "toastSession": "Sesión no disponible.",
+    "toastCreateFailed": "No se pudo crear la partida."
+  },
+  "JoinLobby": {
+    "title": "Unirse a una partida",
+    "description": "Escribe tu nombre y el código de 4 letras para unirte a un lobby.",
+    "yourName": "Tu nombre",
+    "namePlaceholder": "Tu nombre",
+    "lobbyCode": "Código del lobby",
+    "join": "Entrar",
+    "toastNameRequired": "Escribe tu nombre.",
+    "toastNameLength": "El nombre debe tener 20 caracteres o menos.",
+    "toastCodeLength": "Introduce un código de 4 caracteres.",
+    "toastSession": "Sesión no disponible.",
+    "toastJoinFailed": "No se pudo entrar al lobby. Revisa el código y el nombre."
+  },
+  "Game": {
+    "matchNotFoundTitle": "Partida no encontrada",
+    "matchNotFoundBody": "La partida no está disponible o aún no se ha creado.",
+    "copyInvite": "Copiar enlace de invitación",
+    "joinTitle": "Unirse a la partida",
+    "joinSubtitle": "Escribe tu nombre para ocupar un sitio en la mesa.",
+    "namePlaceholder": "Tu nombre",
+    "joinGame": "Entrar",
+    "toastNameRequired": "Escribe tu nombre.",
+    "toastNameLength": "El nombre debe tener 20 caracteres o menos.",
+    "toastSession": "Sesión no disponible.",
+    "toastJoinFailed": "No se pudo unir a la partida.",
+    "toastInviteCopied": "Enlace copiado.",
+    "toastInviteCopyFailed": "No se pudo copiar el enlace.",
+    "errorTitle": "No se pudo cargar la partida",
+    "tryAgain": "Reintentar"
+  },
+  "Errors": {
+    "generic": "{message}",
+    "INVALID_MATCH_STATE": "Esta acción no está permitida en el estado actual de la partida.",
+    "MATCH_NOT_FOUND": "Partida no encontrada.",
+    "INVALID_TURN": "No es tu turno o el turno no es válido.",
+    "INVALID_ACTION": "Esa acción no es válida ahora.",
+    "INVALID_TARGET": "Ese objetivo no está permitido.",
+    "INVALID_HOST_NAME": "Introduce un nombre de anfitrión válido.",
+    "LOBBY_CODE_UNAVAILABLE": "No se pudo asignar un código de lobby. Inténtalo de nuevo.",
+    "LOBBY_NOT_FOUND": "No hay lobby con ese código.",
+    "INVALID_PLAYER_NAME": "Introduce un nombre de jugador válido.",
+    "NAME_ALREADY_TAKEN": "Ese nombre ya está cogido en esta mesa.",
+    "SEAT_ALREADY_CLAIMED": "Ese sitio ya está ocupado.",
+    "NOT_HOST": "Solo el anfitrión puede hacer eso.",
+    "INSUFFICIENT_PLAYERS": "No hay suficientes jugadores con sitio para empezar.",
+    "SEAT_NOT_CLAIMED": "Primero ocupa un sitio.",
+    "gameActionFailed": "La acción de juego falló."
+  },
+  "Events": {
+    "pending_action": "{action} espera un objetivo.",
+    "second_chance_used": "Segunda oportunidad descartó el duplicado {duplicate} en lugar de eliminar al jugador.",
+    "freeze_applied": "¡Congelado! Puntos asegurados y fuera de la ronda.",
+    "flip_three_started": "¡Tres más te afecta!",
+    "deferred_action": "{action} quedó en cola hasta terminar Tres más.",
+    "duplicate_bust": "¡Duplicado {duplicate} — eliminado!",
+    "number_drawn": "Número revelado: {numberValue}.",
+    "flip7": "¡Flip 7 activado!",
+    "modifier_drawn": "El jugador reveló el modificador {modifier}.",
+    "second_chance_held": "El jugador guardó una carta Segunda oportunidad.",
+    "second_chance_discarded": "La Segunda oportunidad extra se descartó porque no había receptor válido.",
+    "second_chance_passed": "La Segunda oportunidad extra pasó a otro jugador activo.",
+    "initial_deal": "La repartida inicial mostró {card} al jugador.",
+    "stay": "Se plantó y aseguró los puntos.",
+    "hit": "Pidió carta y reveló {card}.",
+    "round_scored": "Ronda puntuada con {score} puntos.",
+    "unknown": "Evento de mesa registrado.",
+    "noneYet": "Aún no hay eventos en la mesa."
+  },
+  "Cards": {
+    "brand": "Flip7",
+    "cardGame": "Juego de cartas",
+    "kindNumber": "Número",
+    "kindModifier": "Bonus",
+    "kindAction": "Acción",
+    "scoreLine": "Puntos",
+    "numberLine": "N.º {label}",
+    "action": {
+      "flip_three": "Tres más",
+      "freeze": "Congelar",
+      "second_chance": "Segunda oportunidad"
+    },
+    "modifier": {
+      "x2": "×2",
+      "plus": "+{value}"
+    }
+  },
+  "ScoreSummary": {
+    "title": "Desglose de la ronda",
+    "subtitle": "Totales numéricos, multiplicadores, cartas bonus y la puntuación final que cada jugador se lleva de la ronda.",
+    "colPlayer": "Jugador",
+    "colNumbers": "Números",
+    "colX2": "×2",
+    "colBonus": "Bonus",
+    "colFlip7": "Flip 7",
+    "colRoundTotal": "Total ronda",
+    "yes": "Sí",
+    "no": "No",
+    "srMultiplierApplied": "Multiplicador: ×2",
+    "srMultiplierOff": "Multiplicador: ninguno",
+    "srFinalScore": "Puntuación final de la ronda: {score}"
+  },
+  "PlayerLane": {
+    "seat": "Sitio {n}",
+    "dealer": "Mano",
+    "you": "Tú",
+    "claimed": "Ocupado",
+    "totalScore": "Puntuación total {score}",
+    "pointsAtRisk": "Puntos en juego",
+    "statusActive": "En la ronda",
+    "statusBusted": "Eliminado",
+    "statusStayed": "Asegurado",
+    "statusFrozen": "Congelado",
+    "statusCompleted": "Puntuado",
+    "statusWaiting": "Esperando"
+  },
+  "TurnControls": {
+    "startNextRound": "Empezar siguiente ronda",
+    "actionCardTitle": "Carta de acción en juego",
+    "freezePrompt": "Elige quién asegura sus puntos y queda fuera de la ronda.",
+    "flipThreePrompt": "Elige quién debe seguir robando hasta resolver tres cartas.",
+    "hitFor": "Pedir carta para {name}",
+    "stayFor": "Plantarse con {name}",
+    "claimToPlay": "Ocupa un sitio para jugar desde este dispositivo.",
+    "waitingFor": "Esperando a {name}."
+  },
+  "GameTable": {
+    "matchTitle": "Partida {id}",
+    "roundRace": "Ronda {round} de una carrera a {target} puntos.",
+    "dealerSeat": "Mano en sitio {n}",
+    "turnFor": "Turno: {name}",
+    "updating": "Actualizando",
+    "matchStatus": {
+      "setup": "preparación",
+      "in_progress": "en curso",
+      "completed": "terminada"
+    },
+    "tableCall": "Estado de la mesa",
+    "roundScoredReady": "La ronda está puntuada y lista para la siguiente repartida.",
+    "playerDeciding": "{name} decide si arriesga o asegura puntos.",
+    "waitingResolution": "Esperando la siguiente resolución.",
+    "playingAs": "Juegas como {name}",
+    "claimSeatHint": "Ocupa un sitio en este dispositivo para jugar turnos.",
+    "tableLayout": "Disposición",
+    "tableLayoutHint": "Tu carril queda fijo arriba. Desplázate para ver a los demás en orden de turno.",
+    "yourHand": "Tu mano",
+    "latestResolution": "Última resolución"
+  },
+  "LobbyCodeDisplay": {
+    "copied": "Copiado",
+    "copy": "Copiar",
+    "toastCopied": "¡Código copiado!",
+    "toastFailed": "No se pudo copiar el código."
+  },
+  "StartGameButton": {
+    "startGame": "Empezar partida",
+    "starting": "Iniciando...",
+    "toastClaimSeat": "Debes ocupar un sitio para empezar la partida.",
+    "toastFailed": "No se pudo empezar la partida."
+  }
+}

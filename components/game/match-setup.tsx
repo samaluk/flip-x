@@ -2,12 +2,10 @@
 
 import { useMutation } from "convex/react";
 import { SparklesIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
-import { api } from "@/convex/_generated/api";
-import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +14,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "@/i18n/navigation";
 import { useAnonymousSessionId } from "@/lib/anonymous-session";
+import { translateConvexError } from "@/lib/convex-error";
+import { cn } from "@/lib/utils";
 
 interface MatchSetupProps {
   joinCode?: string;
@@ -31,23 +33,25 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   const createMatch = useMutation(api.matches.createMatch);
   const [hostName, setHostName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useTranslations("MatchSetup");
+  const tErrors = useTranslations("Errors");
 
   async function submitMatch(formData: FormData) {
     const name = formData.get("hostName") as string;
 
     const trimmedName = name?.trim();
     if (!trimmedName) {
-      toast.error("Please enter your name.");
+      toast.error(t("toastNameRequired"));
       return;
     }
 
     if (trimmedName.length > 20) {
-      toast.error("Name must be 20 characters or less.");
+      toast.error(t("toastNameLength"));
       return;
     }
 
     if (!sessionId) {
-      toast.error("Session not available.");
+      toast.error(t("toastSession"));
       return;
     }
 
@@ -70,7 +74,8 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
         });
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not create the match.");
+      const message = error instanceof Error ? error.message : "";
+      toast.error(message ? translateConvexError(message, tErrors) : t("toastCreateFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -86,14 +91,14 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
           <label htmlFor="hostName" className="text-sm font-medium text-foreground">
-            Your name
+            {t("yourName")}
           </label>
           <Input
             id="hostName"
             name="hostName"
             value={hostName}
             onChange={(e) => setHostName(e.target.value)}
-            placeholder="Enter your name"
+            placeholder={t("namePlaceholder")}
             maxLength={20}
             required
             className="transition-all"
@@ -102,32 +107,41 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
 
         <div className="mt-1">
           <Dialog>
-            <DialogTrigger render={
-              <Button type="button" variant="ghost" className="justify-start w-full text-muted-foreground hover:text-foreground transition-colors">
-                <SparklesIcon className="mr-2 h-4 w-4" />
-                Rules help
-              </Button>
-            } />
+            <DialogTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  className="justify-start w-full text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <SparklesIcon className="mr-2 h-4 w-4" />
+                  {t("rulesHelp")}
+                </Button>
+              }
+            />
             <DialogContent>
               <DialogHeader>
-                <DialogTitle className="text-xl font-medium">How this table plays Flip 7</DialogTitle>
-                <DialogDescription>
-                  Hit to reveal another card, stay to bank what you have, and avoid duplicate
-                  numbers unless a Second Chance saves you.
-                </DialogDescription>
+                <DialogTitle className="text-xl font-medium">{t("rulesTitle")}</DialogTitle>
+                <DialogDescription>{t("rulesIntro")}</DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4 text-sm text-muted-foreground mt-4">
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">1</span>
-                  <span>Seven unique number cards ends the round immediately with a Flip 7 bonus.</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    1
+                  </span>
+                  <span>{t("rulesStep1")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">2</span>
-                  <span>Freeze banks a player&apos;s current total. Flip Three forces three more cards.</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    2
+                  </span>
+                  <span>{t("rulesStep2")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">3</span>
-                  <span>Second Chance discards one future duplicate instead of busting the player.</span>
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                    3
+                  </span>
+                  <span>{t("rulesStep3")}</span>
                 </p>
               </div>
             </DialogContent>
@@ -135,10 +149,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground leading-relaxed">
-        Share the match URL after setup. Each player enters their own name when joining, and
-        refresh reconnects to the latest committed turn.
-      </p>
+      <p className="text-xs text-muted-foreground leading-relaxed">{t("footnote")}</p>
 
       <div>
         <button
@@ -149,7 +160,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
           )}
           disabled={isSubmitting || !hostName.trim() || !sessionId}
         >
-          {joinCode ? "Join Lobby" : "Create Lobby"}
+          {joinCode ? t("joinLobby") : t("createLobby")}
         </button>
       </div>
     </form>

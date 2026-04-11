@@ -3,15 +3,18 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useMutation } from "convex/react";
 import { AlertTriangleIcon, RefreshCwIcon, TrophyIcon, UserRoundIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useTransition } from "react";
 import { toast } from "sonner";
 
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { PlayerLane } from "@/components/game/player-lane";
 import { ScoreSummary } from "@/components/game/score-summary";
 import { TurnControls } from "@/components/game/turn-controls";
 import { Badge } from "@/components/ui/badge";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
+import { translateConvexError } from "@/lib/convex-error";
+import { formatLatestRoundEventBody } from "@/lib/round-event-format";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
 const listStagger = {
@@ -36,6 +39,12 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
   const takeTurn = useMutation(api.turns.takeTurn);
   const resolveAction = useMutation(api.turns.resolveAction);
   const startNextRound = useMutation(api.rounds.startNextRound);
+  const t = useTranslations("GameTable");
+  const tEvents = useTranslations("Events");
+  const tCards = useTranslations("Cards");
+  const tErrors = useTranslations("Errors");
+  const tCommon = useTranslations("Common");
+
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
   );
@@ -47,12 +56,19 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
   function runAction(action: () => Promise<unknown>) {
     startTransition(() => {
       action().catch((error) => {
-        toast.error(error instanceof Error ? error.message : "Game action failed.");
+        const message = error instanceof Error ? error.message : "";
+        toast.error(
+          message ? translateConvexError(message, tErrors) : tErrors("gameActionFailed"),
+        );
       });
     });
   }
 
   const sortedPlayers = getSortedPlayers(snapshot);
+
+  const latestBody = snapshot.latestEvent
+    ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
+    : tEvents("noneYet");
 
   return (
     <div className="flex flex-col gap-6">
@@ -61,25 +77,30 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-3">
               <h1 className="font-heading text-xl tracking-tight font-medium text-foreground">
-                Match {snapshot.matchId.slice(0, 8)}
+                {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
               </h1>
               {snapshot.status === "completed" ? (
                 <TrophyIcon className="size-5 text-primary" />
               ) : null}
             </div>
             <div className="text-sm text-muted-foreground">
-              Round {snapshot.currentRoundNumber} of a race to {snapshot.targetScore} points.
+              {t("roundRace", {
+                round: snapshot.currentRoundNumber,
+                target: snapshot.targetScore,
+              })}
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="outline">Dealer seat {snapshot.dealerSeat + 1}</Badge>
-            <Badge variant="outline">{snapshot.status.replace("_", " ")}</Badge>
-            {activePlayer ? <Badge variant="default">Turn: {activePlayer.displayName}</Badge> : null}
+            <Badge variant="outline">{t("dealerSeat", { n: snapshot.dealerSeat + 1 })}</Badge>
+            <Badge variant="outline">{t(`matchStatus.${snapshot.status}`)}</Badge>
+            {activePlayer ? (
+              <Badge variant="default">{t("turnFor", { name: activePlayer.displayName })}</Badge>
+            ) : null}
             {isPending ? (
               <Badge variant="secondary">
                 <RefreshCwIcon className="size-3 animate-spin" />
-                Updating
+                {t("updating")}
               </Badge>
             ) : null}
           </div>
@@ -90,23 +111,21 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-4">
               <div className="space-y-1">
                 <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
-                  Table call
+                  {t("tableCall")}
                 </div>
                 <div className="text-sm text-foreground">
                   {snapshot.roundStatus === "completed"
-                    ? "The round is scored and ready for the next deal."
+                    ? t("roundScoredReady")
                     : activePlayer
-                      ? `${activePlayer.displayName} is deciding whether to push or bank points.`
-                      : "Waiting for the next resolution."}
+                      ? t("playerDeciding", { name: activePlayer.displayName })
+                      : t("waitingResolution")}
                 </div>
                 {viewerPlayer ? (
                   <div className="text-xs text-muted-foreground">
-                    You are playing as {viewerPlayer.displayName}
+                    {t("playingAs", { name: viewerPlayer.displayName })}
                   </div>
                 ) : (
-                  <div className="text-xs text-muted-foreground">
-                    Claim a seat on this device to take turns.
-                  </div>
+                  <div className="text-xs text-muted-foreground">{t("claimSeatHint")}</div>
                 )}
               </div>
               <TurnControls
@@ -153,16 +172,14 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
                 <div>
                   <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
-                    Table layout
+                    {t("tableLayout")}
                   </div>
-                  <div className="text-sm text-muted-foreground">
-                    Your lane stays pinned above. Scroll to see others in turn order.
-                  </div>
+                  <div className="text-sm text-muted-foreground">{t("tableLayoutHint")}</div>
                 </div>
                 {snapshot.status !== "completed" && snapshot.roundStatus === "player_turns" ? (
                   <Badge variant="outline">
                     <UserRoundIcon className="size-3.5" />
-                    {activePlayer?.displayName ?? "Waiting"}
+                    {activePlayer?.displayName ?? tCommon("waiting")}
                   </Badge>
                 ) : null}
               </div>
@@ -199,14 +216,14 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
             {viewerPlayer && (
               <section className="rounded-xl border border-primary/20 bg-primary/[0.03] p-4">
                 <div className="mb-3 text-xs font-medium tracking-wide uppercase text-primary">
-                  Your hand
+                  {t("yourHand")}
                 </div>
                 <PlayerLane player={viewerPlayer} isActive={isViewerTurn} isViewer compact />
               </section>
             )}
             <InfoPanel
-              title="Latest resolution"
-              body={snapshot.latestEvent?.summary ?? "No table event has been logged yet."}
+              title={t("latestResolution")}
+              body={latestBody}
               icon={<AlertTriangleIcon className="size-4 text-muted-foreground" />}
               subtext={snapshot.latestEvent?.playerNames}
             />

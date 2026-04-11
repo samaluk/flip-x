@@ -1,0 +1,213 @@
+{
+  "Metadata": {
+    "title": "Flip 7",
+    "description": "Shared-table web app for playing Flip 7 with live scoring."
+  },
+  "LanguageSwitcher": {
+    "english": "English",
+    "spanish": "Español",
+    "aria": "Language"
+  },
+  "Common": {
+    "waiting": "Waiting",
+    "playerArrow": "{from} → {to}"
+  },
+  "Home": {
+    "heroLine1": "Flip 7, fully scored",
+    "heroLine2": "and fully shared.",
+    "heroBody": "Start a shared-table match that handles dealing, action cards, score modifiers, and the race to 200 without a paper score sheet.",
+    "createTitle": "Create a match",
+    "createSubtitle": "Start a new lobby and invite friends to join.",
+    "joinExistingTitle": "Join an existing game",
+    "joinExistingSubtitleDesktop": "Have a code? Enter it here to jump in.",
+    "joinExistingSubtitleMobile": "Have a code? Enter it here.",
+    "howItWorks": "How it works",
+    "step1": "Seven unique number cards ends the round with a Flip 7 bonus.",
+    "step2": "Freeze banks points. Flip Three forces three more cards.",
+    "step3": "Second Chance discards one future duplicate instead of busting.",
+    "lobbyNotFoundTitle": "Lobby not found",
+    "lobbyNotFoundBody": "There is no open lobby for code {code}. It may have expired or the game may have started.",
+    "backHome": "Back to home",
+    "joinTableTitle": "Join the table",
+    "joinTableBody": "Code {code} is ready. Enter your name to claim a seat."
+  },
+  "Lobby": {
+    "codePlaceholder": "ABCD"
+  },
+  "MatchSetup": {
+    "yourName": "Your name",
+    "namePlaceholder": "Enter your name",
+    "rulesHelp": "Rules help",
+    "rulesTitle": "How this table plays Flip 7",
+    "rulesIntro": "Hit to reveal another card, stay to bank what you have, and avoid duplicate numbers unless a Second Chance saves you.",
+    "rulesStep1": "Seven unique number cards ends the round immediately with a Flip 7 bonus.",
+    "rulesStep2": "Freeze banks a player's current total. Flip Three forces three more cards.",
+    "rulesStep3": "Second Chance discards one future duplicate instead of busting the player.",
+    "footnote": "Share the match URL after setup. Each player enters their own name when joining, and refresh reconnects to the latest committed turn.",
+    "joinLobby": "Join Lobby",
+    "createLobby": "Create Lobby",
+    "toastNameRequired": "Please enter your name.",
+    "toastNameLength": "Name must be 20 characters or less.",
+    "toastSession": "Session not available.",
+    "toastCreateFailed": "Could not create the match."
+  },
+  "JoinLobby": {
+    "title": "Join a Game",
+    "description": "Enter your name and the 4-character code to join an existing lobby.",
+    "yourName": "Your name",
+    "namePlaceholder": "Your name",
+    "lobbyCode": "Lobby code",
+    "join": "Join",
+    "toastNameRequired": "Please enter your name.",
+    "toastNameLength": "Name must be 20 characters or less.",
+    "toastCodeLength": "Please enter a 4-character code.",
+    "toastSession": "Session not available.",
+    "toastJoinFailed": "Could not join the lobby. Check the code and name."
+  },
+  "Game": {
+    "matchNotFoundTitle": "Match not found",
+    "matchNotFoundBody": "The requested match is unavailable or has not been created yet.",
+    "copyInvite": "Copy invite link",
+    "joinTitle": "Join the game",
+    "joinSubtitle": "Enter your name to claim a seat at the table.",
+    "namePlaceholder": "Your name",
+    "joinGame": "Join Game",
+    "toastNameRequired": "Please enter your name.",
+    "toastNameLength": "Name must be 20 characters or less.",
+    "toastSession": "Session not available.",
+    "toastJoinFailed": "Could not join the game.",
+    "toastInviteCopied": "Invite link copied.",
+    "toastInviteCopyFailed": "Could not copy the invite link.",
+    "errorTitle": "Could not load the match",
+    "tryAgain": "Try again"
+  },
+  "Errors": {
+    "generic": "{message}",
+    "INVALID_MATCH_STATE": "This action is not allowed in the current match state.",
+    "MATCH_NOT_FOUND": "Match not found.",
+    "INVALID_TURN": "It is not your turn or the turn is invalid.",
+    "INVALID_ACTION": "That action is not valid right now.",
+    "INVALID_TARGET": "That target is not allowed.",
+    "INVALID_HOST_NAME": "Enter a valid host name.",
+    "LOBBY_CODE_UNAVAILABLE": "Could not assign a lobby code. Try again.",
+    "LOBBY_NOT_FOUND": "No lobby found for that code.",
+    "INVALID_PLAYER_NAME": "Enter a valid player name.",
+    "NAME_ALREADY_TAKEN": "That name is already taken at this table.",
+    "SEAT_ALREADY_CLAIMED": "That seat is already claimed.",
+    "NOT_HOST": "Only the host can do that.",
+    "INSUFFICIENT_PLAYERS": "Not enough claimed players to start.",
+    "SEAT_NOT_CLAIMED": "Claim a seat first.",
+    "gameActionFailed": "Game action failed."
+  },
+  "Events": {
+    "pending_action": "{action} is waiting for a target.",
+    "second_chance_used": "Second Chance discarded duplicate {duplicate} instead of busting the player.",
+    "freeze_applied": "Frozen! Points banked and out of round.",
+    "flip_three_started": "Hit by Flip Three!",
+    "deferred_action": "{action} was queued until Flip Three finished.",
+    "duplicate_bust": "Drew duplicate {duplicate} — bust!",
+    "number_drawn": "Revealed number {numberValue}.",
+    "flip7": "Triggered Flip 7!",
+    "modifier_drawn": "Player revealed modifier {modifier}.",
+    "second_chance_held": "Player stored a Second Chance card.",
+    "second_chance_discarded": "Extra Second Chance was discarded because no eligible recipient existed.",
+    "second_chance_passed": "Extra Second Chance was passed to another active player.",
+    "initial_deal": "Initial deal revealed {card} for the player.",
+    "stay": "Stayed and banked points.",
+    "hit": "Hit and revealed {card}.",
+    "round_scored": "Round scored at {score} points.",
+    "unknown": "Table event recorded.",
+    "noneYet": "No table event has been logged yet."
+  },
+  "Cards": {
+    "brand": "Flip7",
+    "cardGame": "Card Game",
+    "kindNumber": "Number",
+    "kindModifier": "Bonus",
+    "kindAction": "Action",
+    "scoreLine": "Score",
+    "numberLine": "No. {label}",
+    "action": {
+      "flip_three": "Flip Three",
+      "freeze": "Freeze",
+      "second_chance": "Second Chance"
+    },
+    "modifier": {
+      "x2": "×2",
+      "plus": "+{value}"
+    }
+  },
+  "ScoreSummary": {
+    "title": "Round breakdown",
+    "subtitle": "Number totals, multiplier effects, bonus cards, and the final score each seat carries out of the round.",
+    "colPlayer": "Player",
+    "colNumbers": "Numbers",
+    "colX2": "×2",
+    "colBonus": "Bonus",
+    "colFlip7": "Flip 7",
+    "colRoundTotal": "Round total",
+    "yes": "Yes",
+    "no": "No",
+    "srMultiplierApplied": "Multiplier: ×2",
+    "srMultiplierOff": "Multiplier: none",
+    "srFinalScore": "Final round score: {score}"
+  },
+  "PlayerLane": {
+    "seat": "Seat {n}",
+    "dealer": "Dealer",
+    "you": "You",
+    "claimed": "Claimed",
+    "totalScore": "Total score {score}",
+    "pointsAtRisk": "Points at risk",
+    "statusActive": "In the round",
+    "statusBusted": "Busted",
+    "statusStayed": "Banked",
+    "statusFrozen": "Frozen",
+    "statusCompleted": "Scored",
+    "statusWaiting": "Waiting"
+  },
+  "TurnControls": {
+    "startNextRound": "Start next round",
+    "actionCardTitle": "Action card in play",
+    "freezePrompt": "Choose who banks their points and freezes out of the round.",
+    "flipThreePrompt": "Choose who must keep drawing until three cards resolve.",
+    "hitFor": "Hit for {name}",
+    "stayFor": "Stay for {name}",
+    "claimToPlay": "Claim a seat to play from this device.",
+    "waitingFor": "Waiting for {name}."
+  },
+  "GameTable": {
+    "matchTitle": "Match {id}",
+    "roundRace": "Round {round} of a race to {target} points.",
+    "dealerSeat": "Dealer seat {n}",
+    "turnFor": "Turn: {name}",
+    "updating": "Updating",
+    "matchStatus": {
+      "setup": "setup",
+      "in_progress": "in progress",
+      "completed": "completed"
+    },
+    "tableCall": "Table call",
+    "roundScoredReady": "The round is scored and ready for the next deal.",
+    "playerDeciding": "{name} is deciding whether to push or bank points.",
+    "waitingResolution": "Waiting for the next resolution.",
+    "playingAs": "You are playing as {name}",
+    "claimSeatHint": "Claim a seat on this device to take turns.",
+    "tableLayout": "Table layout",
+    "tableLayoutHint": "Your lane stays pinned above. Scroll to see others in turn order.",
+    "yourHand": "Your hand",
+    "latestResolution": "Latest resolution"
+  },
+  "LobbyCodeDisplay": {
+    "copied": "Copied",
+    "copy": "Copy",
+    "toastCopied": "Lobby code copied!",
+    "toastFailed": "Could not copy the code."
+  },
+  "StartGameButton": {
+    "startGame": "Start Game",
+    "starting": "Starting...",
+    "toastClaimSeat": "You must claim a seat to start the game.",
+    "toastFailed": "Could not start the game."
+  }
+}

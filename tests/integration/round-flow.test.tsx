@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { TurnControls } from "@/components/game/turn-controls";
 import type { MatchSnapshot } from "@/lib/game/view-models";
+import { withIntlEn } from "@/tests/test-intl";
 
 function snapshot(): MatchSnapshot {
   return {
@@ -45,13 +46,15 @@ function snapshot(): MatchSnapshot {
 describe("round flow UI", () => {
   it("shows hit and stay controls for the active player", () => {
     render(
-      <TurnControls
-        snapshot={snapshot()}
-        onHit={vi.fn()}
-        onStay={vi.fn()}
-        onResolveAction={vi.fn()}
-        onStartNextRound={vi.fn()}
-      />,
+      withIntlEn(
+        <TurnControls
+          snapshot={snapshot()}
+          onHit={vi.fn()}
+          onStay={vi.fn()}
+          onResolveAction={vi.fn()}
+          onStartNextRound={vi.fn()}
+        />,
+      ),
     );
 
     expect(screen.getByRole("button", { name: /hit for alex/i })).toBeInTheDocument();
@@ -60,13 +63,15 @@ describe("round flow UI", () => {
 
   it("disables turn controls when this device does not own the active seat", () => {
     render(
-      <TurnControls
-        snapshot={{ ...snapshot(), viewerPlayerId: "p2" }}
-        onHit={vi.fn()}
-        onStay={vi.fn()}
-        onResolveAction={vi.fn()}
-        onStartNextRound={vi.fn()}
-      />,
+      withIntlEn(
+        <TurnControls
+          snapshot={{ ...snapshot(), viewerPlayerId: "p2" }}
+          onHit={vi.fn()}
+          onStay={vi.fn()}
+          onResolveAction={vi.fn()}
+          onStartNextRound={vi.fn()}
+        />,
+      ),
     );
 
     expect(screen.getByRole("button", { name: /hit for alex/i })).toBeDisabled();

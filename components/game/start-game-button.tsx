@@ -3,13 +3,15 @@
 import { motion } from "motion/react";
 import { useMutation } from "convex/react";
 import { PlayIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { startTransition, useState } from "react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { Button } from "@/components/ui/button";
+import { translateConvexError } from "@/lib/convex-error";
 
 interface StartGameButtonProps {
   matchId: string;
@@ -22,10 +24,12 @@ export function StartGameButton({ matchId, sessionId, isHost, playerCount }: Sta
   const router = useRouter();
   const startMatch = useMutation(api.matches.startMatch);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const t = useTranslations("StartGameButton");
+  const tErrors = useTranslations("Errors");
 
   async function handleStart() {
     if (!sessionId) {
-      toast.error("You must claim a seat to start the game.");
+      toast.error(t("toastClaimSeat"));
       return;
     }
 
@@ -39,7 +43,8 @@ export function StartGameButton({ matchId, sessionId, isHost, playerCount }: Sta
         router.refresh();
       });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not start the game.");
+      const message = error instanceof Error ? error.message : "";
+      toast.error(message ? translateConvexError(message, tErrors) : t("toastFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -58,7 +63,7 @@ export function StartGameButton({ matchId, sessionId, isHost, playerCount }: Sta
         className="gap-2 rounded-full px-6"
       >
         <PlayIcon className="h-4 w-4" />
-        {isSubmitting ? "Starting..." : "Start Game"}
+        {isSubmitting ? t("starting") : t("startGame")}
       </Button>
     </motion.div>
   );

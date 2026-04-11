@@ -128,11 +128,10 @@ export async function buildSnapshot(
           targetPlayerId: latestRoundEvent.targetPlayerId
             ? String(latestRoundEvent.targetPlayerId)
             : null,
-          summary: latestRoundEvent.summary,
           payload:
             typeof latestRoundEvent.payload === "object" && latestRoundEvent.payload
               ? (latestRoundEvent.payload as Record<string, unknown>)
-              : undefined,
+              : {},
         }
       : null;
   }
@@ -250,7 +249,6 @@ export async function persistEvents(
       eventType: event.eventType,
       actorPlayerId: event.actorPlayerId ? playerIdMap.get(event.actorPlayerId) : undefined,
       targetPlayerId: event.targetPlayerId ? playerIdMap.get(event.targetPlayerId) : undefined,
-      summary: event.summary,
       payload: event.payload,
       createdAt: Date.now(),
     });

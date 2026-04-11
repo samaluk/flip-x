@@ -6,6 +6,8 @@ import {
   createPlayerRoundStates,
   createRoundRuntime,
   takeTurnAction,
+  type PlayerRoundState,
+  type RoundRuntime,
 } from "@/lib/game/turn-resolution";
 
 const players = [
@@ -39,13 +41,13 @@ describe("turn resolution", () => {
   });
 
   it("busts a player when they hit a duplicate number without Second Chance", () => {
-    const playerStates = createPlayerRoundStates(players);
+    const playerStates = createPlayerRoundStates(players) as Record<string, PlayerRoundState>;
     playerStates.p1.status = "active";
     playerStates.p1.numberCards = [numberCard("n1", 7)];
     playerStates.p2.status = "active";
     playerStates.p3.status = "active";
 
-    const round = createRoundRuntime(players, 1, 0);
+    const round = createRoundRuntime(players, 1, 0) as RoundRuntime;
     round.phase = "player_turns";
     round.activePlayerId = "p1";
     round.turnSeatIndex = 0;

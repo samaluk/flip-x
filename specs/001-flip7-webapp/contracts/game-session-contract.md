@@ -11,7 +11,7 @@ authoritative game state.
 - All state-changing operations validate that the match is active and the caller's
   requested action is legal for the current state.
 - Every successful state-changing operation returns the updated match snapshot together
-  with the latest resolved event summary.
+  with the latest resolved round event (`type` + structured `payload` for UI formatting).
 - Every failed operation returns a user-safe error message and a machine-readable error
   code.
 
@@ -40,7 +40,10 @@ type MatchSnapshot = {
   }>;
   latestEvent: {
     type: string;
-    summary: string;
+    payload: Record<string, unknown>;
+    actorPlayerId?: string | null;
+    targetPlayerId?: string | null;
+    playerNames?: string;
   } | null;
 };
 ```

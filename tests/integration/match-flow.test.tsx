@@ -2,11 +2,13 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { ScoreSummary } from "@/components/game/score-summary";
+import { withIntlEn } from "@/tests/test-intl";
 
 describe("match flow UI", () => {
   it("renders score breakdown values for a completed round", () => {
     render(
-      <ScoreSummary
+      withIntlEn(
+        <ScoreSummary
         players={[
           {
             playerId: "p1",
@@ -29,11 +31,12 @@ describe("match flow UI", () => {
             },
           },
         ]}
-      />,
+        />,
+      ),
     );
 
     expect(screen.getByText(/round breakdown/i)).toBeInTheDocument();
     expect(screen.getByText(/final round score: 30/i)).toBeInTheDocument();
-    expect(screen.getByText(/multiplier: x2/i)).toBeInTheDocument();
+    expect(screen.getByText(/multiplier: ×2/i)).toBeInTheDocument();
   });
 });

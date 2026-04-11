@@ -3,12 +3,10 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useMutation, useQuery } from "convex/react";
 import { LinkIcon } from "lucide-react";
-import { use, type FormEvent } from "react";
-import { useState } from "react";
+import { useTranslations } from "next-intl";
+import { use, type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { GameTable } from "@/components/game/game-table";
 import { LobbyCodeDisplay } from "@/components/game/lobby-code-display";
 import { StartGameButton } from "@/components/game/start-game-button";
@@ -16,9 +14,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useAnonymousSessionId } from "@/lib/anonymous-session";
+import { translateConvexError } from "@/lib/convex-error";
 
-export default function GamePage({ params }: { params: Promise<{ matchId: string }> }) {
+export default function GamePage({
+  params,
+}: {
+  params: Promise<{ locale: string; matchId: string }>;
+}) {
   const { matchId } = use(params);
   const sessionId = useAnonymousSessionId();
   const joinMatch = useMutation(api.matches.joinMatch);
@@ -28,23 +33,25 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
     matchId: matchId as Id<"matches">,
     sessionId: sessionId || undefined,
   });
+  const t = useTranslations("Game");
+  const tErrors = useTranslations("Errors");
 
   async function handleJoin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedName = playerName.trim();
     if (!trimmedName) {
-      toast.error("Please enter your name.");
+      toast.error(t("toastNameRequired"));
       return;
     }
 
     if (trimmedName.length > 20) {
-      toast.error("Name must be 20 characters or less.");
+      toast.error(t("toastNameLength"));
       return;
     }
 
     if (!sessionId) {
-      toast.error("Session not available.");
+      toast.error(t("toastSession"));
       return;
     }
 
@@ -57,7 +64,8 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
       });
       setPlayerName("");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Could not join the game.");
+      const message = error instanceof Error ? error.message : "";
+      toast.error(message ? translateConvexError(message, tErrors) : t("toastJoinFailed"));
     } finally {
       setIsJoining(false);
     }
@@ -69,9 +77,9 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
         ? `${window.location.origin}?code=${snapshot.lobbyCode}`
         : window.location.href;
       await navigator.clipboard.writeText(url);
-      toast.success("Invite link copied.");
+      toast.success(t("toastInviteCopied"));
     } catch {
-      toast.error("Could not copy the invite link.");
+      toast.error(t("toastInviteCopyFailed"));
     }
   }
 
@@ -101,10 +109,8 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
     return (
       <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
         <Alert>
-          <AlertTitle>Match not found</AlertTitle>
-          <AlertDescription>
-            The requested match is unavailable or has not been created yet.
-          </AlertDescription>
+          <AlertTitle>{t("matchNotFoundTitle")}</AlertTitle>
+          <AlertDescription>{t("matchNotFoundBody")}</AlertDescription>
         </Alert>
       </div>
     );
@@ -134,7 +140,7 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
         </div>
         <Button variant="outline" onClick={copyInviteLink}>
           <LinkIcon />
-          Copy invite link
+          {t("copyInvite")}
         </Button>
       </motion.div>
 
@@ -149,16 +155,14 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
             className="surface-elevated rounded-2xl p-6"
           >
             <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
-              Join the game
+              {t("joinTitle")}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1 mb-4">
-              Enter your name to claim a seat at the table.
-            </p>
+            <p className="text-sm text-muted-foreground mt-1 mb-4">{t("joinSubtitle")}</p>
             <form onSubmit={handleJoin} className="flex gap-3">
               <Input
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
-                placeholder="Your name"
+                placeholder={t("namePlaceholder")}
                 maxLength={20}
                 className="max-w-xs"
               />
@@ -167,7 +171,7 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
                 disabled={isJoining || !playerName.trim()}
                 className="font-medium"
               >
-                Join Game
+                {t("joinGame")}
               </Button>
             </form>
           </motion.div>

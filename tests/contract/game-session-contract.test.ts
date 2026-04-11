@@ -49,7 +49,7 @@ describe("game session contract", () => {
         eventType: "initial_deal",
         actorPlayerId: "p1",
         targetPlayerId: "p1",
-        summary: "Initial deal revealed 7 for the player.",
+        payload: { cardKind: "number", numberValue: 7 },
       },
     });
 

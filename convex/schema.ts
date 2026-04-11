@@ -91,8 +91,7 @@ export default defineSchema({
     eventType: v.string(),
     actorPlayerId: v.optional(v.id("players")),
     targetPlayerId: v.optional(v.id("players")),
-    summary: v.string(),
-    payload: v.optional(v.any()),
+    payload: v.any(),
     createdAt: v.number(),
   }).index("by_round", ["roundId"]),
   scoreBreakdowns: defineTable({

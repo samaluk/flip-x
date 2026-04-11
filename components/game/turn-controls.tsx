@@ -2,9 +2,10 @@
 
 import { motion } from "motion/react";
 import { BanIcon, HandIcon, SparklesIcon, WandSparklesIcon } from "lucide-react";
+import { useTranslations } from "next-intl";
 
-import type { Id } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
+import type { Id } from "@/convex/_generated/dataModel";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
 type PendingAction = NonNullable<MatchSnapshot["pendingAction"]>;
@@ -22,6 +23,7 @@ export function TurnControls({
   onResolveAction: (playerId: Id<"players">) => void;
   onStartNextRound: () => void;
 }) {
+  const t = useTranslations("TurnControls");
   const activePlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.activePlayerId,
   );
@@ -35,7 +37,10 @@ export function TurnControls({
   if (snapshot.roundStatus === "completed") {
     return (
       <div className="flex flex-wrap items-center gap-3">
-        <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+        <motion.div
+          whileTap={{ scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
           <Button
             onClick={onStartNextRound}
             disabled={!snapshot.viewerPlayerId}
@@ -43,7 +48,7 @@ export function TurnControls({
             className="rounded-full px-6"
           >
             <SparklesIcon />
-            Start next round
+            {t("startNextRound")}
           </Button>
         </motion.div>
       </div>
@@ -57,19 +62,21 @@ export function TurnControls({
       <div className="flex flex-col gap-4 rounded-xl border border-border bg-muted/30 p-4">
         <div className="space-y-1">
           <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
-            Action card in play
+            {t("actionCardTitle")}
           </div>
           <div className="text-sm text-foreground">
-            {pendingAction.actionKind === "freeze"
-              ? "Choose who banks their points and freezes out of the round."
-              : "Choose who must keep drawing until three cards resolve."}
+            {pendingAction.actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt")}
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
           {snapshot.players
             .filter((player) => pendingAction.eligibleTargetIds.includes(player.playerId))
             .map((player) => (
-              <motion.div key={player.playerId} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+              <motion.div
+                key={player.playerId}
+                whileTap={{ scale: 0.97 }}
+                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+              >
                 <Button
                   variant="outline"
                   disabled={!viewerCanResolveAction}
@@ -100,7 +107,7 @@ export function TurnControls({
           className="rounded-full px-6"
         >
           <HandIcon />
-          Hit for {activePlayer.displayName}
+          {t("hitFor", { name: activePlayer.displayName })}
         </Button>
       </motion.div>
       <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
@@ -112,16 +119,14 @@ export function TurnControls({
           className="rounded-full px-6"
         >
           <BanIcon />
-          Stay for {activePlayer.displayName}
+          {t("stayFor", { name: activePlayer.displayName })}
         </Button>
       </motion.div>
       {!snapshot.viewerPlayerId ? (
-        <div className="text-xs text-muted-foreground">
-          Claim a seat to play from this device.
-        </div>
+        <div className="text-xs text-muted-foreground">{t("claimToPlay")}</div>
       ) : !viewerControlsTurn ? (
         <div className="text-xs text-muted-foreground">
-          Waiting for {activePlayer.displayName}.
+          {t("waitingFor", { name: activePlayer.displayName })}
         </div>
       ) : null}
     </div>
