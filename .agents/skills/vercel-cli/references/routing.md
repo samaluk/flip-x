@@ -26,11 +26,11 @@ Use `--ai` with a natural language description to generate routing rules with AI
 
 Use `--src` to specify the path pattern and `--src-syntax` to control how it's interpreted:
 
-| Syntax | Example | When to use |
-|--------|---------|-------------|
-| `regex` | `^/api/(.*)$` | Full regex control. |
+| Syntax           | Example       | When to use                                |
+| ---------------- | ------------- | ------------------------------------------ |
+| `regex`          | `^/api/(.*)$` | Full regex control.                        |
 | `path-to-regexp` | `/api/:path*` | Express-style named params. More readable. |
-| `equals` | `/about` | Exact string match. Simplest option. |
+| `equals`         | `/about`      | Exact string match. Simplest option.       |
 
 Defaults to `regex` if `--src-syntax` is not specified. `path-to-regexp` and `equals` paths must start with `/`.
 
@@ -38,11 +38,11 @@ Defaults to `regex` if `--src-syntax` is not specified. `path-to-regexp` and `eq
 
 Each routing rule can have at most one primary action:
 
-| Action | Required flags | Description |
-|--------|---------------|-------------|
-| `rewrite` | `--dest` | Proxy to destination URL (transparent to the client) |
-| `redirect` | `--dest` + `--status` (301/302/307/308) | Redirect the client to a new URL |
-| `set-status` | `--status` (100-599) | Return a status code (no destination) |
+| Action       | Required flags                          | Description                                          |
+| ------------ | --------------------------------------- | ---------------------------------------------------- |
+| `rewrite`    | `--dest`                                | Proxy to destination URL (transparent to the client) |
+| `redirect`   | `--dest` + `--status` (301/302/307/308) | Redirect the client to a new URL                     |
+| `set-status` | `--status` (100-599)                    | Return a status code (no destination)                |
 
 A routing rule without a primary action can still set response headers or apply request transforms.
 

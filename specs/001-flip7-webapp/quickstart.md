@@ -16,6 +16,11 @@
 
 2. Start the Next.js app and Convex development environment in separate terminals.
 
+   ```bash
+   CONVEX_AGENT_MODE=anonymous npx convex dev
+   pnpm dev
+   ```
+
 3. Open the local app URL in at least two browser windows or devices to simulate a
    shared table.
 
@@ -42,6 +47,7 @@ Run the local quality gates before opening a pull request:
 
 ```bash
 pnpm lint
+pnpm format:check
 pnpm test
 pnpm build
 ```

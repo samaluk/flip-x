@@ -1,0 +1,39 @@
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+
+import { ScoreSummary } from "@/components/game/score-summary";
+
+describe("match flow UI", () => {
+  it("renders score breakdown values for a completed round", () => {
+    render(
+      <ScoreSummary
+        players={[
+          {
+            playerId: "p1",
+            displayName: "Alex",
+            seatIndex: 0,
+            totalScore: 42,
+            isClaimed: true,
+            roundStatus: "completed",
+            pointsAtRisk: 30,
+            numberCards: [],
+            modifierCards: [],
+            heldActionCards: [],
+            scoreBreakdown: {
+              additiveModifierTotal: 4,
+              finalRoundScore: 30,
+              flip7Bonus: 0,
+              multipliedTotal: 26,
+              multiplierApplied: true,
+              numberCardTotal: 13,
+            },
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText(/round breakdown/i)).toBeInTheDocument();
+    expect(screen.getByText(/final round score: 30/i)).toBeInTheDocument();
+    expect(screen.getByText(/multiplier: x2/i)).toBeInTheDocument();
+  });
+});

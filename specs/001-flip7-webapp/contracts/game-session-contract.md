@@ -21,28 +21,28 @@ authoritative game state.
 
 ```ts
 type MatchSnapshot = {
-  matchId: string
-  status: 'setup' | 'in_progress' | 'completed'
-  targetScore: number
-  currentRoundNumber: number
-  dealerSeat: number
-  activePlayerId: string | null
+  matchId: string;
+  status: "setup" | "in_progress" | "completed";
+  targetScore: number;
+  currentRoundNumber: number;
+  dealerSeat: number;
+  activePlayerId: string | null;
   players: Array<{
-    playerId: string
-    displayName: string
-    seatIndex: number
-    totalScore: number
-    roundStatus: 'active' | 'stayed' | 'busted' | 'frozen' | 'completed' | 'waiting'
-    pointsAtRisk: number
-    numberCards: Array<{ label: string; value: number }>
-    modifierCards: Array<{ label: string }>
-    heldActionCards: Array<{ label: string }>
-  }>
+    playerId: string;
+    displayName: string;
+    seatIndex: number;
+    totalScore: number;
+    roundStatus: "active" | "stayed" | "busted" | "frozen" | "completed" | "waiting";
+    pointsAtRisk: number;
+    numberCards: Array<{ label: string; value: number }>;
+    modifierCards: Array<{ label: string }>;
+    heldActionCards: Array<{ label: string }>;
+  }>;
   latestEvent: {
-    type: string
-    summary: string
-  } | null
-}
+    type: string;
+    summary: string;
+  } | null;
+};
 ```
 
 ## Operations
@@ -77,7 +77,7 @@ Begins the first round and performs initial dealing.
 
 ```ts
 {
-  matchId: string
+  matchId: string;
 }
 ```
 
@@ -98,7 +98,7 @@ Returns the latest committed state for rendering or reconnection.
 
 ```ts
 {
-  matchId: string
+  matchId: string;
 }
 ```
 
@@ -114,9 +114,9 @@ Resolves a player's explicit turn decision.
 
 ```ts
 {
-  matchId: string
-  playerId: string
-  action: 'hit' | 'stay'
+  matchId: string;
+  playerId: string;
+  action: "hit" | "stay";
 }
 ```
 
@@ -165,7 +165,7 @@ Creates the next round after round scoring is complete.
 
 ```ts
 {
-  matchId: string
+  matchId: string;
 }
 ```
 
@@ -185,15 +185,15 @@ Creates the next round after round scoring is complete.
 ```ts
 type GameActionError = {
   code:
-    | 'MATCH_NOT_FOUND'
-    | 'INVALID_MATCH_STATE'
-    | 'INVALID_PLAYER_COUNT'
-    | 'INVALID_TURN'
-    | 'INVALID_ACTION'
-    | 'INVALID_TARGET'
-    | 'RULE_VIOLATION'
-  message: string
-}
+    | "MATCH_NOT_FOUND"
+    | "INVALID_MATCH_STATE"
+    | "INVALID_PLAYER_COUNT"
+    | "INVALID_TURN"
+    | "INVALID_ACTION"
+    | "INVALID_TARGET"
+    | "RULE_VIOLATION";
+  message: string;
+};
 ```
 
 ## Contract Test Priorities

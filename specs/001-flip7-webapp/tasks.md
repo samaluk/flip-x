@@ -1,5 +1,4 @@
 ---
-
 description: "Task list for implementing the Flip 7 web app"
 ---
 
@@ -33,13 +32,13 @@ and testing of each story.
 
 **Purpose**: Initialize the Next.js, Convex, testing, styling, and CI foundation.
 
-- [ ] T001 Initialize the pnpm workspace and root app configuration in `package.json`, `pnpm-workspace.yaml`, and `tsconfig.json`
-- [ ] T002 Create the Next.js 16.2.3 app shell in `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `next.config.ts`, and `next-env.d.ts`
-- [ ] T003 [P] Configure Oxc linting and formatting in `.oxlintrc.json` and `.editorconfig`
-- [ ] T004 [P] Configure Tailwind CSS v4 styling foundation in `app/globals.css` and `postcss.config.mjs`
-- [ ] T005 [P] Configure Vitest and shared test setup in `vitest.config.ts` and `tests/setup.ts`
-- [ ] T006 [P] Configure shadcn/ui project settings in `components.json`
-- [ ] T007 Configure GitHub Actions CI in `.github/workflows/ci.yml`
+- [x] T001 Initialize the pnpm workspace and root app configuration in `package.json`, `pnpm-workspace.yaml`, and `tsconfig.json`
+- [x] T002 Create the Next.js 16.2.3 app shell in `app/layout.tsx`, `app/page.tsx`, `app/globals.css`, `next.config.ts`, and `next-env.d.ts`
+- [x] T003 [P] Configure Oxc linting and formatting in `.oxlintrc.json` and `.editorconfig`
+- [x] T004 [P] Configure Tailwind CSS v4 styling foundation in `app/globals.css` and `postcss.config.mjs`
+- [x] T005 [P] Configure Vitest and shared test setup in `vitest.config.ts` and `tests/setup.ts`
+- [x] T006 [P] Configure shadcn/ui project settings in `components.json`
+- [x] T007 Configure GitHub Actions CI in `.github/workflows/ci.yml`
 
 ---
 
@@ -49,16 +48,16 @@ and testing of each story.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create the Convex schema for matches, players, rounds, events, and score breakdowns in `convex/schema.ts`
-- [ ] T009 [P] Implement core card definitions and deck construction in `lib/game/card-types.ts`
-- [ ] T010 [P] Implement deterministic scoring helpers in `lib/game/scoring.ts`
-- [ ] T011 [P] Implement deterministic turn and action resolution helpers in `lib/game/turn-resolution.ts`
-- [ ] T012 [P] Implement match snapshot and UI mapping helpers in `lib/game/view-models.ts`
-- [ ] T013 Implement shared Convex match queries and setup mutations in `convex/matches.ts`
-- [ ] T014 Implement shared Convex round lifecycle and turn mutations in `convex/rounds.ts` and `convex/turns.ts`
-- [ ] T015 [P] Create shared UI primitives for app shell, cards, dialogs, and buttons in `components/ui/`
-- [ ] T016 [P] Create the game route shell and loading or error boundaries in `app/game/[matchId]/page.tsx`, `app/game/[matchId]/loading.tsx`, and `app/game/[matchId]/error.tsx`
-- [ ] T017 [P] Add foundational rule-engine unit coverage in `tests/unit/scoring.test.ts` and `tests/unit/turn-resolution.test.ts`
+- [x] T008 Create the Convex schema for matches, players, rounds, events, and score breakdowns in `convex/schema.ts`
+- [x] T009 [P] Implement core card definitions and deck construction in `lib/game/card-types.ts`
+- [x] T010 [P] Implement deterministic scoring helpers in `lib/game/scoring.ts`
+- [x] T011 [P] Implement deterministic turn and action resolution helpers in `lib/game/turn-resolution.ts`
+- [x] T012 [P] Implement match snapshot and UI mapping helpers in `lib/game/view-models.ts`
+- [x] T013 Implement shared Convex match queries and setup mutations in `convex/matches.ts`
+- [x] T014 Implement shared Convex round lifecycle and turn mutations in `convex/rounds.ts` and `convex/turns.ts`
+- [x] T015 [P] Create shared UI primitives for app shell, cards, dialogs, and buttons in `components/ui/`
+- [x] T016 [P] Create the game route shell and loading or error boundaries in `app/game/[matchId]/page.tsx`, `app/game/[matchId]/loading.tsx`, and `app/game/[matchId]/error.tsx`
+- [x] T017 [P] Add foundational rule-engine unit coverage in `tests/unit/scoring.test.ts` and `tests/unit/turn-resolution.test.ts`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -74,20 +73,20 @@ and testing of each story.
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 
-- [ ] T018 [P] [US1] Add contract tests for `createMatch`, `startMatch`, and `takeTurnAction` in `tests/contract/game-session-contract.test.ts`
-- [ ] T019 [P] [US1] Add integration tests for initial dealing, Hit or Stay flow, and duplicate bust handling in `tests/integration/round-flow.test.ts`
-- [ ] T020 [P] [US1] Add regression tests for Flip Three, Freeze, Second Chance, and modifier ordering in `tests/unit/turn-resolution.test.ts`
+- [x] T018 [P] [US1] Add contract tests for `createMatch`, `startMatch`, and `takeTurnAction` in `tests/contract/game-session-contract.test.ts`
+- [x] T019 [P] [US1] Add integration tests for initial dealing, Hit or Stay flow, and duplicate bust handling in `tests/integration/round-flow.test.tsx`
+- [x] T020 [P] [US1] Add regression tests for Flip Three, Freeze, Second Chance, and modifier ordering in `tests/unit/turn-resolution.test.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T021 [P] [US1] Implement match setup form and player-name validation in `components/game/match-setup.tsx`
-- [ ] T022 [P] [US1] Implement active round table rendering in `components/game/game-table.tsx`
-- [ ] T023 [P] [US1] Implement per-player lane rendering for cards, status, and points-at-risk in `components/game/player-lane.tsx`
-- [ ] T024 [P] [US1] Implement turn action controls for Hit, Stay, and forced action targeting in `components/game/turn-controls.tsx`
-- [ ] T025 [US1] Implement match creation and initial round start wiring in `app/page.tsx` and `convex/matches.ts`
-- [ ] T026 [US1] Implement round progression, action-card resolution, and bust handling mutations in `convex/rounds.ts` and `convex/turns.ts`
-- [ ] T027 [US1] Implement authoritative round scoring and Flip 7 round-end handling in `convex/lib/rule-engine.ts` and `lib/game/scoring.ts`
-- [ ] T028 [US1] Connect the game page to live match snapshots and round controls in `app/game/[matchId]/page.tsx`
+- [x] T021 [P] [US1] Implement match setup form and player-name validation in `components/game/match-setup.tsx`
+- [x] T022 [P] [US1] Implement active round table rendering in `components/game/game-table.tsx`
+- [x] T023 [P] [US1] Implement per-player lane rendering for cards, status, and points-at-risk in `components/game/player-lane.tsx`
+- [x] T024 [P] [US1] Implement turn action controls for Hit, Stay, and forced action targeting in `components/game/turn-controls.tsx`
+- [x] T025 [US1] Implement match creation and initial round start wiring in `app/page.tsx` and `convex/matches.ts`
+- [x] T026 [US1] Implement round progression, action-card resolution, and bust handling mutations in `convex/rounds.ts` and `convex/turns.ts`
+- [x] T027 [US1] Implement authoritative round scoring and Flip 7 round-end handling in `convex/lib/ruleEngine.ts` and `lib/game/scoring.ts`
+- [x] T028 [US1] Connect the game page to live match snapshots and round controls in `app/game/[matchId]/page.tsx`
 
 **Checkpoint**: At this point, User Story 1 should be fully functional and testable independently
 
@@ -101,17 +100,17 @@ and testing of each story.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T029 [P] [US2] Add contract tests for `getMatchSnapshot` and `startNextRound` in `tests/contract/game-session-contract.test.ts`
-- [ ] T030 [P] [US2] Add integration tests for multi-round score carryover, dealer rotation, and winner determination in `tests/integration/match-flow.test.ts`
-- [ ] T031 [P] [US2] Add integration tests for refresh and reconnect restoration in `tests/integration/match-flow.test.ts`
+- [x] T029 [P] [US2] Add contract tests for `getMatchSnapshot` and `startNextRound` in `tests/contract/game-session-contract.test.ts`
+- [x] T030 [P] [US2] Add integration tests for multi-round score carryover, dealer rotation, and winner determination in `tests/integration/match-flow.test.tsx`
+- [x] T031 [P] [US2] Add integration tests for refresh and reconnect restoration in `tests/integration/match-flow.test.tsx`
 
 ### Implementation for User Story 2
 
-- [ ] T032 [P] [US2] Extend match and player persistence for cumulative scoring and winner state in `convex/schema.ts` and `convex/matches.ts`
-- [ ] T033 [P] [US2] Persist round event history and score breakdown records for restoration in `convex/schema.ts` and `convex/rounds.ts`
-- [ ] T034 [US2] Implement next-round creation, dealer rotation, and draw-pile reshuffle behavior in `convex/rounds.ts`
-- [ ] T035 [US2] Implement restore-from-snapshot loading on the game route in `app/game/[matchId]/page.tsx` and `lib/game/view-models.ts`
-- [ ] T036 [US2] Implement cumulative scoreboard and completed-match winner presentation in `components/game/game-table.tsx` and `components/game/player-lane.tsx`
+- [x] T032 [P] [US2] Extend match and player persistence for cumulative scoring and winner state in `convex/schema.ts` and `convex/matches.ts`
+- [x] T033 [P] [US2] Persist round event history and score breakdown records for restoration in `convex/schema.ts` and `convex/rounds.ts`
+- [x] T034 [US2] Implement next-round creation, dealer rotation, and draw-pile reshuffle behavior in `convex/rounds.ts`
+- [x] T035 [US2] Implement restore-from-snapshot loading on the game route in `app/game/[matchId]/page.tsx` and `lib/game/view-models.ts`
+- [x] T036 [US2] Implement cumulative scoreboard and completed-match winner presentation in `components/game/game-table.tsx` and `components/game/player-lane.tsx`
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -125,15 +124,15 @@ and testing of each story.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T037 [P] [US3] Add component interaction tests for active-turn guidance and rule help in `tests/integration/round-flow.test.ts`
-- [ ] T038 [P] [US3] Add integration tests for score breakdown summaries and recent-event explanations in `tests/integration/match-flow.test.ts`
+- [x] T037 [P] [US3] Add component interaction tests for active-turn guidance and rule help in `tests/integration/round-flow.test.tsx`
+- [x] T038 [P] [US3] Add integration tests for score breakdown summaries and recent-event explanations in `tests/integration/match-flow.test.tsx`
 
 ### Implementation for User Story 3
 
-- [ ] T039 [P] [US3] Implement score breakdown presentation in `components/game/score-summary.tsx`
-- [ ] T040 [P] [US3] Implement recent-event and card-effect summary UI in `components/game/game-table.tsx`
-- [ ] T041 [P] [US3] Implement inline rules help and card reference content in `components/game/match-setup.tsx` and `components/game/player-lane.tsx`
-- [ ] T042 [US3] Expose explanation-ready event summaries and score breakdown view models in `convex/rounds.ts` and `lib/game/view-models.ts`
+- [x] T039 [P] [US3] Implement score breakdown presentation in `components/game/score-summary.tsx`
+- [x] T040 [P] [US3] Implement recent-event and card-effect summary UI in `components/game/game-table.tsx`
+- [x] T041 [P] [US3] Implement inline rules help and card reference content in `components/game/match-setup.tsx` and `components/game/player-lane.tsx`
+- [x] T042 [US3] Expose explanation-ready event summaries and score breakdown view models in `convex/rounds.ts` and `lib/game/view-models.ts`
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -143,11 +142,11 @@ and testing of each story.
 
 **Purpose**: Validate quality, UX consistency, and performance across the completed experience.
 
-- [ ] T043 [P] Document setup and local development steps in `README.md`
-- [ ] T044 Refine shared table responsiveness and accessibility states across `components/game/*.tsx` and `app/**/*.tsx`
-- [ ] T045 [P] Add performance-focused rule and snapshot regression coverage in `tests/unit/scoring.test.ts` and `tests/integration/match-flow.test.ts`
-- [ ] T046 [P] Validate quickstart flows and update `specs/001-flip7-webapp/quickstart.md`
-- [ ] T047 Run the full quality gate and fix remaining issues using `pnpm lint`, `pnpm test`, and `pnpm build`
+- [x] T043 [P] Document setup and local development steps in `README.md`
+- [x] T044 Refine shared table responsiveness and accessibility states across `components/game/*.tsx` and `app/**/*.tsx`
+- [x] T045 [P] Add performance-focused rule and snapshot regression coverage in `tests/unit/scoring.test.ts` and `tests/integration/match-flow.test.tsx`
+- [x] T046 [P] Validate quickstart flows and update `specs/001-flip7-webapp/quickstart.md`
+- [x] T047 Run the full quality gate and fix remaining issues using `pnpm lint`, `pnpm test`, and `pnpm build`
 
 ---
 

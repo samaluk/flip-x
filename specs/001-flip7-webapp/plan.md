@@ -32,7 +32,7 @@ preserve a single shared-table UX across screen sizes
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **Code Quality**
   Pre-Research: Pass. The design stays minimal with one Next.js app, one Convex
@@ -138,5 +138,5 @@ functions, `lib/game/` for deterministic game logic shared by UI and backend, an
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| None | N/A | N/A |
+| --------- | ---------- | ------------------------------------ |
+| None      | N/A        | N/A                                  |

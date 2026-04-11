@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "build a webappapp to play the card game flip7 https://cdn.shopify.com/s/files/1/0611/3958/3198/files/25_FLIP_7_TB_RULES_C_Rev_9_2_25_ND.pdf?v=1756935535"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Play a Round of Flip 7 (Priority: P1)
 
@@ -104,7 +104,7 @@ effect on the player state and final points.
   show the current players, active turn, and latest resolved action before allowing
   further input.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -161,7 +161,7 @@ effect on the player state and final points.
 - **PR-004**: The feature MUST validate performance with repeatable gameplay scenarios
   covering match creation, turn resolution, round scoring, and multi-round play.
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
 
 - **Match**: A full game session containing players, cumulative scores, dealer order,
   deck state, discard state, match status, and the winning outcome.
@@ -174,7 +174,7 @@ effect on the player state and final points.
 - **Score Breakdown**: A readable summary of how a player's round total was derived,
   including number totals, multiplier calculations, additive modifiers, and bonuses.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
