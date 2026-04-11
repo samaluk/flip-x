@@ -56,3 +56,10 @@ pnpm build
 ## CI
 
 GitHub Actions runs install, Convex API generation, lint, test, and build on pushes and pull requests.
+
+## Deployment
+
+- GitHub repository: `https://github.com/samaluk/flip7`
+- Vercel project: `flip7` deploying from the `master` branch
+- Convex production URL: `https://valuable-peacock-13.convex.cloud`
+- Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`
