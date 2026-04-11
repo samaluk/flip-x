@@ -34,6 +34,7 @@ function renderGameTable(snapshot: MatchSnapshot) {
           onResolveAction={noopTarget}
           onStartNextRound={noop}
           disableCardFlip3d
+          freezeLaneLayout
         />
       </div>,
     ),
@@ -43,25 +44,25 @@ function renderGameTable(snapshot: MatchSnapshot) {
 describe("GameTable VRT", () => {
   test("mid-round with opponents and bust lane", async () => {
     renderGameTable(vrtSnapshotMidRound);
-    await page.viewport(1440, 1200);
+    await page.viewport(1440, 2400);
     await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-mid-round");
   });
 
   test("pending freeze target selection", async () => {
     renderGameTable(vrtSnapshotPendingFreeze);
-    await page.viewport(1440, 1200);
+    await page.viewport(1440, 2400);
     await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-pending-freeze");
   });
 
   test("round complete with next round control", async () => {
     renderGameTable(vrtSnapshotRoundComplete);
-    await page.viewport(1440, 1200);
+    await page.viewport(1440, 2400);
     await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-round-complete");
   });
 
   test("viewer flip 7 hand", async () => {
     renderGameTable(vrtSnapshotFlip7Hand);
-    await page.viewport(1440, 1200);
+    await page.viewport(1440, 2400);
     await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-flip7-hand");
   });
 });

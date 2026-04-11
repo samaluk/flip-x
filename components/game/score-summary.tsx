@@ -13,14 +13,14 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.1 }}
-      className="surface-elevated rounded-2xl p-5 text-card-foreground"
+      className="game-score-summary surface-elevated overflow-hidden rounded-2xl bg-card p-5 text-card-foreground"
     >
       <div className="space-y-1">
         <h2 className="font-heading text-lg tracking-tight font-medium text-foreground">{t("title")}</h2>
         <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
       </div>
 
-      <div className="mt-5 overflow-x-auto">
+      <div className="game-score-summary-scroll mt-5 overflow-x-auto rounded-lg bg-card">
         <table className="w-full min-w-[42rem] text-left">
           <thead>
             <tr className="border-b border-border text-xs font-medium tracking-wide uppercase text-muted-foreground">

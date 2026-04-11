@@ -43,6 +43,11 @@ export type GameTableViewProps = {
    * Motion is handled separately via MotionGlobalConfig.skipAnimations in browser tests.
    */
   disableCardFlip3d?: boolean;
+  /**
+   * Disable layout projection on player rows. Headless element screenshots can otherwise include a
+   * tall transparent tail (composited white) below real content.
+   */
+  freezeLaneLayout?: boolean;
 };
 
 export function GameTableView({
@@ -53,6 +58,7 @@ export function GameTableView({
   onResolveAction,
   onStartNextRound,
   disableCardFlip3d = false,
+  freezeLaneLayout = false,
 }: GameTableViewProps) {
   const t = useTranslations("GameTable");
   const tEvents = useTranslations("Events");
@@ -158,14 +164,28 @@ export function GameTableView({
                 ) : null}
               </div>
 
-              <motion.div
-                variants={listStagger}
-                initial="hidden"
-                animate="show"
-                className="max-h-[60vh] space-y-3 overflow-y-auto pr-1"
-              >
-                <AnimatePresence>
+              {freezeLaneLayout ? (
+                <div className="max-h-[60vh] space-y-3 overflow-y-auto bg-card pr-1">
                   {sortedPlayers.sorted.map((player) => (
+                    <div key={player.playerId}>
+                      <PlayerLane
+                        player={player}
+                        isActive={snapshot.activePlayerId === player.playerId}
+                        isViewer={snapshot.viewerPlayerId === player.playerId}
+                        {...laneProps}
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <motion.div
+                  variants={listStagger}
+                  initial="hidden"
+                  animate="show"
+                  className="max-h-[60vh] space-y-3 overflow-y-auto bg-card pr-1"
+                >
+                  <AnimatePresence>
+                    {sortedPlayers.sorted.map((player) => (
                       <motion.div
                         key={player.playerId}
                         variants={listItem}
@@ -180,8 +200,9 @@ export function GameTableView({
                         />
                       </motion.div>
                     ))}
-                </AnimatePresence>
-              </motion.div>
+                  </AnimatePresence>
+                </motion.div>
+              )}
             </section>
           </div>
 

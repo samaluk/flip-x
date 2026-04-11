@@ -44,7 +44,9 @@ export default defineConfig({
             instances: [
               {
                 browser: "chromium",
-                viewport: { width: 1280, height: 720 },
+                // Tall enough for full-page element screenshots (Playwright composites only the
+                // visible viewport; 720px was truncating tall VRT targets with a white tail).
+                viewport: { width: 1440, height: 2400 },
               },
             ],
             screenshotFailures: false,
