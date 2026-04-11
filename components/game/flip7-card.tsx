@@ -153,22 +153,8 @@ export function Flip7Card(props: Flip7CardProps) {
           : t("modifier.plus", { value: props.modifierValue as number })
         : t(`action.${props.actionKind}`);
 
-  const kindCorner =
-    props.kind === "number"
-      ? t("kindNumber")
-      : props.kind === "modifier"
-        ? t("kindModifier")
-        : t("kindAction");
-
-  const subCorner =
-    props.kind === "action"
-      ? t(`action.${props.actionKind}`)
-      : props.kind === "modifier"
-        ? t("scoreLine")
-        : t("numberLine", { label: props.label });
-
   const shellClass = cn(
-    "flip7-card-shell w-[4.9rem] shrink-0 sm:w-[5.6rem]",
+    "flip7-card-shell w-32 shrink-0 sm:w-48",
     props.dealing && "flip7-card-deal",
     props.stateAnimation === "bust" && "flip7-card-bust",
     props.stateAnimation === "stay" && "flip7-card-stay",
@@ -185,22 +171,12 @@ export function Flip7Card(props: Flip7CardProps) {
       <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2 text-center">
         <div
           className={cn(
-            "font-heading text-4xl leading-none tracking-[-0.06em] sm:text-5xl",
+            "font-heading text-4xl leading-none tracking-[-0.06em] sm:text-8xl",
             style.ink,
             props.kind !== "number" && "text-2xl tracking-[0.08em] uppercase sm:text-3xl",
           )}
         >
           {centerLabel}
-        </div>
-      </div>
-      <div className="absolute inset-x-2 bottom-2 flex items-end justify-between sm:inset-x-3 sm:bottom-3">
-        <div className={cn("font-heading text-[0.7rem] tracking-[0.28em] uppercase", style.corner)}>
-          {kindCorner}
-        </div>
-        <div
-          className={cn("font-heading text-[0.72rem] tracking-[0.18em] uppercase", style.corner)}
-        >
-          {subCorner}
         </div>
       </div>
       <div className="pointer-events-none absolute inset-2 rounded-xl border border-white/18" />
@@ -225,7 +201,7 @@ export function Flip7Card(props: Flip7CardProps) {
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
         className={shellClass}
       >
-        <div className="relative aspect-[5/7] w-full">{props.faceDown ? faceDown : faceUp}</div>
+        <div className="relative aspect-[4/5] w-full">{props.faceDown ? faceDown : faceUp}</div>
       </motion.div>
     );
   }
@@ -238,7 +214,7 @@ export function Flip7Card(props: Flip7CardProps) {
     >
       <div
         className={cn(
-          "relative aspect-[5/7] transition-transform duration-700 [transform-style:preserve-3d]",
+          "relative aspect-[4/5] transition-transform duration-700 [transform-style:preserve-3d]",
           props.faceDown && "[transform:rotateY(180deg)]",
         )}
       >
