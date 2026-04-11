@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { GameTable } from "@/components/game/game-table";
+import { LobbyCodeDisplay } from "@/components/game/lobby-code-display";
+import { StartGameButton } from "@/components/game/start-game-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -42,10 +44,13 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
 
   async function copyInviteLink() {
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      toast.success("Match link copied.");
+      const url = snapshot?.lobbyCode
+        ? `${window.location.origin}?code=${snapshot.lobbyCode}`
+        : window.location.href;
+      await navigator.clipboard.writeText(url);
+      toast.success("Invite link copied.");
     } catch {
-      toast.error("Could not copy the match link.");
+      toast.error("Could not copy the invite link.");
     }
   }
 
@@ -71,9 +76,23 @@ export default function GamePage({ params }: { params: Promise<{ matchId: string
     );
   }
 
+  const isSetup = snapshot.status === "setup";
+  const claimedCount = snapshot.players.filter((p) => p.isClaimed).length;
+
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          {isSetup && snapshot.lobbyCode && <LobbyCodeDisplay code={snapshot.lobbyCode} />}
+          {isSetup && (
+            <StartGameButton
+              matchId={matchId}
+              sessionId={sessionId}
+              isHost={snapshot.isHost ?? false}
+              playerCount={claimedCount}
+            />
+          )}
+        </div>
         <Button variant="outline" onClick={copyInviteLink}>
           <LinkIcon />
           Copy invite link

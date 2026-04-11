@@ -82,8 +82,7 @@ const NUMBER_CARD_STYLES: Record<number, { shell: string; ink: string; corner: s
 };
 
 const MODIFIER_CARD_STYLE = {
-  shell:
-    "border-[#e59b15]/70 bg-[#ffb020] text-[#e64c5e] shadow-[0_8px_20px_rgba(255,176,32,0.3)]",
+  shell: "border-[#e59b15]/70 bg-[#ffb020] text-[#e64c5e] shadow-[0_8px_20px_rgba(255,176,32,0.3)]",
   ink: "text-[#e64c5e]",
   corner: "text-[#cc3a4a]",
 };

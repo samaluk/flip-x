@@ -140,6 +140,9 @@ export async function buildSnapshot(
   return buildMatchSnapshot({
     matchId: String(match._id),
     status: match.status,
+    lobbyCode: match.lobbyCode,
+    hostSessionId: match.hostSessionId,
+    viewerSessionId: sessionId,
     targetScore: match.targetScore,
     currentRoundNumber: match.currentRoundNumber,
     dealerSeat: match.dealerSeat,

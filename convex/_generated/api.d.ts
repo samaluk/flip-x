@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as lib_lobby_code from "../lib/lobby_code.js";
 import type * as lib_ruleEngine from "../lib/ruleEngine.js";
 import type * as lib_store from "../lib/store.js";
 import type * as matches from "../matches.js";
@@ -21,6 +22,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "lib/lobby_code": typeof lib_lobby_code;
   "lib/ruleEngine": typeof lib_ruleEngine;
   "lib/store": typeof lib_store;
   matches: typeof matches;

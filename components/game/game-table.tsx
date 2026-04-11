@@ -1,12 +1,7 @@
 "use client";
 
 import { useMutation } from "convex/react";
-import {
-  AlertTriangleIcon,
-  RefreshCwIcon,
-  TrophyIcon,
-  UserRoundIcon,
-} from "lucide-react";
+import { AlertTriangleIcon, RefreshCwIcon, TrophyIcon, UserRoundIcon } from "lucide-react";
 import { type ReactNode, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -157,8 +152,6 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
                 ) : null}
               </div>
 
-              
-
               <div className="max-h-[60vh] space-y-3 overflow-y-auto pr-2">
                 {sortedPlayers.sorted
                   .filter((p) => p.playerId !== snapshot.viewerPlayerId)
@@ -180,12 +173,7 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
                 <div className="mb-3 font-heading text-[0.72rem] tracking-[0.24em] uppercase text-emerald-300">
                   Your hand
                 </div>
-                <PlayerLane
-                  player={viewerPlayer}
-                  isActive={isViewerTurn}
-                  isViewer
-                  compact
-                />
+                <PlayerLane player={viewerPlayer} isActive={isViewerTurn} isViewer compact />
               </section>
             )}
             <InfoPanel
@@ -237,7 +225,17 @@ function getSortedPlayers(snapshot: MatchSnapshot) {
   return { active: null, others: withoutDealer, sorted: withoutDealer };
 }
 
-function InfoPanel({ title, body, icon, subtext }: { title: string; body: string; icon?: ReactNode; subtext?: string }) {
+function InfoPanel({
+  title,
+  body,
+  icon,
+  subtext,
+}: {
+  title: string;
+  body: string;
+  icon?: ReactNode;
+  subtext?: string;
+}) {
   return (
     <section className="rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(12,31,46,0.97)_0%,rgba(8,18,28,0.96)_100%)] p-4 text-white shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
       <div className="flex items-center gap-2 font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">

@@ -226,12 +226,12 @@ function applyResolvedTargetAction(
   if (actionKind === "freeze") {
     targetState.status = "frozen";
     updatePointsAtRisk(targetState);
-  addEvent(events, {
-    eventType: "freeze_applied",
-    actorPlayerId: sourcePlayerId,
-    targetPlayerId,
-    summary: "Frozen! Points banked and out of round.",
-  });
+    addEvent(events, {
+      eventType: "freeze_applied",
+      actorPlayerId: sourcePlayerId,
+      targetPlayerId,
+      summary: "Frozen! Points banked and out of round.",
+    });
     return;
   }
 
@@ -339,13 +339,13 @@ function applyCardToPlayer(
         playerState.roundScore = 0;
         playerState.pointsAtRisk = 0;
         discardCard(round, card);
-    addEvent(events, {
-      eventType: "duplicate_bust",
-      actorPlayerId: playerId,
-      targetPlayerId: playerId,
-      summary: `Drew duplicate ${card.numberValue} — bust!`,
-      payload: { duplicate: card.numberValue },
-    });
+        addEvent(events, {
+          eventType: "duplicate_bust",
+          actorPlayerId: playerId,
+          targetPlayerId: playerId,
+          summary: `Drew duplicate ${card.numberValue} — bust!`,
+          payload: { duplicate: card.numberValue },
+        });
       }
 
       return { pending: false };
@@ -366,12 +366,12 @@ function applyCardToPlayer(
       round.endedBy = "flip7";
       round.phase = "scoring";
       round.activePlayerId = playerId;
-    addEvent(events, {
-      eventType: "flip7",
-      actorPlayerId: playerId,
-      targetPlayerId: playerId,
-      summary: "Triggered Flip 7!",
-    });
+      addEvent(events, {
+        eventType: "flip7",
+        actorPlayerId: playerId,
+        targetPlayerId: playerId,
+        summary: "Triggered Flip 7!",
+      });
     }
 
     return { pending: false };

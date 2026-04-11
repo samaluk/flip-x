@@ -20,9 +20,12 @@ import {
   persistScoreBreakdowns,
 } from "./lib/store";
 
+import { generateLobbyCode } from "./lib/lobby_code";
+
 export const createMatch = mutation({
   args: {
     playerNames: v.array(v.string()),
+    sessionId: v.string(),
   },
   handler: async (ctx, args) => {
     const playerNames = args.playerNames.map((name) => name.trim()).filter(Boolean);
@@ -36,9 +39,29 @@ export const createMatch = mutation({
       throw new Error("INVALID_PLAYER_COUNT");
     }
 
+    let lobbyCode = generateLobbyCode();
+    let existing = await ctx.db
+      .query("matches")
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", lobbyCode))
+      .first();
+    let attempts = 0;
+    while (existing && attempts < 10) {
+      lobbyCode = generateLobbyCode();
+      existing = await ctx.db
+        .query("matches")
+        .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", lobbyCode))
+        .first();
+      attempts++;
+    }
+    if (existing) {
+      throw new Error("LOBBY_CODE_UNAVAILABLE");
+    }
+
     const timestamp = Date.now();
     const matchId = await ctx.db.insert("matches", {
       status: "setup",
+      lobbyCode,
+      hostSessionId: args.sessionId,
       targetScore: 200,
       currentRoundNumber: 0,
       dealerSeat: 0,
@@ -66,7 +89,7 @@ export const createMatch = mutation({
       throw new Error("MATCH_NOT_FOUND");
     }
 
-    return await buildSnapshot(ctx, match, null);
+    return await buildSnapshot(ctx, match, null, args.sessionId);
   },
 });
 
@@ -84,6 +107,49 @@ export const getMatchSnapshot = query({
 
     const round = await getLatestRound(ctx, args.matchId);
     return await buildSnapshot(ctx, match, round, args.sessionId);
+  },
+});
+
+export const getMatchByCode = query({
+  args: {
+    lobbyCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const match = await ctx.db
+      .query("matches")
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", args.lobbyCode.toUpperCase()))
+      .first();
+
+    if (!match || match.status !== "setup") {
+      return null;
+    }
+
+    return {
+      matchId: String(match._id),
+      lobbyCode: match.lobbyCode,
+      status: match.status,
+    };
+  },
+});
+
+export const joinByCode = mutation({
+  args: {
+    lobbyCode: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const match = await ctx.db
+      .query("matches")
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", args.lobbyCode.toUpperCase()))
+      .first();
+
+    if (!match || match.status !== "setup") {
+      throw new Error("LOBBY_NOT_FOUND");
+    }
+
+    return {
+      matchId: String(match._id),
+      lobbyCode: match.lobbyCode,
+    };
   },
 });
 
@@ -149,7 +215,16 @@ export const startMatch = mutation({
       throw new Error("INVALID_MATCH_STATE");
     }
 
+    if (match.hostSessionId !== args.sessionId) {
+      throw new Error("NOT_HOST");
+    }
+
     const players = await getPlayersByMatch(ctx, args.matchId);
+    const claimedPlayers = players.filter((p) => p.claimedBySessionId);
+    if (claimedPlayers.length < 3) {
+      throw new Error("INSUFFICIENT_PLAYERS");
+    }
+
     const viewerPlayerId = requireViewerPlayerId(players, args.sessionId);
     await ctx.db.patch(viewerPlayerId, {
       connected: true,

@@ -34,12 +34,16 @@ const DEFAULT_PLAYERS = ["Alex", "Blair", "Casey"].map((name, index) => ({
   name,
 }));
 
-export function MatchSetup() {
+interface MatchSetupProps {
+  joinCode?: string;
+  existingMatchId?: string;
+}
+
+export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   const router = useRouter();
   const sessionId = useAnonymousSessionId();
   const createMatch = useMutation(api.matches.createMatch);
   const claimSeat = useMutation(api.matches.claimSeat);
-  const startMatch = useMutation(api.matches.startMatch);
   const [playerNames, setPlayerNames] = useState(DEFAULT_PLAYERS);
   const [selectedSeatIndex, setSelectedSeatIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,26 +75,32 @@ export function MatchSetup() {
     setIsSubmitting(true);
 
     try {
-      const match = await createMatch({ playerNames: names });
-      const claimedPlayer = match.players[selectedSeatIndex];
+      let targetMatchId = existingMatchId;
 
-      if (!sessionId || !claimedPlayer) {
-        throw new Error("Could not create the match.");
+      if (!targetMatchId) {
+        if (!sessionId) {
+          throw new Error("Session not available.");
+        }
+        const match = await createMatch({ playerNames: names, sessionId });
+        targetMatchId = match.matchId;
+        const claimedPlayer = match.players[selectedSeatIndex];
+
+        if (!claimedPlayer) {
+          throw new Error("Could not create the match.");
+        }
+
+        await claimSeat({
+          matchId: match.matchId as Id<"matches">,
+          playerId: claimedPlayer.playerId as Id<"players">,
+          sessionId,
+        });
       }
 
-      await claimSeat({
-        matchId: match.matchId as Id<"matches">,
-        playerId: claimedPlayer.playerId as Id<"players">,
-        sessionId,
-      });
-      await startMatch({
-        matchId: match.matchId as Id<"matches">,
-        sessionId,
-      });
-
-      startTransition(() => {
-        router.push(`/game/${match.matchId}`);
-      });
+      if (targetMatchId) {
+        startTransition(() => {
+          router.push(`/game/${targetMatchId}`);
+        });
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Could not create the match.");
     } finally {
@@ -135,9 +145,11 @@ export function MatchSetup() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Create a match</CardTitle>
+            <CardTitle>{joinCode ? "Join Lobby" : "Create a match"}</CardTitle>
             <CardDescription>
-              Add three to eight players, then start the first round immediately.
+              {joinCode
+                ? "Enter your name to join this lobby."
+                : "Add three to eight players to create a lobby."}
             </CardDescription>
           </CardHeader>
           <form onSubmit={onSubmit}>
@@ -210,7 +222,7 @@ export function MatchSetup() {
             </CardContent>
             <CardFooter>
               <Button type="submit" disabled={isSubmitting || playerNames.length < 3 || !sessionId}>
-                Start match
+                {joinCode ? "Join Lobby" : "Create Lobby"}
               </Button>
             </CardFooter>
           </form>

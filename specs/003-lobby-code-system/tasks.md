@@ -30,9 +30,9 @@ The project already exists with Next.js + Convex stack. Skip setup phase.
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T001 Add lobbyCode and hostSessionId fields to matches table in convex/schema.ts
-- [ ] T002 [P] Add index on lobbyCode for fast code lookups in convex/schema.ts
-- [ ] T003 Update createMatch mutation to generate lobby code and store hostSessionId in convex/matches.ts
+- [X] T001 Add lobbyCode and hostSessionId fields to matches table in convex/schema.ts
+- [X] T002 [P] Add index on lobbyCode for fast code lookups in convex/schema.ts
+- [X] T003 Update createMatch mutation to generate lobby code and store hostSessionId in convex/matches.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -46,12 +46,12 @@ The project already exists with Next.js + Convex stack. Skip setup phase.
 
 ### Implementation for User Story 1
 
-- [ ] T004 [P] [US1] Implement lobby code generation utility (4-char alphanumeric) in convex/lib/lobby-code.ts
-- [ ] T005 [US1] Refactor app/page.tsx to show Create Game and Join Lobby options in app/page.tsx
-- [ ] T006 [P] [US1] Update MatchSetup component flow (remove auto-start) in components/game/match-setup.tsx
-- [ ] T007 [US1] Add LobbyCodeDisplay component showing lobby code with copy button in components/game/lobby-code-display.tsx
-- [ ] T008 [US1] Update game page to show lobby code in setup state in app/game/[matchId]/page.tsx
-- [ ] T009 [US1] Update getMatchSnapshot to include lobbyCode in response in convex/matches.ts
+- [X] T004 [P] [US1] Implement lobby code generation utility (4-char alphanumeric) in convex/lib/lobby-code.ts
+- [X] T005 [US1] Refactor app/page.tsx to show Create Game and Join Lobby options in app/page.tsx
+- [X] T006 [P] [US1] Update MatchSetup component flow (remove auto-start) in components/game/match-setup.tsx
+- [X] T007 [US1] Add LobbyCodeDisplay component showing lobby code with copy button in components/game/lobby-code-display.tsx
+- [X] T008 [US1] Update game page to show lobby code in setup state in app/game/[matchId]/page.tsx
+- [X] T009 [US1] Update getMatchSnapshot to include lobbyCode in response in convex/matches.ts
 
 **Checkpoint**: At this point, User Story 1 should be fully functional
 
@@ -65,10 +65,10 @@ The project already exists with Next.js + Convex stack. Skip setup phase.
 
 ### Implementation for User Story 2
 
-- [ ] T010 [P] [US2] Add joinByCode mutation in convex/matches.ts
-- [ ] T011 [P] [US2] Create JoinLobbyDialog component with code input in components/game/join-lobby-dialog.tsx
-- [ ] T012 [US2] Add Join Lobby button to homepage in app/page.tsx
-- [ ] T013 [US2] Handle URL query parameter for lobby code (e.g., ?code=ABCD) in app/page.tsx
+- [X] T010 [P] [US2] Add joinByCode mutation in convex/matches.ts
+- [X] T011 [P] [US2] Create JoinLobbyDialog component with code input in components/game/join-lobby-dialog.tsx
+- [X] T012 [US2] Add Join Lobby button to homepage in app/page.tsx
+- [X] T013 [US2] Handle URL query parameter for lobby code (e.g., ?code=ABCD) in app/page.tsx
 
 **Checkpoint**: At this point, User Stories 1 AND 2 should both work independently
 
@@ -82,10 +82,10 @@ The project already exists with Next.js + Convex stack. Skip setup phase.
 
 ### Implementation for User Story 3
 
-- [ ] T014 [P] [US3] Add startMatchByHost mutation with host validation in convex/matches.ts
-- [ ] T015 [P] [US3] Add startMatch mutation for non-host players (reject with error) in convex/matches.ts
-- [ ] T016 [US3] Add StartGameButton component visible only to host in components/game/start-game-button.tsx
-- [ ] T017 [US3] Update game page to show StartGameButton in setup state only in app/game/[matchId]/page.tsx
+- [X] T014 [P] [US3] Add startMatchByHost mutation with host validation in convex/matches.ts
+- [X] T015 [P] [US3] Add startMatch mutation for non-host players (reject with error) in convex/matches.ts
+- [X] T016 [US3] Add StartGameButton component visible only to host in components/game/start-game-button.tsx
+- [X] T017 [US3] Update game page to show StartGameButton in setup state only in app/game/[matchId]/page.tsx
 
 **Checkpoint**: All core P1 user stories complete
 
@@ -99,8 +99,8 @@ The project already exists with Next.js + Convex stack. Skip setup phase.
 
 ### Implementation for User Story 4
 
-- [ ] T018 [P] [US4] Update copy invite link functionality in game page in app/game/[matchId]/page.tsx
-- [ ] T019 [US4] Handle URL parameter parsing for lobby code in game page in app/game/[matchId]/page.tsx
+- [X] T018 [P] [US4] Update copy invite link functionality in game page in app/game/[matchId]/page.tsx
+- [X] T019 [US4] Handle URL parameter parsing for lobby code in game page in app/game/[matchId]/page.tsx
 
 **Checkpoint**: All user stories complete
 
@@ -110,10 +110,10 @@ The project already exists with Next.js + Convex stack. Skip setup phase.
 
 **Purpose**: Improvements that affect multiple user stories
 
-- [ ] T020 [P] Add error handling for invalid lobby codes in JoinLobbyDialog
-- [ ] T021 [P] Add loading states during lobby creation and code validation
-- [ ] T022 Run quickstart.md validation
-- [ ] T023 Run lint, format check, and tests
+- [X] T020 [P] Add error handling for invalid lobby codes in JoinLobbyDialog
+- [X] T021 [P] Add loading states during lobby creation and code validation
+- [X] T022 Run quickstart.md validation
+- [X] T023 Run lint, format check, and tests
 
 ---
 

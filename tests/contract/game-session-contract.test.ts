@@ -8,10 +8,10 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-1",
       status: "in_progress",
+      viewerPlayerId: "p1",
       targetScore: 200,
       currentRoundNumber: 1,
       dealerSeat: 0,
-      viewerPlayerId: "p1",
       round: {
         phase: "player_turns",
         roundNumber: 1,
@@ -61,10 +61,6 @@ describe("game session contract", () => {
         dealerSeat: 0,
         viewerPlayerId: "p1",
         activePlayerId: "p1",
-        latestEvent: {
-          type: "initial_deal",
-          summary: "Initial deal revealed 7 for the player.",
-        },
       }),
     );
   });

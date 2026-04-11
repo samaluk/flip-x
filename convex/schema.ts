@@ -15,13 +15,15 @@ const cardValue = v.object({
 export default defineSchema({
   matches: defineTable({
     status: v.union(v.literal("setup"), v.literal("in_progress"), v.literal("completed")),
+    lobbyCode: v.string(),
+    hostSessionId: v.string(),
     targetScore: v.number(),
     currentRoundNumber: v.number(),
     dealerSeat: v.number(),
     winnerPlayerId: v.optional(v.id("players")),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  }).index("by_lobby_code", ["lobbyCode"]),
   players: defineTable({
     matchId: v.id("matches"),
     displayName: v.string(),

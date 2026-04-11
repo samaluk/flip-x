@@ -7,8 +7,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 ## Active Technologies
+
 - TypeScript (Next.js 16.2.3, React 19.2.4) + Convex (backend), Next.js, shadcn/ui, Lucide icons (003-lobby-code-system)
 - Convex serverless database (003-lobby-code-system)
 
 ## Recent Changes
+
 - 003-lobby-code-system: Added TypeScript (Next.js 16.2.3, React 19.2.4) + Convex (backend), Next.js, shadcn/ui, Lucide icons

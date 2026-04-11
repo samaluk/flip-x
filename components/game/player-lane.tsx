@@ -96,7 +96,8 @@ export function PlayerLane({
         "rounded-[1.75rem] border border-white/10 bg-[linear-gradient(180deg,rgba(11,28,41,0.92)_0%,rgba(8,18,28,0.96)_100%)] text-white shadow-[0_18px_50px_rgba(0,0,0,0.35)]",
         isActive && "ring-2 ring-[#f3d48a]/80 ring-offset-2 ring-offset-[#0e2233]",
         isDealer && "border-[#f3d48a]/40",
-        isPinned && "border-emerald-400/50 bg-[linear-gradient(180deg,rgba(16,48,35,0.95)_0%,rgba(10,30,22,0.98)_100%)] shadow-[0_8px_30px_rgba(16,185,129,0.15)]",
+        isPinned &&
+          "border-emerald-400/50 bg-[linear-gradient(180deg,rgba(16,48,35,0.95)_0%,rgba(10,30,22,0.98)_100%)] shadow-[0_8px_30px_rgba(16,185,129,0.15)]",
         compact ? "p-3" : "p-4",
       )}
     >
@@ -141,16 +142,38 @@ export function PlayerLane({
 
       <div className={cn("mt-3 flex flex-wrap gap-3", compact ? "gap-2" : "gap-4")}>
         {player.modifierCards.map((card) => (
-          <Flip7Card key={card.id} kind="modifier" label={card.label} dealing={dealingIds.includes(card.id)} stateAnimation={stateAnimation} />
+          <Flip7Card
+            key={card.id}
+            kind="modifier"
+            label={card.label}
+            dealing={dealingIds.includes(card.id)}
+            stateAnimation={stateAnimation}
+          />
         ))}
 
         {player.numberCards.map((card) => (
-          <Flip7Card key={card.id} kind="number" numberValue={card.numberValue} label={card.label} dealing={dealingIds.includes(card.id)} stateAnimation={stateAnimation} />
+          <Flip7Card
+            key={card.id}
+            kind="number"
+            numberValue={card.numberValue}
+            label={card.label}
+            dealing={dealingIds.includes(card.id)}
+            stateAnimation={stateAnimation}
+          />
         ))}
 
         {player.heldActionCards.map((card) => {
           const key = `${player.playerId}-${card.actionKind}-${card.label}`;
-          return <Flip7Card key={key} kind="action" actionKind={card.actionKind} label={card.label} dealing={dealingIds.includes(key)} stateAnimation={stateAnimation} />;
+          return (
+            <Flip7Card
+              key={key}
+              kind="action"
+              actionKind={card.actionKind}
+              label={card.label}
+              dealing={dealingIds.includes(key)}
+              stateAnimation={stateAnimation}
+            />
+          );
         })}
       </div>
     </section>
