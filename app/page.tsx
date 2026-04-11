@@ -5,8 +5,11 @@ import { useQuery } from "convex/react";
 import { use } from "react";
 
 import { api } from "@/convex/_generated/api";
+import Link from "next/link";
+
 import { JoinLobbyDialog } from "@/components/game/join-lobby-dialog";
 import { MatchSetup } from "@/components/game/match-setup";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const stagger = {
@@ -29,11 +32,12 @@ const fadeUp = {
 export default function Home({ searchParams }: { searchParams: Promise<{ code?: string }> }) {
   const { code } = use(searchParams);
   const codeParam = code?.toUpperCase();
-  const getMatchByCode = useQuery(api.matches.getMatchByCode, {
-    lobbyCode: codeParam || "",
-  });
+  const getMatchByCode = useQuery(
+    api.matches.getMatchByCode,
+    codeParam ? { lobbyCode: codeParam } : "skip",
+  );
 
-  if (codeParam && !getMatchByCode) {
+  if (codeParam && getMatchByCode === undefined) {
     return (
       <div className="flex flex-1 items-center justify-center min-h-[100dvh]">
         <div className="w-full max-w-md space-y-4 px-6">
@@ -43,6 +47,33 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
           <Skeleton className="h-10 w-32 rounded-lg" />
         </div>
       </div>
+    );
+  }
+
+  if (codeParam && getMatchByCode === null) {
+    return (
+      <main className="flex flex-1 min-h-[100dvh] items-center justify-center selection:bg-primary/20 px-6">
+        <div className="w-full max-w-md text-center space-y-6">
+          <div>
+            <h2 className="font-heading text-2xl tracking-tight text-foreground mb-2">
+              Lobby not found
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              There is no open lobby for code{" "}
+              <span className="font-mono text-foreground tracking-widest">{codeParam}</span>. It may
+              have expired or the game may have started.
+            </p>
+          </div>
+          <Button
+            render={<Link href="/" />}
+            nativeButton={false}
+            variant="default"
+            className="w-full sm:w-auto"
+          >
+            Back to home
+          </Button>
+        </div>
+      </main>
     );
   }
 

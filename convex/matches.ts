@@ -110,9 +110,14 @@ export const getMatchByCode = query({
     lobbyCode: v.string(),
   },
   handler: async (ctx, args) => {
+    const normalized = args.lobbyCode.trim().toUpperCase();
+    if (normalized.length !== 4) {
+      return null;
+    }
+
     const match = await ctx.db
       .query("matches")
-      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", args.lobbyCode.toUpperCase()))
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
       .first();
 
     if (!match || match.status !== "setup") {
@@ -132,9 +137,14 @@ export const joinByCode = mutation({
     lobbyCode: v.string(),
   },
   handler: async (ctx, args) => {
+    const normalized = args.lobbyCode.trim().toUpperCase();
+    if (normalized.length !== 4) {
+      throw new Error("LOBBY_NOT_FOUND");
+    }
+
     const match = await ctx.db
       .query("matches")
-      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", args.lobbyCode.toUpperCase()))
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
       .first();
 
     if (!match || match.status !== "setup") {
