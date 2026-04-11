@@ -222,7 +222,12 @@
     "tableLayout": "Table layout",
     "tableLayoutHint": "Your lane stays pinned above. Scroll to see others in turn order.",
     "yourHand": "Your hand",
-    "latestResolution": "Latest resolution"
+    "latestResolution": "Latest resolution",
+    "layoutList": "List",
+    "layoutTable": "Table",
+    "layoutPreferenceAria": "Choose how the game table is displayed",
+    "roundTableTitle": "Round table",
+    "roundTableHint": "Your hand is below. Hover other players' cards to fan them out."
   },
   "LobbyCodeDisplay": {
     "copied": "Copied",

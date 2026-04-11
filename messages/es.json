@@ -222,7 +222,12 @@
     "tableLayout": "Disposición",
     "tableLayoutHint": "Tu carril queda fijo arriba. Desplázate para ver a los demás en orden de turno.",
     "yourHand": "Tu mano",
-    "latestResolution": "Última resolución"
+    "latestResolution": "Última resolución",
+    "layoutList": "Lista",
+    "layoutTable": "Mesa",
+    "layoutPreferenceAria": "Elige cómo se muestra la mesa de juego",
+    "roundTableTitle": "Mesa redonda",
+    "roundTableHint": "Tu mano está abajo. Pasa el cursor sobre las cartas de los rivales para desplegarlas."
   },
   "LobbyCodeDisplay": {
     "copied": "Copiado",

@@ -1,7 +1,8 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { Flip7Card } from "@/components/game/flip7-card";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +61,7 @@ export function PlayerLane({
   isPinned = false,
   compact = false,
   disableCardFlip3d = false,
+  overlapCards = false,
 }: {
   player: MatchSnapshot["players"][number];
   isActive: boolean;
@@ -69,6 +71,8 @@ export function PlayerLane({
   compact?: boolean;
   /** No CSS 3D flip (reliable faces in headless screenshots). */
   disableCardFlip3d?: boolean;
+  /** Overlap cards horizontally; fan out on lane hover (round table opponents). */
+  overlapCards?: boolean;
 }) {
   const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
@@ -133,6 +137,48 @@ export function PlayerLane({
   const cardStateAnimation = stateAnimation ?? poseFromStatus(player.roundStatus);
   const roundStatusLabelKey = statusLabelKey(player.roundStatus);
 
+  const cardElements: ReactElement[] = [
+    ...player.modifierCards.map((card) => (
+      <Flip7Card
+        key={card.id}
+        kind="modifier"
+        modifierValue={card.modifierValue}
+        label={card.label}
+        dealing={dealingIds.includes(card.id)}
+        stateAnimation={cardStateAnimation}
+        compact={compact}
+        disableFlip3d={disableCardFlip3d}
+      />
+    )),
+    ...player.numberCards.map((card) => (
+      <Flip7Card
+        key={card.id}
+        kind="number"
+        numberValue={card.numberValue}
+        label={card.label}
+        dealing={dealingIds.includes(card.id)}
+        stateAnimation={cardStateAnimation}
+        compact={compact}
+        disableFlip3d={disableCardFlip3d}
+      />
+    )),
+    ...player.heldActionCards.map((card) => {
+      const key = `${player.playerId}-${card.actionKind}-${card.label}`;
+      return (
+        <Flip7Card
+          key={key}
+          kind="action"
+          actionKind={card.actionKind}
+          label={card.label}
+          dealing={dealingIds.includes(key)}
+          stateAnimation={cardStateAnimation}
+          compact={compact}
+          disableFlip3d={disableCardFlip3d}
+        />
+      );
+    }),
+  ];
+
   return (
     <section
       className={cn(
@@ -141,6 +187,7 @@ export function PlayerLane({
         isDealer && "border-primary/30",
         isPinned && "border-primary/30 bg-primary/[0.03]",
         compact ? "p-3" : "p-4",
+        overlapCards && "relative z-0 hover:z-40 focus-within:z-40",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -191,51 +238,34 @@ export function PlayerLane({
 
       <div
         className={cn(
-          "mt-3 flex flex-row flex-wrap items-start",
-          compact ? "gap-1.5" : "gap-3",
+          "mt-3 flex flex-row items-start",
+          overlapCards
+            ? "group/cards max-w-[min(100%,26rem)] flex-nowrap overflow-x-auto overscroll-x-contain pb-1 [&>*]:transition-[margin-left] [&>*]:duration-300 [&>*]:ease-out [&>*:not(:first-child)]:-ml-7 sm:[&>*:not(:first-child)]:-ml-8 group-hover/cards:[&>*]:ml-0"
+            : compact
+              ? "flex-wrap gap-1.5"
+              : "flex-wrap gap-3",
         )}
       >
-        {player.modifierCards.map((card) => (
-          <Flip7Card
-            key={card.id}
-            kind="modifier"
-            modifierValue={card.modifierValue}
-            label={card.label}
-            dealing={dealingIds.includes(card.id)}
-            stateAnimation={cardStateAnimation}
-            compact={compact}
-            disableFlip3d={disableCardFlip3d}
-          />
-        ))}
-
-        {player.numberCards.map((card) => (
-          <Flip7Card
-            key={card.id}
-            kind="number"
-            numberValue={card.numberValue}
-            label={card.label}
-            dealing={dealingIds.includes(card.id)}
-            stateAnimation={cardStateAnimation}
-            compact={compact}
-            disableFlip3d={disableCardFlip3d}
-          />
-        ))}
-
-        {player.heldActionCards.map((card) => {
-          const key = `${player.playerId}-${card.actionKind}-${card.label}`;
-          return (
-            <Flip7Card
-              key={key}
-              kind="action"
-              actionKind={card.actionKind}
-              label={card.label}
-              dealing={dealingIds.includes(key)}
-              stateAnimation={cardStateAnimation}
-              compact={compact}
-              disableFlip3d={disableCardFlip3d}
-            />
-          );
-        })}
+        {overlapCards
+          ? cardElements.map((el, index) => {
+              const wrapKey = String(el.key ?? index);
+              return disableCardFlip3d ? (
+                <div key={wrapKey} className="shrink-0" style={{ zIndex: index + 1 }}>
+                  {el}
+                </div>
+              ) : (
+                <motion.div
+                  key={wrapKey}
+                  layout
+                  className="shrink-0"
+                  style={{ zIndex: index + 1 }}
+                  transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                >
+                  {el}
+                </motion.div>
+              );
+            })
+          : cardElements}
       </div>
     </section>
   );
