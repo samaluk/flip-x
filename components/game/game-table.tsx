@@ -4,7 +4,6 @@ import { useMutation } from "convex/react";
 import {
   AlertTriangleIcon,
   RefreshCwIcon,
-  SparklesIcon,
   TrophyIcon,
   UserRoundIcon,
 } from "lucide-react";
@@ -193,21 +192,7 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
               title="Latest resolution"
               body={snapshot.latestEvent?.summary ?? "No table event has been logged yet."}
               icon={<AlertTriangleIcon className="size-4 text-[#f3d48a]" />}
-            />
-            <InfoPanel
-              title="Round ending"
-              body={
-                snapshot.endedBy === "flip7"
-                  ? "Someone revealed seven unique numbers and ended the round immediately."
-                  : snapshot.endedBy === "all_inactive"
-                    ? "Every player is out of the round, so scoring can settle."
-                    : "The round is still live. Duplicate numbers still bust unless Second Chance intervenes."
-              }
-              icon={<SparklesIcon className="size-4 text-[#f3d48a]" />}
-            />
-            <InfoPanel
-              title="Rules reminder"
-              body="Modifiers do not bust a player. The x2 doubles only the number-card total before additive bonus cards are added."
+              subtext={snapshot.latestEvent?.playerNames}
             />
           </aside>
         </div>
@@ -252,7 +237,7 @@ function getSortedPlayers(snapshot: MatchSnapshot) {
   return { active: null, others: withoutDealer, sorted: withoutDealer };
 }
 
-function InfoPanel({ title, body, icon }: { title: string; body: string; icon?: ReactNode }) {
+function InfoPanel({ title, body, icon, subtext }: { title: string; body: string; icon?: ReactNode; subtext?: string }) {
   return (
     <section className="rounded-[1.5rem] border border-white/10 bg-[linear-gradient(180deg,rgba(12,31,46,0.97)_0%,rgba(8,18,28,0.96)_100%)] p-4 text-white shadow-[0_16px_40px_rgba(0,0,0,0.28)]">
       <div className="flex items-center gap-2 font-heading text-[0.72rem] tracking-[0.24em] uppercase text-[#8cb1c4]">
@@ -260,6 +245,7 @@ function InfoPanel({ title, body, icon }: { title: string; body: string; icon?: 
         {title}
       </div>
       <div className="mt-2 text-sm leading-6 text-[#d9e5eb]">{body}</div>
+      {subtext && <div className="mt-1 text-xs text-[#8cb1c4]">{subtext}</div>}
     </section>
   );
 }

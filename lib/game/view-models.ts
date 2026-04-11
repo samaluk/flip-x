@@ -35,6 +35,9 @@ export type MatchSnapshot = {
   latestEvent: {
     type: string;
     summary: string;
+    actorPlayerId?: string | null;
+    targetPlayerId?: string | null;
+    playerNames?: string;
   } | null;
 };
 
@@ -108,6 +111,25 @@ export function buildMatchSnapshot(args: {
       ? {
           type: args.latestEvent.eventType,
           summary: args.latestEvent.summary,
+          actorPlayerId: args.latestEvent.actorPlayerId,
+          targetPlayerId: args.latestEvent.targetPlayerId,
+          playerNames: (() => {
+            const playerMap = new Map(args.players.map((p) => [p.playerId, p.displayName]));
+            const actorName = args.latestEvent.actorPlayerId
+              ? playerMap.get(args.latestEvent.actorPlayerId) ?? "Unknown"
+              : null;
+            const targetName =
+              args.latestEvent.targetPlayerId && args.latestEvent.targetPlayerId !== args.latestEvent.actorPlayerId
+                ? playerMap.get(args.latestEvent.targetPlayerId) ?? "Unknown"
+                : null;
+            if (actorName && targetName && actorName !== targetName) {
+              return `${actorName} → ${targetName}`;
+            }
+            if (actorName) {
+              return actorName;
+            }
+            return undefined;
+          })(),
         }
       : null,
   } satisfies MatchSnapshot;

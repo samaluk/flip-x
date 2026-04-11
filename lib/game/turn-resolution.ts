@@ -226,12 +226,12 @@ function applyResolvedTargetAction(
   if (actionKind === "freeze") {
     targetState.status = "frozen";
     updatePointsAtRisk(targetState);
-    addEvent(events, {
-      eventType: "freeze_applied",
-      actorPlayerId: sourcePlayerId,
-      targetPlayerId,
-      summary: "Freeze banked the target player's current points and removed them from the round.",
-    });
+  addEvent(events, {
+    eventType: "freeze_applied",
+    actorPlayerId: sourcePlayerId,
+    targetPlayerId,
+    summary: "Frozen! Points banked and out of round.",
+  });
     return;
   }
 
@@ -239,7 +239,7 @@ function applyResolvedTargetAction(
     eventType: "flip_three_started",
     actorPlayerId: sourcePlayerId,
     targetPlayerId,
-    summary: "Flip Three forced the target player to draw up to three additional cards.",
+    summary: "Hit by Flip Three!",
   });
 
   const queuedActions: PendingAction["actionKind"][] = [];
@@ -339,13 +339,13 @@ function applyCardToPlayer(
         playerState.roundScore = 0;
         playerState.pointsAtRisk = 0;
         discardCard(round, card);
-        addEvent(events, {
-          eventType: "duplicate_bust",
-          actorPlayerId: playerId,
-          targetPlayerId: playerId,
-          summary: `Player busted after drawing a duplicate ${card.numberValue}.`,
-          payload: { duplicate: card.numberValue },
-        });
+    addEvent(events, {
+      eventType: "duplicate_bust",
+      actorPlayerId: playerId,
+      targetPlayerId: playerId,
+      summary: `Drew duplicate ${card.numberValue} — bust!`,
+      payload: { duplicate: card.numberValue },
+    });
       }
 
       return { pending: false };
@@ -359,19 +359,19 @@ function applyCardToPlayer(
       eventType: "number_drawn",
       actorPlayerId: playerId,
       targetPlayerId: playerId,
-      summary: `Player revealed number ${card.numberValue}.`,
+      summary: `Revealed number ${card.numberValue}.`,
     });
 
     if (playerState.hasFlip7) {
       round.endedBy = "flip7";
       round.phase = "scoring";
       round.activePlayerId = playerId;
-      addEvent(events, {
-        eventType: "flip7",
-        actorPlayerId: playerId,
-        targetPlayerId: playerId,
-        summary: "Player revealed seven unique number cards and triggered Flip 7.",
-      });
+    addEvent(events, {
+      eventType: "flip7",
+      actorPlayerId: playerId,
+      targetPlayerId: playerId,
+      summary: "Triggered Flip 7!",
+    });
     }
 
     return { pending: false };
@@ -608,7 +608,7 @@ export function takeTurnAction(
       eventType: "stay",
       actorPlayerId: playerId,
       targetPlayerId: playerId,
-      summary: "Player stayed and banked their current points.",
+      summary: "Stayed and banked points.",
     });
   } else {
     const card = drawCard(round);
@@ -620,7 +620,7 @@ export function takeTurnAction(
         eventType: "hit",
         actorPlayerId: playerId,
         targetPlayerId: playerId,
-        summary: `Player hit and revealed ${card.label}.`,
+        summary: `Hit and revealed ${card.label}.`,
       });
 
       applyCardToPlayer(round, players, playerStates, playerId, card, "turns", events);
