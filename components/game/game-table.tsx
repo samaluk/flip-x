@@ -16,6 +16,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { translateConvexError } from "@/lib/convex-error";
 import { formatLatestRoundEventBody } from "@/lib/round-event-format";
 import type { MatchSnapshot } from "@/lib/game/view-models";
+import { cn } from "@/lib/utils";
 
 const listStagger = {
   hidden: { opacity: 0 },
@@ -93,7 +94,13 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
 
           <div className="flex flex-wrap items-center gap-2">
             <Badge variant="outline">{t("dealerSeat", { n: snapshot.dealerSeat + 1 })}</Badge>
-            <Badge variant="outline">{t(`matchStatus.${snapshot.status}`)}</Badge>
+            <Badge
+              variant="outline"
+              className="game-match-status"
+              data-status={snapshot.status}
+            >
+              {t(`matchStatus.${snapshot.status}`)}
+            </Badge>
             {activePlayer ? (
               <Badge variant="default">{t("turnFor", { name: activePlayer.displayName })}</Badge>
             ) : null}
@@ -224,6 +231,7 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
             <InfoPanel
               title={t("latestResolution")}
               body={latestBody}
+              bodyClassName="game-latest-resolution"
               icon={<AlertTriangleIcon className="size-4 text-muted-foreground" />}
               subtext={snapshot.latestEvent?.playerNames}
             />
@@ -265,11 +273,13 @@ function getSortedPlayers(snapshot: MatchSnapshot) {
 function InfoPanel({
   title,
   body,
+  bodyClassName,
   icon,
   subtext,
 }: {
   title: string;
   body: string;
+  bodyClassName?: string;
   icon?: ReactNode;
   subtext?: string;
 }) {
@@ -279,7 +289,7 @@ function InfoPanel({
         {icon}
         {title}
       </div>
-      <div className="mt-2 text-sm leading-6 text-foreground">{body}</div>
+      <div className={cn("mt-2 text-sm leading-6 text-foreground", bodyClassName)}>{body}</div>
       {subtext && <div className="mt-1 text-xs text-muted-foreground">{subtext}</div>}
     </section>
   );
