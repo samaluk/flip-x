@@ -125,14 +125,44 @@
     "kindAction": "Action",
     "scoreLine": "Score",
     "numberLine": "No. {label}",
+    "numberName": {
+      "0": "ZERO",
+      "1": "ONE",
+      "2": "TWO",
+      "3": "THREE",
+      "4": "FOUR",
+      "5": "FIVE",
+      "6": "SIX",
+      "7": "SEVEN",
+      "8": "EIGHT",
+      "9": "NINE",
+      "10": "TEN",
+      "11": "ELEVEN",
+      "12": "TWELVE"
+    },
     "action": {
       "flip_three": "Flip Three",
       "freeze": "Freeze",
       "second_chance": "Second Chance"
     },
+    "actionTitle": {
+      "flip_three_line1": "FLIP",
+      "flip_three_line2": "THREE",
+      "freeze": "FREEZE",
+      "second_chance_line1": "SECOND",
+      "second_chance_line2": "CHANCE"
+    },
+    "actionHelper": {
+      "playOnActive": "PLAY ON AN ACTIVE PLAYER",
+      "saveUntilNeeded": "SAVE THIS CARD UNTIL NEEDED",
+      "instant": "INSTANT",
+      "action": "ACTION"
+    },
     "modifier": {
       "x2": "×2",
-      "plus": "+{value}"
+      "plus": "+{value}",
+      "effectPlus": "+{value} THE SUM OF YOUR NUMBER CARDS",
+      "effectX2": "×2 THE SUM OF YOUR NUMBER CARDS"
     }
   },
   "ScoreSummary": {

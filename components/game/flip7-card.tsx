@@ -3,116 +3,11 @@
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 
+import { ActionCardContent } from "@/components/game/cards/action-content";
+import { ModifierCardContent } from "@/components/game/cards/modifier-content";
+import { NumberCardContent } from "@/components/game/cards/number-content";
 import type { ModifierCard } from "@/lib/game/card-types";
 import { cn } from "@/lib/utils";
-
-const NUMBER_CARD_STYLES: Record<number, { shell: string; ink: string; corner: string }> = {
-  0: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#f03a94] shadow-[0_8px_20px_rgba(240,58,148,0.15)]",
-    ink: "text-[#f03a94]",
-    corner: "text-[#f03a94]",
-  },
-  1: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#977598] shadow-[0_8px_20px_rgba(151,117,152,0.15)]",
-    ink: "text-[#977598]",
-    corner: "text-[#977598]",
-  },
-  2: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#c5d52d] shadow-[0_8px_20px_rgba(197,213,45,0.15)]",
-    ink: "text-[#c5d52d]",
-    corner: "text-[#c5d52d]",
-  },
-  3: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#ef5966] shadow-[0_8px_20px_rgba(239,89,102,0.15)]",
-    ink: "text-[#ef5966]",
-    corner: "text-[#ef5966]",
-  },
-  4: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#00a6b6] shadow-[0_8px_20px_rgba(0,166,182,0.15)]",
-    ink: "text-[#00a6b6]",
-    corner: "text-[#00a6b6]",
-  },
-  5: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#00985f] shadow-[0_8px_20px_rgba(0,152,95,0.15)]",
-    ink: "text-[#00985f]",
-    corner: "text-[#00985f]",
-  },
-  6: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#b660a8] shadow-[0_8px_20px_rgba(182,96,168,0.15)]",
-    ink: "text-[#b660a8]",
-    corner: "text-[#b660a8]",
-  },
-  7: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#f39192] shadow-[0_8px_20px_rgba(243,145,146,0.15)]",
-    ink: "text-[#f39192]",
-    corner: "text-[#f39192]",
-  },
-  8: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#8cc63f] shadow-[0_8px_20px_rgba(140,198,63,0.15)]",
-    ink: "text-[#8cc63f]",
-    corner: "text-[#8cc63f]",
-  },
-  9: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#f27023] shadow-[0_8px_20px_rgba(242,112,35,0.15)]",
-    ink: "text-[#f27023]",
-    corner: "text-[#f27023]",
-  },
-  10: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#ed1c24] shadow-[0_8px_20px_rgba(237,28,36,0.15)]",
-    ink: "text-[#ed1c24]",
-    corner: "text-[#ed1c24]",
-  },
-  11: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#6ca8d2] shadow-[0_8px_20px_rgba(108,168,210,0.15)]",
-    ink: "text-[#6ca8d2]",
-    corner: "text-[#6ca8d2]",
-  },
-  12: {
-    shell:
-      "border-[#d4c5a9]/70 bg-[#f5eedc] text-[#7a6a61] shadow-[0_8px_20px_rgba(122,106,97,0.15)]",
-    ink: "text-[#7a6a61]",
-    corner: "text-[#7a6a61]",
-  },
-};
-
-const MODIFIER_CARD_STYLE = {
-  shell: "border-[#e59b15]/70 bg-[#ffb020] text-[#e64c5e] shadow-[0_8px_20px_rgba(255,176,32,0.3)]",
-  ink: "text-[#e64c5e]",
-  corner: "text-[#cc3a4a]",
-};
-
-const ACTION_CARD_STYLES = {
-  freeze: {
-    shell:
-      "border-[#1ea6b8]/70 bg-[#26c6da] text-[#1a4b68] shadow-[0_8px_20px_rgba(38,198,218,0.3)]",
-    ink: "text-[#1a4b68]",
-    corner: "text-[#123b54]",
-  },
-  flip_three: {
-    shell:
-      "border-[#e6d800]/70 bg-[#fff000] text-[#4a4a4a] shadow-[0_8px_20px_rgba(255,240,0,0.3)]",
-    ink: "text-[#4a4a4a]",
-    corner: "text-[#333333]",
-  },
-  second_chance: {
-    shell:
-      "border-[#e66a55]/70 bg-[#ff7e67] text-[#ffffff] shadow-[0_8px_20px_rgba(255,126,103,0.3)]",
-    ink: "text-[#ffffff]",
-    corner: "text-[#ffffff]",
-  },
-} as const;
 
 type Flip7CardProps = {
   label: string;
@@ -128,23 +23,27 @@ type Flip7CardProps = {
   | { kind: "action"; actionKind: "freeze" | "flip_three" | "second_chance" }
 );
 
-function getCardStyle(props: Flip7CardProps) {
+function FaceContent(props: Flip7CardProps) {
   if (props.kind === "number") {
-    return NUMBER_CARD_STYLES[props.numberValue];
+    return <NumberCardContent numberValue={props.numberValue} />;
   }
-
   if (props.kind === "modifier") {
-    return MODIFIER_CARD_STYLE;
+    return <ModifierCardContent modifierValue={props.modifierValue} />;
   }
-
-  return ACTION_CARD_STYLES[props.actionKind];
+  return <ActionCardContent actionKind={props.actionKind} />;
 }
 
-export function Flip7Card(props: Flip7CardProps) {
-  const style = getCardStyle(props);
+function ScreenReaderSummary(props: Flip7CardProps) {
   const t = useTranslations("Cards");
 
-  const centerLabel =
+  const kindLabel =
+    props.kind === "number"
+      ? t("kindNumber")
+      : props.kind === "modifier"
+        ? t("kindModifier")
+        : t("kindAction");
+
+  const valueLabel =
     props.kind === "number"
       ? String(props.numberValue)
       : props.kind === "modifier"
@@ -153,6 +52,16 @@ export function Flip7Card(props: Flip7CardProps) {
           : t("modifier.plus", { value: props.modifierValue as number })
         : t(`action.${props.actionKind}`);
 
+  return (
+    <div className="sr-only">
+      <span>{kindLabel}</span>
+      <span>{t("numberLine", { label: props.label })}</span>
+      <span>{valueLabel}</span>
+    </div>
+  );
+}
+
+export function Flip7Card(props: Flip7CardProps) {
   const shellClass = cn(
     "flip7-card-shell w-32 shrink-0 sm:w-48",
     props.dealing && "flip7-card-deal",
@@ -162,24 +71,9 @@ export function Flip7Card(props: Flip7CardProps) {
   );
 
   const faceUp = (
-    <div
-      className={cn(
-        "absolute inset-0 overflow-hidden rounded-2xl border p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] [backface-visibility:hidden] sm:p-3",
-        style.shell,
-      )}
-    >
-      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2 text-center">
-        <div
-          className={cn(
-            "font-heading text-4xl leading-none tracking-[-0.06em] sm:text-8xl",
-            style.ink,
-            props.kind !== "number" && "text-2xl tracking-[0.08em] uppercase sm:text-3xl",
-          )}
-        >
-          {centerLabel}
-        </div>
-      </div>
-      <div className="pointer-events-none absolute inset-2 rounded-xl border border-white/18" />
+    <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden]">
+      <ScreenReaderSummary {...props} />
+      <FaceContent {...props} />
     </div>
   );
 

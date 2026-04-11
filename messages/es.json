@@ -125,14 +125,44 @@
     "kindAction": "Acción",
     "scoreLine": "Puntos",
     "numberLine": "N.º {label}",
+    "numberName": {
+      "0": "CERO",
+      "1": "UNO",
+      "2": "DOS",
+      "3": "TRES",
+      "4": "CUATRO",
+      "5": "CINCO",
+      "6": "SEIS",
+      "7": "SIETE",
+      "8": "OCHO",
+      "9": "NUEVE",
+      "10": "DIEZ",
+      "11": "ONCE",
+      "12": "DOCE"
+    },
     "action": {
       "flip_three": "Tres más",
       "freeze": "Congelar",
       "second_chance": "Segunda oportunidad"
     },
+    "actionTitle": {
+      "flip_three_line1": "VOLTEA",
+      "flip_three_line2": "TRES",
+      "freeze": "CONGELAR",
+      "second_chance_line1": "SEGUNDA",
+      "second_chance_line2": "OPORTUNIDAD"
+    },
+    "actionHelper": {
+      "playOnActive": "JUEGA SOBRE UN JUGADOR ACTIVO",
+      "saveUntilNeeded": "GUARDA ESTA CARTA HASTA QUE LA NECESITES",
+      "instant": "INSTANTÁNEA",
+      "action": "ACCIÓN"
+    },
     "modifier": {
       "x2": "×2",
-      "plus": "+{value}"
+      "plus": "+{value}",
+      "effectPlus": "+{value} LA SUMA DE TUS CARTAS NUMÉRICAS",
+      "effectX2": "×2 LA SUMA DE TUS CARTAS NUMÉRICAS"
     }
   },
   "ScoreSummary": {

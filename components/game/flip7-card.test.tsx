@@ -39,7 +39,7 @@ describe("Flip7Card", () => {
     render(withIntlEn(<Flip7Card kind="action" actionKind="freeze" label="F" />));
 
     expect(screen.getAllByText(/freeze/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getByText(/action/i)).toBeInTheDocument();
+    expect(screen.getByText("Action", { exact: true })).toBeInTheDocument();
   });
 
   it("hides face value when face down", () => {
