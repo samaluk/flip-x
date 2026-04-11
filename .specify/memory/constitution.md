@@ -87,6 +87,7 @@ Amendments require the constitution file to be updated together with any affecte
 templates or workflow documents in the same change.
 
 Versioning follows semantic versioning for governance documents:
+
 - MAJOR for removed or fundamentally redefined principles or governance rules.
 - MINOR for new principles, new mandatory sections, or materially expanded guidance.
 - PATCH for clarifications, wording improvements, or non-semantic fixes.

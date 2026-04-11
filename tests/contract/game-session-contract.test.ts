@@ -1,0 +1,102 @@
+import { describe, expect, it } from "vitest";
+
+import { buildMatchSnapshot } from "@/lib/game/view-models";
+import { createPlayerRoundStates, createRoundRuntime } from "@/lib/game/turn-resolution";
+
+describe("game session contract", () => {
+  it("returns the expected top-level snapshot fields", () => {
+    const snapshot = buildMatchSnapshot({
+      matchId: "match-1",
+      status: "in_progress",
+      targetScore: 200,
+      currentRoundNumber: 1,
+      dealerSeat: 0,
+      viewerPlayerId: "p1",
+      round: {
+        phase: "player_turns",
+        roundNumber: 1,
+        dealerSeat: 0,
+        drawPile: [],
+        discardPile: [],
+        openingSeatIndex: 3,
+        turnSeatIndex: 0,
+        activePlayerId: "p1",
+        endedBy: "unknown",
+        pendingAction: null,
+      },
+      players: [
+        {
+          playerId: "p1",
+          displayName: "Alex",
+          seatIndex: 0,
+          totalScore: 0,
+          isClaimed: true,
+        },
+      ],
+      playerStates: {
+        p1: {
+          playerId: "p1",
+          status: "active",
+          numberCards: [],
+          modifierCards: [],
+          heldActionCards: [],
+          roundScore: 0,
+          pointsAtRisk: 0,
+          hasFlip7: false,
+        },
+      },
+      latestEvent: {
+        eventType: "initial_deal",
+        actorPlayerId: "p1",
+        targetPlayerId: "p1",
+        summary: "Initial deal revealed 7 for the player.",
+      },
+    });
+
+    expect(snapshot).toEqual(
+      expect.objectContaining({
+        matchId: "match-1",
+        status: "in_progress",
+        currentRoundNumber: 1,
+        dealerSeat: 0,
+        viewerPlayerId: "p1",
+        activePlayerId: "p1",
+        latestEvent: {
+          type: "initial_deal",
+          summary: "Initial deal revealed 7 for the player.",
+        },
+      }),
+    );
+  });
+
+  it("supports next-round snapshots with advanced round number and dealer seat", () => {
+    const players = [
+      { playerId: "p1", seatIndex: 0 },
+      { playerId: "p2", seatIndex: 1 },
+      { playerId: "p3", seatIndex: 2 },
+    ];
+    const round = createRoundRuntime(players, 2, 1);
+    const playerStates = createPlayerRoundStates(players);
+
+    const snapshot = buildMatchSnapshot({
+      matchId: "match-2",
+      status: "in_progress",
+      targetScore: 200,
+      currentRoundNumber: 2,
+      dealerSeat: 1,
+      viewerPlayerId: null,
+      round,
+      players: [
+        { playerId: "p1", displayName: "Alex", seatIndex: 0, totalScore: 15, isClaimed: true },
+        { playerId: "p2", displayName: "Blair", seatIndex: 1, totalScore: 30, isClaimed: false },
+        { playerId: "p3", displayName: "Casey", seatIndex: 2, totalScore: 25, isClaimed: false },
+      ],
+      playerStates,
+      latestEvent: null,
+    });
+
+    expect(snapshot.currentRoundNumber).toBe(2);
+    expect(snapshot.dealerSeat).toBe(1);
+    expect(snapshot.players.map((player) => player.totalScore)).toEqual([15, 30, 25]);
+  });
+});
