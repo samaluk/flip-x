@@ -123,10 +123,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at top, rgba(83, 143, 132, 0.28), transparent 32%),
-      linear-gradient(180deg, #163146 0%, #0b1824 100%);
-    min-height: 100vh;
+    min-height: 100dvh;
   }
   html {
     @apply font-sans;

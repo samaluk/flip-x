@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input";
 
 interface JoinLobbyDialogProps {
-  trigger: React.ReactNode;
+  trigger: React.ReactElement;
 }
 
 export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
@@ -53,24 +53,28 @@ export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent>
+      <DialogTrigger render={trigger} />
+      <DialogContent className="bg-zinc-950 border-zinc-800 text-zinc-100">
         <DialogHeader>
-          <DialogTitle>Join a Game</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-xl font-medium">Join a Game</DialogTitle>
+          <DialogDescription className="text-zinc-400">
             Enter the 4-character code to join an existing lobby.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="mt-4">
           <div className="flex gap-3">
             <Input
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
               placeholder="ABCD"
               maxLength={4}
-              className="font-mono text-center text-xl tracking-widest"
+              className="font-mono text-center text-2xl tracking-[0.25em] h-14 bg-zinc-900/50 border-zinc-800 focus-visible:ring-zinc-700 text-zinc-100 placeholder:text-zinc-600 uppercase"
             />
-            <Button type="submit" disabled={isSubmitting || code.trim().length !== 4}>
+            <Button 
+              type="submit" 
+              disabled={isSubmitting || code.trim().length !== 4}
+              className="h-14 px-8 bg-zinc-100 text-zinc-950 hover:bg-white active:scale-[0.98] transition-all font-medium"
+            >
               Join
             </Button>
           </div>
