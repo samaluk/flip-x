@@ -1,101 +1,21 @@
-"use client";
+import { getTranslations } from "next-intl/server";
 
-import { motion } from "motion/react";
-import { useQuery } from "convex/react";
-import { useTranslations } from "next-intl";
-import { use } from "react";
-
+import { HomeLobbyCodeGate } from "@/components/home/home-lobby-code-gate";
 import { JoinLobbyDialog } from "@/components/game/join-lobby-dialog";
 import { MatchSetup } from "@/components/game/match-setup";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { api } from "@/convex/_generated/api";
-import { Link } from "@/i18n/navigation";
 
-const stagger = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 },
-  },
-} as const;
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: { type: "spring" as const, stiffness: 100, damping: 20 },
-  },
-};
-
-export default function Home({ searchParams }: { searchParams: Promise<{ code?: string }> }) {
-  const { code } = use(searchParams);
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ code?: string }>;
+}) {
+  const { code } = await searchParams;
   const codeParam = code?.toUpperCase();
-  const t = useTranslations("Home");
-  const tLobby = useTranslations("Lobby");
-  const getMatchByCode = useQuery(
-    api.matches.getMatchByCode,
-    codeParam ? { lobbyCode: codeParam } : "skip",
-  );
+  const t = await getTranslations("Home");
+  const tLobby = await getTranslations("Lobby");
 
-  if (codeParam && getMatchByCode === undefined) {
-    return (
-      <div className="flex min-h-[100dvh] flex-1 items-center justify-center">
-        <div className="w-full max-w-md space-y-4 px-6">
-          <Skeleton className="h-8 w-48 rounded-lg" />
-          <Skeleton className="h-4 w-72 rounded-lg" />
-          <Skeleton className="h-12 w-full rounded-xl" />
-          <Skeleton className="h-10 w-32 rounded-lg" />
-        </div>
-      </div>
-    );
-  }
-
-  if (codeParam && getMatchByCode === null) {
-    return (
-      <main className="selection:bg-primary/20 flex min-h-[100dvh] flex-1 items-center justify-center px-6">
-        <div className="w-full max-w-md space-y-6 text-center">
-          <div>
-            <h2 className="font-heading text-foreground mb-2 text-2xl tracking-tight">
-              {t("lobbyNotFoundTitle")}
-            </h2>
-            <p className="text-muted-foreground text-sm">
-              {t("lobbyNotFoundBody", { code: codeParam })}
-            </p>
-          </div>
-          <Button
-            render={<Link href="/" />}
-            nativeButton={false}
-            variant="default"
-            className="w-full sm:w-auto"
-          >
-            {t("backHome")}
-          </Button>
-        </div>
-      </main>
-    );
-  }
-
-  if (codeParam && getMatchByCode) {
-    return (
-      <main className="selection:bg-primary/20 flex min-h-[100dvh] flex-1 items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ type: "spring", stiffness: 100, damping: 20 }}
-          className="w-full max-w-md px-6"
-        >
-          <h2 className="font-heading text-foreground mb-2 text-2xl tracking-tight">
-            {t("joinTableTitle")}
-          </h2>
-          <p className="text-muted-foreground mb-8 text-sm">
-            {t("joinTableBody", { code: codeParam })}
-          </p>
-          <MatchSetup joinCode={codeParam} existingMatchId={getMatchByCode.matchId} />
-        </motion.div>
-      </main>
-    );
+  if (codeParam) {
+    return <HomeLobbyCodeGate code={codeParam} />;
   }
 
   return (
@@ -112,23 +32,17 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
       <div className="z-10 mx-auto w-full max-w-[1400px] px-6 py-16 md:py-24">
         <div className="grid items-start gap-16 lg:grid-cols-[1.4fr_1fr] lg:gap-24">
-          <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-xl">
-            <motion.h1
-              variants={fadeUp}
-              className="text-foreground mb-6 text-4xl leading-none font-medium tracking-tighter md:text-6xl"
-            >
+          <div className="max-w-xl">
+            <h1 className="text-foreground mb-6 text-4xl leading-none font-medium tracking-tighter md:text-6xl">
               {t("heroLine1")}
               <br />
               {t("heroLine2")}
-            </motion.h1>
-            <motion.p
-              variants={fadeUp}
-              className="text-muted-foreground mb-12 max-w-[50ch] text-base leading-relaxed"
-            >
+            </h1>
+            <p className="text-muted-foreground mb-12 max-w-[50ch] text-base leading-relaxed">
               {t("heroBody")}
-            </motion.p>
+            </p>
 
-            <motion.div variants={fadeUp}>
+            <div>
               <div className="mb-3">
                 <h2 className="font-heading text-foreground text-lg tracking-tight">
                   {t("createTitle")}
@@ -136,15 +50,10 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
                 <p className="text-muted-foreground mt-1 text-sm">{t("createSubtitle")}</p>
               </div>
               <MatchSetup />
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.3 }}
-            className="hidden flex-col gap-6 pt-8 lg:flex"
-          >
+          <div className="hidden flex-col gap-6 pt-8 lg:flex">
             <JoinLobbyDialog
               trigger={
                 <button
@@ -189,15 +98,10 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="mt-8 lg:hidden"
-        >
+        <div className="mt-8 lg:hidden">
           <JoinLobbyDialog
             trigger={
               <button
@@ -216,7 +120,7 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
               </button>
             }
           />
-        </motion.div>
+        </div>
       </div>
     </main>
   );

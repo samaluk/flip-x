@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { AlertTriangleIcon, RefreshCwIcon, TrophyIcon, UserRoundIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 import { PlayerLane } from "@/components/game/player-lane";
 import { ScoreSummary } from "@/components/game/score-summary";
@@ -68,27 +68,27 @@ export function GameTableView({
   const tCards = useTranslations("Cards");
   const tCommon = useTranslations("Common");
 
-  const [layoutMode, setLayoutModeState] = useState<"list" | "table">("list");
+  const [layoutMode, setLayoutModeState] = useState<"list" | "table">(() => {
+    if (typeof window === "undefined") {
+      return "list";
+    }
 
-  useEffect(() => {
     try {
       const raw = window.localStorage.getItem(GAME_TABLE_LAYOUT_STORAGE_KEY);
-      if (raw === "list" || raw === "table") {
-        setLayoutModeState(raw);
-      }
+      return raw === "table" ? "table" : "list";
     } catch {
-      /* ignore */
+      return "list";
     }
-  }, []);
+  });
 
-  const setLayoutMode = useCallback((mode: "list" | "table") => {
+  const setLayoutMode = (mode: "list" | "table") => {
     setLayoutModeState(mode);
     try {
       window.localStorage.setItem(GAME_TABLE_LAYOUT_STORAGE_KEY, mode);
     } catch {
       /* ignore */
     }
-  }, []);
+  };
 
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,

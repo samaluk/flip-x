@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { BanIcon, HandIcon, SparklesIcon, WandSparklesIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
@@ -37,20 +36,15 @@ export function TurnControls({
   if (snapshot.roundStatus === "completed") {
     return (
       <div className="flex flex-wrap items-center gap-3">
-        <motion.div
-          whileTap={{ scale: 0.97 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        <Button
+          onClick={onStartNextRound}
+          disabled={!snapshot.viewerPlayerId}
+          size="lg"
+          className="rounded-full px-6"
         >
-          <Button
-            onClick={onStartNextRound}
-            disabled={!snapshot.viewerPlayerId}
-            size="lg"
-            className="rounded-full px-6"
-          >
-            <SparklesIcon />
-            {t("startNextRound")}
-          </Button>
-        </motion.div>
+          <SparklesIcon />
+          {t("startNextRound")}
+        </Button>
       </div>
     );
   }
@@ -72,11 +66,7 @@ export function TurnControls({
           {snapshot.players
             .filter((player) => pendingAction.eligibleTargetIds.includes(player.playerId))
             .map((player) => (
-              <motion.div
-                key={player.playerId}
-                whileTap={{ scale: 0.97 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
+              <div key={player.playerId}>
                 <Button
                   variant="outline"
                   disabled={!viewerCanResolveAction}
@@ -86,7 +76,7 @@ export function TurnControls({
                   <WandSparklesIcon />
                   {player.displayName}
                 </Button>
-              </motion.div>
+              </div>
             ))}
         </div>
       </div>
@@ -99,35 +89,20 @@ export function TurnControls({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <motion.div
-        whileTap={{ scale: 0.97 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      <Button onClick={onHit} disabled={!viewerControlsTurn} size="lg" className="rounded-full px-6">
+        <HandIcon />
+        {t("hitFor", { name: activePlayer.displayName })}
+      </Button>
+      <Button
+        variant="outline"
+        onClick={onStay}
+        disabled={!viewerControlsTurn}
+        size="lg"
+        className="rounded-full px-6"
       >
-        <Button
-          onClick={onHit}
-          disabled={!viewerControlsTurn}
-          size="lg"
-          className="rounded-full px-6"
-        >
-          <HandIcon />
-          {t("hitFor", { name: activePlayer.displayName })}
-        </Button>
-      </motion.div>
-      <motion.div
-        whileTap={{ scale: 0.97 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      >
-        <Button
-          variant="outline"
-          onClick={onStay}
-          disabled={!viewerControlsTurn}
-          size="lg"
-          className="rounded-full px-6"
-        >
-          <BanIcon />
-          {t("stayFor", { name: activePlayer.displayName })}
-        </Button>
-      </motion.div>
+        <BanIcon />
+        {t("stayFor", { name: activePlayer.displayName })}
+      </Button>
       {!snapshot.viewerPlayerId ? (
         <div className="text-muted-foreground text-xs">{t("claimToPlay")}</div>
       ) : !viewerControlsTurn ? (

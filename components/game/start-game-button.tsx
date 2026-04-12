@@ -4,8 +4,7 @@ import { useSessionMutation } from "convex-helpers/react/sessions";
 import { motion } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
-import { startTransition, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -20,7 +19,6 @@ interface StartGameButtonProps {
 }
 
 export function StartGameButton({ matchId, isHost, playerCount }: StartGameButtonProps) {
-  const router = useRouter();
   const startMatch = useSessionMutation(api.matches.startMatch);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("StartGameButton");
@@ -31,9 +29,6 @@ export function StartGameButton({ matchId, isHost, playerCount }: StartGameButto
     try {
       await startMatch({
         matchId: matchId as Id<"matches">,
-      });
-      startTransition(() => {
-        router.refresh();
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";

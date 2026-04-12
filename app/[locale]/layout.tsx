@@ -35,8 +35,8 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
+      <LanguageSwitcher />
       <ConvexClientProvider>
-        <LanguageSwitcher />
         {children}
       </ConvexClientProvider>
     </NextIntlClientProvider>

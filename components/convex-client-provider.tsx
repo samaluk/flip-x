@@ -3,26 +3,27 @@
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { SessionProvider } from "convex-helpers/react/sessions";
-import { useEffect, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 function useLocalSessionStorage(key: string, initialValue: SessionId | undefined) {
-  const [value, setValue] = useState<SessionId | undefined>(initialValue);
+  const [value, setValue] = useState<SessionId | undefined>(() => {
+    if (typeof window === "undefined") {
+      return initialValue;
+    }
 
-  useEffect(() => {
     const existing = window.localStorage.getItem(key);
-
     if (existing) {
-      setValue(existing as SessionId);
-      return;
+      return existing as SessionId;
     }
 
     if (initialValue !== undefined) {
       window.localStorage.setItem(key, initialValue);
-      setValue(initialValue);
     }
-  }, [initialValue, key]);
+
+    return initialValue;
+  });
 
   const updateValue = (nextValue: SessionId | undefined) => {
     if (nextValue === undefined) {

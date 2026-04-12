@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 
 import type { MatchSnapshot } from "@/lib/game/view-models";
@@ -9,12 +8,7 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
   const t = useTranslations("ScoreSummary");
 
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ type: "spring", stiffness: 100, damping: 20, delay: 0.1 }}
-      className="game-score-summary surface-elevated bg-card text-card-foreground overflow-hidden rounded-2xl p-5"
-    >
+    <section className="game-score-summary surface-elevated bg-card text-card-foreground overflow-hidden rounded-2xl p-5">
       <div className="space-y-1">
         <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
           {t("title")}
@@ -66,6 +60,6 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
           </tbody>
         </table>
       </div>
-    </motion.section>
+    </section>
   );
 }
