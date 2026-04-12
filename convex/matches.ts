@@ -210,7 +210,8 @@ export const joinMatch = mutationWithSession({
       throw new Error("NAME_ALREADY_TAKEN");
     }
 
-    const nextSeat = players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
+    const nextSeat =
+      players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
     const playerId = await ctx.db.insert("players", {
       matchId: args.matchId,
       displayName: playerName,

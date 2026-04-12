@@ -107,12 +107,12 @@ export function GameTableView({
   const laneProps = { disableCardFlip3d } as const;
 
   const tableCallSection = (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-muted/30 px-4 py-4">
+    <div className="border-border bg-muted/30 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-4">
       <div className="space-y-1">
-        <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
+        <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
           {t("tableCall")}
         </div>
-        <div className="text-sm text-foreground">
+        <div className="text-foreground text-sm">
           {snapshot.roundStatus === "completed"
             ? t("roundScoredReady")
             : activePlayer
@@ -120,11 +120,11 @@ export function GameTableView({
               : t("waitingResolution")}
         </div>
         {viewerPlayer ? (
-          <div className="text-xs text-muted-foreground">
+          <div className="text-muted-foreground text-xs">
             {t("playingAs", { name: viewerPlayer.displayName })}
           </div>
         ) : (
-          <div className="text-xs text-muted-foreground">{t("joinHint")}</div>
+          <div className="text-muted-foreground text-xs">{t("joinHint")}</div>
         )}
       </div>
       <TurnControls
@@ -142,7 +142,7 @@ export function GameTableView({
       title={t("latestResolution")}
       body={latestBody}
       bodyClassName="game-latest-resolution"
-      icon={<AlertTriangleIcon className="size-4 text-muted-foreground" />}
+      icon={<AlertTriangleIcon className="text-muted-foreground size-4" />}
       subtext={snapshot.latestEvent?.playerNames}
     />
   );
@@ -166,18 +166,18 @@ export function GameTableView({
 
   return (
     <div className="flex flex-col gap-6">
-      <section className="surface-elevated overflow-hidden rounded-2xl text-foreground">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border px-5 py-4">
+      <section className="surface-elevated text-foreground overflow-hidden rounded-2xl">
+        <div className="border-border flex flex-wrap items-start justify-between gap-4 border-b px-5 py-4">
           <div className="space-y-1.5">
             <div className="flex flex-wrap items-center gap-3">
-              <h1 className="font-heading text-xl tracking-tight font-medium text-foreground">
+              <h1 className="font-heading text-foreground text-xl font-medium tracking-tight">
                 {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
               </h1>
               {snapshot.status === "completed" ? (
-                <TrophyIcon className="size-5 text-primary" />
+                <TrophyIcon className="text-primary size-5" />
               ) : null}
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-muted-foreground text-sm">
               {t("roundRace", {
                 round: snapshot.currentRoundNumber,
                 target: snapshot.targetScore,
@@ -187,7 +187,7 @@ export function GameTableView({
 
           <div className="flex flex-wrap items-center gap-2">
             <div
-              className="hidden items-center gap-1 rounded-lg border border-border bg-muted/20 p-0.5 lg:flex"
+              className="border-border bg-muted/20 hidden items-center gap-1 rounded-lg border p-0.5 lg:flex"
               role="group"
               aria-label={t("layoutPreferenceAria")}
             >
@@ -245,10 +245,10 @@ export function GameTableView({
             >
               <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
                 <div>
-                  <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
+                  <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                     {t("tableLayout")}
                   </div>
-                  <div className="text-sm text-muted-foreground">{t("tableLayoutHint")}</div>
+                  <div className="text-muted-foreground text-sm">{t("tableLayoutHint")}</div>
                 </div>
                 {snapshot.status !== "completed" && snapshot.roundStatus === "player_turns" ? (
                   <Badge variant="outline">
@@ -259,11 +259,9 @@ export function GameTableView({
               </div>
 
               {freezeLaneLayout ? (
-                <div className="max-h-[60vh] space-y-3 overflow-y-auto bg-card pr-1">
+                <div className="bg-card max-h-[60vh] space-y-3 overflow-y-auto pr-1">
                   {sortedPlayers.sorted.map((player) => (
-                    <div key={player.playerId}>
-                      {renderPlayerLane(player)}
-                    </div>
+                    <div key={player.playerId}>{renderPlayerLane(player)}</div>
                   ))}
                 </div>
               ) : (
@@ -271,7 +269,7 @@ export function GameTableView({
                   variants={listStagger}
                   initial="hidden"
                   animate="show"
-                  className="max-h-[60vh] space-y-3 overflow-y-auto bg-card pr-1"
+                  className="bg-card max-h-[60vh] space-y-3 overflow-y-auto pr-1"
                 >
                   <AnimatePresence>
                     {sortedPlayers.sorted.map((player) => (
@@ -297,7 +295,7 @@ export function GameTableView({
               data-game-round-table
             >
               <div
-                className="pointer-events-none absolute inset-[10%] rounded-[50%] border border-dashed border-border/50 bg-muted/15 shadow-inner"
+                className="border-border/50 bg-muted/15 pointer-events-none absolute inset-[10%] rounded-[50%] border border-dashed shadow-inner"
                 aria-hidden
               />
 
@@ -307,10 +305,10 @@ export function GameTableView({
               </div>
 
               <div className="absolute top-3 left-1/2 z-[5] -translate-x-1/2 text-center">
-                <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
+                <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
                   {t("roundTableTitle")}
                 </div>
-                <div className="text-xs text-muted-foreground">{t("roundTableHint")}</div>
+                <div className="text-muted-foreground text-xs">{t("roundTableHint")}</div>
               </div>
 
               {roundOpponents.map((player, index) => {
@@ -436,13 +434,13 @@ function InfoPanel({
   subtext?: string;
 }) {
   return (
-    <section className="rounded-xl border border-border bg-card p-4">
-      <div className="flex items-center gap-2 text-xs font-medium tracking-wide uppercase text-muted-foreground">
+    <section className="border-border bg-card rounded-xl border p-4">
+      <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-wide uppercase">
         {icon}
         {title}
       </div>
       <div className={cn("mt-2 text-sm leading-6 text-foreground", bodyClassName)}>{body}</div>
-      {subtext && <div className="mt-1 text-xs text-muted-foreground">{subtext}</div>}
+      {subtext && <div className="text-muted-foreground mt-1 text-xs">{subtext}</div>}
     </section>
   );
 }

@@ -341,11 +341,7 @@ export function ActionCardContent({
                 compact={compact}
               />
               <FannedCardsIcon
-                className={cardTw(
-                  compact,
-                  "h-8 w-10 shrink-0 rotate-180",
-                  "sm:h-10 sm:w-12",
-                )}
+                className={cardTw(compact, "h-8 w-10 shrink-0 rotate-180", "sm:h-10 sm:w-12")}
               />
             </>
           ) : actionKind === "freeze" ? (
@@ -362,11 +358,7 @@ export function ActionCardContent({
                 bodyFill={p.lockBody}
                 shackleFill={p.lockShackle}
                 stroke={p.border}
-                className={cardTw(
-                  compact,
-                  "h-8 w-7 shrink-0 rotate-180",
-                  "sm:h-9 sm:w-8",
-                )}
+                className={cardTw(compact, "h-8 w-7 shrink-0 rotate-180", "sm:h-9 sm:w-8")}
               />
             </>
           ) : (

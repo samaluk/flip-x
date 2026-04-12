@@ -4,9 +4,7 @@ import type { MatchSnapshot } from "@/lib/game/view-models";
 
 const MATCH_ID = "jz7abcd1234567890";
 
-function numbers(
-  pairs: Array<{ label: string; value: number }>,
-): NumberCard[] {
+function numbers(pairs: Array<{ label: string; value: number }>): NumberCard[] {
   return pairs.map(({ label, value }) => ({
     id: `n-${label}-${value}`,
     type: "number" as const,
@@ -15,7 +13,9 @@ function numbers(
   }));
 }
 
-function modifiers(items: Array<{ id: string; value: ModifierCard["modifierValue"] }>): ModifierCard[] {
+function modifiers(
+  items: Array<{ id: string; value: ModifierCard["modifierValue"] }>,
+): ModifierCard[] {
   return items.map(({ id, value }) => ({
     id: `m-${id}`,
     type: "modifier" as const,

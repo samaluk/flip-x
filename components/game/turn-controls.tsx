@@ -59,12 +59,12 @@ export function TurnControls({
     const pendingAction: PendingAction = snapshot.pendingAction;
 
     return (
-      <div className="flex flex-col gap-4 rounded-xl border border-border bg-muted/30 p-4">
+      <div className="border-border bg-muted/30 flex flex-col gap-4 rounded-xl border p-4">
         <div className="space-y-1">
-          <div className="text-xs font-medium tracking-wide uppercase text-muted-foreground">
+          <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
             {t("actionCardTitle")}
           </div>
-          <div className="text-sm text-foreground">
+          <div className="text-foreground text-sm">
             {pendingAction.actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt")}
           </div>
         </div>
@@ -99,7 +99,10 @@ export function TurnControls({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+      <motion.div
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
         <Button
           onClick={onHit}
           disabled={!viewerControlsTurn}
@@ -110,7 +113,10 @@ export function TurnControls({
           {t("hitFor", { name: activePlayer.displayName })}
         </Button>
       </motion.div>
-      <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+      <motion.div
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      >
         <Button
           variant="outline"
           onClick={onStay}
@@ -123,9 +129,9 @@ export function TurnControls({
         </Button>
       </motion.div>
       {!snapshot.viewerPlayerId ? (
-        <div className="text-xs text-muted-foreground">{t("claimToPlay")}</div>
+        <div className="text-muted-foreground text-xs">{t("claimToPlay")}</div>
       ) : !viewerControlsTurn ? (
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           {t("waitingFor", { name: activePlayer.displayName })}
         </div>
       ) : null}

@@ -44,9 +44,7 @@ describe("Flip7Card", () => {
 
   it("hides face value when face down", () => {
     render(
-      withIntlEn(
-        <Flip7Card kind="number" numberValue={3} label="B" faceDown disableFlip3d />,
-      ),
+      withIntlEn(<Flip7Card kind="number" numberValue={3} label="B" faceDown disableFlip3d />),
     );
 
     expect(screen.queryByText("3")).not.toBeInTheDocument();

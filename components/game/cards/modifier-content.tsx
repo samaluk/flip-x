@@ -18,7 +18,8 @@ export function ModifierCardContent({
   const t = useTranslations("Cards");
   const p = MODIFIER_CARD_PALETTE;
 
-  const centerLabel = modifierValue === "x2" ? t("modifier.x2") : t("modifier.plus", { value: modifierValue });
+  const centerLabel =
+    modifierValue === "x2" ? t("modifier.x2") : t("modifier.plus", { value: modifierValue });
   const effectLine =
     modifierValue === "x2"
       ? t("modifier.effectX2")

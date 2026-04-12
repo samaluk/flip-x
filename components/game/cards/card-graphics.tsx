@@ -29,12 +29,7 @@ export function ModifierShellFan({
         strokeWidth={1.4}
         strokeLinejoin="round"
       />
-      <path
-        d="M60 8 L32 26 L88 26 Z"
-        stroke={stroke}
-        strokeWidth={1.2}
-        fill="none"
-      />
+      <path d="M60 8 L32 26 L88 26 Z" stroke={stroke} strokeWidth={1.2} fill="none" />
       <path d="M44 22 L76 22" stroke={stroke} strokeWidth={1} strokeLinecap="round" />
     </svg>
   );

@@ -124,9 +124,7 @@ export function NumberCardContent({
     >
       <div className="relative min-h-0 w-full flex-1">
         <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center">
-          <div
-            className={cardTw(compact, "-translate-y-3", "sm:-translate-y-5")}
-          >
+          <div className={cardTw(compact, "-translate-y-3", "sm:-translate-y-5")}>
             <OutlinedDigit
               value={numberValue}
               fill={palette.fill}
@@ -138,7 +136,7 @@ export function NumberCardContent({
         </div>
 
         <div className="relative z-[1] flex h-full min-h-0 flex-col justify-end">
-          <div className="relative z-[2] flex justify-center pb-1 pt-0.5">
+          <div className="relative z-[2] flex justify-center pt-0.5 pb-1">
             <div
               className={cardTw(
                 compact,

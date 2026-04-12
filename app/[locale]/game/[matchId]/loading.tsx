@@ -12,7 +12,7 @@ export default function LoadingGamePage() {
       </div>
 
       <div className="surface-elevated rounded-2xl p-5">
-        <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
+        <div className="border-border flex items-start justify-between gap-4 border-b pb-4">
           <div className="space-y-2">
             <Skeleton className="h-6 w-44 rounded-lg" />
             <Skeleton className="h-4 w-64 rounded-lg" />

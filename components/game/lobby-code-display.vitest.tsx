@@ -10,7 +10,7 @@ describe("LobbyCodeDisplay VRT", () => {
   test("lobby code display", async () => {
     render(
       withIntlEn(
-        <div data-testid="vrt-lobby" className="bg-background p-8 text-foreground">
+        <div data-testid="vrt-lobby" className="bg-background text-foreground p-8">
           <LobbyCodeDisplay code="PLAY" />
         </div>,
       ),

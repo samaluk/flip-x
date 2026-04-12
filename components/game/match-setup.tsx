@@ -88,7 +88,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
     <form onSubmit={onSubmit} className="flex flex-col gap-5">
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-2">
-          <label htmlFor="hostName" className="text-sm font-medium text-foreground">
+          <label htmlFor="hostName" className="text-foreground text-sm font-medium">
             {t("yourName")}
           </label>
           <Input
@@ -110,7 +110,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
                 <Button
                   type="button"
                   variant="ghost"
-                  className="justify-start w-full text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground w-full justify-start transition-colors"
                 >
                   <SparklesIcon className="mr-2 h-4 w-4" />
                   {t("rulesHelp")}
@@ -122,21 +122,21 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
                 <DialogTitle className="text-xl font-medium">{t("rulesTitle")}</DialogTitle>
                 <DialogDescription>{t("rulesIntro")}</DialogDescription>
               </DialogHeader>
-              <div className="flex flex-col gap-4 text-sm text-muted-foreground mt-4">
+              <div className="text-muted-foreground mt-4 flex flex-col gap-4 text-sm">
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="bg-primary/10 text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     1
                   </span>
                   <span>{t("rulesStep1")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="bg-primary/10 text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     2
                   </span>
                   <span>{t("rulesStep2")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="bg-primary/10 text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     3
                   </span>
                   <span>{t("rulesStep3")}</span>
@@ -147,7 +147,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
         </div>
       </div>
 
-      <p className="text-xs text-muted-foreground leading-relaxed">{t("footnote")}</p>
+      <p className="text-muted-foreground text-xs leading-relaxed">{t("footnote")}</p>
 
       <div>
         <button

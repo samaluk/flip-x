@@ -9,9 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 import { cn } from "@/lib/utils";
 
-function statusLabelKey(
-  status: MatchSnapshot["players"][number]["roundStatus"],
-): string | null {
+function statusLabelKey(status: MatchSnapshot["players"][number]["roundStatus"]): string | null {
   switch (status) {
     case "active":
       return null;
@@ -193,7 +191,7 @@ export function PlayerLane({
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-heading text-base font-medium tracking-tight text-foreground">
+            <h3 className="font-heading text-foreground text-base font-medium tracking-tight">
               {player.displayName}
             </h3>
             {isDealer ? (
@@ -204,7 +202,7 @@ export function PlayerLane({
             {isViewer ? (
               <Badge
                 variant="default"
-                className="text-[0.65rem] bg-primary/15 text-primary border-primary/30"
+                className="bg-primary/15 text-primary border-primary/30 text-[0.65rem]"
               >
                 {t("you")}
               </Badge>
@@ -215,7 +213,7 @@ export function PlayerLane({
               </Badge>
             ) : null}
           </div>
-          <div className="text-sm text-muted-foreground">
+          <div className="text-muted-foreground text-sm">
             {t("totalScore", { score: player.totalScore })}
           </div>
         </div>
@@ -230,8 +228,10 @@ export function PlayerLane({
                 {t(roundStatusLabelKey)}
               </Badge>
             ) : null}
-            <div className="text-2xl font-semibold text-foreground tabular-nums">{player.pointsAtRisk}</div>
-            <div className="text-xs text-muted-foreground">{t("pointsAtRisk")}</div>
+            <div className="text-foreground text-2xl font-semibold tabular-nums">
+              {player.pointsAtRisk}
+            </div>
+            <div className="text-muted-foreground text-xs">{t("pointsAtRisk")}</div>
           </div>
         )}
       </div>

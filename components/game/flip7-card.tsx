@@ -73,9 +73,7 @@ export function Flip7Card(props: Flip7CardProps) {
 
   const shellClass = cn(
     "flip7-card-shell shrink-0",
-    isCompact
-      ? "h-[4.75rem] w-[3.68rem] overflow-visible"
-      : "w-32 sm:w-48",
+    isCompact ? "h-[4.75rem] w-[3.68rem] overflow-visible" : "w-32 sm:w-48",
     props.dealing && "flip7-card-deal",
     props.stateAnimation === "bust" && "flip7-card-bust",
     props.stateAnimation === "stay" && "flip7-card-stay",
@@ -84,10 +82,7 @@ export function Flip7Card(props: Flip7CardProps) {
 
   const compactScaleWrap = (node: ReactNode) =>
     isCompact ? (
-      <div
-        className="w-32 origin-top-left"
-        style={{ transform: `scale(${COMPACT_CARD_SCALE})` }}
-      >
+      <div className="w-32 origin-top-left" style={{ transform: `scale(${COMPACT_CARD_SCALE})` }}>
         {node}
       </div>
     ) : (
@@ -102,13 +97,13 @@ export function Flip7Card(props: Flip7CardProps) {
   );
 
   const faceDown = (
-    <div className="absolute inset-0 overflow-hidden rounded-2xl border border-border bg-card p-3 text-primary shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_30px_rgba(0,0,0,0.24)]">
-      <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
-      <div className="pointer-events-none absolute inset-4 rounded-lg border border-primary/10" />
+    <div className="border-border bg-card text-primary absolute inset-0 overflow-hidden rounded-2xl border p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_30px_rgba(0,0,0,0.24)]">
+      <div className="border-primary/20 pointer-events-none absolute inset-2 rounded-xl border" />
+      <div className="border-primary/10 pointer-events-none absolute inset-4 rounded-lg border" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-70" />
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(45deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-60" />
-      <div className="pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2 bg-primary/15" />
-      <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/15" />
+      <div className="bg-primary/15 pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2" />
+      <div className="bg-primary/15 pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2" />
     </div>
   );
 
@@ -125,9 +120,7 @@ export function Flip7Card(props: Flip7CardProps) {
 
   return (
     <motion.div
-      whileHover={
-        isCompact ? { scale: 1.03, y: -1 } : { scale: 1.04, y: -2 }
-      }
+      whileHover={isCompact ? { scale: 1.03, y: -1 } : { scale: 1.04, y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={shellClass}
     >
@@ -139,7 +132,7 @@ export function Flip7Card(props: Flip7CardProps) {
           )}
         >
           {faceUp}
-          <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)]">
+          <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
             {faceDown}
           </div>
         </div>,

@@ -48,7 +48,10 @@ export function StartGameButton({ matchId, isHost, playerCount }: StartGameButto
   }
 
   return (
-    <motion.div whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+    <motion.div
+      whileTap={{ scale: 0.97 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
       <Button
         onClick={handleStart}
         disabled={isSubmitting || playerCount < 2}

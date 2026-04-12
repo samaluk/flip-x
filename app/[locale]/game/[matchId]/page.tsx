@@ -170,10 +170,10 @@ export default function GamePage({
             transition={{ type: "spring", stiffness: 120, damping: 20 }}
             className="surface-elevated rounded-2xl p-6"
           >
-            <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
+            <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
               {t("joinTitle")}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1 mb-4">{t("joinSubtitle")}</p>
+            <p className="text-muted-foreground mt-1 mb-4 text-sm">{t("joinSubtitle")}</p>
             <form onSubmit={handleJoin} className="flex gap-3">
               <Input
                 value={playerName}
@@ -194,11 +194,7 @@ export default function GamePage({
         ) : null}
       </AnimatePresence>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}>
         <GameTable snapshot={snapshot} />
       </motion.div>
     </main>

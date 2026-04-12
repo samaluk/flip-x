@@ -19,13 +19,13 @@ function snapshot(): MatchSnapshot {
     endedBy: "unknown",
     latestEvent: null,
     players: [
-        {
-          playerId: "p1",
-          displayName: "Alex",
-          seatIndex: 0,
-          totalScore: 12,
-          isOnline: true,
-          roundStatus: "active",
+      {
+        playerId: "p1",
+        displayName: "Alex",
+        seatIndex: 0,
+        totalScore: 12,
+        isOnline: true,
+        roundStatus: "active",
         pointsAtRisk: 12,
         numberCards: [],
         modifierCards: [],

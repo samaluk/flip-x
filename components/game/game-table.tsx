@@ -22,9 +22,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
     startTransition(() => {
       action().catch((error) => {
         const message = error instanceof Error ? error.message : "";
-        toast.error(
-          message ? translateConvexError(message, tErrors) : tErrors("gameActionFailed"),
-        );
+        toast.error(message ? translateConvexError(message, tErrors) : tErrors("gameActionFailed"));
       });
     });
   }

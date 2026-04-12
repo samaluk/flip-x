@@ -41,7 +41,7 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
   if (codeParam && getMatchByCode === undefined) {
     return (
-      <div className="flex flex-1 items-center justify-center min-h-[100dvh]">
+      <div className="flex min-h-[100dvh] flex-1 items-center justify-center">
         <div className="w-full max-w-md space-y-4 px-6">
           <Skeleton className="h-8 w-48 rounded-lg" />
           <Skeleton className="h-4 w-72 rounded-lg" />
@@ -54,10 +54,10 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
   if (codeParam && getMatchByCode === null) {
     return (
-      <main className="flex flex-1 min-h-[100dvh] items-center justify-center selection:bg-primary/20 px-6">
-        <div className="w-full max-w-md text-center space-y-6">
+      <main className="selection:bg-primary/20 flex min-h-[100dvh] flex-1 items-center justify-center px-6">
+        <div className="w-full max-w-md space-y-6 text-center">
           <div>
-            <h2 className="font-heading text-2xl tracking-tight text-foreground mb-2">
+            <h2 className="font-heading text-foreground mb-2 text-2xl tracking-tight">
               {t("lobbyNotFoundTitle")}
             </h2>
             <p className="text-muted-foreground text-sm">
@@ -79,17 +79,19 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
   if (codeParam && getMatchByCode) {
     return (
-      <main className="flex flex-1 min-h-[100dvh] items-center justify-center selection:bg-primary/20">
+      <main className="selection:bg-primary/20 flex min-h-[100dvh] flex-1 items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 100, damping: 20 }}
           className="w-full max-w-md px-6"
         >
-          <h2 className="font-heading text-2xl tracking-tight text-foreground mb-2">
+          <h2 className="font-heading text-foreground mb-2 text-2xl tracking-tight">
             {t("joinTableTitle")}
           </h2>
-          <p className="text-muted-foreground text-sm mb-8">{t("joinTableBody", { code: codeParam })}</p>
+          <p className="text-muted-foreground mb-8 text-sm">
+            {t("joinTableBody", { code: codeParam })}
+          </p>
           <MatchSetup joinCode={codeParam} existingMatchId={getMatchByCode.matchId} />
         </motion.div>
       </main>
@@ -97,7 +99,7 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
   }
 
   return (
-    <main className="flex flex-1 min-h-[100dvh] items-center selection:bg-primary/20 relative overflow-hidden">
+    <main className="selection:bg-primary/20 relative flex min-h-[100dvh] flex-1 items-center overflow-hidden">
       <div
         className="pointer-events-none absolute inset-0 opacity-[0.03] mix-blend-overlay"
         style={{
@@ -108,12 +110,12 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
 
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_oklch(0.72_0.14_160_/_0.04),_transparent_60%)]" />
 
-      <div className="z-10 w-full max-w-[1400px] mx-auto px-6 py-16 md:py-24">
-        <div className="grid gap-16 lg:grid-cols-[1.4fr_1fr] lg:gap-24 items-start">
+      <div className="z-10 mx-auto w-full max-w-[1400px] px-6 py-16 md:py-24">
+        <div className="grid items-start gap-16 lg:grid-cols-[1.4fr_1fr] lg:gap-24">
           <motion.div variants={stagger} initial="hidden" animate="show" className="max-w-xl">
             <motion.h1
               variants={fadeUp}
-              className="text-4xl md:text-6xl font-medium tracking-tighter leading-none text-foreground mb-6"
+              className="text-foreground mb-6 text-4xl leading-none font-medium tracking-tighter md:text-6xl"
             >
               {t("heroLine1")}
               <br />
@@ -121,17 +123,17 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
             </motion.h1>
             <motion.p
               variants={fadeUp}
-              className="text-base text-muted-foreground leading-relaxed max-w-[50ch] mb-12"
+              className="text-muted-foreground mb-12 max-w-[50ch] text-base leading-relaxed"
             >
               {t("heroBody")}
             </motion.p>
 
             <motion.div variants={fadeUp}>
               <div className="mb-3">
-                <h2 className="font-heading text-lg tracking-tight text-foreground">
+                <h2 className="font-heading text-foreground text-lg tracking-tight">
                   {t("createTitle")}
                 </h2>
-                <p className="text-sm text-muted-foreground mt-1">{t("createSubtitle")}</p>
+                <p className="text-muted-foreground mt-1 text-sm">{t("createSubtitle")}</p>
               </div>
               <MatchSetup />
             </motion.div>
@@ -141,19 +143,21 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.3 }}
-            className="hidden lg:flex flex-col gap-6 pt-8"
+            className="hidden flex-col gap-6 pt-8 lg:flex"
           >
             <JoinLobbyDialog
               trigger={
                 <button
                   type="button"
-                  className="group w-full text-left surface-elevated rounded-2xl p-8 cursor-pointer transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
+                  className="group surface-elevated w-full cursor-pointer rounded-2xl p-8 text-left transition-all duration-300 hover:scale-[1.01] active:scale-[0.99]"
                 >
-                  <h3 className="text-lg font-medium text-foreground group-hover:text-primary transition-colors tracking-tight">
+                  <h3 className="text-foreground group-hover:text-primary text-lg font-medium tracking-tight transition-colors">
                     {t("joinExistingTitle")}
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1.5">{t("joinExistingSubtitleDesktop")}</p>
-                  <div className="mt-5 inline-flex items-center justify-center rounded-xl bg-muted/50 px-5 py-3 border border-border font-mono text-xl tracking-[0.25em] text-muted-foreground group-hover:text-foreground transition-colors">
+                  <p className="text-muted-foreground mt-1.5 text-sm">
+                    {t("joinExistingSubtitleDesktop")}
+                  </p>
+                  <div className="bg-muted/50 border-border text-muted-foreground group-hover:text-foreground mt-5 inline-flex items-center justify-center rounded-xl border px-5 py-3 font-mono text-xl tracking-[0.25em] transition-colors">
                     {tLobby("codePlaceholder")}
                   </div>
                 </button>
@@ -161,24 +165,24 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
             />
 
             <div className="surface-elevated rounded-2xl p-8">
-              <h3 className="text-sm font-medium text-muted-foreground tracking-tight uppercase">
+              <h3 className="text-muted-foreground text-sm font-medium tracking-tight uppercase">
                 {t("howItWorks")}
               </h3>
-              <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <div className="text-muted-foreground mt-4 space-y-3 text-sm">
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="bg-primary/10 text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     1
                   </span>
                   <span>{t("step1")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="bg-primary/10 text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     2
                   </span>
                   <span>{t("step2")}</span>
                 </p>
                 <p className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary">
+                  <span className="bg-primary/10 text-primary flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     3
                   </span>
                   <span>{t("step3")}</span>
@@ -198,13 +202,15 @@ export default function Home({ searchParams }: { searchParams: Promise<{ code?: 
             trigger={
               <button
                 type="button"
-                className="group w-full text-left surface-elevated rounded-2xl p-6 cursor-pointer transition-all duration-300 active:scale-[0.99]"
+                className="group surface-elevated w-full cursor-pointer rounded-2xl p-6 text-left transition-all duration-300 active:scale-[0.99]"
               >
-                <h3 className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
+                <h3 className="text-foreground group-hover:text-primary text-base font-medium transition-colors">
                   {t("joinExistingTitle")}
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1">{t("joinExistingSubtitleMobile")}</p>
-                <div className="mt-4 inline-flex items-center justify-center rounded-lg bg-muted/50 px-4 py-2.5 border border-border font-mono text-lg tracking-[0.25em] text-muted-foreground">
+                <p className="text-muted-foreground mt-1 text-sm">
+                  {t("joinExistingSubtitleMobile")}
+                </p>
+                <div className="bg-muted/50 border-border text-muted-foreground mt-4 inline-flex items-center justify-center rounded-lg border px-4 py-2.5 font-mono text-lg tracking-[0.25em]">
                   {tLobby("codePlaceholder")}
                 </div>
               </button>

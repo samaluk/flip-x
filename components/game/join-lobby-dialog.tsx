@@ -93,7 +93,7 @@ export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
         </DialogHeader>
         <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label htmlFor="join-name" className="text-sm font-medium text-foreground">
+            <label htmlFor="join-name" className="text-foreground text-sm font-medium">
               {t("yourName")}
             </label>
             <Input
@@ -105,7 +105,7 @@ export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
             />
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="join-code" className="text-sm font-medium text-foreground">
+            <label htmlFor="join-code" className="text-foreground text-sm font-medium">
               {t("lobbyCode")}
             </label>
             <div className="flex gap-3">
@@ -115,7 +115,7 @@ export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder={tLobby("codePlaceholder")}
                 maxLength={4}
-                className="font-mono text-center text-2xl tracking-[0.25em] h-14 uppercase"
+                className="h-14 text-center font-mono text-2xl tracking-[0.25em] uppercase"
               />
               <Button
                 type="submit"

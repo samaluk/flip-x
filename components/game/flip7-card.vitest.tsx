@@ -17,12 +17,12 @@ function cardShell(testId: string, card: ReactNode, snapshotWrap?: boolean) {
   const inner = <div data-testid={testId}>{card}</div>;
   if (snapshotWrap) {
     return (
-      <div data-vrt-snapshot className="inline-block bg-background p-4 text-foreground">
+      <div data-vrt-snapshot className="bg-background text-foreground inline-block p-4">
         {inner}
       </div>
     );
   }
-  return <div className="inline-block bg-background p-4 text-foreground">{inner}</div>;
+  return <div className="bg-background text-foreground inline-block p-4">{inner}</div>;
 }
 
 describe("Flip7Card VRT", () => {
@@ -76,13 +76,7 @@ describe("Flip7Card VRT", () => {
       withIntlEn(
         cardShell(
           "vrt-card-shot",
-          <Flip7Card
-            kind="number"
-            numberValue={7}
-            label="L"
-            stateAnimation="bust"
-            disableFlip3d
-          />,
+          <Flip7Card kind="number" numberValue={7} label="L" stateAnimation="bust" disableFlip3d />,
           true,
         ),
       ),
@@ -97,13 +91,7 @@ describe("Flip7Card VRT", () => {
       withIntlEn(
         cardShell(
           "vrt-card-shot",
-          <Flip7Card
-            kind="number"
-            numberValue={7}
-            label="L"
-            stateAnimation="stay"
-            disableFlip3d
-          />,
+          <Flip7Card kind="number" numberValue={7} label="L" stateAnimation="stay" disableFlip3d />,
           true,
         ),
       ),
@@ -140,8 +128,6 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-shot")).toMatchScreenshot(
-      `flip7-action-${actionKind}`,
-    );
+    await expect(page.getByTestId("vrt-card-shot")).toMatchScreenshot(`flip7-action-${actionKind}`);
   });
 });

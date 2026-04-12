@@ -24,7 +24,7 @@ function renderGameTable(snapshot: MatchSnapshot) {
       <div
         data-vrt-snapshot
         data-testid="vrt-game-table"
-        className="inline-block min-w-[1280px] align-top bg-background p-6 text-foreground"
+        className="bg-background text-foreground inline-block min-w-[1280px] p-6 align-top"
       >
         <GameTableView
           snapshot={snapshot}
