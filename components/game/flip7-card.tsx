@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import type { ReactNode } from "react";
+import { memo, type ReactNode } from "react";
 
 import { ActionCardContent } from "@/components/game/cards/action-content";
 import { ModifierCardContent } from "@/components/game/cards/modifier-content";
@@ -68,7 +68,7 @@ function ScreenReaderSummary(props: Flip7CardProps) {
   );
 }
 
-export function Flip7Card(props: Flip7CardProps) {
+export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
   const isCompact = props.compact === true;
 
   const shellClass = cn(
@@ -139,4 +139,32 @@ export function Flip7Card(props: Flip7CardProps) {
       )}
     </motion.div>
   );
+}, areFlip7CardPropsEqual);
+
+function areFlip7CardPropsEqual(left: Flip7CardProps, right: Flip7CardProps) {
+  if (
+    left.kind !== right.kind ||
+    left.label !== right.label ||
+    left.faceDown !== right.faceDown ||
+    left.dealing !== right.dealing ||
+    left.stateAnimation !== right.stateAnimation ||
+    left.className !== right.className ||
+    left.compact !== right.compact ||
+    left.disableFlip3d !== right.disableFlip3d
+  ) {
+    return false;
+  }
+
+  switch (left.kind) {
+    case "number":
+      return left.numberValue === (right.kind === "number" ? right.numberValue : undefined);
+    case "modifier":
+      return (
+        left.modifierValue === (right.kind === "modifier" ? right.modifierValue : undefined)
+      );
+    case "action":
+      return left.actionKind === (right.kind === "action" ? right.actionKind : undefined);
+    default:
+      return false;
+  }
 }

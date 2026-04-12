@@ -1,8 +1,7 @@
 "use client";
 
-import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { type ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import { memo, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { Flip7Card } from "@/components/game/flip7-card";
 import { Badge } from "@/components/ui/badge";
@@ -51,16 +50,7 @@ function poseFromStatus(
   return null;
 }
 
-export function PlayerLane({
-  player,
-  isActive,
-  isDealer = false,
-  isViewer = false,
-  isPinned = false,
-  compact = false,
-  disableCardFlip3d = false,
-  overlapCards = false,
-}: {
+type PlayerLaneProps = {
   player: MatchSnapshot["players"][number];
   isActive: boolean;
   isDealer?: boolean;
@@ -71,7 +61,18 @@ export function PlayerLane({
   disableCardFlip3d?: boolean;
   /** Overlap cards horizontally; fan out on lane hover (round table opponents). */
   overlapCards?: boolean;
-}) {
+};
+
+export const PlayerLane = memo(function PlayerLane({
+  player,
+  isActive,
+  isDealer = false,
+  isViewer = false,
+  isPinned = false,
+  compact = false,
+  disableCardFlip3d = false,
+  overlapCards = false,
+}: PlayerLaneProps) {
   const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
   const initialCardSyncDone = useRef(false);
@@ -89,6 +90,7 @@ export function PlayerLane({
     ],
     [player.heldActionCards, player.modifierCards, player.numberCards, player.playerId],
   );
+  const dealingIdSet = useMemo(() => new Set(dealingIds), [dealingIds]);
 
   useEffect(() => {
     if (!initialCardSyncDone.current) {
@@ -142,7 +144,7 @@ export function PlayerLane({
         kind="modifier"
         modifierValue={card.modifierValue}
         label={card.label}
-        dealing={dealingIds.includes(card.id)}
+        dealing={dealingIdSet.has(card.id)}
         stateAnimation={cardStateAnimation}
         compact={compact}
         disableFlip3d={disableCardFlip3d}
@@ -154,7 +156,7 @@ export function PlayerLane({
         kind="number"
         numberValue={card.numberValue}
         label={card.label}
-        dealing={dealingIds.includes(card.id)}
+        dealing={dealingIdSet.has(card.id)}
         stateAnimation={cardStateAnimation}
         compact={compact}
         disableFlip3d={disableCardFlip3d}
@@ -168,7 +170,7 @@ export function PlayerLane({
           kind="action"
           actionKind={card.actionKind}
           label={card.label}
-          dealing={dealingIds.includes(key)}
+          dealing={dealingIdSet.has(key)}
           stateAnimation={cardStateAnimation}
           compact={compact}
           disableFlip3d={disableCardFlip3d}
@@ -249,24 +251,104 @@ export function PlayerLane({
         {overlapCards
           ? cardElements.map((el, index) => {
               const wrapKey = String(el.key ?? index);
-              return disableCardFlip3d ? (
+              return (
                 <div key={wrapKey} className="shrink-0" style={{ zIndex: index + 1 }}>
                   {el}
                 </div>
-              ) : (
-                <motion.div
-                  key={wrapKey}
-                  layout
-                  className="shrink-0"
-                  style={{ zIndex: index + 1 }}
-                  transition={{ type: "spring", stiffness: 380, damping: 28 }}
-                >
-                  {el}
-                </motion.div>
               );
             })
           : cardElements}
       </div>
     </section>
   );
+}, arePlayerLanePropsEqual);
+
+function arePlayerLanePropsEqual(left: PlayerLaneProps, right: PlayerLaneProps) {
+  return (
+    left.isActive === right.isActive &&
+    left.isDealer === right.isDealer &&
+    left.isViewer === right.isViewer &&
+    left.isPinned === right.isPinned &&
+    left.compact === right.compact &&
+    left.disableCardFlip3d === right.disableCardFlip3d &&
+    left.overlapCards === right.overlapCards &&
+    arePlayersEqual(left.player, right.player)
+  );
+}
+
+function arePlayersEqual(
+  left: MatchSnapshot["players"][number],
+  right: MatchSnapshot["players"][number],
+) {
+  return (
+    left.playerId === right.playerId &&
+    left.displayName === right.displayName &&
+    left.seatIndex === right.seatIndex &&
+    left.totalScore === right.totalScore &&
+    left.isOnline === right.isOnline &&
+    left.roundStatus === right.roundStatus &&
+    left.pointsAtRisk === right.pointsAtRisk &&
+    areNumberCardsEqual(left.numberCards, right.numberCards) &&
+    areModifierCardsEqual(left.modifierCards, right.modifierCards) &&
+    areHeldActionCardsEqual(left.heldActionCards, right.heldActionCards)
+  );
+}
+
+function areNumberCardsEqual(
+  left: MatchSnapshot["players"][number]["numberCards"],
+  right: MatchSnapshot["players"][number]["numberCards"],
+) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let i = 0; i < left.length; i++) {
+    if (
+      left[i]?.id !== right[i]?.id ||
+      left[i]?.label !== right[i]?.label ||
+      left[i]?.numberValue !== right[i]?.numberValue
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function areModifierCardsEqual(
+  left: MatchSnapshot["players"][number]["modifierCards"],
+  right: MatchSnapshot["players"][number]["modifierCards"],
+) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let i = 0; i < left.length; i++) {
+    if (
+      left[i]?.id !== right[i]?.id ||
+      left[i]?.label !== right[i]?.label ||
+      left[i]?.modifierValue !== right[i]?.modifierValue
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function areHeldActionCardsEqual(
+  left: MatchSnapshot["players"][number]["heldActionCards"],
+  right: MatchSnapshot["players"][number]["heldActionCards"],
+) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  for (let i = 0; i < left.length; i++) {
+    if (left[i]?.label !== right[i]?.label || left[i]?.actionKind !== right[i]?.actionKind) {
+      return false;
+    }
+  }
+
+  return true;
 }

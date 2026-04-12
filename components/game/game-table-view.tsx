@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { AlertTriangleIcon, RefreshCwIcon, TrophyIcon, UserRoundIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState, type ReactNode } from "react";
@@ -82,6 +82,10 @@ export function GameTableView({
   });
 
   const setLayoutMode = (mode: "list" | "table") => {
+    if (layoutMode === mode) {
+      return;
+    }
+
     setLayoutModeState(mode);
     try {
       window.localStorage.setItem(GAME_TABLE_LAYOUT_STORAGE_KEY, mode);
@@ -186,11 +190,8 @@ export function GameTableView({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <div
-              className="border-border bg-muted/20 hidden items-center gap-1 rounded-lg border p-0.5 lg:flex"
-              role="group"
-              aria-label={t("layoutPreferenceAria")}
-            >
+            <fieldset className="border-border bg-muted/20 hidden items-center gap-1 rounded-lg border p-0.5 lg:flex">
+              <legend className="sr-only">{t("layoutPreferenceAria")}</legend>
               <Button
                 type="button"
                 variant={layoutMode === "list" ? "secondary" : "ghost"}
@@ -211,7 +212,7 @@ export function GameTableView({
               >
                 {t("layoutTable")}
               </Button>
-            </div>
+            </fieldset>
             <Badge variant="outline">{t("dealerSeat", { n: snapshot.dealerSeat + 1 })}</Badge>
             <Badge variant="outline" className="game-match-status" data-status={snapshot.status}>
               {t(`matchStatus.${snapshot.status}`)}
@@ -271,18 +272,11 @@ export function GameTableView({
                   animate="show"
                   className="bg-card max-h-[60vh] space-y-3 overflow-y-auto pr-1"
                 >
-                  <AnimatePresence>
-                    {sortedPlayers.sorted.map((player) => (
-                      <motion.div
-                        key={player.playerId}
-                        variants={listItem}
-                        layout
-                        layoutId={player.playerId}
-                      >
-                        {renderPlayerLane(player)}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
+                  {sortedPlayers.sorted.map((player) => (
+                    <motion.div key={player.playerId} variants={listItem}>
+                      {renderPlayerLane(player)}
+                    </motion.div>
+                  ))}
                 </motion.div>
               )}
             </section>
