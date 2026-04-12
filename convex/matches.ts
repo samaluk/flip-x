@@ -24,7 +24,7 @@ import {
   serializeRoundRuntime,
 } from "./lib/store";
 import type { MutationCtx } from "./_generated/server";
-import { mutation, query } from "./_generated/server";
+import { mutation, query as convexQuery } from "./_generated/server";
 
 async function generateUniqueLobbyCode(ctx: MutationCtx) {
   let lobbyCode = generateLobbyCode();
@@ -109,7 +109,7 @@ export const getMatchSnapshot = queryWithSession({
   },
 });
 
-export const getMatchByCode = query({
+export const getMatchByCode = convexQuery({
   args: {
     lobbyCode: v.string(),
   },
@@ -121,7 +121,7 @@ export const getMatchByCode = query({
 
     const match = await ctx.db
       .query("matches")
-      .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
       .first();
 
     if (!match || match.status !== "setup") {
@@ -148,7 +148,7 @@ export const joinByCode = mutation({
 
     const match = await ctx.db
       .query("matches")
-      .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
+      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
       .first();
 
     if (!match || match.status !== "setup") {
