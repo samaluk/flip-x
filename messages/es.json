@@ -93,10 +93,9 @@
     "LOBBY_NOT_FOUND": "No hay lobby con ese código.",
     "INVALID_PLAYER_NAME": "Introduce un nombre de jugador válido.",
     "NAME_ALREADY_TAKEN": "Ese nombre ya está cogido en esta mesa.",
-    "SEAT_ALREADY_CLAIMED": "Ese sitio ya está ocupado.",
     "NOT_HOST": "Solo el anfitrión puede hacer eso.",
-    "INSUFFICIENT_PLAYERS": "No hay suficientes jugadores con sitio para empezar.",
-    "SEAT_NOT_CLAIMED": "Primero ocupa un sitio.",
+    "INSUFFICIENT_PLAYERS": "Al menos dos jugadores deben unirse antes de empezar.",
+    "PLAYER_NOT_JOINED": "Primero únete a la partida.",
     "gameActionFailed": "La acción de juego falló."
   },
   "Events": {
@@ -183,7 +182,7 @@
   "PlayerLane": {
     "dealer": "Mano",
     "you": "Tú",
-    "claimed": "Ocupado",
+    "online": "En línea",
     "totalScore": "Puntuación total {score}",
     "pointsAtRisk": "Puntos en juego",
     "statusBusted": "Eliminado",
@@ -199,13 +198,13 @@
     "flipThreePrompt": "Elige quién debe seguir robando hasta resolver tres cartas.",
     "hitFor": "Pedir carta para {name}",
     "stayFor": "Plantarse con {name}",
-    "claimToPlay": "Ocupa un sitio para jugar desde este dispositivo.",
+    "claimToPlay": "Únete a la partida desde este dispositivo para jugar.",
     "waitingFor": "Esperando a {name}."
   },
   "GameTable": {
     "matchTitle": "Partida {id}",
     "roundRace": "Ronda {round} de una carrera a {target} puntos.",
-    "dealerSeat": "Mano en sitio {n}",
+    "dealerSeat": "Posición de mano {n}",
     "turnFor": "Turno: {name}",
     "updating": "Actualizando",
     "matchStatus": {
@@ -218,7 +217,7 @@
     "playerDeciding": "{name} decide si arriesga o asegura puntos.",
     "waitingResolution": "Esperando la siguiente resolución.",
     "playingAs": "Juegas como {name}",
-    "claimSeatHint": "Ocupa un sitio en este dispositivo para jugar turnos.",
+    "joinHint": "Únete a esta partida en este dispositivo para jugar turnos.",
     "tableLayout": "Disposición",
     "tableLayoutHint": "Tu carril queda fijo arriba. Desplázate para ver a los demás en orden de turno.",
     "yourHand": "Tu mano",
@@ -238,7 +237,6 @@
   "StartGameButton": {
     "startGame": "Empezar partida",
     "starting": "Iniciando...",
-    "toastClaimSeat": "Debes ocupar un sitio para empezar la partida.",
     "toastFailed": "No se pudo empezar la partida."
   }
 }

@@ -47,7 +47,7 @@ function playerRow(args: PlayerArgs): MatchSnapshot["players"][number] {
     displayName: args.displayName,
     seatIndex: args.seatIndex,
     totalScore: args.totalScore,
-    isClaimed: true,
+    isOnline: true,
     roundStatus: args.roundStatus,
     pointsAtRisk: args.pointsAtRisk,
     numberCards: args.numberCards,

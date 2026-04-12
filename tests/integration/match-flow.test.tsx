@@ -15,7 +15,7 @@ describe("match flow UI", () => {
               displayName: "Alex",
               seatIndex: 0,
               totalScore: 42,
-              isClaimed: true,
+              isOnline: true,
               roundStatus: "completed",
               pointsAtRisk: 30,
               numberCards: [],

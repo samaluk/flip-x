@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "convex/react";
+import { useSessionId, useSessionMutation } from "convex-helpers/react/sessions";
 import { SparklesIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState } from "react";
@@ -18,7 +18,6 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "@/i18n/navigation";
-import { useAnonymousSessionId } from "@/lib/anonymous-session";
 import { translateConvexError } from "@/lib/convex-error";
 import { cn } from "@/lib/utils";
 
@@ -29,8 +28,8 @@ interface MatchSetupProps {
 
 export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   const router = useRouter();
-  const sessionId = useAnonymousSessionId();
-  const createMatch = useMutation(api.matches.createMatch);
+  const [sessionId] = useSessionId();
+  const createMatch = useSessionMutation(api.matches.createMatch);
   const [hostName, setHostName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("MatchSetup");
@@ -63,7 +62,6 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
       if (!targetMatchId) {
         const match = await createMatch({
           hostName: trimmedName,
-          sessionId,
         });
         targetMatchId = match.matchId;
       }

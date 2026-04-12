@@ -1,9 +1,13 @@
 import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../_generated/server";
+import type { SessionId } from "convex-helpers/server/sessions";
 import { buildMatchSnapshot, toOrderedPlayers } from "../../lib/game/view-models";
 import { scoreRound } from "../../lib/game/scoring";
 import type { Card } from "../../lib/game/card-types";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../lib/game/turn-resolution";
+import { getPlayerIdForSession } from "./session_store";
+
+const PRESENCE_STALE_MS = 10_000;
 
 function normalizePlayerRoundState(doc: Doc<"roundPlayerStates">): PlayerRoundState {
   return {
@@ -47,28 +51,52 @@ export async function getPlayersByMatch(ctx: QueryCtx | MutationCtx, matchId: Id
     .collect();
 }
 
-export function getViewerPlayerId(
-  players: Array<{ _id: Id<"players">; claimedBySessionId?: string }>,
-  sessionId?: string,
+export async function getViewerPlayerId(
+  ctx: QueryCtx | MutationCtx,
+  matchId: Id<"matches">,
+  sessionId?: SessionId,
 ) {
-  if (!sessionId) {
+  const playerId = await getPlayerIdForSession(ctx, sessionId);
+
+  if (!playerId) {
     return null;
   }
 
-  return players.find((player) => player.claimedBySessionId === sessionId)?._id ?? null;
+  const player = await ctx.db.get(playerId);
+  return player?.matchId === matchId ? player._id : null;
 }
 
-export function requireViewerPlayerId(
-  players: Array<{ _id: Id<"players">; claimedBySessionId?: string }>,
-  sessionId: string,
+export async function requireViewerPlayerId(
+  ctx: QueryCtx | MutationCtx,
+  matchId: Id<"matches">,
+  sessionId: SessionId,
 ) {
-  const playerId = getViewerPlayerId(players, sessionId);
+  const playerId = await getViewerPlayerId(ctx, matchId, sessionId);
 
   if (!playerId) {
-    throw new Error("SEAT_NOT_CLAIMED");
+    throw new Error("PLAYER_NOT_JOINED");
   }
 
   return playerId;
+}
+
+async function getPresentPlayerIds(ctx: QueryCtx | MutationCtx, matchId: Id<"matches">) {
+  const docs = await ctx.db
+    .query("presence")
+    .withIndex("by_room_and_updated", (query) => query.eq("room", String(matchId)))
+    .order("desc")
+    .take(20);
+  const cutoff = Date.now() - PRESENCE_STALE_MS;
+
+  return new Set(
+    docs.flatMap((doc) => {
+      if (doc.updated < cutoff || doc.data.matchId !== matchId || !doc.data.playerId) {
+        return [];
+      }
+
+      return [String(doc.data.playerId)];
+    }),
+  );
 }
 
 export async function getLatestRound(ctx: QueryCtx | MutationCtx, matchId: Id<"matches">) {
@@ -100,10 +128,11 @@ export async function buildSnapshot(
   ctx: QueryCtx | MutationCtx,
   match: Doc<"matches">,
   round: Doc<"rounds"> | null,
-  sessionId?: string,
+  sessionId?: SessionId,
 ) {
   const players = await getPlayersByMatch(ctx, match._id);
-  const viewerPlayerId = getViewerPlayerId(players, sessionId);
+  const viewerPlayerId = await getViewerPlayerId(ctx, match._id, sessionId);
+  const presentPlayerIds = await getPresentPlayerIds(ctx, match._id);
 
   let playerStates: Record<string, PlayerRoundState> = {};
   let latestEvent: RoundEvent | null = null;
@@ -140,8 +169,7 @@ export async function buildSnapshot(
     matchId: String(match._id),
     status: match.status,
     lobbyCode: match.lobbyCode,
-    hostSessionId: match.hostSessionId,
-    viewerSessionId: sessionId,
+    hostPlayerId: match.hostPlayerId ? String(match.hostPlayerId) : null,
     targetScore: match.targetScore,
     currentRoundNumber: match.currentRoundNumber,
     dealerSeat: match.dealerSeat,
@@ -152,7 +180,7 @@ export async function buildSnapshot(
       displayName: player.displayName,
       seatIndex: player.seatIndex,
       totalScore: player.totalScore,
-      isClaimed: Boolean(player.claimedBySessionId),
+      isOnline: presentPlayerIds.has(String(player._id)),
     })),
     playerStates,
     latestEvent,

@@ -93,10 +93,9 @@
     "LOBBY_NOT_FOUND": "No lobby found for that code.",
     "INVALID_PLAYER_NAME": "Enter a valid player name.",
     "NAME_ALREADY_TAKEN": "That name is already taken at this table.",
-    "SEAT_ALREADY_CLAIMED": "That seat is already claimed.",
     "NOT_HOST": "Only the host can do that.",
-    "INSUFFICIENT_PLAYERS": "Not enough claimed players to start.",
-    "SEAT_NOT_CLAIMED": "Claim a seat first.",
+    "INSUFFICIENT_PLAYERS": "At least two players need to join before the game can start.",
+    "PLAYER_NOT_JOINED": "Join the game first.",
     "gameActionFailed": "Game action failed."
   },
   "Events": {
@@ -183,7 +182,7 @@
   "PlayerLane": {
     "dealer": "Dealer",
     "you": "You",
-    "claimed": "Claimed",
+    "online": "Online",
     "totalScore": "Total score {score}",
     "pointsAtRisk": "Points at risk",
     "statusBusted": "Busted",
@@ -199,13 +198,13 @@
     "flipThreePrompt": "Choose who must keep drawing until three cards resolve.",
     "hitFor": "Hit for {name}",
     "stayFor": "Stay for {name}",
-    "claimToPlay": "Claim a seat to play from this device.",
+    "claimToPlay": "Join the game from this device to play.",
     "waitingFor": "Waiting for {name}."
   },
   "GameTable": {
     "matchTitle": "Match {id}",
     "roundRace": "Round {round} of a race to {target} points.",
-    "dealerSeat": "Dealer seat {n}",
+    "dealerSeat": "Dealer position {n}",
     "turnFor": "Turn: {name}",
     "updating": "Updating",
     "matchStatus": {
@@ -218,7 +217,7 @@
     "playerDeciding": "{name} is deciding whether to push or bank points.",
     "waitingResolution": "Waiting for the next resolution.",
     "playingAs": "You are playing as {name}",
-    "claimSeatHint": "Claim a seat on this device to take turns.",
+    "joinHint": "Join this game on this device to take turns.",
     "tableLayout": "Table layout",
     "tableLayoutHint": "Your lane stays pinned above. Scroll to see others in turn order.",
     "yourHand": "Your hand",
@@ -238,7 +237,6 @@
   "StartGameButton": {
     "startGame": "Start Game",
     "starting": "Starting...",
-    "toastClaimSeat": "You must claim a seat to start the game.",
     "toastFailed": "Could not start the game."
   }
 }

@@ -1,10 +1,10 @@
 "use client";
 
+import { useSessionId, useSessionMutation, useSessionQuery } from "convex-helpers/react/sessions";
 import { AnimatePresence, motion } from "motion/react";
-import { useMutation, useQuery } from "convex/react";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { use, type FormEvent, useState } from "react";
+import { use, type FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { GameTable } from "@/components/game/game-table";
@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useAnonymousSessionId } from "@/lib/anonymous-session";
 import { translateConvexError } from "@/lib/convex-error";
 
 export default function GamePage({
@@ -25,16 +24,35 @@ export default function GamePage({
   params: Promise<{ locale: string; matchId: string }>;
 }) {
   const { matchId } = use(params);
-  const sessionId = useAnonymousSessionId();
-  const joinMatch = useMutation(api.matches.joinMatch);
+  const [sessionId] = useSessionId();
+  const joinMatch = useSessionMutation(api.matches.joinMatch);
+  const updatePresence = useSessionMutation(api.presence.update);
+  const heartbeatPresence = useSessionMutation(api.presence.heartbeat);
   const [playerName, setPlayerName] = useState("");
   const [isJoining, setIsJoining] = useState(false);
-  const snapshot = useQuery(api.matches.getMatchSnapshot, {
+  const snapshot = useSessionQuery(api.matches.getMatchSnapshot, {
     matchId: matchId as Id<"matches">,
-    sessionId: sessionId || undefined,
   });
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
+
+  useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
+
+    const typedMatchId = matchId as Id<"matches">;
+    void updatePresence({
+      matchId: typedMatchId,
+      playerId: snapshot?.viewerPlayerId ? (snapshot.viewerPlayerId as Id<"players">) : undefined,
+    });
+
+    const interval = window.setInterval(() => {
+      void heartbeatPresence({ matchId: typedMatchId });
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [heartbeatPresence, matchId, sessionId, snapshot?.viewerPlayerId, updatePresence]);
 
   async function handleJoin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,7 +78,6 @@ export default function GamePage({
       await joinMatch({
         matchId: matchId as Id<"matches">,
         playerName: trimmedName,
-        sessionId,
       });
       setPlayerName("");
     } catch (error) {
@@ -117,7 +134,7 @@ export default function GamePage({
   }
 
   const isSetup = snapshot.status === "setup";
-  const claimedCount = snapshot.players.filter((p) => p.isClaimed).length;
+  const playerCount = snapshot.players.length;
 
   return (
     <main className="mx-auto flex w-full max-w-9/10 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -132,9 +149,8 @@ export default function GamePage({
           {isSetup && (
             <StartGameButton
               matchId={matchId}
-              sessionId={sessionId}
               isHost={snapshot.isHost ?? false}
-              playerCount={claimedCount}
+              playerCount={playerCount}
             />
           )}
         </div>
@@ -183,7 +199,7 @@ export default function GamePage({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.15 }}
       >
-        <GameTable snapshot={snapshot} sessionId={sessionId} />
+        <GameTable snapshot={snapshot} />
       </motion.div>
     </main>
   );

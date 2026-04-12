@@ -9,10 +9,9 @@ const CONVEX_ERROR_CODES = new Set([
   "LOBBY_NOT_FOUND",
   "INVALID_PLAYER_NAME",
   "NAME_ALREADY_TAKEN",
-  "SEAT_ALREADY_CLAIMED",
   "NOT_HOST",
   "INSUFFICIENT_PLAYERS",
-  "SEAT_NOT_CLAIMED",
+  "PLAYER_NOT_JOINED",
 ]);
 
 export function translateConvexError(

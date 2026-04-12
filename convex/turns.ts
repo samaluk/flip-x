@@ -1,6 +1,5 @@
 import { v } from "convex/values";
 
-import { mutation } from "./_generated/server";
 import { finalizeRound, resolvePendingAction, takeTurnAction } from "../lib/game/turn-resolution";
 import {
   buildOrderedPlayers,
@@ -16,6 +15,7 @@ import {
   requireViewerPlayerId,
 } from "./lib/store";
 import type { Card } from "../lib/game/card-types";
+import { mutationWithSession } from "./lib/session_functions";
 
 function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRound>>>) {
   return {
@@ -59,10 +59,9 @@ function normalizePlayerStates(
   );
 }
 
-export const takeTurn = mutation({
+export const takeTurn = mutationWithSession({
   args: {
     matchId: v.id("matches"),
-    sessionId: v.string(),
     action: v.union(v.literal("hit"), v.literal("stay")),
   },
   handler: async (ctx, args) => {
@@ -74,7 +73,7 @@ export const takeTurn = mutation({
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
-    const viewerPlayerId = requireViewerPlayerId(players, args.sessionId);
+    const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
 
     if (!round.activePlayerId || round.activePlayerId !== viewerPlayerId) {
       throw new Error("INVALID_TURN");
@@ -108,7 +107,6 @@ export const takeTurn = mutation({
         const nextState = finalized.playerStates[String(player._id)];
         await ctx.db.patch(player._id, {
           totalScore: player.totalScore + nextState.roundScore,
-          lastSeenAt: Date.now(),
         });
       }
 
@@ -136,11 +134,6 @@ export const takeTurn = mutation({
       }
     }
 
-    await ctx.db.patch(viewerPlayerId, {
-      connected: true,
-      lastSeenAt: Date.now(),
-    });
-
     const nextMatch = await ctx.db.get(args.matchId);
     const nextRound = await getLatestRound(ctx, args.matchId);
 
@@ -152,10 +145,9 @@ export const takeTurn = mutation({
   },
 });
 
-export const resolveAction = mutation({
+export const resolveAction = mutationWithSession({
   args: {
     matchId: v.id("matches"),
-    sessionId: v.string(),
     targetPlayerId: v.id("players"),
   },
   handler: async (ctx, args) => {
@@ -167,7 +159,7 @@ export const resolveAction = mutation({
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
-    const viewerPlayerId = requireViewerPlayerId(players, args.sessionId);
+    const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
 
     if (!round.pendingAction || round.pendingAction.sourcePlayerId !== viewerPlayerId) {
       throw new Error("INVALID_ACTION");
@@ -188,10 +180,6 @@ export const resolveAction = mutation({
     await persistPlayerStates(ctx, round._id, resolved.playerStates, playerIdMap);
     await persistRoundRuntime(ctx, round._id, resolved.round, playerIdMap);
     await persistEvents(ctx, round._id, resolved.events, playerIdMap);
-    await ctx.db.patch(viewerPlayerId, {
-      connected: true,
-      lastSeenAt: Date.now(),
-    });
 
     const nextMatch = await ctx.db.get(args.matchId);
     const nextRound = await getLatestRound(ctx, args.matchId);

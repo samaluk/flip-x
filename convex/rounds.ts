@@ -1,12 +1,12 @@
 import { v } from "convex/values";
 
-import { mutation } from "./_generated/server";
 import {
   continueRound,
   createPlayerRoundStates,
   createRoundRuntime,
   finalizeRound,
 } from "../lib/game/turn-resolution";
+import { mutationWithSession } from "./lib/session_functions";
 import {
   buildOrderedPlayers,
   buildPlayerIdMap,
@@ -20,10 +20,9 @@ import {
   requireViewerPlayerId,
 } from "./lib/store";
 
-export const startNextRound = mutation({
+export const startNextRound = mutationWithSession({
   args: {
     matchId: v.id("matches"),
-    sessionId: v.string(),
   },
   handler: async (ctx, args) => {
     const match = await ctx.db.get(args.matchId);
@@ -33,11 +32,7 @@ export const startNextRound = mutation({
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
-    const viewerPlayerId = requireViewerPlayerId(players, args.sessionId);
-    await ctx.db.patch(viewerPlayerId, {
-      connected: true,
-      lastSeenAt: Date.now(),
-    });
+    await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
     const orderedPlayers = buildOrderedPlayers(players);
     const nextDealerSeat = (match.dealerSeat + 1) % players.length;
     const playerStates = createPlayerRoundStates(orderedPlayers);

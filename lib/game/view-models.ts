@@ -26,7 +26,7 @@ export type MatchSnapshot = {
     displayName: string;
     seatIndex: number;
     totalScore: number;
-    isClaimed: boolean;
+    isOnline: boolean;
     roundStatus: PlayerRoundState["status"];
     pointsAtRisk: number;
     numberCards: NumberCard[];
@@ -47,8 +47,7 @@ export function buildMatchSnapshot(args: {
   matchId: string;
   status: MatchSnapshot["status"];
   lobbyCode?: string;
-  hostSessionId?: string;
-  viewerSessionId?: string;
+  hostPlayerId?: string | null;
   targetScore: number;
   currentRoundNumber: number;
   dealerSeat: number;
@@ -59,7 +58,7 @@ export function buildMatchSnapshot(args: {
     displayName: string;
     seatIndex: number;
     totalScore: number;
-    isClaimed: boolean;
+    isOnline: boolean;
   }>;
   playerStates: Record<string, PlayerRoundState>;
   latestEvent: RoundEvent | null;
@@ -78,8 +77,8 @@ export function buildMatchSnapshot(args: {
   };
 
   if (args.lobbyCode) result.lobbyCode = args.lobbyCode;
-  if (args.hostSessionId && args.viewerSessionId) {
-    result.isHost = args.hostSessionId === args.viewerSessionId;
+  if (args.hostPlayerId && args.viewerPlayerId) {
+    result.isHost = args.hostPlayerId === args.viewerPlayerId;
   }
 
   result.players = [...args.players]
@@ -101,7 +100,7 @@ export function buildMatchSnapshot(args: {
         displayName: player.displayName,
         seatIndex: player.seatIndex,
         totalScore: player.totalScore,
-        isClaimed: player.isClaimed,
+        isOnline: player.isOnline,
         roundStatus: playerState.status,
         pointsAtRisk: playerState.pointsAtRisk,
         numberCards: playerState.numberCards,

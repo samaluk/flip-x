@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "convex/react";
+import { useSessionMutation } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -11,11 +11,11 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { translateConvexError } from "@/lib/convex-error";
 import type { MatchSnapshot } from "@/lib/game/view-models";
 
-export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; sessionId: string }) {
+export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const [isPending, startTransition] = useTransition();
-  const takeTurn = useMutation(api.turns.takeTurn);
-  const resolveAction = useMutation(api.turns.resolveAction);
-  const startNextRound = useMutation(api.rounds.startNextRound);
+  const takeTurn = useSessionMutation(api.turns.takeTurn);
+  const resolveAction = useSessionMutation(api.turns.resolveAction);
+  const startNextRound = useSessionMutation(api.rounds.startNextRound);
   const tErrors = useTranslations("Errors");
 
   function runAction(action: () => Promise<unknown>) {
@@ -37,7 +37,6 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
         runAction(() =>
           takeTurn({
             matchId: snapshot.matchId as Id<"matches">,
-            sessionId: sessionId,
             action: "hit",
           }),
         )
@@ -46,7 +45,6 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
         runAction(() =>
           takeTurn({
             matchId: snapshot.matchId as Id<"matches">,
-            sessionId: sessionId,
             action: "stay",
           }),
         )
@@ -55,7 +53,6 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
         runAction(() =>
           resolveAction({
             matchId: snapshot.matchId as Id<"matches">,
-            sessionId: sessionId,
             targetPlayerId,
           }),
         )
@@ -64,7 +61,6 @@ export function GameTable({ snapshot, sessionId }: { snapshot: MatchSnapshot; se
         runAction(() =>
           startNextRound({
             matchId: snapshot.matchId as Id<"matches">,
-            sessionId: sessionId,
           }),
         )
       }

@@ -124,7 +124,7 @@ export function GameTableView({
             {t("playingAs", { name: viewerPlayer.displayName })}
           </div>
         ) : (
-          <div className="text-xs text-muted-foreground">{t("claimSeatHint")}</div>
+          <div className="text-xs text-muted-foreground">{t("joinHint")}</div>
         )}
       </div>
       <TurnControls

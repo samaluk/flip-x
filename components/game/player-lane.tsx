@@ -209,9 +209,9 @@ export function PlayerLane({
                 {t("you")}
               </Badge>
             ) : null}
-            {player.isClaimed && !isViewer ? (
+            {player.isOnline && !isViewer ? (
               <Badge variant="secondary" className="text-[0.65rem]">
-                {t("claimed")}
+                {t("online")}
               </Badge>
             ) : null}
           </div>

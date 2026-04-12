@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { vSessionId } from "convex-helpers/server/sessions";
 
 const cardValue = v.object({
   id: v.string(),
@@ -16,7 +17,7 @@ export default defineSchema({
   matches: defineTable({
     status: v.union(v.literal("setup"), v.literal("in_progress"), v.literal("completed")),
     lobbyCode: v.string(),
-    hostSessionId: v.string(),
+    hostPlayerId: v.optional(v.id("players")),
     targetScore: v.number(),
     currentRoundNumber: v.number(),
     dealerSeat: v.number(),
@@ -30,11 +31,24 @@ export default defineSchema({
     seatIndex: v.number(),
     totalScore: v.number(),
     hasWon: v.boolean(),
-    claimedBySessionId: v.optional(v.string()),
-    claimedAt: v.optional(v.number()),
-    connected: v.boolean(),
-    lastSeenAt: v.number(),
   }).index("by_match", ["matchId"]),
+  playerSessions: defineTable({
+    sessionId: vSessionId,
+    playerId: v.id("players"),
+  })
+    .index("by_session_id", ["sessionId"])
+    .index("by_player_id", ["playerId"]),
+  presence: defineTable({
+    room: v.string(),
+    user: vSessionId,
+    updated: v.number(),
+    data: v.object({
+      matchId: v.id("matches"),
+      playerId: v.optional(v.id("players")),
+    }),
+  })
+    .index("by_room_and_updated", ["room", "updated"])
+    .index("by_user_and_room", ["user", "room"]),
   rounds: defineTable({
     matchId: v.id("matches"),
     roundNumber: v.number(),

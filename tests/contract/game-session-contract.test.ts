@@ -8,6 +8,7 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-1",
       status: "in_progress",
+      hostPlayerId: "p1",
       viewerPlayerId: "p1",
       targetScore: 200,
       currentRoundNumber: 1,
@@ -30,7 +31,7 @@ describe("game session contract", () => {
           displayName: "Alex",
           seatIndex: 0,
           totalScore: 0,
-          isClaimed: true,
+          isOnline: true,
         },
       ],
       playerStates: {
@@ -77,15 +78,16 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-2",
       status: "in_progress",
+      hostPlayerId: null,
       targetScore: 200,
       currentRoundNumber: 2,
       dealerSeat: 1,
       viewerPlayerId: null,
       round,
       players: [
-        { playerId: "p1", displayName: "Alex", seatIndex: 0, totalScore: 15, isClaimed: true },
-        { playerId: "p2", displayName: "Blair", seatIndex: 1, totalScore: 30, isClaimed: false },
-        { playerId: "p3", displayName: "Casey", seatIndex: 2, totalScore: 25, isClaimed: false },
+        { playerId: "p1", displayName: "Alex", seatIndex: 0, totalScore: 15, isOnline: true },
+        { playerId: "p2", displayName: "Blair", seatIndex: 1, totalScore: 30, isOnline: false },
+        { playerId: "p3", displayName: "Casey", seatIndex: 2, totalScore: 25, isOnline: false },
       ],
       playerStates,
       latestEvent: null,

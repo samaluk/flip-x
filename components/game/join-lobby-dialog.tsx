@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "convex/react";
+import { useSessionId, useSessionMutation } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState } from "react";
 import { toast } from "sonner";
@@ -18,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
-import { useAnonymousSessionId } from "@/lib/anonymous-session";
 import { translateConvexError } from "@/lib/convex-error";
 
 interface JoinLobbyDialogProps {
@@ -27,9 +27,9 @@ interface JoinLobbyDialogProps {
 
 export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
   const router = useRouter();
-  const sessionId = useAnonymousSessionId();
+  const [sessionId] = useSessionId();
   const joinByCode = useMutation(api.matches.joinByCode);
-  const joinMatch = useMutation(api.matches.joinMatch);
+  const joinMatch = useSessionMutation(api.matches.joinMatch);
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
@@ -70,7 +70,6 @@ export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
       await joinMatch({
         matchId: result.matchId as Id<"matches">,
         playerName: trimmedName,
-        sessionId,
       });
       startTransition(() => {
         router.push(`/game/${result.matchId}`);
