@@ -21,6 +21,7 @@ import {
   persistRoundRuntime,
   persistScoreBreakdowns,
   requireViewerPlayerId,
+  serializeRoundRuntime,
 } from "./lib/store";
 import type { MutationCtx } from "./_generated/server";
 import { mutation, query } from "./_generated/server";
@@ -249,6 +250,7 @@ export const startMatch = mutationWithSession({
     }
 
     const orderedPlayers = buildOrderedPlayers(players);
+    const playerIdMap = buildPlayerIdMap(players);
     const playerStates = createPlayerRoundStates(orderedPlayers);
     const baseRound = createRoundRuntime(orderedPlayers, 1, match.dealerSeat);
     const resolved = continueRound(orderedPlayers, baseRound, playerStates);
@@ -256,33 +258,10 @@ export const startMatch = mutationWithSession({
     const roundId = await ctx.db.insert("rounds", {
       matchId: args.matchId,
       roundNumber: 1,
-      phase: resolved.round.phase,
-      dealerSeat: resolved.round.dealerSeat,
-      activePlayerId: resolved.round.activePlayerId
-        ? (players.find((player) => String(player._id) === resolved.round.activePlayerId)?._id ??
-          undefined)
-        : undefined,
-      drawPile: resolved.round.drawPile,
-      discardPile: resolved.round.discardPile,
-      openingSeatIndex: resolved.round.openingSeatIndex,
-      turnSeatIndex: resolved.round.turnSeatIndex,
-      endedBy: resolved.round.endedBy,
-      pendingAction: resolved.round.pendingAction
-        ? {
-            sourcePlayerId: players.find(
-              (player) => String(player._id) === resolved.round.pendingAction?.sourcePlayerId,
-            )!._id,
-            actionKind: resolved.round.pendingAction.actionKind,
-            eligibleTargetIds: resolved.round.pendingAction.eligibleTargetIds.map(
-              (playerId) => players.find((player) => String(player._id) === playerId)!._id,
-            ),
-            resume: resolved.round.pendingAction.resume,
-          }
-        : undefined,
+      ...serializeRoundRuntime(resolved.round, playerIdMap),
       startedAt: Date.now(),
     });
 
-    const playerIdMap = buildPlayerIdMap(players);
     await persistPlayerStates(ctx, roundId, resolved.playerStates, playerIdMap);
     await persistEvents(ctx, roundId, resolved.events, playerIdMap);
 

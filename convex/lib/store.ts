@@ -194,24 +194,7 @@ export async function persistRoundRuntime(
   playerIdMap: Map<string, Id<"players">>,
 ) {
   await ctx.db.patch(roundId, {
-    phase: round.phase,
-    dealerSeat: round.dealerSeat,
-    activePlayerId: round.activePlayerId ? playerIdMap.get(round.activePlayerId) : undefined,
-    drawPile: round.drawPile,
-    discardPile: round.discardPile,
-    openingSeatIndex: round.openingSeatIndex,
-    turnSeatIndex: round.turnSeatIndex,
-    endedBy: round.endedBy,
-    pendingAction: round.pendingAction
-      ? {
-          sourcePlayerId: playerIdMap.get(round.pendingAction.sourcePlayerId)!,
-          actionKind: round.pendingAction.actionKind,
-          eligibleTargetIds: round.pendingAction.eligibleTargetIds.map(
-            (playerId) => playerIdMap.get(playerId)!,
-          ),
-          resume: round.pendingAction.resume,
-        }
-      : undefined,
+    ...serializeRoundRuntime(round, playerIdMap),
     endedAt: round.phase === "completed" ? Date.now() : undefined,
   });
 }
@@ -315,6 +298,32 @@ export async function persistScoreBreakdowns(
 
 export function buildPlayerIdMap(players: Array<{ _id: Id<"players">; seatIndex: number }>) {
   return new Map(players.map((player) => [String(player._id), player._id]));
+}
+
+export function serializeRoundRuntime(
+  round: RoundRuntime,
+  playerIdMap: Map<string, Id<"players">>,
+) {
+  return {
+    phase: round.phase,
+    dealerSeat: round.dealerSeat,
+    activePlayerId: round.activePlayerId ? playerIdMap.get(round.activePlayerId) : undefined,
+    drawPile: round.drawPile,
+    discardPile: round.discardPile,
+    openingSeatIndex: round.openingSeatIndex,
+    turnSeatIndex: round.turnSeatIndex,
+    endedBy: round.endedBy,
+    pendingAction: round.pendingAction
+      ? {
+          sourcePlayerId: playerIdMap.get(round.pendingAction.sourcePlayerId)!,
+          actionKind: round.pendingAction.actionKind,
+          eligibleTargetIds: round.pendingAction.eligibleTargetIds.map(
+            (playerId) => playerIdMap.get(playerId)!,
+          ),
+          resume: round.pendingAction.resume,
+        }
+      : undefined,
+  };
 }
 
 export function buildOrderedPlayers(players: Array<{ _id: Id<"players">; seatIndex: number }>) {

@@ -3,7 +3,7 @@
 import { useSessionId, useSessionMutation, useSessionQuery } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { GameTable } from "@/components/game/game-table";
@@ -27,6 +27,19 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const snapshot = useSessionQuery(api.matches.getMatchSnapshot, { matchId });
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
+  const viewerPlayerId = snapshot?.viewerPlayerId ? (snapshot.viewerPlayerId as Id<"players">) : undefined;
+
+  useEffect(() => {
+    if (!sessionId) {
+      return;
+    }
+
+    const interval = window.setInterval(() => {
+      void heartbeatPresence({ matchId });
+    }, 5000);
+
+    return () => window.clearInterval(interval);
+  }, [heartbeatPresence, matchId, sessionId]);
 
   useEffect(() => {
     if (!sessionId) {
@@ -35,17 +48,11 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
 
     void updatePresence({
       matchId,
-      playerId: snapshot?.viewerPlayerId ? (snapshot.viewerPlayerId as Id<"players">) : undefined,
+      playerId: viewerPlayerId,
     });
+  }, [matchId, sessionId, updatePresence, viewerPlayerId]);
 
-    const interval = window.setInterval(() => {
-      void heartbeatPresence({ matchId });
-    }, 5000);
-
-    return () => window.clearInterval(interval);
-  }, [heartbeatPresence, matchId, sessionId, snapshot?.viewerPlayerId, updatePresence]);
-
-  async function handleJoin(event: FormEvent<HTMLFormElement>) {
+  const handleJoin = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const trimmedName = playerName.trim();
@@ -77,9 +84,9 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
     } finally {
       setIsJoining(false);
     }
-  }
+  }, [joinMatch, matchId, playerName, sessionId, t, tErrors]);
 
-  async function copyInviteLink() {
+  const copyInviteLink = useCallback(async () => {
     try {
       const url = snapshot?.lobbyCode
         ? `${window.location.origin}?code=${snapshot.lobbyCode}`
@@ -89,7 +96,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
     } catch {
       toast.error(t("toastInviteCopyFailed"));
     }
-  }
+  }, [snapshot?.lobbyCode, t]);
 
   if (snapshot === undefined) {
     return (
