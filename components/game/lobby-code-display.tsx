@@ -27,8 +27,13 @@ export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
   }
 
   return (
-    <div className="border-border bg-card flex items-center gap-3 rounded-xl border px-5 py-3 shadow-[inset_0_1px_0_oklch(1_0_0_/_4%)]">
-      <span className="text-foreground font-mono text-3xl font-bold tracking-[0.3em]">{code}</span>
+    <div
+      data-testid="lobby-code-display"
+      className="border-border bg-card flex items-center gap-3 rounded-xl border px-5 py-3 shadow-[inset_0_1px_0_oklch(1_0_0_/_4%)]"
+    >
+      <span data-testid="lobby-code-value" className="text-foreground font-mono text-3xl font-bold tracking-[0.3em]">
+        {code}
+      </span>
       <Button variant="outline" size="sm" onClick={copyCode} className="gap-2">
         {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
         {copied ? t("copied") : t("copy")}

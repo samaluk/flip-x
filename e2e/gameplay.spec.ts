@@ -1,13 +1,49 @@
 import { test, expect } from "@playwright/test";
 
 import {
+  createLobbyAsHost,
   findPageWithEnabledHitButton,
+  getLobbyCode,
   hitControl,
   latestResolutionBodyLocator,
+  matchSetupForm,
+  waitForCreateLobbyEnabled,
   withThreePlayerMatch,
 } from "./helpers/match";
 
 test.describe("gameplay", () => {
+  test("join-by-code flow claims the seat without prompting twice", async ({ browser }) => {
+    const suffix = `${Date.now()}`;
+    const hostContext = await browser.newContext();
+    const guestContext = await browser.newContext();
+
+    const hostPage = await hostContext.newPage();
+    const guestPage = await guestContext.newPage();
+
+    try {
+      await createLobbyAsHost(hostPage, `Host ${suffix}`);
+
+      const lobbyCode = await getLobbyCode(hostPage);
+
+      await guestPage.goto(`/?code=${lobbyCode}`);
+      const joinForm = matchSetupForm(guestPage);
+      await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
+      await waitForCreateLobbyEnabled(guestPage);
+      await joinForm.getByRole("button", { name: /join lobby/i }).click();
+
+      await guestPage.waitForURL(/\/game\/[^/?#]+/);
+      await expect(
+        guestPage.getByRole("heading", { name: /join the game/i }),
+      ).not.toBeVisible({ timeout: 20_000 });
+      await expect(guestPage.getByText(`You are playing as Guest ${suffix}`).first()).toBeVisible({
+        timeout: 20_000,
+      });
+    } finally {
+      await guestContext.close();
+      await hostContext.close();
+    }
+  });
+
   test("three players start a match and the active player can hit", async ({ browser }) => {
     const suffix = `${Date.now()}`;
 

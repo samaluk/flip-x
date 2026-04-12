@@ -17,6 +17,7 @@ import {
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/i18n/navigation";
 import { translateConvexError } from "@/lib/convex-error";
 import { cn } from "@/lib/utils";
@@ -30,6 +31,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   const router = useRouter();
   const [sessionId] = useSessionId();
   const createMatch = useSessionMutation(api.matches.createMatch);
+  const joinMatch = useSessionMutation(api.matches.joinMatch);
   const [hostName, setHostName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("MatchSetup");
@@ -64,6 +66,11 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
           hostName: trimmedName,
         });
         targetMatchId = match.matchId;
+      } else {
+        await joinMatch({
+          matchId: targetMatchId as Id<"matches">,
+          playerName: trimmedName,
+        });
       }
 
       if (targetMatchId) {

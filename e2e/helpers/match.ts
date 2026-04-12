@@ -43,6 +43,15 @@ export async function createLobbyAsHost(page: Page, hostName: string) {
   return id;
 }
 
+export async function getLobbyCode(page: Page) {
+  await expect(page.getByTestId("lobby-code-value")).toBeVisible({ timeout: 20_000 });
+  const code = (await page.getByTestId("lobby-code-value").textContent())?.trim();
+  if (!code) {
+    throw new Error("Expected lobby code to be visible");
+  }
+  return code;
+}
+
 export async function joinGameAsGuest(page: Page, matchId: string, displayName: string) {
   await page.goto(`/game/${matchId}`);
   const form = joinSeatForm(page);
