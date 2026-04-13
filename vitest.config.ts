@@ -27,6 +27,7 @@ export default defineConfig({
             "components/**/*.test.ts",
             "components/**/*.test.tsx",
           ],
+          exclude: ["tests/backend/**/*.test.ts"],
         },
       },
       {

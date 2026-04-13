@@ -11,6 +11,7 @@
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
     "test": "vitest run --project unit",
+    "test:convex": "bash scripts/convex-local-test.sh",
     "test:all": "vitest run --project unit && bash scripts/vrt-docker.sh",
     "test:watch": "vitest --project unit",
     "test:e2e": "playwright test",

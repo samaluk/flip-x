@@ -1,10 +1,12 @@
-import type { Doc, Id } from "../_generated/dataModel";
-import type { QueryCtx, MutationCtx } from "../_generated/server";
 import type { SessionId } from "convex-helpers/server/sessions";
+import { getManyFrom } from "convex-helpers/server/relationships";
+
 import { buildMatchSnapshot, toOrderedPlayers } from "../../lib/game/view-models";
 import { scoreRound } from "../../lib/game/scoring";
 import type { Card } from "../../lib/game/card-types";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../lib/game/turn-resolution";
+import type { Doc, Id } from "../_generated/dataModel";
+import type { QueryCtx, MutationCtx } from "../_generated/server";
 import { getPlayerIdForSession } from "./session_store";
 
 const PRESENCE_STALE_MS = 10_000;
@@ -45,10 +47,7 @@ function normalizeRoundRuntime(doc: Doc<"rounds">): RoundRuntime {
 }
 
 export async function getPlayersByMatch(ctx: QueryCtx | MutationCtx, matchId: Id<"matches">) {
-  return await ctx.db
-    .query("players")
-    .withIndex("by_match", (query) => query.eq("matchId", matchId))
-    .collect();
+  return await getManyFrom(ctx.db, "players", "by_match", matchId, "matchId");
 }
 
 export async function getViewerPlayerId(
@@ -100,26 +99,17 @@ async function getPresentPlayerIds(ctx: QueryCtx | MutationCtx, matchId: Id<"mat
 }
 
 export async function getLatestRound(ctx: QueryCtx | MutationCtx, matchId: Id<"matches">) {
-  const rounds = await ctx.db
-    .query("rounds")
-    .withIndex("by_match", (query) => query.eq("matchId", matchId))
-    .collect();
+  const rounds = await getManyFrom(ctx.db, "rounds", "by_match", matchId, "matchId");
 
   return rounds.toSorted((left, right) => right.roundNumber - left.roundNumber)[0] ?? null;
 }
 
 export async function getRoundPlayerStateDocs(ctx: QueryCtx | MutationCtx, roundId: Id<"rounds">) {
-  return await ctx.db
-    .query("roundPlayerStates")
-    .withIndex("by_round", (query) => query.eq("roundId", roundId))
-    .collect();
+  return await getManyFrom(ctx.db, "roundPlayerStates", "by_round", roundId, "roundId");
 }
 
 export async function getLatestRoundEvent(ctx: QueryCtx | MutationCtx, roundId: Id<"rounds">) {
-  const events = await ctx.db
-    .query("roundEvents")
-    .withIndex("by_round", (query) => query.eq("roundId", roundId))
-    .collect();
+  const events = await getManyFrom(ctx.db, "roundEvents", "by_round", roundId, "roundId");
 
   return events.toSorted((left, right) => right.sequence - left.sequence)[0] ?? null;
 }

@@ -1,6 +1,8 @@
-import type { QueryCtx, MutationCtx } from "../_generated/server";
-import type { Id } from "../_generated/dataModel";
 import type { SessionId } from "convex-helpers/server/sessions";
+import { getOneFrom } from "convex-helpers/server/relationships";
+
+import type { Id } from "../_generated/dataModel";
+import type { QueryCtx, MutationCtx } from "../_generated/server";
 
 type Ctx = QueryCtx | MutationCtx;
 
@@ -12,10 +14,13 @@ export async function getPlayerIdForSession(
     return null;
   }
 
-  const playerSession = await ctx.db
-    .query("playerSessions")
-    .withIndex("by_session_id", (query) => query.eq("sessionId", sessionId))
-    .unique();
+  const playerSession = await getOneFrom(
+    ctx.db,
+    "playerSessions",
+    "by_session_id",
+    sessionId,
+    "sessionId",
+  );
 
   return playerSession?.playerId ?? null;
 }
@@ -25,10 +30,13 @@ export async function setPlayerSession(
   sessionId: SessionId,
   playerId: Id<"players">,
 ) {
-  const existing = await ctx.db
-    .query("playerSessions")
-    .withIndex("by_session_id", (query) => query.eq("sessionId", sessionId))
-    .unique();
+  const existing = await getOneFrom(
+    ctx.db,
+    "playerSessions",
+    "by_session_id",
+    sessionId,
+    "sessionId",
+  );
 
   if (existing) {
     await ctx.db.patch(existing._id, { playerId });
