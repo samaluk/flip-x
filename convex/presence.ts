@@ -1,88 +1,66 @@
 import { v } from "convex/values";
+import { Presence } from "@convex-dev/presence";
 
+import { components } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
-import { mutationWithSession, queryWithSession } from "./lib/session_functions";
+import { mutation, query } from "./_generated/server";
+import { mutationWithSession } from "./lib/session_functions";
 
-export const update = mutationWithSession({
+const presence = new Presence(components.presence);
+
+export const heartbeat = mutation({
+  args: {
+    roomId: v.string(),
+    userId: v.string(),
+    sessionId: v.string(),
+    interval: v.number(),
+  },
+  handler: async (ctx, args) => {
+    return await presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval);
+  },
+});
+
+export const list = query({
+  args: {
+    roomToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await presence.list(ctx, args.roomToken);
+  },
+});
+
+export const disconnect = mutation({
+  args: {
+    sessionToken: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await presence.disconnect(ctx, args.sessionToken);
+  },
+});
+
+export const syncPlayer = mutationWithSession({
   args: {
     matchId: v.id("matches"),
     playerId: v.optional(v.id("players")),
   },
   handler: async (ctx, args) => {
-    const room = String(args.matchId);
-    const existing = await ctx.db
-      .query("presence")
-      .withIndex("by_user_and_room", (query) => query.eq("user", args.sessionId).eq("room", room))
-      .unique();
-
-    const patch = {
-      updated: Date.now(),
-      data: {
-        matchId: args.matchId,
-        playerId: args.playerId,
-      },
-    };
-
-    if (existing) {
-      await ctx.db.patch(existing._id, patch);
-      return;
-    }
-
-    await ctx.db.insert("presence", {
-      room,
-      user: args.sessionId,
-      ...patch,
-    });
+    return await presence.updateRoomUser(ctx, String(args.matchId), args.sessionId, args.playerId);
   },
 });
 
-export const heartbeat = mutationWithSession({
+export const listMatchPresence = query({
   args: {
-    matchId: v.id("matches"),
+    roomToken: v.string(),
   },
-  handler: async (ctx, args) => {
-    const existing = await ctx.db
-      .query("presence")
-      .withIndex("by_user_and_room", (query) =>
-        query.eq("user", args.sessionId).eq("room", String(args.matchId)),
-      )
-      .unique();
+  handler: async (ctx, args): Promise<Array<{ playerId: Id<"players">; online: boolean }>> => {
+    const states = await presence.list(ctx, args.roomToken);
 
-    if (!existing) {
-      return;
-    }
-
-    await ctx.db.patch(existing._id, {
-      updated: Date.now(),
-    });
-  },
-});
-
-export const list = queryWithSession({
-  args: {
-    matchId: v.id("matches"),
-  },
-  handler: async (ctx, args): Promise<Array<{ playerId: Id<"players">; updated: number }>> => {
-    const docs = await ctx.db
-      .query("presence")
-      .withIndex("by_room_and_updated", (query) => query.eq("room", String(args.matchId)))
-      .order("desc")
-      .take(20);
-
-    const seen = new Set<string>();
-
-    return docs.flatMap((doc) => {
-      if (!doc.data.playerId) {
+    return states.flatMap((state) => {
+      if (!state.online || typeof state.data !== "string") {
         return [];
       }
 
-      const key = String(doc.data.playerId);
-      if (seen.has(key)) {
-        return [];
-      }
-      seen.add(key);
-
-      return [{ playerId: doc.data.playerId, updated: doc.updated }];
+      return [{ playerId: state.data as Id<"players">, online: true }];
     });
   },
 });

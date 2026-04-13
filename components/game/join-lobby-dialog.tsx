@@ -1,6 +1,5 @@
 "use client";
 
-import { useMutation } from "convex/react";
 import { useSessionId, useSessionMutation } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState } from "react";
@@ -28,7 +27,7 @@ interface JoinLobbyDialogProps {
 export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
   const router = useRouter();
   const [sessionId] = useSessionId();
-  const joinByCode = useMutation(api.matches.joinByCode);
+  const joinByCode = useSessionMutation(api.matches.joinByCode);
   const joinMatch = useSessionMutation(api.matches.joinMatch);
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");

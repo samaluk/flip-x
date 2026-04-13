@@ -9,8 +9,6 @@ import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../_generated/server";
 import { getPlayerIdForSession } from "./session_store";
 
-const PRESENCE_STALE_MS = 10_000;
-
 function normalizePlayerRoundState(doc: Doc<"roundPlayerStates">): PlayerRoundState {
   return {
     playerId: String(doc.playerId),
@@ -79,25 +77,6 @@ export async function requireViewerPlayerId(
   return playerId;
 }
 
-async function getPresentPlayerIds(ctx: QueryCtx | MutationCtx, matchId: Id<"matches">) {
-  const docs = await ctx.db
-    .query("presence")
-    .withIndex("by_room_and_updated", (query) => query.eq("room", String(matchId)))
-    .order("desc")
-    .take(20);
-  const cutoff = Date.now() - PRESENCE_STALE_MS;
-
-  return new Set(
-    docs.flatMap((doc) => {
-      if (doc.updated < cutoff || doc.data.matchId !== matchId || !doc.data.playerId) {
-        return [];
-      }
-
-      return [String(doc.data.playerId)];
-    }),
-  );
-}
-
 export async function getLatestRound(ctx: QueryCtx | MutationCtx, matchId: Id<"matches">) {
   const rounds = await getManyFrom(ctx.db, "rounds", "by_match", matchId, "matchId");
 
@@ -122,7 +101,6 @@ export async function buildSnapshot(
 ) {
   const players = await getPlayersByMatch(ctx, match._id);
   const viewerPlayerId = await getViewerPlayerId(ctx, match._id, sessionId);
-  const presentPlayerIds = await getPresentPlayerIds(ctx, match._id);
 
   let playerStates: Record<string, PlayerRoundState> = {};
   let latestEvent: RoundEvent | null = null;
@@ -165,15 +143,15 @@ export async function buildSnapshot(
     dealerSeat: match.dealerSeat,
     viewerPlayerId: viewerPlayerId ? String(viewerPlayerId) : null,
     round: round ? normalizeRoundRuntime(round) : null,
-    players: players.map((player) => ({
-      playerId: String(player._id),
-      displayName: player.displayName,
-      seatIndex: player.seatIndex,
-      totalScore: player.totalScore,
-      isOnline: presentPlayerIds.has(String(player._id)),
-    })),
-    playerStates,
-    latestEvent,
+      players: players.map((player) => ({
+        playerId: String(player._id),
+        displayName: player.displayName,
+        seatIndex: player.seatIndex,
+        totalScore: player.totalScore,
+        isOnline: false,
+      })),
+      playerStates,
+      latestEvent,
   });
 }
 

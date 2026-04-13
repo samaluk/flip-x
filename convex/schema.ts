@@ -38,17 +38,6 @@ export default defineSchema({
   })
     .index("by_session_id", ["sessionId"])
     .index("by_player_id", ["playerId"]),
-  presence: defineTable({
-    room: v.string(),
-    user: vSessionId,
-    updated: v.number(),
-    data: v.object({
-      matchId: v.id("matches"),
-      playerId: v.optional(v.id("players")),
-    }),
-  })
-    .index("by_room_and_updated", ["room", "updated"])
-    .index("by_user_and_room", ["user", "room"]),
   rounds: defineTable({
     matchId: v.id("matches"),
     roundNumber: v.number(),

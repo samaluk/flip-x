@@ -12,6 +12,7 @@ const CONVEX_ERROR_CODES = new Set([
   "NOT_HOST",
   "INSUFFICIENT_PLAYERS",
   "PLAYER_NOT_JOINED",
+  "RATE_LIMITED",
 ]);
 
 export function translateConvexError(

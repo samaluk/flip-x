@@ -11,6 +11,18 @@ importers:
       '@base-ui/react':
         specifier: ^1.3.0
         version: 1.3.0(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@convex-dev/migrations':
+        specifier: ^0.3.3
+        version: 0.3.3(convex@1.35.1(react@19.2.4))
+      '@convex-dev/presence':
+        specifier: ^0.3.0
+        version: 0.3.0(convex@1.35.1(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@convex-dev/rate-limiter':
+        specifier: ^0.3.2
+        version: 0.3.2(convex@1.35.1(react@19.2.4))(react@19.2.4)
+      '@sholajegede/convex-cascading-deletes':
+        specifier: ^0.1.2
+        version: 0.1.2(convex@1.35.1(react@19.2.4))(react@19.2.4)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -299,6 +311,34 @@ packages:
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
     hasBin: true
+
+  '@convex-dev/migrations@0.3.3':
+    resolution: {integrity: sha512-eUfqCBMjObr9sPCRL7V98CX58fViLVye7ZtYVCb0/6c6kOERZopbiQ/dWnF8NoxXg3bREr3Jb3VjZR9FjP96+A==}
+    peerDependencies:
+      convex: ^1.24.8
+
+  '@convex-dev/presence@0.3.0':
+    resolution: {integrity: sha512-adV+ao1L77u+egobyJabNwuai/0y/VgzMbqZiy+Q49JmX6fbSaiYg6FpFVACqPaq3giOfjrN2k+5mK2jTAUG0g==}
+    peerDependencies:
+      convex: ^1.24.8
+      expo-crypto: '>=14.1.0'
+      react: ~18.3.1 || ^19.0.0
+      react-dom: ~18.3.1 || ^19.0.0
+      react-native: '>=0.79.0'
+    peerDependenciesMeta:
+      expo-crypto:
+        optional: true
+      react-native:
+        optional: true
+
+  '@convex-dev/rate-limiter@0.3.2':
+    resolution: {integrity: sha512-+oBPsBfFbzdxiF/9XaaTQmVnvDlvEfg/c69/v8LxTbw4VLuiflIKlfnPQL8OS0azXQQ11hcPWHmU8ytFmHKDXA==}
+    peerDependencies:
+      convex: ^1.24.8
+      react: ^18.2.0 || ^19.0.0
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   '@csstools/color-helpers@6.0.2':
     resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
@@ -1320,6 +1360,12 @@ packages:
 
   '@sec-ant/readable-stream@0.4.1':
     resolution: {integrity: sha512-831qok9r2t8AlxLko40y2ebgSDhenenCatLVeW/uBtnHPyhHOvG0C7TvfgecV+wHzIm5KUICgzmVpWS+IMEAeg==}
+
+  '@sholajegede/convex-cascading-deletes@0.1.2':
+    resolution: {integrity: sha512-utP2NvdWJsaQH/BgxOYDJhkbCaHdDMPeMvRUMcIV85A0fuKZSPZTdrKsOY5dfAMFZfuH7j9hRgNw1fI+MQybPA==}
+    peerDependencies:
+      convex: ^1.32.0
+      react: ^18.3.1 || ^19.0.0
 
   '@sindresorhus/merge-streams@4.0.0':
     resolution: {integrity: sha512-tlqY9xq5ukxTUZBmoOp+m61cqwQD5pHJtFY3Mn8CA8ps6yghLH/Hw8UPdqg4OLmFW3IFlcXnQNmo/dh8HzXYIQ==}
@@ -3704,6 +3750,22 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
+  '@convex-dev/migrations@0.3.3(convex@1.35.1(react@19.2.4))':
+    dependencies:
+      convex: 1.35.1(react@19.2.4)
+
+  '@convex-dev/presence@0.3.0(convex@1.35.1(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      convex: 1.35.1(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+
+  '@convex-dev/rate-limiter@0.3.2(convex@1.35.1(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      convex: 1.35.1(react@19.2.4)
+    optionalDependencies:
+      react: 19.2.4
+
   '@csstools/color-helpers@6.0.2': {}
 
   '@csstools/css-calc@3.1.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
@@ -4362,6 +4424,11 @@ snapshots:
   '@schummar/icu-type-parser@1.21.5': {}
 
   '@sec-ant/readable-stream@0.4.1': {}
+
+  '@sholajegede/convex-cascading-deletes@0.1.2(convex@1.35.1(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      convex: 1.35.1(react@19.2.4)
+      react: 19.2.4
 
   '@sindresorhus/merge-streams@4.0.0': {}
 

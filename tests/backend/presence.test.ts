@@ -16,7 +16,7 @@ describe("Convex presence", () => {
     await resetTestClient(client);
   });
 
-  it("update inserts and then patches a single presence record per session and room", async () => {
+  it("heartbeat creates a room token and syncPlayer attaches the player id", async () => {
     const sessionId = asSessionId("session-host");
     const created = await client.mutation(api.matches.createMatch, {
       hostName: "Host",
@@ -24,87 +24,93 @@ describe("Convex presence", () => {
     });
     const matchId = created.matchId as Id<"matches">;
 
-    await client.mutation(api.presence.update, {
-      matchId,
-      playerId: created.viewerPlayerId as Id<"players">,
-      sessionId,
+    const heartbeat = await client.mutation(api.presence.heartbeat, {
+      roomId: String(matchId),
+      userId: String(sessionId),
+      sessionId: "tab-host",
+      interval: 5_000,
     });
-    await client.mutation(api.presence.update, {
+
+    await client.mutation(api.presence.syncPlayer, {
       matchId,
       playerId: created.viewerPlayerId as Id<"players">,
       sessionId,
     });
 
     const listed = await client.query(api.presence.list, {
-      matchId,
-      sessionId,
+      roomToken: heartbeat.roomToken,
     });
 
     expect(listed).toHaveLength(1);
-    expect(listed[0].playerId).toBe(created.viewerPlayerId);
+    expect(listed[0]).toMatchObject({
+      userId: sessionId,
+      online: true,
+      data: created.viewerPlayerId,
+    });
   });
 
-  it("heartbeat leaves presence unchanged when no row exists", async () => {
+  it("disconnect marks a user offline", async () => {
     const sessionId = asSessionId("session-host");
     const created = await client.mutation(api.matches.createMatch, {
       hostName: "Host",
       sessionId,
     });
 
-    await client.mutation(api.presence.heartbeat, {
-      matchId: created.matchId as Id<"matches">,
-      sessionId,
+    const heartbeat = await client.mutation(api.presence.heartbeat, {
+      roomId: String(created.matchId),
+      userId: String(sessionId),
+      sessionId: "tab-host",
+      interval: 5_000,
+    });
+
+    await client.mutation(api.presence.disconnect, {
+      sessionToken: heartbeat.sessionToken,
     });
 
     const listed = await client.query(api.presence.list, {
-      matchId: created.matchId as Id<"matches">,
-      sessionId,
+      roomToken: heartbeat.roomToken,
     });
 
-    expect(listed).toEqual([]);
+    expect(listed).toHaveLength(1);
+    expect(listed[0]?.online).toBe(false);
   });
 
-  it("list deduplicates multiple presence updates for the same player", async () => {
-    const hostSession = asSessionId("session-host");
+  it("multiple browser sessions for one anonymous session collapse into one user", async () => {
+    const sessionId = asSessionId("session-host");
     const created = await client.mutation(api.matches.createMatch, {
       hostName: "Host",
-      sessionId: hostSession,
+      sessionId,
     });
     const matchId = created.matchId as Id<"matches">;
 
-    await client.mutation(api.presence.update, {
-      matchId,
-      playerId: created.viewerPlayerId as Id<"players">,
-      sessionId: hostSession,
+    const firstHeartbeat = await client.mutation(api.presence.heartbeat, {
+      roomId: String(matchId),
+      userId: String(sessionId),
+      sessionId: "tab-host-a",
+      interval: 5_000,
     });
     await client.mutation(api.presence.heartbeat, {
-      matchId,
-      sessionId: hostSession,
+      roomId: String(matchId),
+      userId: String(sessionId),
+      sessionId: "tab-host-b",
+      interval: 5_000,
     });
 
-    await client.mutation(api.matches.joinMatch, {
+    await client.mutation(api.presence.syncPlayer, {
       matchId,
-      playerName: "Guest",
-      sessionId: asSessionId("session-guest"),
-    });
-
-    const guestSnapshot = await client.query(api.matches.getMatchSnapshot, {
-      matchId,
-      sessionId: asSessionId("session-guest"),
-    });
-
-    await client.mutation(api.presence.update, {
-      matchId,
-      playerId: guestSnapshot?.viewerPlayerId as Id<"players">,
-      sessionId: asSessionId("session-guest"),
+      playerId: created.viewerPlayerId as Id<"players">,
+      sessionId,
     });
 
     const listed = await client.query(api.presence.list, {
-      matchId,
-      sessionId: hostSession,
+      roomToken: firstHeartbeat.roomToken,
     });
 
-    expect(listed).toHaveLength(2);
-    expect(new Set(listed.map((entry) => entry.playerId)).size).toBe(2);
+    expect(listed).toHaveLength(1);
+    expect(listed[0]).toMatchObject({
+      userId: sessionId,
+      online: true,
+      data: created.viewerPlayerId,
+    });
   });
 });

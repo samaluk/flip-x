@@ -96,6 +96,7 @@
     "NOT_HOST": "Only the host can do that.",
     "INSUFFICIENT_PLAYERS": "At least two players need to join before the game can start.",
     "PLAYER_NOT_JOINED": "Join the game first.",
+    "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
     "gameActionFailed": "Game action failed."
   },
   "Events": {

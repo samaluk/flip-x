@@ -3,12 +3,13 @@
 import { useSessionId, useSessionMutation, useSessionQuery } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type FormEvent, useCallback, useEffect, useState } from "react";
+import { type FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { GameTable } from "@/components/game/game-table";
 import { LobbyCodeDisplay } from "@/components/game/lobby-code-display";
 import { StartGameButton } from "@/components/game/start-game-button";
+import { useMatchPresence } from "@/components/game/use-match-presence";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,37 +21,13 @@ import { translateConvexError } from "@/lib/convex-error";
 export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const [sessionId] = useSessionId();
   const joinMatch = useSessionMutation(api.matches.joinMatch);
-  const updatePresence = useSessionMutation(api.presence.update);
-  const heartbeatPresence = useSessionMutation(api.presence.heartbeat);
   const [playerName, setPlayerName] = useState("");
   const [isJoining, setIsJoining] = useState(false);
   const snapshot = useSessionQuery(api.matches.getMatchSnapshot, { matchId });
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
   const viewerPlayerId = snapshot?.viewerPlayerId ? (snapshot.viewerPlayerId as Id<"players">) : undefined;
-
-  useEffect(() => {
-    if (!sessionId) {
-      return;
-    }
-
-    const interval = window.setInterval(() => {
-      void heartbeatPresence({ matchId });
-    }, 5000);
-
-    return () => window.clearInterval(interval);
-  }, [heartbeatPresence, matchId, sessionId]);
-
-  useEffect(() => {
-    if (!sessionId) {
-      return;
-    }
-
-    void updatePresence({
-      matchId,
-      playerId: viewerPlayerId,
-    });
-  }, [matchId, sessionId, updatePresence, viewerPlayerId]);
+  const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId);
 
   const handleJoin = useCallback(async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -131,16 +108,24 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
     );
   }
 
-  const isSetup = snapshot.status === "setup";
-  const playerCount = snapshot.players.length;
+  const snapshotWithPresence = {
+    ...snapshot,
+    players: snapshot.players.map((player) => ({
+      ...player,
+      isOnline: onlinePlayerIds?.includes(player.playerId as Id<"players">) ?? false,
+    })),
+  };
+
+  const isSetup = snapshotWithPresence.status === "setup";
+  const playerCount = snapshotWithPresence.players.length;
 
   return (
     <main className="mx-auto flex w-full max-w-9/10 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          {isSetup && snapshot.lobbyCode ? <LobbyCodeDisplay code={snapshot.lobbyCode} /> : null}
+          {isSetup && snapshotWithPresence.lobbyCode ? <LobbyCodeDisplay code={snapshotWithPresence.lobbyCode} /> : null}
           {isSetup ? (
-            <StartGameButton matchId={matchId} isHost={snapshot.isHost ?? false} playerCount={playerCount} />
+            <StartGameButton matchId={matchId} isHost={snapshotWithPresence.isHost ?? false} playerCount={playerCount} />
           ) : null}
         </div>
         <Button variant="outline" onClick={copyInviteLink}>
@@ -148,8 +133,8 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
           {t("copyInvite")}
         </Button>
       </div>
-
-      {!snapshot.viewerPlayerId && isSetup ? (
+    
+      {!snapshotWithPresence.viewerPlayerId && isSetup ? (
         <div className="surface-elevated rounded-2xl p-6">
           <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
             {t("joinTitle")}
@@ -170,7 +155,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
         </div>
       ) : null}
 
-      <GameTable snapshot={snapshot} />
+      <GameTable snapshot={snapshotWithPresence} />
     </main>
   );
 }

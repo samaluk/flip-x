@@ -96,6 +96,7 @@
     "NOT_HOST": "Solo el anfitrión puede hacer eso.",
     "INSUFFICIENT_PLAYERS": "Al menos dos jugadores deben unirse antes de empezar.",
     "PLAYER_NOT_JOINED": "Primero únete a la partida.",
+    "RATE_LIMITED": "Demasiados intentos. Espera un momento y vuelve a intentarlo.",
     "gameActionFailed": "La acción de juego falló."
   },
   "Events": {

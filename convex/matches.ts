@@ -7,6 +7,7 @@ import {
   finalizeRound,
 } from "../lib/game/turn-resolution";
 import { generateLobbyCode } from "./lib/lobby_code";
+import { enforceRateLimit } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession } from "./lib/session_functions";
 import { setPlayerSession } from "./lib/session_store";
 import {
@@ -24,7 +25,7 @@ import {
   serializeRoundRuntime,
 } from "./lib/store";
 import type { MutationCtx } from "./_generated/server";
-import { mutation, query as convexQuery } from "./_generated/server";
+import { query as convexQuery } from "./_generated/server";
 
 async function generateUniqueLobbyCode(ctx: MutationCtx) {
   let lobbyCode = generateLobbyCode();
@@ -55,6 +56,8 @@ export const createMatch = mutationWithSession({
     hostName: v.string(),
   },
   handler: async (ctx, args) => {
+    await enforceRateLimit(ctx, "createMatch", String(args.sessionId));
+
     const hostName = args.hostName.trim();
 
     if (!hostName || hostName.length > 20) {
@@ -136,11 +139,13 @@ export const getMatchByCode = convexQuery({
   },
 });
 
-export const joinByCode = mutation({
+export const joinByCode = mutationWithSession({
   args: {
     lobbyCode: v.string(),
   },
   handler: async (ctx, args) => {
+    await enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
+
     const normalized = args.lobbyCode.trim().toUpperCase();
     if (normalized.length !== 4) {
       throw new Error("LOBBY_NOT_FOUND");
@@ -168,6 +173,8 @@ export const joinMatch = mutationWithSession({
     playerName: v.string(),
   },
   handler: async (ctx, args) => {
+    await enforceRateLimit(ctx, "joinMatch", String(args.sessionId));
+
     const match = await ctx.db.get(args.matchId);
 
     if (!match || match.status !== "setup") {
@@ -233,6 +240,8 @@ export const startMatch = mutationWithSession({
     matchId: v.id("matches"),
   },
   handler: async (ctx, args) => {
+    await enforceRateLimit(ctx, "startMatch", String(args.sessionId));
+
     const match = await ctx.db.get(args.matchId);
 
     if (!match || match.status !== "setup") {

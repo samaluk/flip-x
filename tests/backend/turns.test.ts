@@ -33,9 +33,15 @@ describe("Convex turns", () => {
   });
 
   it("takeTurn updates the round state and latest event for the active session", async () => {
-    const { matchId, sessions, started } = await createStartedMatch(client, ["Host", "Guest"]);
+    const { matchId, sessions } = await createStartedMatch(client, ["Host", "Guest"]);
+    const snapshot = await client.query(api.matches.getMatchSnapshot, {
+      matchId,
+      sessionId: sessions[0].sessionId,
+    });
+    expect(snapshot).not.toBeNull();
+
     const activeSession = sessions.find(
-      (session) => started.activePlayerId === started.players.find((player) => player.displayName === session.name)?.playerId,
+      (session) => snapshot?.activePlayerId === snapshot.players.find((player) => player.displayName === session.name)?.playerId,
     );
 
     expect(activeSession).toBeDefined();
