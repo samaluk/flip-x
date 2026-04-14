@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 import {
   createLobbyAsHost,
@@ -14,43 +14,38 @@ import {
 test.describe("gameplay", () => {
   test.describe.configure({ timeout: 120_000 });
 
-  test("join-by-code flow claims the seat without prompting twice", async ({ browser }) => {
+  test("join-by-code flow claims the seat without prompting twice", async ({ isolated }) => {
     const suffix = `${Date.now()}`;
-    const hostContext = await browser.newContext();
-    const guestContext = await browser.newContext();
+    const hostContext = await isolated.create();
+    const guestContext = await isolated.create();
 
     const hostPage = await hostContext.newPage();
     const guestPage = await guestContext.newPage();
 
-    try {
-      await createLobbyAsHost(hostPage, `Host ${suffix}`);
+    await createLobbyAsHost(hostPage, `Host ${suffix}`);
 
-      const lobbyCode = await getLobbyCode(hostPage);
+    const lobbyCode = await getLobbyCode(hostPage);
 
-      await guestPage.goto(`/?code=${lobbyCode}`);
-      const joinForm = matchSetupForm(guestPage);
-      await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
-      await waitForCreateLobbyEnabled(guestPage);
-      await joinForm.getByRole("button", { name: /join lobby/i }).click();
+    await guestPage.goto(`/?code=${lobbyCode}`);
+    const joinForm = matchSetupForm(guestPage);
+    await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
+    await waitForCreateLobbyEnabled(guestPage);
+    await joinForm.getByRole("button", { name: /join lobby/i }).click();
 
-      await guestPage.waitForURL(/\/game\/[^/?#]+/);
-      await expect(
-        guestPage.getByRole("heading", { name: /join the game/i }),
-      ).not.toBeVisible({ timeout: 20_000 });
-      await expect(guestPage.getByText(`You are playing as Guest ${suffix}`).first()).toBeVisible({
-        timeout: 20_000,
-      });
-    } finally {
-      await guestContext.close().catch(() => {});
-      await hostContext.close().catch(() => {});
-    }
+    await guestPage.waitForURL(/\/game\/[^/?#]+/);
+    await expect(
+      guestPage.getByRole("heading", { name: /join the game/i }),
+    ).not.toBeVisible({ timeout: 20_000 });
+    await expect(guestPage.getByText(`You are playing as Guest ${suffix}`).first()).toBeVisible({
+      timeout: 20_000,
+    });
   });
 
-  test("three players start a match and the active player can hit", async ({ browser }) => {
+  test("three players start a match and the active player can hit", async ({ isolated }) => {
     const suffix = `${Date.now()}`;
 
     await withThreePlayerMatch(
-      browser,
+      isolated,
       {
         host: `Host ${suffix}`,
         guestA: `GuestA ${suffix}`,

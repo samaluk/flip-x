@@ -1,4 +1,6 @@
-import { expect, type Browser, type Page } from "@playwright/test";
+import { expect, type Page } from "@playwright/test";
+
+import type { IsolatedContexts } from "../fixtures";
 
 /**
  * Locators use roles and copy from the default locale (`en`, `localePrefix: "never"`).
@@ -115,31 +117,25 @@ export type ThreePlayerContext = {
 };
 
 /**
- * Opens three isolated browser contexts, runs host + two guests through lobby and start,
- * then invokes the callback. Always closes contexts in a `finally` block.
+ * Opens three isolated browser contexts via the `isolated` fixture, runs host + two guests
+ * through lobby and start, then invokes the callback. Context teardown is handled by the fixture.
  */
 export async function withThreePlayerMatch(
-  browser: Browser,
+  isolated: IsolatedContexts,
   names: { host: string; guestA: string; guestB: string },
   fn: (ctx: ThreePlayerContext) => Promise<void>,
 ): Promise<void> {
-  const hostContext = await browser.newContext();
-  const guestAContext = await browser.newContext();
-  const guestBContext = await browser.newContext();
+  const hostContext = await isolated.create();
+  const guestAContext = await isolated.create();
+  const guestBContext = await isolated.create();
 
   const hostPage = await hostContext.newPage();
   const guestAPage = await guestAContext.newPage();
   const guestBPage = await guestBContext.newPage();
 
-  try {
-    const matchId = await createLobbyAsHost(hostPage, names.host);
-    await joinGameAsGuest(guestAPage, matchId, names.guestA);
-    await joinGameAsGuest(guestBPage, matchId, names.guestB);
-    await clickStartGameWhenReady(hostPage);
-    await fn({ hostPage, guestAPage, guestBPage, matchId });
-  } finally {
-    await guestBContext.close();
-    await guestAContext.close();
-    await hostContext.close();
-  }
+  const matchId = await createLobbyAsHost(hostPage, names.host);
+  await joinGameAsGuest(guestAPage, matchId, names.guestA);
+  await joinGameAsGuest(guestBPage, matchId, names.guestB);
+  await clickStartGameWhenReady(hostPage);
+  await fn({ hostPage, guestAPage, guestBPage, matchId });
 }
