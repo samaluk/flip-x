@@ -43,57 +43,35 @@ jobs:
       - name: Build
         run: pnpm build
 
-  # Requires GitHub secret CONVEX_DEPLOY_KEY = Convex "Preview" deploy key (not production).
-  # Deploys a preview backend, sets NEXT_PUBLIC_CONVEX_URL for the command, then runs Playwright.
-  # Skipped when the secret is missing (e.g. fork PRs). Preview keys: https://docs.convex.dev/production/hosting/preview-deployments
-  # Note: secrets cannot be used in jobs.<id>.if (context availability); gate with a step output instead.
+  # Playwright against a local Convex backend (no cloud deploy or deploy key).
   e2e:
     runs-on: ubuntu-latest
     needs: quality
     steps:
-      - name: Check Convex deploy key
-        id: convex
-        env:
-          KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-        run: |
-          if [ -n "$KEY" ]; then
-            echo "has_key=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_key=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Checkout
-        if: steps.convex.outputs.has_key == 'true'
         uses: actions/checkout@v4
 
       - name: Setup pnpm
-        if: steps.convex.outputs.has_key == 'true'
         uses: pnpm/action-setup@v4
         with:
           version: 10.33.0
 
       - name: Setup Node.js
-        if: steps.convex.outputs.has_key == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
 
       - name: Install dependencies
-        if: steps.convex.outputs.has_key == 'true'
         run: pnpm install --frozen-lockfile
 
       - name: Generate Convex API
-        if: steps.convex.outputs.has_key == 'true'
         run: CONVEX_AGENT_MODE=anonymous npx convex dev --once
 
       - name: Install Playwright Chromium
-        if: steps.convex.outputs.has_key == 'true'
         run: pnpm exec playwright install --with-deps chromium
 
-      - name: Deploy Convex preview and run E2E
-        if: steps.convex.outputs.has_key == 'true'
+      - name: Run E2E (local Convex)
         env:
-          CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
-          CONVEX_PREVIEW_NAME: ${{ github.head_ref || github.ref_name || format('ci-{0}', github.run_id) }}
+          CONVEX_AGENT_MODE: anonymous
         run: bash scripts/convex-preview-e2e.sh

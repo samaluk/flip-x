@@ -1,11 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
-// Preview E2E: `scripts/convex-preview-e2e.sh` deploys functions first, then sets
-// NEXT_PUBLIC_CONVEX_URL and runs Playwright (Convex's `deploy --cmd` runs the command *before*
-// pushing functions to preview, which breaks backend-dependent e2e).
-// Local: `CONVEX_DEPLOY_KEY=<preview key> pnpm test:e2e:preview` (optional `CONVEX_PREVIEW_NAME=...`).
+// E2E with Convex: `scripts/convex-preview-e2e.sh` runs `npx convex dev --local`, sets
+// NEXT_PUBLIC_CONVEX_URL (and optional NEXT_PUBLIC_CONVEX_SITE_URL), then runs Playwright.
+// Run via `pnpm test:e2e:preview`. Optional overrides: CONVEX_LOCAL_URL, CONVEX_LOCAL_SITE_URL.
 //
-// When NEXT_PUBLIC_CONVEX_URL is set for preview, do not reuse an existing dev server on :3000.
+// When NEXT_PUBLIC_CONVEX_URL is set for E2E, do not reuse an existing dev server on :3000.
 
 const convexUrlFromPreviewCmd = process.env.NEXT_PUBLIC_CONVEX_URL;
 

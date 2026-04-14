@@ -1,32 +1,51 @@
 #!/usr/bin/env bash
-# Deploy Convex functions to a preview deployment, then run Playwright.
+# Run Playwright against a local Convex backend (`npx convex dev --local`).
 #
-# Convex runs `npx convex deploy --cmd` BEFORE pushing functions to preview
-# (the --cmd hook is for frontend builds that only need the deployment URL).
-# E2E needs the backend live first, so we deploy without --cmd, parse the URL
-# from CLI output, then run tests.
+# Starts Convex in the background, waits until functions are ready, sets
+# NEXT_PUBLIC_CONVEX_URL (and optional site URL) for the Next.js dev server
+# that Playwright starts, then runs the E2E suite.
 set -euo pipefail
 
-RAW_NAME="${CONVEX_PREVIEW_NAME:-local-e2e}"
-PREVIEW_NAME="${RAW_NAME//\//-}"
-PREVIEW_NAME="${PREVIEW_NAME:-local-e2e}"
+rm -rf .convex/local
 
-LOG=$(mktemp)
-trap 'rm -f "$LOG"' EXIT
+log_file="$(mktemp)"
+convex_pid=""
+tmp_home="$(mktemp -d)"
 
-echo "Deploying Convex preview \"${PREVIEW_NAME}\" (functions only, no --cmd)..."
-npx convex deploy --preview-create "$PREVIEW_NAME" --typecheck try 2>&1 | tee "$LOG"
+cleanup() {
+  if [[ -n "$convex_pid" ]] && kill -0 "$convex_pid" 2>/dev/null; then
+    kill "$convex_pid" 2>/dev/null || true
+    wait "$convex_pid" 2>/dev/null || true
+  fi
+  rm -f "$log_file"
+  rm -rf "$tmp_home"
+}
 
-# Strip ANSI (chalk) so we can grep the URL (perl works on macOS + Linux CI)
-STRIPPED=$(perl -pe 's/\e\[[0-9;]*m//g' <"$LOG")
-URL=$(echo "$STRIPPED" | grep 'Deployed Convex functions to' | grep -oE 'https://[a-z0-9-]+\.convex\.cloud' | tail -1)
+trap cleanup EXIT
 
-if [[ -z "${URL}" ]]; then
-  echo "Could not parse preview deployment URL from \`npx convex deploy\` output." >&2
-  echo "Look for a line like: Deployed Convex functions to https://....convex.cloud" >&2
+echo "Starting local Convex (npx convex dev --local)..."
+HOME="$tmp_home" CONVEX_DEPLOYMENT= npx convex dev --local --typecheck try --tail-logs disable >"$log_file" 2>&1 &
+convex_pid="$!"
+
+ready="false"
+for _ in $(seq 1 60); do
+  if grep -q "Convex functions ready!" "$log_file" 2>/dev/null; then
+    ready="true"
+    break
+  fi
+  sleep 2
+done
+
+if [[ "$ready" != "true" ]]; then
+  echo "Local Convex did not become ready in time. Log:" >&2
+  cat "$log_file" >&2
   exit 1
 fi
 
-echo "Using NEXT_PUBLIC_CONVEX_URL=${URL}"
-export NEXT_PUBLIC_CONVEX_URL="$URL"
+# Defaults match Convex local deployment; override with CONVEX_LOCAL_URL / CONVEX_LOCAL_SITE_URL if needed.
+export NEXT_PUBLIC_CONVEX_URL="${CONVEX_LOCAL_URL:-http://127.0.0.1:3210}"
+export NEXT_PUBLIC_CONVEX_SITE_URL="${CONVEX_LOCAL_SITE_URL:-http://127.0.0.1:3211}"
+
+echo "Using NEXT_PUBLIC_CONVEX_URL=${NEXT_PUBLIC_CONVEX_URL}"
+echo "Using NEXT_PUBLIC_CONVEX_SITE_URL=${NEXT_PUBLIC_CONVEX_SITE_URL}"
 exec pnpm test:e2e
