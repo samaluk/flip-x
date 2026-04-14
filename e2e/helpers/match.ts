@@ -79,9 +79,16 @@ export async function clickStartGameWhenReady(hostPage: Page) {
   );
 }
 
-/** Hit uses the shared `Button` primitive (`data-slot="button"`), not a raw `<button>`. */
+/**
+ * Hit uses the shared `Button` primitive (`data-slot="button"`), not a raw `<button>`).
+ * TurnControls can be mounted twice (list vs round-table); only one is visible — use visible + first.
+ */
 export function hitControl(page: Page) {
-  return page.locator('[data-slot="button"]').filter({ hasText: /^Hit for /i });
+  return page
+    .locator('[data-slot="button"]')
+    .filter({ hasText: /^Hit for /i })
+    .filter({ visible: true })
+    .first();
 }
 
 export async function findPageWithEnabledHitButton(pages: Page[]): Promise<Page> {
@@ -91,7 +98,7 @@ export async function findPageWithEnabledHitButton(pages: Page[]): Promise<Page>
     for (const p of pages) {
       const hit = hitControl(p);
       if ((await hit.count()) === 0) continue;
-      if (await hit.first().isEnabled()) {
+      if (await hit.isEnabled()) {
         found = p;
         return;
       }

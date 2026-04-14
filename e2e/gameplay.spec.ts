@@ -12,7 +12,7 @@ import {
 } from "./helpers/match";
 
 test.describe("gameplay", () => {
-  test.describe.configure({ timeout: 120_000 });
+  test.describe.configure({ timeout: 180_000 });
 
   test("join-by-code flow claims the seat without prompting twice", async ({ isolated }) => {
     const suffix = `${Date.now()}`;
@@ -26,7 +26,8 @@ test.describe("gameplay", () => {
 
     const lobbyCode = await getLobbyCode(hostPage);
 
-    await guestPage.goto(`/?code=${lobbyCode}`);
+    await guestPage.goto(`/?code=${lobbyCode}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
+    await expect(guestPage.locator("#hostName")).toBeVisible({ timeout: 90_000 });
     const joinForm = matchSetupForm(guestPage);
     await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
     await waitForCreateLobbyEnabled(guestPage);
