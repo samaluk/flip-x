@@ -12,7 +12,7 @@ import {
 } from "./helpers/match";
 
 test.describe("gameplay", () => {
-  test.describe.configure({ timeout: 180_000 });
+  test.describe.configure({ timeout: 10_000 });
 
   test("join-by-code flow claims the seat without prompting twice", async ({ isolated }) => {
     const suffix = `${Date.now()}`;
@@ -26,8 +26,8 @@ test.describe("gameplay", () => {
 
     const lobbyCode = await getLobbyCode(hostPage);
 
-    await guestPage.goto(`/?code=${lobbyCode}`, { waitUntil: "domcontentloaded", timeout: 60_000 });
-    await expect(guestPage.locator("#hostName")).toBeVisible({ timeout: 90_000 });
+    await guestPage.goto(`/?code=${lobbyCode}`, { waitUntil: "domcontentloaded" });
+    await expect(guestPage.locator("#hostName")).toBeVisible();
     const joinForm = matchSetupForm(guestPage);
     await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
     await waitForCreateLobbyEnabled(guestPage);
@@ -36,10 +36,8 @@ test.describe("gameplay", () => {
     await guestPage.waitForURL(/\/game\/[^/?#]+/);
     await expect(
       guestPage.getByRole("heading", { name: /join the game/i }),
-    ).not.toBeVisible({ timeout: 20_000 });
-    await expect(guestPage.getByText(`You are playing as Guest ${suffix}`).first()).toBeVisible({
-      timeout: 20_000,
-    });
+    ).not.toBeVisible();
+    await expect(guestPage.getByText(`You are playing as Guest ${suffix}`).first()).toBeVisible();
   });
 
   test("three players start a match and the active player can hit", async ({ isolated }) => {
@@ -67,7 +65,7 @@ test.describe("gameplay", () => {
             await expect(async () => {
               const after = (await resolution.textContent())?.trim() ?? "";
               expect(after).not.toBe(beforeHit);
-            }).toPass({ timeout: 30_000, intervals: [200, 500, 1000] });
+            }).toPass({ intervals: [200, 500, 1000] });
           });
         });
       },

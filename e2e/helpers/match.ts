@@ -46,9 +46,12 @@ export async function createLobbyAsHost(page: Page, hostName: string) {
 }
 
 export async function getLobbyCode(page: Page) {
-  const lobbyCode = page.getByRole("status", { name: /lobby code/i });
-  await expect(lobbyCode).toBeVisible({ timeout: 20_000 });
-  const code = (await lobbyCode.textContent())?.trim();
+  const region = page.getByRole("status", { name: /lobby code/i });
+  await expect(region).toBeVisible({ timeout: 20_000 });
+  // Code lives in a span; the region also contains the Copy button (see LobbyCodeDisplay).
+  const codeEl = region.locator("span.font-mono");
+  await expect(codeEl).toBeVisible();
+  const code = (await codeEl.textContent())?.trim();
   if (!code) {
     throw new Error("Expected lobby code to be visible");
   }
