@@ -10,7 +10,8 @@ const convexUrlFromPreviewCmd = process.env.NEXT_PUBLIC_CONVEX_URL;
 
 export default defineConfig({
   testDir: "./e2e",
-  timeout: 60_000,
+  // Helpers poll up to 90s (e.g. hit button); default 60s would cut those off.
+  timeout: 180_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,
   forbidOnly: !!process.env.CI,

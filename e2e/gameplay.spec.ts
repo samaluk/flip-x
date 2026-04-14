@@ -12,8 +12,6 @@ import {
 } from "./helpers/match";
 
 test.describe("gameplay", () => {
-  test.describe.configure({ timeout: 10_000 });
-
   test("join-by-code flow claims the seat without prompting twice", async ({ isolated }) => {
     const suffix = `${Date.now()}`;
     const hostContext = await isolated.create();
