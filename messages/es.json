@@ -203,6 +203,7 @@
     "waitingFor": "Esperando a {name}."
   },
   "GameTable": {
+    "matchEyebrow": "Mesa en vivo",
     "matchTitle": "Partida {id}",
     "roundRace": "Ronda {round} de una carrera a {target} puntos.",
     "dealerSeat": "Posición de mano {n}",
@@ -219,8 +220,11 @@
     "waitingResolution": "Esperando la siguiente resolución.",
     "playingAs": "Juegas como {name}",
     "joinHint": "Únete a esta partida en este dispositivo para jugar turnos.",
-    "tableLayout": "Disposición",
-    "tableLayoutHint": "Tu carril queda fijo arriba. Desplázate para ver a los demás en orden de turno.",
+    "tableLayout": "Manos",
+    "tableLayoutHint": "Los jugadores aparecen en orden de turno. Desplázate para comparar.",
+    "tableLayoutHintViewerFirst": "Tu mano queda fija arriba. Desplázate en la lista para ver al resto.",
+    "everyoneElse": "Resto de jugadores",
+    "whoseTurn": "Activo",
     "yourHand": "Tu mano",
     "latestResolution": "Última resolución",
     "layoutList": "Lista",

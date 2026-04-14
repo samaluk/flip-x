@@ -203,6 +203,7 @@
     "waitingFor": "Waiting for {name}."
   },
   "GameTable": {
+    "matchEyebrow": "Live table",
     "matchTitle": "Match {id}",
     "roundRace": "Round {round} of a race to {target} points.",
     "dealerSeat": "Dealer position {n}",
@@ -219,8 +220,11 @@
     "waitingResolution": "Waiting for the next resolution.",
     "playingAs": "You are playing as {name}",
     "joinHint": "Join this game on this device to take turns.",
-    "tableLayout": "Table layout",
-    "tableLayoutHint": "Your lane stays pinned above. Scroll to see others in turn order.",
+    "tableLayout": "Hands",
+    "tableLayoutHint": "Players are listed in turn order. Scroll the list to compare everyone.",
+    "tableLayoutHintViewerFirst": "Your hand stays pinned at the top. Scroll the list below for everyone else.",
+    "everyoneElse": "Everyone else",
+    "whoseTurn": "Active",
     "yourHand": "Your hand",
     "latestResolution": "Latest resolution",
     "layoutList": "List",
