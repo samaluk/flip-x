@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { buildMatchSnapshot } from "@/lib/game/view-models";
-import { createPlayerRoundStates, createRoundRuntime } from "@/lib/game/turn-resolution";
+import { buildMatchSnapshot } from "@/game/logic/view-models";
+import { createPlayerRoundStates, createRoundRuntime } from "@/game/logic/turn-resolution";
 
 describe("game session contract", () => {
   it("returns the expected top-level snapshot fields", () => {

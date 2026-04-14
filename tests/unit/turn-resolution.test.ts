@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { NumberCard } from "@/lib/game/card-types";
+import type { NumberCard } from "@/game/logic/card-types";
 import {
   continueRound,
   createPlayerRoundStates,
@@ -8,7 +8,7 @@ import {
   takeTurnAction,
   type PlayerRoundState,
   type RoundRuntime,
-} from "@/lib/game/turn-resolution";
+} from "@/game/logic/turn-resolution";
 
 const players = [
   { playerId: "p1", seatIndex: 0 },

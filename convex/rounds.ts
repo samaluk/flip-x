@@ -5,7 +5,7 @@ import {
   createPlayerRoundStates,
   createRoundRuntime,
   finalizeRound,
-} from "../lib/game/turn-resolution";
+} from "../game/logic/turn-resolution";
 import { mutationWithSession } from "./lib/session_functions";
 import {
   buildOrderedPlayers,

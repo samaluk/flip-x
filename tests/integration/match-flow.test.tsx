@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
-import { ScoreSummary } from "@/components/game/score-summary";
+import { ScoreSummary } from "@/game/ui/score-summary";
 import { withIntlEn } from "@/tests/test-intl";
 
 describe("match flow UI", () => {

@@ -39,9 +39,14 @@ describe("Convex turns", () => {
       sessionId: sessions[0].sessionId,
     });
     expect(snapshot).not.toBeNull();
+    if (!snapshot) {
+      throw new Error("expected snapshot");
+    }
 
     const activeSession = sessions.find(
-      (session) => snapshot?.activePlayerId === snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      (session) =>
+        snapshot.activePlayerId ===
+        snapshot.players.find((player) => player.displayName === session.name)?.playerId,
     );
 
     expect(activeSession).toBeDefined();

@@ -4,7 +4,7 @@ import { AlertCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 
 export default function GamePageError({ error, reset }: { error: Error; reset: () => void }) {
   const t = useTranslations("Game");

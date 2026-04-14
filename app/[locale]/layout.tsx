@@ -1,6 +1,6 @@
-import { ConvexClientProvider } from "@/components/convex-client-provider";
-import { LanguageSwitcher } from "@/components/language-switcher";
-import { routing } from "@/i18n/routing";
+import { ConvexClientProvider } from "@/shared/providers/convex-client-provider";
+import { LanguageSwitcher } from "@/shared/language-switcher";
+import { routing } from "@/shared/i18n/routing";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";

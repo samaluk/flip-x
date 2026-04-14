@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { countDeckCards } from "@/lib/game/card-types";
-import { scoreRound } from "@/lib/game/scoring";
+import { countDeckCards } from "@/game/logic/card-types";
+import { scoreRound } from "@/game/logic/scoring";
 
 describe("scoreRound", () => {
   it("builds the official 94-card Flip 7 deck", () => {

@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 
-import { finalizeRound, resolvePendingAction, takeTurnAction } from "../lib/game/turn-resolution";
+import { finalizeRound, resolvePendingAction, takeTurnAction } from "../game/logic/turn-resolution";
 import {
   buildOrderedPlayers,
   buildPlayerIdMap,
@@ -14,7 +14,7 @@ import {
   persistScoreBreakdowns,
   requireViewerPlayerId,
 } from "./lib/store";
-import type { Card } from "../lib/game/card-types";
+import type { Card } from "../game/logic/card-types";
 import { mutationWithSession } from "./lib/session_functions";
 
 function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRound>>>) {

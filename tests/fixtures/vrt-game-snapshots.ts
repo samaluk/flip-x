@@ -1,6 +1,6 @@
-import type { ActionKind, ModifierCard, NumberCard } from "@/lib/game/card-types";
-import { scoreRound } from "@/lib/game/scoring";
-import type { MatchSnapshot } from "@/lib/game/view-models";
+import type { ActionKind, ModifierCard, NumberCard } from "@/game/logic/card-types";
+import { scoreRound } from "@/game/logic/scoring";
+import type { MatchSnapshot } from "@/game/logic/view-models";
 
 const MATCH_ID = "jz7abcd1234567890";
 

@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-import { TurnControls } from "@/components/game/turn-controls";
-import type { MatchSnapshot } from "@/lib/game/view-models";
+import { TurnControls } from "@/game/ui/turn-controls";
+import type { MatchSnapshot } from "@/game/logic/view-models";
 import { withIntlEn } from "@/tests/test-intl";
 
 function snapshot(): MatchSnapshot {

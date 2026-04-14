@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 
-import { HomeLobbyCodeGate } from "@/components/home/home-lobby-code-gate";
-import { JoinLobbyDialog } from "@/components/game/join-lobby-dialog";
-import { MatchSetup } from "@/components/game/match-setup";
+import { HomeLobbyCodeGate } from "@/game/screens/home-lobby-code-gate";
+import { JoinLobbyDialog } from "@/game/screens/join-lobby-dialog";
+import { MatchSetup } from "@/game/screens/match-setup";
 
 export default async function Home({
   searchParams,

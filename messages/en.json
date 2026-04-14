@@ -232,6 +232,7 @@
   "LobbyCodeDisplay": {
     "copied": "Copied",
     "copy": "Copy",
+    "statusLabel": "Lobby code",
     "toastCopied": "Lobby code copied!",
     "toastFailed": "Could not copy the code."
   },

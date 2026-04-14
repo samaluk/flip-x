@@ -5,7 +5,7 @@ import {
   createPlayerRoundStates,
   createRoundRuntime,
   finalizeRound,
-} from "../lib/game/turn-resolution";
+} from "../game/logic/turn-resolution";
 import { generateLobbyCode } from "./lib/lobby_code";
 import { enforceRateLimit } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession } from "./lib/session_functions";

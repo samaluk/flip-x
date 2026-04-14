@@ -44,8 +44,9 @@ export async function createLobbyAsHost(page: Page, hostName: string) {
 }
 
 export async function getLobbyCode(page: Page) {
-  await expect(page.getByTestId("lobby-code-value")).toBeVisible({ timeout: 20_000 });
-  const code = (await page.getByTestId("lobby-code-value").textContent())?.trim();
+  const lobbyCode = page.getByRole("status", { name: /lobby code/i });
+  await expect(lobbyCode).toBeVisible({ timeout: 20_000 });
+  const code = (await lobbyCode.textContent())?.trim();
   if (!code) {
     throw new Error("Expected lobby code to be visible");
   }

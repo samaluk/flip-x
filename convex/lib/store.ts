@@ -1,10 +1,10 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getManyFrom } from "convex-helpers/server/relationships";
 
-import { buildMatchSnapshot, toOrderedPlayers } from "../../lib/game/view-models";
-import { scoreRound } from "../../lib/game/scoring";
-import type { Card } from "../../lib/game/card-types";
-import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../lib/game/turn-resolution";
+import { buildMatchSnapshot, toOrderedPlayers } from "../../game/logic/view-models";
+import { scoreRound } from "../../game/logic/scoring";
+import type { Card } from "../../game/logic/card-types";
+import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../game/logic/turn-resolution";
 import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../_generated/server";
 import { getPlayerIdForSession } from "./session_store";

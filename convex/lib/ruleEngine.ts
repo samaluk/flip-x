@@ -5,4 +5,4 @@ export {
   finalizeRound,
   resolvePendingAction,
   takeTurnAction,
-} from "../../lib/game/turn-resolution";
+} from "../../game/logic/turn-resolution";
