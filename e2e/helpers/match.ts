@@ -102,8 +102,9 @@ export async function findPageWithEnabledHitButton(pages: Page[]): Promise<Page>
   return found;
 }
 
+/** Latest-resolution body is mounted twice in the game table UI (aside + round table); one copy is hidden via CSS. */
 export function latestResolutionBodyLocator(page: Page) {
-  return page.locator(".game-latest-resolution");
+  return page.locator(".game-latest-resolution").filter({ visible: true });
 }
 
 export type ThreePlayerContext = {

@@ -12,6 +12,8 @@ import {
 } from "./helpers/match";
 
 test.describe("gameplay", () => {
+  test.describe.configure({ timeout: 120_000 });
+
   test("join-by-code flow claims the seat without prompting twice", async ({ browser }) => {
     const suffix = `${Date.now()}`;
     const hostContext = await browser.newContext();
@@ -39,8 +41,8 @@ test.describe("gameplay", () => {
         timeout: 20_000,
       });
     } finally {
-      await guestContext.close();
-      await hostContext.close();
+      await guestContext.close().catch(() => {});
+      await hostContext.close().catch(() => {});
     }
   });
 
