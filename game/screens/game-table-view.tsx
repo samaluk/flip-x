@@ -1,27 +1,32 @@
 "use client";
 
 import { motion } from "motion/react";
-import { AlertTriangleIcon, RefreshCwIcon, TrophyIcon, UserRoundIcon } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  ChevronDownIcon,
+  CircleDotIcon,
+  RefreshCwIcon,
+  TrophyIcon,
+  UserRoundIcon,
+  UsersIcon,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 
 import { PlayerLane } from "@/game/ui/player-lane";
 import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
 import { Badge } from "@/shared/ui/badge";
-import { Button } from "@/shared/ui/button";
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/logic/round-event-format";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 
-const GAME_TABLE_LAYOUT_STORAGE_KEY = "flip7:v1:gameTableLayout";
-
 const listStagger = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
-    transition: { staggerChildren: 0.08 },
+    transition: { staggerChildren: 0.06 },
   },
 } as const;
 
@@ -66,33 +71,11 @@ export function GameTableView({
   const t = useTranslations("GameTable");
   const tEvents = useTranslations("Events");
   const tCards = useTranslations("Cards");
-  const tCommon = useTranslations("Common");
+  const tScore = useTranslations("ScoreSummary");
 
-  const [layoutMode, setLayoutModeState] = useState<"list" | "table">(() => {
-    if (typeof window === "undefined") {
-      return "list";
-    }
-
-    try {
-      const raw = window.localStorage.getItem(GAME_TABLE_LAYOUT_STORAGE_KEY);
-      return raw === "table" ? "table" : "list";
-    } catch {
-      return "list";
-    }
-  });
-
-  const setLayoutMode = (mode: "list" | "table") => {
-    if (layoutMode === mode) {
-      return;
-    }
-
-    setLayoutModeState(mode);
-    try {
-      window.localStorage.setItem(GAME_TABLE_LAYOUT_STORAGE_KEY, mode);
-    } catch {
-      /* ignore */
-    }
-  };
+  // Breakdown opens automatically once the round has been scored so players see results;
+  // otherwise stays collapsed to maximize board space during play.
+  const [showBreakdown, setShowBreakdown] = useState(false);
 
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
@@ -100,56 +83,13 @@ export function GameTableView({
   const activePlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.activePlayerId,
   );
-  const sortedPlayers = getSortedPlayers(snapshot);
-  const { viewer: roundViewer, opponents: roundOpponents } = getRoundTablePartition(snapshot);
-  const opponentSlots = opponentArcSlots(roundOpponents.length);
+  const { viewer, opponents } = partitionPlayers(snapshot);
 
   const latestBody = snapshot.latestEvent
     ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
     : tEvents("noneYet");
 
   const laneProps = { disableCardFlip3d } as const;
-
-  const tableCallSection = (
-    <div className="border-border bg-muted/30 flex flex-wrap items-center justify-between gap-3 rounded-xl border px-4 py-4">
-      <div className="space-y-1">
-        <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-          {t("tableCall")}
-        </div>
-        <div className="text-foreground text-sm">
-          {snapshot.roundStatus === "completed"
-            ? t("roundScoredReady")
-            : activePlayer
-              ? t("playerDeciding", { name: activePlayer.displayName })
-              : t("waitingResolution")}
-        </div>
-        {viewerPlayer ? (
-          <div className="text-muted-foreground text-xs">
-            {t("playingAs", { name: viewerPlayer.displayName })}
-          </div>
-        ) : (
-          <div className="text-muted-foreground text-xs">{t("joinHint")}</div>
-        )}
-      </div>
-      <TurnControls
-        snapshot={snapshot}
-        onHit={onHit}
-        onStay={onStay}
-        onResolveAction={onResolveAction}
-        onStartNextRound={onStartNextRound}
-      />
-    </div>
-  );
-
-  const infoPanelLatest = (
-    <InfoPanel
-      title={t("latestResolution")}
-      body={latestBody}
-      bodyClassName="game-latest-resolution"
-      icon={<AlertTriangleIcon className="text-muted-foreground size-4" />}
-      subtext={snapshot.latestEvent?.playerNames}
-    />
-  );
 
   const renderPlayerLane = (
     player: MatchSnapshot["players"][number],
@@ -168,205 +108,229 @@ export function GameTableView({
     />
   );
 
+  const callText =
+    snapshot.roundStatus === "completed"
+      ? t("roundScoredReady")
+      : activePlayer
+        ? t("playerDeciding", { name: activePlayer.displayName })
+        : t("waitingResolution");
+
+  const opponentsGridClass = opponentsGridCols(opponents.length);
+
+  // Mirrors the render conditions inside TurnControls so we can skip the sticky dock
+  // (and avoid reserving bottom padding) when no action UI would appear.
+  const hasTurnControls =
+    snapshot.status !== "completed" &&
+    (snapshot.roundStatus === "completed" ||
+      snapshot.pendingAction !== null ||
+      (activePlayer !== undefined && snapshot.roundStatus === "player_turns"));
+
+  const turnControls = (
+    <TurnControls
+      snapshot={snapshot}
+      onHit={onHit}
+      onStay={onStay}
+      onResolveAction={onResolveAction}
+      onStartNextRound={onStartNextRound}
+    />
+  );
+
   return (
-    <div className="flex flex-col gap-6">
-      <section className="surface-elevated text-foreground overflow-hidden rounded-2xl">
-        <div className="border-border flex flex-wrap items-start justify-between gap-4 border-b px-5 py-4">
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="font-heading text-foreground text-xl font-medium tracking-tight">
+    <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
+      {/* ─────────── HUD ─────────── */}
+      <section
+        aria-label={t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
+        className="surface-elevated text-foreground overflow-hidden rounded-2xl"
+      >
+        <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            {snapshot.status === "completed" ? (
+              <TrophyIcon className="text-primary size-5 shrink-0" aria-hidden />
+            ) : (
+              <CircleDotIcon className="text-primary size-5 shrink-0" aria-hidden />
+            )}
+            <div className="flex min-w-0 flex-col leading-tight">
+              <h1 className="font-heading text-foreground truncate text-sm font-medium tracking-tight sm:text-base">
                 {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
               </h1>
-              {snapshot.status === "completed" ? (
-                <TrophyIcon className="text-primary size-5" />
-              ) : null}
-            </div>
-            <div className="text-muted-foreground text-sm">
-              {t("roundRace", {
-                round: snapshot.currentRoundNumber,
-                target: snapshot.targetScore,
-              })}
+              <span className="text-muted-foreground text-xs">
+                {t("roundRace", {
+                  round: snapshot.currentRoundNumber,
+                  target: snapshot.targetScore,
+                })}
+              </span>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <fieldset className="border-border bg-muted/20 hidden items-center gap-1 rounded-lg border p-0.5 lg:flex">
-              <legend className="sr-only">{t("layoutPreferenceAria")}</legend>
-              <Button
-                type="button"
-                variant={layoutMode === "list" ? "secondary" : "ghost"}
-                size="sm"
-                className="h-7 px-2.5 text-xs"
-                onClick={() => setLayoutMode("list")}
-                aria-pressed={layoutMode === "list"}
-              >
-                {t("layoutList")}
-              </Button>
-              <Button
-                type="button"
-                variant={layoutMode === "table" ? "secondary" : "ghost"}
-                size="sm"
-                className="h-7 px-2.5 text-xs"
-                onClick={() => setLayoutMode("table")}
-                aria-pressed={layoutMode === "table"}
-              >
-                {t("layoutTable")}
-              </Button>
-            </fieldset>
-            <Badge variant="outline">{t("dealerSeat", { n: snapshot.dealerSeat + 1 })}</Badge>
-            <Badge variant="outline" className="game-match-status" data-status={snapshot.status}>
+          <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            <Badge
+              variant="outline"
+              className="game-match-status"
+              data-status={snapshot.status}
+            >
               {t(`matchStatus.${snapshot.status}`)}
             </Badge>
+            <Badge variant="outline" className="hidden sm:inline-flex">
+              {t("dealerSeat", { n: snapshot.dealerSeat + 1 })}
+            </Badge>
             {activePlayer ? (
-              <Badge variant="default">{t("turnFor", { name: activePlayer.displayName })}</Badge>
+              <Badge variant="default" className="max-w-[12rem]">
+                <UserRoundIcon className="size-3" aria-hidden />
+                <span className="truncate">
+                  {t("turnFor", { name: activePlayer.displayName })}
+                </span>
+              </Badge>
             ) : null}
             {isPending ? (
-              <Badge variant="secondary">
-                <RefreshCwIcon className="size-3 animate-spin" />
-                {t("updating")}
+              <Badge variant="secondary" aria-live="polite">
+                <RefreshCwIcon className="size-3 animate-spin" aria-hidden />
+                <span className="hidden sm:inline">{t("updating")}</span>
               </Badge>
             ) : null}
           </div>
         </div>
 
-        <div
-          className={cn(
-            "grid gap-5 px-5 py-5",
-            layoutMode === "list" && "xl:grid-cols-[minmax(0,1fr)_20rem]",
-          )}
-        >
-          <div className="space-y-5">
-            <div className={cn(layoutMode === "table" && "lg:hidden")}>{tableCallSection}</div>
-
-            <section
-              className={cn(
-                "rounded-xl border border-border bg-card p-4",
-                layoutMode === "table" && "lg:hidden",
-              )}
-            >
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
-                <div>
-                  <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                    {t("tableLayout")}
-                  </div>
-                  <div className="text-muted-foreground text-sm">{t("tableLayoutHint")}</div>
-                </div>
-                {snapshot.status !== "completed" && snapshot.roundStatus === "player_turns" ? (
-                  <Badge variant="outline">
-                    <UserRoundIcon className="size-3.5" />
-                    {activePlayer?.displayName ?? tCommon("waiting")}
-                  </Badge>
-                ) : null}
-              </div>
-
-              {freezeLaneLayout ? (
-                <div className="bg-card max-h-[60vh] space-y-3 overflow-y-auto pr-1">
-                  {sortedPlayers.sorted.map((player) => (
-                    <div key={player.playerId}>{renderPlayerLane(player)}</div>
-                  ))}
-                </div>
-              ) : (
-                <motion.div
-                  variants={listStagger}
-                  initial="hidden"
-                  animate="show"
-                  className="bg-card max-h-[60vh] space-y-3 overflow-y-auto pr-1"
-                >
-                  {sortedPlayers.sorted.map((player) => (
-                    <motion.div key={player.playerId} variants={listItem}>
-                      {renderPlayerLane(player)}
-                    </motion.div>
-                  ))}
-                </motion.div>
-              )}
-            </section>
-
-            <div
-              className={cn(
-                "relative hidden min-h-[min(720px,82svh)] w-full overflow-visible rounded-xl border border-border bg-card/50 p-4",
-                layoutMode === "table" && "lg:block",
-              )}
-              data-game-round-table
-            >
-              <div
-                className="border-border/50 bg-muted/15 pointer-events-none absolute inset-[10%] rounded-[50%] border border-dashed shadow-inner"
-                aria-hidden
-              />
-
-              <div className="absolute top-1/2 left-1/2 z-10 w-[min(28rem,calc(100%-1.5rem))] max-w-full -translate-x-1/2 -translate-y-1/2 space-y-4">
-                {tableCallSection}
-                {infoPanelLatest}
-              </div>
-
-              <div className="absolute top-3 left-1/2 z-[5] -translate-x-1/2 text-center">
-                <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  {t("roundTableTitle")}
-                </div>
-                <div className="text-muted-foreground text-xs">{t("roundTableHint")}</div>
-              </div>
-
-              {roundOpponents.map((player, index) => {
-                const slot = opponentSlots[index];
-                if (!slot) {
-                  return null;
-                }
-                return (
-                  <div
-                    key={player.playerId}
-                    className="absolute z-[8] w-[min(18rem,calc(42vw-0.5rem))] max-w-[95%] -translate-x-1/2 -translate-y-1/2"
-                    style={{ top: slot.top, left: slot.left }}
-                  >
-                    {renderPlayerLane(player, { compact: true, overlapCards: true })}
-                  </div>
-                );
-              })}
-
-              {roundViewer ? (
-                <div className="absolute bottom-1 left-1/2 z-20 w-[min(40rem,calc(100%-1rem))] max-w-full -translate-x-1/2 px-1">
-                  {renderPlayerLane(roundViewer)}
-                </div>
-              ) : null}
+        {/* Status + Latest resolution — merged into one compact strip */}
+        <div className="border-border grid gap-3 border-t px-4 py-2.5 sm:grid-cols-2 sm:px-5">
+          <div className="space-y-0.5">
+            <div className="text-muted-foreground text-[0.65rem] font-medium tracking-wide uppercase">
+              {t("tableCall")}
             </div>
+            <div className="text-foreground text-sm leading-snug">{callText}</div>
+            {viewerPlayer ? (
+              <div className="text-muted-foreground text-xs">
+                {t("playingAs", { name: viewerPlayer.displayName })}
+              </div>
+            ) : (
+              <div className="text-muted-foreground text-xs">{t("joinHint")}</div>
+            )}
           </div>
-
-          <aside className={cn("space-y-5", layoutMode === "table" && "lg:hidden")}>
-            {infoPanelLatest}
-          </aside>
+          <div className="border-border space-y-0.5 border-t pt-2.5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
+            <div className="text-muted-foreground flex items-center gap-1.5 text-[0.65rem] font-medium tracking-wide uppercase">
+              <AlertTriangleIcon className="size-3" aria-hidden />
+              {t("latestResolution")}
+            </div>
+            <div className="game-latest-resolution text-foreground text-sm leading-snug">
+              {latestBody}
+            </div>
+            {snapshot.latestEvent?.playerNames ? (
+              <div className="text-muted-foreground text-xs">
+                {snapshot.latestEvent.playerNames}
+              </div>
+            ) : null}
+          </div>
         </div>
       </section>
 
-      <ScoreSummary players={snapshot.players} />
+      {/* ─────────── Opponents ─────────── */}
+      {opponents.length > 0 ? (
+        <section aria-label={t("opponents")} className="space-y-2">
+          <div className="flex items-center justify-between px-1">
+            <div className="text-muted-foreground flex items-center gap-1.5 text-[0.7rem] font-medium tracking-wide uppercase">
+              <UsersIcon className="size-3.5" aria-hidden />
+              <span>{t("opponents")}</span>
+              <span className="text-muted-foreground/60">·</span>
+              <span className="tabular-nums">{opponents.length}</span>
+            </div>
+          </div>
+          {freezeLaneLayout ? (
+            <div className={cn("grid gap-3", opponentsGridClass)}>
+              {opponents.map((player) => (
+                <div key={player.playerId}>
+                  {renderPlayerLane(player, { compact: true })}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              variants={listStagger}
+              initial="hidden"
+              animate="show"
+              className={cn("grid gap-3", opponentsGridClass)}
+            >
+              {opponents.map((player) => (
+                <motion.div key={player.playerId} variants={listItem}>
+                  {renderPlayerLane(player, { compact: true })}
+                </motion.div>
+              ))}
+            </motion.div>
+          )}
+        </section>
+      ) : null}
+
+      {/* ─────────── Viewer lane ─────────── */}
+      {viewer ? (
+        <section aria-label={t("yourHand")} className="space-y-2">
+          <div className="text-muted-foreground px-1 text-[0.7rem] font-medium tracking-wide uppercase">
+            {t("yourHand")}
+          </div>
+          {renderPlayerLane(viewer)}
+        </section>
+      ) : null}
+
+      {/* ─────────── Desktop action dock (inline) ─────────── */}
+      {hasTurnControls ? (
+        <section
+          aria-label={t("turnActions")}
+          className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
+        >
+          {turnControls}
+        </section>
+      ) : null}
+
+      {/* ─────────── Collapsible round breakdown ─────────── */}
+      <div className="space-y-3">
+        <button
+          type="button"
+          onClick={() => setShowBreakdown((v) => !v)}
+          aria-expanded={showBreakdown}
+          aria-controls="game-round-breakdown"
+          className={cn(
+            "border-border bg-card hover:bg-muted/30 flex w-full items-center justify-between gap-3 rounded-2xl border px-5 py-3 text-left transition-colors",
+            snapshot.roundStatus === "completed" && "border-primary/40",
+          )}
+        >
+          <div className="min-w-0 space-y-0.5">
+            <div className="font-heading text-foreground text-sm font-medium tracking-tight">
+              {tScore("title")}
+            </div>
+            <div className="text-muted-foreground truncate text-xs">
+              {snapshot.roundStatus === "completed"
+                ? t("breakdownReady")
+                : t("breakdownHint")}
+            </div>
+          </div>
+          <ChevronDownIcon
+            aria-hidden
+            className={cn(
+              "text-muted-foreground size-4 shrink-0 transition-transform duration-200",
+              showBreakdown && "rotate-180",
+            )}
+          />
+        </button>
+        {showBreakdown ? (
+          <div id="game-round-breakdown">
+            <ScoreSummary players={snapshot.players} />
+          </div>
+        ) : null}
+      </div>
+
+      {/* ─────────── Sticky mobile/tablet action bar ─────────── */}
+      {hasTurnControls ? (
+        <div
+          role="region"
+          aria-label={t("turnActions")}
+          className="border-border bg-background/95 fixed inset-x-0 bottom-0 z-30 max-h-[55svh] overflow-y-auto border-t px-4 py-3 shadow-[0_-10px_30px_-12px_oklch(0_0_0/0.35)] backdrop-blur-md lg:hidden"
+        >
+          <div className="mx-auto max-w-5xl">{turnControls}</div>
+        </div>
+      ) : null}
     </div>
   );
 }
 
-function getSortedPlayers(snapshot: MatchSnapshot) {
-  const viewerId = snapshot.viewerPlayerId;
-  const activeId = snapshot.activePlayerId;
-  const dealerSeat = snapshot.dealerSeat;
-
-  const players = [...snapshot.players];
-
-  if (activeId) {
-    const active = players.find((p) => p.playerId === activeId);
-    const others = players.filter((p) => p.playerId !== activeId);
-    return { active, others, sorted: [active!, ...others] };
-  }
-
-  if (viewerId) {
-    const dealer = players.find((p) => p.seatIndex === dealerSeat) ?? players[0];
-    const withoutDealer = players.filter((p) => p.playerId !== dealer?.playerId);
-    withoutDealer.sort((a, b) => a.seatIndex - b.seatIndex);
-    return { active: null, others: withoutDealer, sorted: withoutDealer };
-  }
-
-  const dealer = players.find((p) => p.seatIndex === dealerSeat) ?? players[0];
-  const withoutDealer = players.filter((p) => p.playerId !== dealer?.playerId);
-  withoutDealer.sort((a, b) => a.seatIndex - b.seatIndex);
-  return { active: null, others: withoutDealer, sorted: withoutDealer };
-}
-
-function getRoundTablePartition(snapshot: MatchSnapshot) {
+/** Viewer first/pinned, opponents in seat order. */
+function partitionPlayers(snapshot: MatchSnapshot) {
   const bySeat = [...snapshot.players].toSorted((a, b) => a.seatIndex - b.seatIndex);
   const viewerId = snapshot.viewerPlayerId;
   if (!viewerId) {
@@ -380,61 +344,19 @@ function getRoundTablePartition(snapshot: MatchSnapshot) {
   return { viewer, opponents };
 }
 
-/** Percent positions; element uses -translate-x-1/2 -translate-y-1/2 for anchor. */
-function opponentArcSlots(count: number): Array<{ top: string; left: string }> {
-  if (count <= 0) {
-    return [];
-  }
-  if (count === 1) {
-    return [{ top: "6%", left: "50%" }];
+/** Opponents grid: density scales with headcount but keeps lanes legible. */
+function opponentsGridCols(count: number) {
+  if (count <= 1) {
+    return "grid-cols-1";
   }
   if (count === 2) {
-    return [
-      { top: "48%", left: "10%" },
-      { top: "48%", left: "90%" },
-    ];
+    return "grid-cols-1 sm:grid-cols-2";
   }
   if (count === 3) {
-    return [
-      { top: "48%", left: "10%" },
-      { top: "6%", left: "50%" },
-      { top: "48%", left: "90%" },
-    ];
+    return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
   }
-  const cx = 50;
-  const cy = 40;
-  const r = 36;
-  const slots: Array<{ top: string; left: string }> = [];
-  for (let i = 0; i < count; i++) {
-    const angle = Math.PI - (Math.PI * i) / (count - 1);
-    const x = cx + r * Math.cos(angle);
-    const y = cy - r * Math.sin(angle);
-    slots.push({ top: `${y}%`, left: `${x}%` });
+  if (count === 4) {
+    return "grid-cols-2 lg:grid-cols-4";
   }
-  return slots;
-}
-
-function InfoPanel({
-  title,
-  body,
-  bodyClassName,
-  icon,
-  subtext,
-}: {
-  title: string;
-  body: string;
-  bodyClassName?: string;
-  icon?: ReactNode;
-  subtext?: string;
-}) {
-  return (
-    <section className="border-border bg-card rounded-xl border p-4">
-      <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium tracking-wide uppercase">
-        {icon}
-        {title}
-      </div>
-      <div className={cn("mt-2 text-sm leading-6 text-foreground", bodyClassName)}>{body}</div>
-      {subtext && <div className="text-muted-foreground mt-1 text-xs">{subtext}</div>}
-    </section>
-  );
+  return "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 }

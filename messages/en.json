@@ -227,7 +227,11 @@
     "layoutTable": "Table",
     "layoutPreferenceAria": "Choose how the game table is displayed",
     "roundTableTitle": "Round table",
-    "roundTableHint": "Your hand is below. Hover other players' cards to fan them out."
+    "roundTableHint": "Your hand is below. Hover other players' cards to fan them out.",
+    "opponents": "Opponents",
+    "turnActions": "Turn actions",
+    "breakdownHint": "Expand to review numbers, bonuses and multipliers.",
+    "breakdownReady": "Round scored. Expand to see each seat's totals."
   },
   "LobbyCodeDisplay": {
     "copied": "Copied",

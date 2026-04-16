@@ -120,19 +120,34 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const playerCount = snapshotWithPresence.players.length;
 
   return (
-    <main className="mx-auto flex w-full max-w-9/10 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          {isSetup && snapshotWithPresence.lobbyCode ? <LobbyCodeDisplay code={snapshotWithPresence.lobbyCode} /> : null}
-          {isSetup ? (
-            <StartGameButton matchId={matchId} isHost={snapshotWithPresence.isHost ?? false} playerCount={playerCount} />
-          ) : null}
+    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 pt-4 pb-6 sm:gap-5 sm:px-5 sm:pt-5 sm:pb-8 lg:px-6">
+      {isSetup || !snapshotWithPresence.viewerPlayerId ? (
+        <div className="flex flex-wrap items-center justify-between gap-3 pr-24 sm:pr-28">
+          <div className="flex flex-wrap items-center gap-3">
+            {isSetup && snapshotWithPresence.lobbyCode ? (
+              <LobbyCodeDisplay code={snapshotWithPresence.lobbyCode} />
+            ) : null}
+            {isSetup ? (
+              <StartGameButton
+                matchId={matchId}
+                isHost={snapshotWithPresence.isHost ?? false}
+                playerCount={playerCount}
+              />
+            ) : null}
+          </div>
+          <Button variant="outline" size="sm" onClick={copyInviteLink}>
+            <LinkIcon />
+            <span className="hidden sm:inline">{t("copyInvite")}</span>
+          </Button>
         </div>
-        <Button variant="outline" onClick={copyInviteLink}>
-          <LinkIcon />
-          {t("copyInvite")}
-        </Button>
-      </div>
+      ) : (
+        <div className="flex justify-end pr-24 sm:pr-28">
+          <Button variant="ghost" size="sm" onClick={copyInviteLink}>
+            <LinkIcon />
+            <span className="hidden sm:inline">{t("copyInvite")}</span>
+          </Button>
+        </div>
+      )}
     
       {!snapshotWithPresence.viewerPlayerId && isSetup ? (
         <div className="surface-elevated rounded-2xl p-6">
