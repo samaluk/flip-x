@@ -231,7 +231,7 @@
     "layoutTable": "Table",
     "layoutPreferenceAria": "Choose how the game table is displayed",
     "roundTableTitle": "Round table",
-    "roundTableHint": "Your hand is below. Hover other players' cards to fan them out."
+    "roundTableHint": "Your hand is below. Hover a player's lane to bring it to the front."
   },
   "LobbyCodeDisplay": {
     "copied": "Copied",

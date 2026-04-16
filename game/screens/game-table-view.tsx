@@ -158,7 +158,7 @@ export function GameTableView({
     player: MatchSnapshot["players"][number],
     options: {
       compact?: boolean;
-      overlapCards?: boolean;
+      elevateOnHover?: boolean;
     } = {},
   ) => (
     <PlayerLane
@@ -380,7 +380,7 @@ export function GameTableView({
                       className="absolute z-[8] w-[min(18rem,calc(42vw-0.5rem))] max-w-[95%] -translate-x-1/2 -translate-y-1/2"
                       style={{ top: slot.top, left: slot.left }}
                     >
-                      {renderPlayerLane(player, { compact: true, overlapCards: true })}
+                      {renderPlayerLane(player, { compact: true, elevateOnHover: true })}
                     </div>
                   );
                 })}

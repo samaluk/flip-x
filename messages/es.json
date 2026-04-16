@@ -231,7 +231,7 @@
     "layoutTable": "Mesa",
     "layoutPreferenceAria": "Elige cómo se muestra la mesa de juego",
     "roundTableTitle": "Mesa redonda",
-    "roundTableHint": "Tu mano está abajo. Pasa el cursor sobre las cartas de los rivales para desplegarlas."
+    "roundTableHint": "Tu mano está abajo. Pasa el cursor sobre la fila de un jugador para traerla al frente."
   },
   "LobbyCodeDisplay": {
     "copied": "Copiado",

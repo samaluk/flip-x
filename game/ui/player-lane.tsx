@@ -59,8 +59,12 @@ type PlayerLaneProps = {
   compact?: boolean;
   /** No CSS 3D flip (reliable faces in headless screenshots). */
   disableCardFlip3d?: boolean;
-  /** Overlap cards horizontally; fan out on lane hover (round table opponents). */
-  overlapCards?: boolean;
+  /**
+   * Elevate this lane above its siblings on hover/focus. Use for round-table opponent
+   * lanes that are absolutely positioned and may visually overlap each other.
+   * Cards are never stacked — they always lay out side-by-side.
+   */
+  elevateOnHover?: boolean;
 };
 
 export const PlayerLane = memo(function PlayerLane({
@@ -71,7 +75,7 @@ export const PlayerLane = memo(function PlayerLane({
   isPinned = false,
   compact = false,
   disableCardFlip3d = false,
-  overlapCards = false,
+  elevateOnHover = false,
 }: PlayerLaneProps) {
   const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
@@ -187,7 +191,7 @@ export const PlayerLane = memo(function PlayerLane({
         isDealer && "border-primary/30",
         isPinned && "border-primary/30 bg-primary/[0.03]",
         compact ? "p-3" : "p-4",
-        overlapCards && "relative z-0 hover:z-40 focus-within:z-40",
+        elevateOnHover && "relative z-0 hover:z-40 focus-within:z-40",
       )}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -240,24 +244,11 @@ export const PlayerLane = memo(function PlayerLane({
 
       <div
         className={cn(
-          "mt-3 flex flex-row items-start",
-          overlapCards
-            ? "group/cards max-w-[min(100%,26rem)] flex-nowrap overflow-x-auto overscroll-x-contain pb-1 [&>*]:transition-[margin-left] [&>*]:duration-300 [&>*]:ease-out [&>*:not(:first-child)]:-ml-5 group-hover/cards:[&>*]:ml-0"
-            : compact
-              ? "flex-wrap gap-1.5"
-              : "flex-wrap gap-3",
+          "mt-3 flex flex-row flex-wrap items-start",
+          compact ? "gap-1.5" : "gap-3",
         )}
       >
-        {overlapCards
-          ? cardElements.map((el, index) => {
-              const wrapKey = String(el.key ?? index);
-              return (
-                <div key={wrapKey} className="shrink-0" style={{ zIndex: index + 1 }}>
-                  {el}
-                </div>
-              );
-            })
-          : cardElements}
+        {cardElements}
       </div>
     </section>
   );
@@ -271,7 +262,7 @@ function arePlayerLanePropsEqual(left: PlayerLaneProps, right: PlayerLaneProps) 
     left.isPinned === right.isPinned &&
     left.compact === right.compact &&
     left.disableCardFlip3d === right.disableCardFlip3d &&
-    left.overlapCards === right.overlapCards &&
+    left.elevateOnHover === right.elevateOnHover &&
     arePlayersEqual(left.player, right.player)
   );
 }
