@@ -242,7 +242,7 @@ export const PlayerLane = memo(function PlayerLane({
         className={cn(
           "mt-3 flex flex-row items-start",
           overlapCards
-            ? "group/cards max-w-[min(100%,26rem)] flex-nowrap overflow-x-auto overscroll-x-contain pb-1 [&>*]:transition-[margin-left] [&>*]:duration-300 [&>*]:ease-out [&>*:not(:first-child)]:-ml-7 sm:[&>*:not(:first-child)]:-ml-8 group-hover/cards:[&>*]:ml-0"
+            ? "group/cards max-w-[min(100%,26rem)] flex-nowrap overflow-x-auto overscroll-x-contain pb-1 [&>*]:transition-[margin-left] [&>*]:duration-300 [&>*]:ease-out [&>*:not(:first-child)]:-ml-5 group-hover/cards:[&>*]:ml-0"
             : compact
               ? "flex-wrap gap-1.5"
               : "flex-wrap gap-3",
