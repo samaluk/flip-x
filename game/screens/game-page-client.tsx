@@ -77,7 +77,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
 
   if (snapshot === undefined) {
     return (
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Skeleton className="h-12 w-36 rounded-xl" />
@@ -120,7 +120,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const playerCount = snapshotWithPresence.players.length;
 
   return (
-    <main className="mx-auto flex w-full max-w-9/10 flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <main className="mx-auto flex w-full max-w-9/10 flex-1 flex-col gap-4 px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           {isSetup && snapshotWithPresence.lobbyCode ? <LobbyCodeDisplay code={snapshotWithPresence.lobbyCode} /> : null}
@@ -135,11 +135,11 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
       </div>
     
       {!snapshotWithPresence.viewerPlayerId && isSetup ? (
-        <div className="surface-elevated rounded-2xl p-6">
-          <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
+        <div className="surface-elevated rounded-2xl p-4 sm:p-5">
+          <h2 className="font-heading text-foreground text-base font-medium tracking-tight">
             {t("joinTitle")}
           </h2>
-          <p className="text-muted-foreground mt-1 mb-4 text-sm">{t("joinSubtitle")}</p>
+          <p className="text-muted-foreground mt-1 mb-3 text-sm">{t("joinSubtitle")}</p>
           <form onSubmit={handleJoin} className="flex gap-3">
             <Input
               value={playerName}

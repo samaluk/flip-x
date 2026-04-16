@@ -62,6 +62,11 @@ export type GameTableViewProps = {
    * tall transparent tail (composited white) below real content.
    */
   freezeLaneLayout?: boolean;
+  /**
+   * Force an initial layout mode, bypassing localStorage. Useful in tests to render a specific mode
+   * without needing to interact with the toggle.
+   */
+  initialLayoutMode?: "list" | "table";
 };
 
 export function GameTableView({
@@ -73,6 +78,7 @@ export function GameTableView({
   onStartNextRound,
   disableCardFlip3d = false,
   freezeLaneLayout = false,
+  initialLayoutMode,
 }: GameTableViewProps) {
   const t = useTranslations("GameTable");
   const tEvents = useTranslations("Events");
@@ -80,6 +86,10 @@ export function GameTableView({
   const tCommon = useTranslations("Common");
 
   const [layoutMode, setLayoutModeState] = useState<"list" | "table">(() => {
+    if (initialLayoutMode !== undefined) {
+      return initialLayoutMode;
+    }
+
     if (typeof window === "undefined") {
       return "list";
     }
@@ -226,7 +236,7 @@ export function GameTableView({
     );
 
   return (
-    <div className="flex flex-col gap-8 md:gap-10">
+    <div className="flex flex-col gap-5 md:gap-7">
       <motion.section
         initial="hidden"
         whileInView="show"
@@ -247,26 +257,28 @@ export function GameTableView({
               "radial-gradient(ellipse 120% 80% at 50% -30%, oklch(0.42 0.12 285 / 0.18), transparent 55%), radial-gradient(ellipse 80% 60% at 100% 50%, oklch(0.35 0.08 165 / 0.08), transparent 50%)",
           }}
         />
-        <div className="relative px-4 py-8 md:px-6 md:py-10">
-          <div className="flex flex-wrap items-start justify-between gap-6">
-            <div className="max-w-xl space-y-3">
-              <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-medium tracking-[0.2em] text-white/55 uppercase">
-                {t("matchEyebrow")}
-              </span>
-              <div className="flex flex-wrap items-center gap-3">
-                <h1 className="font-heading text-2xl font-medium tracking-tight text-white md:text-3xl">
-                  {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
-                </h1>
+        <div className="relative px-4 py-5 md:px-6 md:py-7">
+          <div className="flex flex-wrap items-start justify-between gap-4 md:gap-6">
+            <div className="max-w-xl space-y-2">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-medium tracking-[0.2em] text-white/55 uppercase">
+                  {t("matchEyebrow")}
+                </span>
                 {snapshot.status === "completed" ? (
-                  <IconTrophy className="text-primary size-6" />
+                  <IconTrophy className="text-primary size-5" />
                 ) : null}
               </div>
-              <p className="text-sm leading-relaxed text-white/55">
-                {t("roundRace", {
-                  round: snapshot.currentRoundNumber,
-                  target: snapshot.targetScore,
-                })}
-              </p>
+              <div className="flex flex-wrap items-baseline gap-3">
+                <h1 className="font-heading text-xl font-medium tracking-tight text-white md:text-2xl">
+                  {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
+                </h1>
+                <p className="text-sm leading-relaxed text-white/55">
+                  {t("roundRace", {
+                    round: snapshot.currentRoundNumber,
+                    target: snapshot.targetScore,
+                  })}
+                </p>
+              </div>
             </div>
 
             <div className="flex max-w-full flex-wrap items-center justify-end gap-2 md:gap-3">
@@ -297,17 +309,17 @@ export function GameTableView({
 
           <div
             className={cn(
-              "mt-10 grid gap-6 md:gap-8",
+              "mt-6 grid gap-4 md:gap-6",
               layoutMode === "list" && "xl:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]",
             )}
           >
-            <div className="flex min-w-0 flex-col gap-6 md:gap-8">
+            <div className="flex min-w-0 flex-col gap-4 md:gap-6">
               <div className={cn(layoutMode === "table" && "lg:hidden")}>{tableCallSection}</div>
 
-              <DoubleBezel>
-                <div className="p-4 md:p-6">
-                  <div className="flex flex-wrap items-start justify-between gap-4 pb-6">
-                    <div className="space-y-2">
+              <DoubleBezel className={cn(layoutMode === "table" && "lg:hidden")}>
+                <div className="p-3 md:p-5">
+                  <div className="flex flex-wrap items-start justify-between gap-3 pb-4">
+                    <div className="space-y-1.5">
                       <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-medium tracking-[0.2em] text-white/50 uppercase">
                         {t("tableLayout")}
                       </span>
@@ -328,7 +340,7 @@ export function GameTableView({
 
               <div
                 className={cn(
-                  "relative hidden min-h-[min(720px,82dvh)] w-full overflow-visible md:min-h-[min(720px,82dvh)]",
+                  "relative hidden min-h-[min(600px,75dvh)] w-full overflow-visible",
                   layoutMode === "table" && "lg:block",
                 )}
                 data-game-round-table
@@ -381,7 +393,7 @@ export function GameTableView({
               </div>
             </div>
 
-            <aside className={cn("min-w-0 space-y-6", layoutMode === "table" && "lg:hidden")}>
+            <aside className={cn("min-w-0 space-y-4", layoutMode === "table" && "lg:hidden")}>
               {infoPanelLatest}
             </aside>
           </div>
@@ -435,7 +447,7 @@ function TableCallPanel({
   const t = useTranslations("GameTable");
   return (
     <DoubleBezel>
-      <div className="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between md:gap-6 md:p-6">
+      <div className="flex flex-col gap-3 p-3 md:flex-row md:items-center md:justify-between md:gap-5 md:p-5">
         <div className="min-w-0 space-y-2">
           <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[10px] font-medium tracking-[0.2em] text-white/50 uppercase">
             {t("tableCall")}

@@ -18,7 +18,7 @@ import "./game-table.vrt.css";
 const noop = () => {};
 const noopTarget = (_id: Id<"players">) => {};
 
-function renderGameTable(snapshot: MatchSnapshot) {
+function renderGameTable(snapshot: MatchSnapshot, layoutMode?: "list" | "table") {
   render(
     withIntlEn(
       <div
@@ -36,13 +36,14 @@ function renderGameTable(snapshot: MatchSnapshot) {
           onStartNextRound={noop}
           disableCardFlip3d
           freezeLaneLayout
+          initialLayoutMode={layoutMode}
         />
       </div>,
     ),
   );
 }
 
-describe("GameTable VRT", () => {
+describe("GameTable VRT — list layout", () => {
   test("mid-round with opponents and bust lane", async () => {
     renderGameTable(vrtSnapshotMidRound);
     await page.viewport(1440, 2400);
@@ -72,6 +73,40 @@ describe("GameTable VRT", () => {
     await page.viewport(1440, 2400);
     await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
       "game-flip7-hand",
+    );
+  });
+});
+
+describe("GameTable VRT — table layout", () => {
+  test("mid-round table view with opponents", async () => {
+    renderGameTable(vrtSnapshotMidRound, "table");
+    await page.viewport(1440, 2400);
+    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+      "game-table-mid-round",
+    );
+  });
+
+  test("pending freeze target selection in table view", async () => {
+    renderGameTable(vrtSnapshotPendingFreeze, "table");
+    await page.viewport(1440, 2400);
+    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+      "game-table-pending-freeze",
+    );
+  });
+
+  test("round complete in table view", async () => {
+    renderGameTable(vrtSnapshotRoundComplete, "table");
+    await page.viewport(1440, 2400);
+    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+      "game-table-round-complete",
+    );
+  });
+
+  test("viewer flip 7 hand in table view", async () => {
+    renderGameTable(vrtSnapshotFlip7Hand, "table");
+    await page.viewport(1440, 2400);
+    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+      "game-table-flip7-hand",
     );
   });
 });
