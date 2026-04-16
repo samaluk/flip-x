@@ -67,6 +67,12 @@ export type GameTableViewProps = {
    * without needing to interact with the toggle.
    */
   initialLayoutMode?: "list" | "table";
+  /**
+   * Replace `lg:block`/`lg:hidden` breakpoint guards on the round-table section and list bezel
+   * with unconditional visibility. Use in browser tests where element screenshots are taken before
+   * responsive breakpoints resolve (element width ≠ viewport width).
+   */
+  disableResponsiveBreakpoints?: boolean;
 };
 
 export function GameTableView({
@@ -79,6 +85,7 @@ export function GameTableView({
   disableCardFlip3d = false,
   freezeLaneLayout = false,
   initialLayoutMode,
+  disableResponsiveBreakpoints = false,
 }: GameTableViewProps) {
   const t = useTranslations("GameTable");
   const tEvents = useTranslations("Events");
@@ -314,9 +321,19 @@ export function GameTableView({
             )}
           >
             <div className="flex min-w-0 flex-col gap-4 md:gap-6">
-              <div className={cn(layoutMode === "table" && "lg:hidden")}>{tableCallSection}</div>
+              <div
+                className={cn(
+                  layoutMode === "table" && (disableResponsiveBreakpoints ? "hidden" : "lg:hidden"),
+                )}
+              >
+                {tableCallSection}
+              </div>
 
-              <DoubleBezel className={cn(layoutMode === "table" && "lg:hidden")}>
+              <DoubleBezel
+                className={cn(
+                  layoutMode === "table" && (disableResponsiveBreakpoints ? "hidden" : "lg:hidden"),
+                )}
+              >
                 <div className="p-3 md:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3 pb-4">
                     <div className="space-y-1.5">
@@ -340,11 +357,20 @@ export function GameTableView({
 
               <div
                 className={cn(
-                  "relative hidden min-h-[min(600px,75dvh)] w-full overflow-visible",
-                  layoutMode === "table" && "lg:block",
+                  "relative w-full overflow-visible",
+                  "hidden lg:block",
+                  layoutMode !== "table" && "!hidden",
                 )}
+                style={
+                  disableResponsiveBreakpoints && layoutMode === "table"
+                    ? { display: "block" }
+                    : { minHeight: "min(600px, 75dvh)" }
+                }
                 data-game-round-table
               >
+                {disableResponsiveBreakpoints ? (
+                  <div aria-hidden style={{ height: "600px", pointerEvents: "none" }} />
+                ) : null}
                 <div
                   className="pointer-events-none absolute inset-[8%] rounded-[50%] opacity-60"
                   style={{
@@ -393,7 +419,12 @@ export function GameTableView({
               </div>
             </div>
 
-            <aside className={cn("min-w-0 space-y-4", layoutMode === "table" && "lg:hidden")}>
+            <aside
+              className={cn(
+                "min-w-0 space-y-4",
+                layoutMode === "table" && (disableResponsiveBreakpoints ? "hidden" : "lg:hidden"),
+              )}
+            >
               {infoPanelLatest}
             </aside>
           </div>
