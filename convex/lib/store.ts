@@ -3,7 +3,7 @@ import { getManyFrom } from "convex-helpers/server/relationships";
 
 import { buildMatchSnapshot, toOrderedPlayers } from "../../game/logic/view-models";
 import { scoreRound } from "../../game/logic/scoring";
-import type { Card } from "../../game/logic/card-types";
+import type { ActionCard, Card } from "../../game/logic/card-types";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../game/logic/turn-resolution";
 import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../_generated/server";
@@ -47,6 +47,7 @@ function normalizeRoundRuntime(doc: Doc<"rounds">): RoundRuntime {
           sourcePlayerId: String(doc.pendingFlip3.sourcePlayerId),
           targetPlayerId: String(doc.pendingFlip3.targetPlayerId),
           cardsRemaining: doc.pendingFlip3.cardsRemaining,
+          deferredActionCards: doc.pendingFlip3.deferredActionCards as ActionCard[],
         }
       : null,
   };
@@ -298,6 +299,14 @@ export function serializeRoundRuntime(
             (playerId) => playerIdMap.get(playerId)!,
           ),
           resume: round.pendingAction.resume,
+        }
+      : undefined,
+    pendingFlip3: round.pendingFlip3
+      ? {
+          sourcePlayerId: playerIdMap.get(round.pendingFlip3.sourcePlayerId)!,
+          targetPlayerId: playerIdMap.get(round.pendingFlip3.targetPlayerId)!,
+          cardsRemaining: round.pendingFlip3.cardsRemaining,
+          deferredActionCards: round.pendingFlip3.deferredActionCards,
         }
       : undefined,
   };

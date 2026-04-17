@@ -30,6 +30,7 @@ export type PendingFlip3 = {
   sourcePlayerId: string;
   targetPlayerId: string;
   cardsRemaining: number;
+  deferredActionCards: ActionCard[];
 };
 
 export type PlayerRoundState = {
@@ -102,6 +103,15 @@ function clonePlayerStates(
   );
 }
 
+function clonePendingFlip3(pendingFlip3: PendingFlip3 | null) {
+  return pendingFlip3
+    ? {
+        ...pendingFlip3,
+        deferredActionCards: [...pendingFlip3.deferredActionCards],
+      }
+    : null;
+}
+
 function orderedPlayerIds(players: OrderedPlayer[]) {
   return [...players].toSorted((left, right) => left.seatIndex - right.seatIndex);
 }
@@ -126,6 +136,10 @@ function nextActiveSeatIndex(
   }
 
   return null;
+}
+
+function isFlip3ActiveForPlayer(round: RoundRuntime, playerId: string) {
+  return round.pendingFlip3?.targetPlayerId === playerId && round.pendingFlip3.cardsRemaining > 0;
 }
 
 function activePlayerIds(players: OrderedPlayer[], playerStates: Record<string, PlayerRoundState>) {
@@ -277,7 +291,97 @@ function applyResolvedTargetAction(
     sourcePlayerId,
     targetPlayerId,
     cardsRemaining: 3,
+    deferredActionCards: [],
   };
+}
+
+function removeHeldActionCard(playerState: PlayerRoundState, cardId: string) {
+  const cardIndex = playerState.heldActionCards.findIndex((card) => card.id === cardId);
+  if (cardIndex === -1) {
+    return null;
+  }
+
+  const [card] = playerState.heldActionCards.splice(cardIndex, 1);
+  return card;
+}
+
+function discardDeferredFlip3Cards(
+  round: RoundRuntime,
+  playerState: PlayerRoundState,
+  cards: ActionCard[],
+) {
+  for (const card of cards) {
+    const heldCard = removeHeldActionCard(playerState, card.id);
+    if (heldCard) {
+      discardCard(round, heldCard);
+    }
+  }
+}
+
+function resolveHeldTargetAction(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+  playerId: string,
+  card: ActionCard & { actionKind: PendingAction["actionKind"] },
+  resume: PendingAction["resume"],
+  events: RoundEvent[],
+) {
+  const targetOrPending = createPendingTargetAction(
+    round,
+    players,
+    playerStates,
+    playerId,
+    card.actionKind,
+    resume,
+    events,
+  );
+
+  if (typeof targetOrPending === "string") {
+    applyResolvedTargetAction(
+      round,
+      players,
+      playerStates,
+      playerId,
+      card.actionKind,
+      targetOrPending,
+      events,
+    );
+  }
+}
+
+function resolveDeferredFlip3Actions(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+  playerId: string,
+  events: RoundEvent[],
+) {
+  const flip3 = round.pendingFlip3;
+  if (!flip3 || flip3.targetPlayerId !== playerId || flip3.deferredActionCards.length === 0) {
+    return;
+  }
+
+  const deferredCards = [
+    ...flip3.deferredActionCards,
+  ] as Array<ActionCard & { actionKind: PendingAction["actionKind"] }>;
+  flip3.deferredActionCards = [];
+
+  for (const card of deferredCards) {
+    if (round.phase !== "player_turns") {
+      break;
+    }
+
+    if (playerStates[playerId]?.status !== "active") {
+      break;
+    }
+
+    resolveHeldTargetAction(round, players, playerStates, playerId, card, "turns", events);
+
+    if (round.pendingAction) {
+      break;
+    }
+  }
 }
 
 function applyCardToPlayer(
@@ -403,30 +507,29 @@ function applyCardToPlayer(
     return { pending: false };
   }
 
-  const targetOrPending = createPendingTargetAction(
+  if (isFlip3ActiveForPlayer(round, playerId)) {
+    playerState.heldActionCards.push(card);
+    round.pendingFlip3?.deferredActionCards.push(card);
+    addEvent(events, {
+      eventType: "deferred_action",
+      actorPlayerId: playerId,
+      targetPlayerId: playerId,
+      payload: { actionKind: card.actionKind },
+    });
+    return { pending: false };
+  }
+
+  playerState.heldActionCards.push(card);
+
+  resolveHeldTargetAction(
     round,
     players,
     playerStates,
     playerId,
-    card.actionKind,
+    card as ActionCard & { actionKind: PendingAction["actionKind"] },
     resume,
     events,
   );
-
-  playerState.heldActionCards.push(card);
-
-  if (typeof targetOrPending === "string") {
-    applyResolvedTargetAction(
-      round,
-      players,
-      playerStates,
-      playerId,
-      card.actionKind,
-      targetOrPending,
-      events,
-    );
-    return { pending: false };
-  }
 
   return { pending: Boolean(round.pendingAction) };
 }
@@ -442,7 +545,17 @@ function maybeFinishRound(
 
   const flip3 = round.pendingFlip3;
   if (flip3 && flip3.cardsRemaining > 0) {
-    return;
+    const targetState = playerStates[flip3.targetPlayerId];
+    const flip3StillValid =
+      round.phase === "player_turns" &&
+      round.activePlayerId === flip3.targetPlayerId &&
+      targetState?.status === "active";
+
+    if (flip3StillValid) {
+      return;
+    }
+
+    round.pendingFlip3 = null;
   }
 
   if (activePlayerIds(players, playerStates).length === 0) {
@@ -503,7 +616,7 @@ export function continueRound(
     drawPile: [...roundInput.drawPile],
     discardPile: [...roundInput.discardPile],
     pendingAction: roundInput.pendingAction ? { ...roundInput.pendingAction } : null,
-    pendingFlip3: roundInput.pendingFlip3 ? { ...roundInput.pendingFlip3 } : null,
+    pendingFlip3: clonePendingFlip3(roundInput.pendingFlip3),
   };
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
@@ -568,7 +681,7 @@ export function takeTurnAction(
     drawPile: [...roundInput.drawPile],
     discardPile: [...roundInput.discardPile],
     pendingAction: roundInput.pendingAction ? { ...roundInput.pendingAction } : null,
-    pendingFlip3: roundInput.pendingFlip3 ? { ...roundInput.pendingFlip3 } : null,
+    pendingFlip3: clonePendingFlip3(roundInput.pendingFlip3),
   };
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
@@ -579,15 +692,8 @@ export function takeTurnAction(
   }
 
   if (action === "stay") {
-    const flip3 = round.pendingFlip3;
-    if (flip3 && flip3.targetPlayerId === playerId && flip3.cardsRemaining > 0) {
-      addEvent(events, {
-        eventType: "flip3_stayed",
-        actorPlayerId: playerId,
-        targetPlayerId: playerId,
-        payload: { cardsRemaining: flip3.cardsRemaining },
-      });
-      round.pendingFlip3 = null;
+    if (isFlip3ActiveForPlayer(round, playerId)) {
+      throw new Error("INVALID_TURN");
     }
     currentState.status = "stayed";
     currentState.roundScore = currentState.pointsAtRisk;
@@ -603,8 +709,7 @@ export function takeTurnAction(
     if (!card) {
       round.phase = "scoring";
     } else {
-      const flip3 = round.pendingFlip3;
-      const isFlip3Turn = flip3 && flip3.targetPlayerId === playerId && flip3.cardsRemaining > 0;
+      const isFlip3Turn = isFlip3ActiveForPlayer(round, playerId);
 
       addEvent(events, {
         eventType: isFlip3Turn ? "flip3_hit" : "hit",
@@ -615,25 +720,48 @@ export function takeTurnAction(
 
       applyCardToPlayer(round, players, playerStates, playerId, card, "turns", events);
 
-      if (isFlip3Turn && round.pendingFlip3) {
-        round.pendingFlip3.cardsRemaining -= 1;
-        if (round.pendingFlip3.cardsRemaining <= 0) {
+      if (isFlip3Turn) {
+        const flip3 = round.pendingFlip3;
+
+        if (!flip3) {
+          // A nested Flip Three cannot replace the active one until the current sequence ends.
+        } else if (round.phase !== "player_turns") {
+          discardDeferredFlip3Cards(round, currentState, flip3.deferredActionCards);
           round.pendingFlip3 = null;
+        } else if (currentState.status !== "active") {
+          discardDeferredFlip3Cards(round, currentState, flip3.deferredActionCards);
+          round.pendingFlip3 = null;
+        } else {
+          flip3.cardsRemaining -= 1;
+          if (flip3.cardsRemaining <= 0) {
+            const deferredCards = [...flip3.deferredActionCards];
+            round.pendingFlip3 = null;
+            addEvent(events, {
+              eventType: "flip3_completed",
+              actorPlayerId: playerId,
+              targetPlayerId: playerId,
+              payload: {},
+            });
+            if (deferredCards.length > 0) {
+              round.pendingFlip3 = {
+                ...flip3,
+                cardsRemaining: 0,
+                deferredActionCards: deferredCards,
+              };
+              resolveDeferredFlip3Actions(round, players, playerStates, playerId, events);
+              if (round.pendingFlip3?.targetPlayerId === playerId && round.pendingFlip3.cardsRemaining === 0) {
+                round.pendingFlip3 = null;
+              }
+            }
+          }
         }
-      } else if (isFlip3Turn && !round.pendingFlip3) {
-        addEvent(events, {
-          eventType: "flip3_completed",
-          actorPlayerId: playerId,
-          targetPlayerId: playerId,
-          payload: {},
-        });
       }
     }
   }
 
   maybeFinishRound(round, players, playerStates);
 
-  if (round.phase === "player_turns" && !round.pendingAction) {
+  if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
     const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
     round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
     round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
@@ -658,7 +786,7 @@ export function resolvePendingAction(
     drawPile: [...roundInput.drawPile],
     discardPile: [...roundInput.discardPile],
     pendingAction: { ...roundInput.pendingAction },
-    pendingFlip3: roundInput.pendingFlip3 ? { ...roundInput.pendingFlip3 } : null,
+    pendingFlip3: clonePendingFlip3(roundInput.pendingFlip3),
   };
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];

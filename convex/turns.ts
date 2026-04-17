@@ -18,7 +18,7 @@ import {
   persistScoreBreakdowns,
   requireViewerPlayerId,
 } from "./lib/store";
-import type { Card } from "../game/logic/card-types";
+import type { ActionCard, Card } from "../game/logic/card-types";
 import { mutationWithSession } from "./lib/session_functions";
 
 function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRound>>>) {
@@ -45,6 +45,7 @@ function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRo
           sourcePlayerId: String(round.pendingFlip3.sourcePlayerId),
           targetPlayerId: String(round.pendingFlip3.targetPlayerId),
           cardsRemaining: round.pendingFlip3.cardsRemaining,
+          deferredActionCards: round.pendingFlip3.deferredActionCards as ActionCard[],
         }
       : null,
   };

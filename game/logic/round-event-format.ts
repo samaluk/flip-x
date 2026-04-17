@@ -60,10 +60,6 @@ export function formatLatestRoundEventBody(
       return tEvents("flip3_hit");
     case "flip3_completed":
       return tEvents("flip3_completed");
-    case "flip3_stayed":
-      return tEvents("flip3_stayed", {
-        cardsRemaining: typeof p.cardsRemaining === "number" ? p.cardsRemaining : 0,
-      });
     case "deferred_action":
       return tEvents("deferred_action", {
         action: actionKindLabel(p.actionKind, tCards),

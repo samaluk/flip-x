@@ -68,6 +68,7 @@ export default defineSchema({
         sourcePlayerId: v.id("players"),
         targetPlayerId: v.id("players"),
         cardsRemaining: v.number(),
+        deferredActionCards: v.array(cardValue),
       }),
     ),
     startedAt: v.number(),

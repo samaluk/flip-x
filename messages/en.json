@@ -106,7 +106,6 @@
     "flip_three_targeted": "Flip Three targeted! {cardsRemaining} cards to draw.",
     "flip3_hit": "Card drawn.",
     "flip3_completed": "Flip Three completed!",
-    "flip3_stayed": "Flip Three incomplete: chose to stay with {cardsRemaining} remaining.",
     "deferred_action": "{action} was queued until Flip Three finished.",
     "duplicate_bust": "Drew duplicate {duplicate} — bust!",
     "number_drawn": "Revealed number {numberValue}.",

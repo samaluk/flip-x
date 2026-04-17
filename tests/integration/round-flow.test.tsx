@@ -80,4 +80,29 @@ describe("round flow UI", () => {
     expect(screen.getByRole("button", { name: /stay for alex/i })).toBeDisabled();
     expect(screen.getByText(/waiting for alex/i)).toBeInTheDocument();
   });
+
+  it("keeps stay disabled while the active player is resolving Flip Three", () => {
+    render(
+      withIntlEn(
+        <TurnControls
+          snapshot={{
+            ...snapshot(),
+            pendingFlip3: {
+              sourcePlayerId: "p2",
+              targetPlayerId: "p1",
+              cardsRemaining: 2,
+              deferredActionCards: [],
+            },
+          }}
+          onHit={vi.fn()}
+          onStay={vi.fn()}
+          onResolveAction={vi.fn()}
+          onStartNextRound={vi.fn()}
+        />,
+      ),
+    );
+
+    expect(screen.getByRole("button", { name: /draw \(2\)/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /stay for alex/i })).toBeDisabled();
+  });
 });

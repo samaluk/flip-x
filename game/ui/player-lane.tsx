@@ -351,6 +351,12 @@ function arePlayerLanePropsEqual(left: PlayerLaneProps, right: PlayerLaneProps) 
     left.compact === right.compact &&
     left.disableCardFlip3d === right.disableCardFlip3d &&
     left.overlapCards === right.overlapCards &&
+    left.isActionSource === right.isActionSource &&
+    left.isTargetable === right.isTargetable &&
+    left.isSelfTargeting === right.isSelfTargeting &&
+    left.incomingActionKind === right.incomingActionKind &&
+    left.flip3Remaining === right.flip3Remaining &&
+    Boolean(left.onSelectTarget) === Boolean(right.onSelectTarget) &&
     arePlayersEqual(left.player, right.player)
   );
 }
@@ -369,7 +375,8 @@ function arePlayersEqual(
     left.pointsAtRisk === right.pointsAtRisk &&
     areNumberCardsEqual(left.numberCards, right.numberCards) &&
     areModifierCardsEqual(left.modifierCards, right.modifierCards) &&
-    areHeldActionCardsEqual(left.heldActionCards, right.heldActionCards)
+    areActionCardsEqual(left.heldActionCards, right.heldActionCards) &&
+    areActionCardsEqual(left.receivedActionCards, right.receivedActionCards)
   );
 }
 
@@ -415,7 +422,7 @@ function areModifierCardsEqual(
   return true;
 }
 
-function areHeldActionCardsEqual(
+function areActionCardsEqual(
   left: MatchSnapshot["players"][number]["heldActionCards"],
   right: MatchSnapshot["players"][number]["heldActionCards"],
 ) {
