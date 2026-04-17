@@ -23,6 +23,10 @@ type Flip7CardProps = {
   compact?: boolean;
   /** Skip 3D flip; use for VRT — headless browsers can screenshot the wrong face with preserve-3d. */
   disableFlip3d?: boolean;
+  /** Action card is pending - show pulsing glow */
+  active?: boolean;
+  /** Card was received from another player */
+  variant?: "received";
 } & (
   | { kind: "number"; numberValue: number }
   | { kind: "modifier"; modifierValue: ModifierCard["modifierValue"] }
@@ -77,6 +81,8 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
     props.dealing && "flip7-card-deal",
     props.stateAnimation === "bust" && "flip7-card-bust",
     props.stateAnimation === "stay" && "flip7-card-stay",
+    props.active && "flip7-card-active",
+    props.variant === "received" && "flip7-card-received",
     props.className,
   );
 

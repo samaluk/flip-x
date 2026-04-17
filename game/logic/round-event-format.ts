@@ -52,8 +52,14 @@ export function formatLatestRoundEventBody(
       });
     case "freeze_applied":
       return tEvents("freeze_applied");
-    case "flip_three_started":
-      return tEvents("flip_three_started");
+    case "flip_three_targeted":
+      return tEvents("flip_three_targeted", {
+        cardsRemaining: typeof p.cardsRemaining === "number" ? p.cardsRemaining : 3,
+      });
+    case "flip3_hit":
+      return tEvents("flip3_hit");
+    case "flip3_completed":
+      return tEvents("flip3_completed");
     case "deferred_action":
       return tEvents("deferred_action", {
         action: actionKindLabel(p.actionKind, tCards),

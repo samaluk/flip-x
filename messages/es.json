@@ -227,7 +227,11 @@
     "layoutTable": "Mesa",
     "layoutPreferenceAria": "Elige cómo se muestra la mesa de juego",
     "roundTableTitle": "Mesa redonda",
-    "roundTableHint": "Tu mano está abajo. Pasa el cursor sobre las cartas de los rivales para desplegarlas."
+    "roundTableHint": "Tu mano está abajo. Pasa el cursor sobre las cartas de los rivales para desplegarlas.",
+    "opponents": "Rivales",
+    "turnActions": "Acciones de turno",
+    "breakdownHint": "Despliega para ver números, bonus y multiplicadores.",
+    "breakdownReady": "Ronda puntuada. Despliega para ver los totales de cada sitio."
   },
   "LobbyCodeDisplay": {
     "copied": "Copiado",

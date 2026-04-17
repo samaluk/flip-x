@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import "@/app/globals.css";
 import { MotionGlobalConfig } from "motion/react";
 import { cleanup } from "@testing-library/react";
+import { act } from "react";
 import { afterEach } from "vitest";
 
 /**
@@ -10,6 +11,8 @@ import { afterEach } from "vitest";
  */
 MotionGlobalConfig.skipAnimations = true;
 
-afterEach(() => {
-  cleanup();
+afterEach(async () => {
+  await act(async () => {
+    cleanup();
+  });
 });

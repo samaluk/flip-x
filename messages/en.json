@@ -103,7 +103,9 @@
     "pending_action": "{action} is waiting for a target.",
     "second_chance_used": "Second Chance discarded duplicate {duplicate} instead of busting the player.",
     "freeze_applied": "Frozen! Points banked and out of round.",
-    "flip_three_started": "Hit by Flip Three!",
+    "flip_three_targeted": "Flip Three targeted! {cardsRemaining} cards to draw.",
+    "flip3_hit": "Card drawn.",
+    "flip3_completed": "Flip Three completed!",
     "deferred_action": "{action} was queued until Flip Three finished.",
     "duplicate_bust": "Drew duplicate {duplicate} — bust!",
     "number_drawn": "Revealed number {numberValue}.",
@@ -190,13 +192,20 @@
     "statusStayed": "Banked",
     "statusFrozen": "Frozen",
     "statusCompleted": "Scored",
-    "statusWaiting": "Waiting"
+    "statusWaiting": "Waiting",
+    "selfTarget": "Self",
+    "incomingAction": "Incoming",
+    "flip3Remaining": "{count} to draw"
   },
   "TurnControls": {
     "startNextRound": "Start next round",
     "actionCardTitle": "Action card in play",
     "freezePrompt": "Choose who banks their points and freezes out of the round.",
     "flipThreePrompt": "Choose who must keep drawing until three cards resolve.",
+    "selectTargetHint": "Click a player lane to select target",
+    "waitingFreeze": "Freeze being resolved...",
+    "waitingFlipThree": "Flip 3 being resolved...",
+    "hitFlip3": "Draw ({count})",
     "hitFor": "Hit for {name}",
     "stayFor": "Stay for {name}",
     "claimToPlay": "Join the game from this device to play.",
@@ -227,7 +236,11 @@
     "layoutTable": "Table",
     "layoutPreferenceAria": "Choose how the game table is displayed",
     "roundTableTitle": "Round table",
-    "roundTableHint": "Your hand is below. Hover other players' cards to fan them out."
+    "roundTableHint": "Your hand is below. Hover other players' cards to fan them out.",
+    "opponents": "Opponents",
+    "turnActions": "Turn actions",
+    "breakdownHint": "Expand to review numbers, bonuses and multipliers.",
+    "breakdownReady": "Round scored. Expand to see each seat's totals."
   },
   "LobbyCodeDisplay": {
     "copied": "Copied",

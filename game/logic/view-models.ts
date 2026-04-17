@@ -19,6 +19,12 @@ export type MatchSnapshot = {
   viewerPlayerId: string | null;
   activePlayerId: string | null;
   pendingAction: PendingAction | null;
+  pendingFlip3: {
+    sourcePlayerId: string;
+    targetPlayerId: string;
+    cardsRemaining: number;
+    deferredActionCards: Array<{ label: string; actionKind: ActionKind }>;
+  } | null;
   roundStatus: RoundRuntime["phase"] | null;
   endedBy: RoundRuntime["endedBy"] | null;
   players: Array<{
@@ -32,6 +38,7 @@ export type MatchSnapshot = {
     numberCards: NumberCard[];
     modifierCards: ModifierCard[];
     heldActionCards: Array<{ label: string; actionKind: ActionKind }>;
+    receivedActionCards: Array<{ label: string; actionKind: ActionKind }>;
     scoreBreakdown: ReturnType<typeof scoreRound>;
   }>;
   latestEvent: {
@@ -72,6 +79,17 @@ export function buildMatchSnapshot(args: {
     viewerPlayerId: args.viewerPlayerId,
     activePlayerId: args.round?.activePlayerId ?? null,
     pendingAction: args.round?.pendingAction ?? null,
+    pendingFlip3: args.round?.pendingFlip3
+      ? {
+          sourcePlayerId: args.round.pendingFlip3.sourcePlayerId,
+          targetPlayerId: args.round.pendingFlip3.targetPlayerId,
+          cardsRemaining: args.round.pendingFlip3.cardsRemaining,
+          deferredActionCards: args.round.pendingFlip3.deferredActionCards.map((card) => ({
+            label: card.label,
+            actionKind: card.actionKind,
+          })),
+        }
+      : null,
     roundStatus: args.round?.phase ?? null,
     endedBy: args.round?.endedBy ?? null,
   };
@@ -90,6 +108,7 @@ export function buildMatchSnapshot(args: {
         numberCards: [],
         modifierCards: [],
         heldActionCards: [],
+        receivedActionCards: [],
         roundScore: 0,
         pointsAtRisk: 0,
         hasFlip7: false,
@@ -106,6 +125,12 @@ export function buildMatchSnapshot(args: {
         numberCards: playerState.numberCards,
         modifierCards: playerState.modifierCards,
         heldActionCards: playerState.heldActionCards.map(
+          (card: { label: string; actionKind: ActionKind }) => ({
+            label: card.label,
+            actionKind: card.actionKind,
+          }),
+        ),
+        receivedActionCards: playerState.receivedActionCards.map(
           (card: { label: string; actionKind: ActionKind }) => ({
             label: card.label,
             actionKind: card.actionKind,
