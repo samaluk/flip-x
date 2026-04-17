@@ -1,6 +1,7 @@
 import type { ActionKind, ModifierCard, NumberCard } from "@/game/logic/card-types";
 import { scoreRound } from "@/game/logic/scoring";
 import type { MatchSnapshot } from "@/game/logic/view-models";
+import type { PlayerRoundStatus } from "@/game/logic/turn-resolution";
 
 const MATCH_ID = "jz7abcd1234567890";
 
@@ -33,11 +34,12 @@ type PlayerArgs = {
   displayName: string;
   seatIndex: number;
   totalScore: number;
-  roundStatus: MatchSnapshot["players"][number]["roundStatus"];
+  roundStatus: PlayerRoundStatus;
   pointsAtRisk: number;
   numberCards: NumberCard[];
   modifierCards: ModifierCard[];
   heldActionCards: Array<{ label: string; actionKind: ActionKind }>;
+  receivedActionCards?: Array<{ label: string; actionKind: ActionKind }>;
 };
 
 function playerRow(args: PlayerArgs): MatchSnapshot["players"][number] {
@@ -48,11 +50,12 @@ function playerRow(args: PlayerArgs): MatchSnapshot["players"][number] {
     seatIndex: args.seatIndex,
     totalScore: args.totalScore,
     isOnline: true,
-    roundStatus: args.roundStatus,
+    roundStatus: args.roundStatus as PlayerRoundStatus,
     pointsAtRisk: args.pointsAtRisk,
     numberCards: args.numberCards,
     modifierCards: args.modifierCards,
     heldActionCards: args.heldActionCards,
+    receivedActionCards: args.receivedActionCards ?? [],
     scoreBreakdown: scoreRound(args.numberCards, args.modifierCards, hasFlip7),
   };
 }
@@ -71,6 +74,7 @@ export const vrtSnapshotMidRound: MatchSnapshot = {
   viewerPlayerId: RILEY,
   activePlayerId: RILEY,
   pendingAction: null,
+  pendingFlip3: null,
   roundStatus: "player_turns",
   endedBy: null,
   players: [

@@ -24,6 +24,7 @@ describe("game session contract", () => {
         activePlayerId: "p1",
         endedBy: "unknown",
         pendingAction: null,
+        pendingFlip3: null,
       },
       players: [
         {
@@ -41,6 +42,7 @@ describe("game session contract", () => {
           numberCards: [],
           modifierCards: [],
           heldActionCards: [],
+          receivedActionCards: [],
           roundScore: 0,
           pointsAtRisk: 0,
           hasFlip7: false,

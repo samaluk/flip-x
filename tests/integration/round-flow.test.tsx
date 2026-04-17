@@ -15,6 +15,7 @@ function snapshot(): MatchSnapshot {
     viewerPlayerId: "p1",
     activePlayerId: "p1",
     pendingAction: null,
+    pendingFlip3: null,
     roundStatus: "player_turns",
     endedBy: "unknown",
     latestEvent: null,
@@ -30,6 +31,7 @@ function snapshot(): MatchSnapshot {
         numberCards: [],
         modifierCards: [],
         heldActionCards: [],
+        receivedActionCards: [],
         scoreBreakdown: {
           additiveModifierTotal: 0,
           finalRoundScore: 12,
