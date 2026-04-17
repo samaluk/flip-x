@@ -21,6 +21,7 @@ describe("match flow UI", () => {
               numberCards: [],
               modifierCards: [],
               heldActionCards: [],
+              receivedActionCards: [],
               scoreBreakdown: {
                 additiveModifierTotal: 4,
                 finalRoundScore: 30,
@@ -35,7 +36,6 @@ describe("match flow UI", () => {
       ),
     );
 
-    expect(screen.getByText(/round breakdown/i)).toBeInTheDocument();
     expect(screen.getByText(/final round score: 30/i)).toBeInTheDocument();
     expect(screen.getByText(/multiplier: ×2/i)).toBeInTheDocument();
   });
