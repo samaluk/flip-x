@@ -1,4 +1,5 @@
 import { render } from "@testing-library/react";
+import { act } from "react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 
@@ -18,33 +19,37 @@ import "./game-table.vrt.css";
 const noop = () => {};
 const noopTarget = (_id: Id<"players">) => {};
 
-function renderGameTable(snapshot: MatchSnapshot) {
-  render(
-    withIntlEn(
-      <div
-        data-vrt-snapshot
-        role="img"
-        aria-label="Game table preview"
-        className="bg-background text-foreground inline-block min-w-[1280px] p-6 align-top"
-      >
-        <GameTableView
-          snapshot={snapshot}
-          isPending={false}
-          onHit={noop}
-          onStay={noop}
-          onResolveAction={noopTarget}
-          onStartNextRound={noop}
-          disableCardFlip3d
-          freezeLaneLayout
-        />
-      </div>,
-    ),
-  );
+async function renderGameTable(snapshot: MatchSnapshot) {
+  await act(async () => {
+    render(
+      withIntlEn(
+        <div
+          data-vrt-snapshot
+          role="img"
+          aria-label="Game table preview"
+          className="bg-background text-foreground inline-block min-w-[1280px] p-6 align-top"
+        >
+          <GameTableView
+            snapshot={snapshot}
+            isPending={false}
+            onHit={noop}
+            onStay={noop}
+            onResolveAction={noopTarget}
+            onStartNextRound={noop}
+            disableCardFlip3d
+            freezeLaneLayout
+          />
+        </div>,
+      ),
+    );
+
+    await Promise.resolve();
+  });
 }
 
 describe("GameTable VRT", () => {
   test("mid-round with opponents and bust lane", async () => {
-    renderGameTable(vrtSnapshotMidRound);
+    await renderGameTable(vrtSnapshotMidRound);
     await page.viewport(1440, 2400);
     await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
       "game-mid-round",
@@ -52,7 +57,7 @@ describe("GameTable VRT", () => {
   });
 
   test("pending freeze target selection", async () => {
-    renderGameTable(vrtSnapshotPendingFreeze);
+    await renderGameTable(vrtSnapshotPendingFreeze);
     await page.viewport(1440, 2400);
     await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
       "game-pending-freeze",
@@ -60,7 +65,7 @@ describe("GameTable VRT", () => {
   });
 
   test("round complete with next round control", async () => {
-    renderGameTable(vrtSnapshotRoundComplete);
+    await renderGameTable(vrtSnapshotRoundComplete);
     await page.viewport(1440, 2400);
     await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
       "game-round-complete",
@@ -68,7 +73,7 @@ describe("GameTable VRT", () => {
   });
 
   test("viewer flip 7 hand", async () => {
-    renderGameTable(vrtSnapshotFlip7Hand);
+    await renderGameTable(vrtSnapshotFlip7Hand);
     await page.viewport(1440, 2400);
     await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
       "game-flip7-hand",
