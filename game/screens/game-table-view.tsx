@@ -1,26 +1,35 @@
 "use client";
 
-import { motion } from "motion/react";
 import {
   AlertTriangleIcon,
-  ChevronDownIcon,
   CircleDotIcon,
   RefreshCwIcon,
   TrophyIcon,
   UserRoundIcon,
   UsersIcon,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
-import { PlayerLane } from "@/game/ui/player-lane";
-import { ScoreSummary } from "@/game/ui/score-summary";
-import { TurnControls } from "@/game/ui/turn-controls";
-import { Badge } from "@/shared/ui/badge";
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/logic/round-event-format";
 import type { MatchSnapshot } from "@/game/logic/view-models";
+import { PlayerLane } from "@/game/ui/player-lane";
+import { ScoreSummary } from "@/game/ui/score-summary";
+import { TurnControls } from "@/game/ui/turn-controls";
 import { cn } from "@/shared/lib/utils";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/shared/ui/accordion";
+import {
+  Card,
+  CardContent,
+} from "@/shared/ui/card"
+import { Badge } from "@/shared/ui/badge";
 
 const listStagger = {
   hidden: { opacity: 0 },
@@ -75,7 +84,7 @@ export function GameTableView({
 
   // Breakdown opens automatically once the round has been scored so players see results;
   // otherwise stays collapsed to maximize board space during play.
-  const [showBreakdown, setShowBreakdown] = useState(false);
+  const [showBreakdown, setShowBreakdown] = useState<string[]>(["summary"]);
 
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
@@ -91,22 +100,57 @@ export function GameTableView({
 
   const laneProps = { disableCardFlip3d } as const;
 
+  const pendingAction = snapshot.pendingAction;
+  const viewerIsSource = Boolean(
+    pendingAction && snapshot.viewerPlayerId && snapshot.viewerPlayerId === pendingAction.sourcePlayerId,
+  );
+  const viewerCanTargetSelf = Boolean(
+    viewerIsSource && pendingAction && pendingAction.eligibleTargetIds.includes(snapshot.viewerPlayerId ?? ""),
+  );
+
   const renderPlayerLane = (
     player: MatchSnapshot["players"][number],
     options: {
       compact?: boolean;
       overlapCards?: boolean;
     } = {},
-  ) => (
-    <PlayerLane
-      player={player}
-      isActive={snapshot.activePlayerId === player.playerId}
-      isViewer={snapshot.viewerPlayerId === player.playerId}
-      isDealer={player.seatIndex === snapshot.dealerSeat}
-      {...laneProps}
-      {...options}
-    />
-  );
+  ) => {
+    const isTargetable =
+      viewerIsSource && !!pendingAction && pendingAction.eligibleTargetIds.includes(player.playerId);
+    const isSelfTargeting =
+      !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
+    const incomingActionKindVal: "flip_three" | "freeze" | null =
+      !pendingAction || player.playerId === pendingAction.sourcePlayerId
+        ? null
+        : pendingAction.eligibleTargetIds.includes(player.playerId)
+          ? pendingAction.actionKind
+          : null;
+    const flip3RemainingVal =
+      snapshot.pendingFlip3 && snapshot.pendingFlip3.targetPlayerId === player.playerId
+        ? snapshot.pendingFlip3.cardsRemaining
+        : null;
+
+    return (
+      <PlayerLane
+        player={player}
+        isActive={snapshot.activePlayerId === player.playerId}
+        isViewer={snapshot.viewerPlayerId === player.playerId}
+        isDealer={player.seatIndex === snapshot.dealerSeat}
+        isActionSource={!!viewerIsSource}
+        isTargetable={isTargetable}
+        isSelfTargeting={isSelfTargeting}
+        incomingActionKind={incomingActionKindVal}
+        flip3Remaining={flip3RemainingVal}
+        onSelectTarget={
+          viewerIsSource
+            ? (playerId: string) => onResolveAction(playerId as Id<"players">)
+            : undefined
+        }
+        {...laneProps}
+        {...options}
+      />
+    );
+  };
 
   const callText =
     snapshot.roundStatus === "completed"
@@ -279,41 +323,22 @@ export function GameTableView({
       ) : null}
 
       {/* ─────────── Collapsible round breakdown ─────────── */}
-      <div className="space-y-3">
-        <button
-          type="button"
-          onClick={() => setShowBreakdown((v) => !v)}
-          aria-expanded={showBreakdown}
-          aria-controls="game-round-breakdown"
-          className={cn(
-            "border-border bg-card hover:bg-muted/30 flex w-full items-center justify-between gap-3 rounded-2xl border px-5 py-3 text-left transition-colors",
-            snapshot.roundStatus === "completed" && "border-primary/40",
-          )}
-        >
-          <div className="min-w-0 space-y-0.5">
-            <div className="font-heading text-foreground text-sm font-medium tracking-tight">
-              {tScore("title")}
-            </div>
-            <div className="text-muted-foreground truncate text-xs">
-              {snapshot.roundStatus === "completed"
-                ? t("breakdownReady")
-                : t("breakdownHint")}
-            </div>
-          </div>
-          <ChevronDownIcon
-            aria-hidden
-            className={cn(
-              "text-muted-foreground size-4 shrink-0 transition-transform duration-200",
-              showBreakdown && "rotate-180",
-            )}
-          />
-        </button>
-        {showBreakdown ? (
-          <div id="game-round-breakdown">
-            <ScoreSummary players={snapshot.players} />
-          </div>
-        ) : null}
-      </div>
+      <Card className="w-full">
+        <CardContent>
+
+          <Accordion
+            value={showBreakdown}
+            onValueChange={setShowBreakdown}
+          >
+            <AccordionItem value="summary">
+              <AccordionTrigger className="text-xl">{tScore("title")}</AccordionTrigger>
+              <AccordionContent>
+                <ScoreSummary players={snapshot.players} />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardContent>
+      </Card>
 
       {/* ─────────── Sticky mobile/tablet action bar ─────────── */}
       {hasTurnControls ? (

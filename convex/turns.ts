@@ -1,6 +1,10 @@
 import { v } from "convex/values";
 
-import { finalizeRound, resolvePendingAction, takeTurnAction } from "../game/logic/turn-resolution";
+import {
+  finalizeRound,
+  resolvePendingAction,
+  takeTurnAction,
+} from "../game/logic/turn-resolution";
 import {
   buildOrderedPlayers,
   buildPlayerIdMap,
@@ -36,6 +40,13 @@ function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRo
           resume: round.pendingAction.resume,
         }
       : null,
+    pendingFlip3: round.pendingFlip3
+      ? {
+          sourcePlayerId: String(round.pendingFlip3.sourcePlayerId),
+          targetPlayerId: String(round.pendingFlip3.targetPlayerId),
+          cardsRemaining: round.pendingFlip3.cardsRemaining,
+        }
+      : null,
   };
 }
 
@@ -51,6 +62,7 @@ function normalizePlayerStates(
         numberCards: playerState.numberCards as never,
         modifierCards: playerState.modifierCards as never,
         heldActionCards: playerState.heldActionCards as never,
+        receivedActionCards: playerState.receivedActionCards as never,
         roundScore: playerState.roundScore,
         pointsAtRisk: playerState.pointsAtRisk,
         hasFlip7: playerState.hasFlip7,

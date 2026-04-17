@@ -8,15 +8,8 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
   const t = useTranslations("ScoreSummary");
 
   return (
-    <section className="game-score-summary surface-elevated bg-card text-card-foreground overflow-hidden rounded-2xl p-5">
-      <div className="space-y-1">
-        <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
-          {t("title")}
-        </h2>
-        <p className="text-muted-foreground text-sm">{t("subtitle")}</p>
-      </div>
-
-      <div className="game-score-summary-scroll bg-card mt-5 overflow-x-auto rounded-lg">
+    <section className="text-card-foreground overflow-hidden rounded-2xl p-5">
+      <div className="mt-5 overflow-x-auto">
         <table className="w-full min-w-[42rem] text-left">
           <thead>
             <tr className="border-border text-muted-foreground border-b text-xs font-medium tracking-wide uppercase">

@@ -63,6 +63,13 @@ export default defineSchema({
         resume: v.union(v.literal("dealing"), v.literal("turns")),
       }),
     ),
+    pendingFlip3: v.optional(
+      v.object({
+        sourcePlayerId: v.id("players"),
+        targetPlayerId: v.id("players"),
+        cardsRemaining: v.number(),
+      }),
+    ),
     startedAt: v.number(),
     endedAt: v.optional(v.number()),
   })
@@ -82,6 +89,7 @@ export default defineSchema({
     numberCards: v.array(cardValue),
     modifierCards: v.array(cardValue),
     heldActionCards: v.array(cardValue),
+    receivedActionCards: v.array(cardValue),
     roundScore: v.number(),
     pointsAtRisk: v.number(),
     hasFlip7: v.boolean(),

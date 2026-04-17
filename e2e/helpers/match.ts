@@ -22,6 +22,33 @@ export function joinSeatForm(page: Page) {
   return page.locator("form").filter({ has: page.getByRole("button", { name: /join game/i }) });
 }
 
+export type TwoPlayerContext = {
+  hostPage: Page;
+  guestPage: Page;
+  matchId: string;
+};
+
+/**
+ * Opens two isolated browser contexts via the `isolated` fixture, runs host + guest
+ * through lobby and start, then invokes the callback. Context teardown is handled by the fixture.
+ */
+export async function withTwoPlayerMatch(
+  isolated: IsolatedContexts,
+  names: { host: string; guest: string },
+  fn: (ctx: TwoPlayerContext) => Promise<void>,
+): Promise<void> {
+  const hostContext = await isolated.create();
+  const guestContext = await isolated.create();
+
+  const hostPage = await hostContext.newPage();
+  const guestPage = await guestContext.newPage();
+
+  const matchId = await createLobbyAsHost(hostPage, names.host);
+  await joinGameAsGuest(guestPage, matchId, names.guest);
+  await clickStartGameWhenReady(hostPage);
+  await fn({ hostPage, guestPage, matchId });
+}
+
 /** Session id is set in useEffect; button also requires a non-empty name. */
 export async function waitForCreateLobbyEnabled(page: Page) {
   await expect(
@@ -117,6 +144,11 @@ export async function findPageWithEnabledHitButton(pages: Page[]): Promise<Page>
 /** Latest-resolution body is mounted twice in the game table UI (aside + round table); one copy is hidden via CSS. */
 export function latestResolutionBodyLocator(page: Page) {
   return page.locator(".game-latest-resolution").filter({ visible: true });
+}
+
+/** Count of Flip7Cards for a player (modifier + number + held action + received action cards). */
+export async function countPlayerCards(page: Page): Promise<number> {
+  return page.locator(".player-lane .flip7-card").count();
 }
 
 export type ThreePlayerContext = {

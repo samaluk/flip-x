@@ -1,5 +1,6 @@
 "use client";
 
+import { CrosshairIcon, RefreshCwIcon, UserIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { memo, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
@@ -61,6 +62,18 @@ type PlayerLaneProps = {
   disableCardFlip3d?: boolean;
   /** Overlap cards horizontally; fan out on lane hover (round table opponents). */
   overlapCards?: boolean;
+  /** Player is the source of pending action (needs to pick target) */
+  isActionSource?: boolean;
+  /** This player lane is an eligible target */
+  isTargetable?: boolean;
+  /** Viewer can target themselves */
+  isSelfTargeting?: boolean;
+  /** Action being targeted at this player */
+  incomingActionKind?: "flip_three" | "freeze" | null;
+  /** Flip 3 cards remaining to draw */
+  flip3Remaining?: number | null;
+  /** Callback when player is clicked as target */
+  onSelectTarget?: (playerId: string) => void;
 };
 
 export const PlayerLane = memo(function PlayerLane({
@@ -72,6 +85,12 @@ export const PlayerLane = memo(function PlayerLane({
   compact = false,
   disableCardFlip3d = false,
   overlapCards = false,
+  isActionSource = false,
+  isTargetable = false,
+  isSelfTargeting = false,
+  incomingActionKind = null,
+  flip3Remaining = null,
+  onSelectTarget,
 }: PlayerLaneProps) {
   const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
@@ -80,6 +99,9 @@ export const PlayerLane = memo(function PlayerLane({
   const [dealingIds, setDealingIds] = useState<string[]>([]);
   const [stateAnimation, setStateAnimation] = useState<"bust" | "stay" | null>(null);
 
+  const actionSourcePending = isActionSource;
+  const targetingActive = isTargetable || isSelfTargeting;
+
   const cardIds = useMemo(
     () => [
       ...player.modifierCards.map((card) => card.id),
@@ -87,8 +109,17 @@ export const PlayerLane = memo(function PlayerLane({
       ...player.heldActionCards.map(
         (card) => `${player.playerId}-${card.actionKind}-${card.label}`,
       ),
+      ...player.receivedActionCards.map(
+        (card) => `${player.playerId}-received-${card.actionKind}-${card.label}`,
+      ),
     ],
-    [player.heldActionCards, player.modifierCards, player.numberCards, player.playerId],
+    [
+      player.heldActionCards,
+      player.receivedActionCards,
+      player.modifierCards,
+      player.numberCards,
+      player.playerId,
+    ],
   );
   const dealingIdSet = useMemo(() => new Set(dealingIds), [dealingIds]);
 
@@ -174,6 +205,22 @@ export const PlayerLane = memo(function PlayerLane({
           stateAnimation={cardStateAnimation}
           compact={compact}
           disableFlip3d={disableCardFlip3d}
+          active={actionSourcePending}
+        />
+      );
+    }),
+    ...player.receivedActionCards.map((card) => {
+      const key = `${player.playerId}-received-${card.actionKind}-${card.label}`;
+      return (
+        <Flip7Card
+          key={key}
+          kind="action"
+          actionKind={card.actionKind}
+          label={card.label}
+          stateAnimation={cardStateAnimation}
+          compact={compact}
+          disableFlip3d={disableCardFlip3d}
+          variant="received"
         />
       );
     }),
@@ -188,7 +235,21 @@ export const PlayerLane = memo(function PlayerLane({
         isPinned && "border-primary/30 bg-primary/[0.03]",
         compact ? "p-3" : "p-4",
         overlapCards && "relative z-0 hover:z-40 focus-within:z-40",
+        (isTargetable || isSelfTargeting) && "ring-2 ring-yellow-500/70 ring-offset-2 ring-offset-background cursor-pointer",
       )}
+      onClick={() => {
+        if (onSelectTarget && (isTargetable || isSelfTargeting)) {
+          onSelectTarget(player.playerId);
+        }
+      }}
+      onKeyUp={(e) => {
+        if (e.key === "Enter" && onSelectTarget && (isTargetable || isSelfTargeting)) {
+          onSelectTarget(player.playerId);
+        }
+      }}
+      role={targetingActive ? "button" : undefined}
+      tabIndex={targetingActive ? 0 : undefined}
+      aria-label={targetingActive ? `Select ${player.displayName} as target` : undefined}
     >
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1.5">
@@ -212,6 +273,24 @@ export const PlayerLane = memo(function PlayerLane({
             {player.isOnline && !isViewer ? (
               <Badge variant="secondary" className="text-[0.65rem]">
                 {t("online")}
+              </Badge>
+            ) : null}
+            {isSelfTargeting ? (
+              <Badge variant="outline" className="border-yellow-500 text-yellow-600 dark:text-yellow-500 text-[0.65rem]">
+                <UserIcon className="size-3" />
+                {t("selfTarget")}
+              </Badge>
+            ) : null}
+            {incomingActionKind ? (
+              <Badge variant="destructive" className="text-[0.65rem]">
+                <CrosshairIcon className="size-3" />
+                {t("incomingAction")}
+              </Badge>
+            ) : null}
+            {flip3Remaining !== null && flip3Remaining > 0 ? (
+              <Badge variant="outline" className="border-blue-500 text-blue-600 dark:text-blue-500 text-[0.65rem]">
+                <RefreshCwIcon className="size-3 animate-spin" />
+                {t("flip3Remaining", { count: flip3Remaining })}
               </Badge>
             ) : null}
           </div>

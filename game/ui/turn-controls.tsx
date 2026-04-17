@@ -1,6 +1,6 @@
 "use client";
 
-import { BanIcon, HandIcon, SparklesIcon, WandSparklesIcon } from "lucide-react";
+import { BanIcon, HandIcon, SparklesIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/shared/ui/button";
@@ -13,13 +13,13 @@ export function TurnControls({
   snapshot,
   onHit,
   onStay,
-  onResolveAction,
   onStartNextRound,
 }: {
   snapshot: MatchSnapshot;
   onHit: () => void;
   onStay: () => void;
-  onResolveAction: (playerId: Id<"players">) => void;
+  /* unused - targeting now happens in PlayerLane */
+  onResolveAction?: (playerId: Id<"players">) => void;
   onStartNextRound: () => void;
 }) {
   const t = useTranslations("TurnControls");
@@ -28,6 +28,8 @@ export function TurnControls({
   );
   const viewerControlsTurn = snapshot.viewerPlayerId === snapshot.activePlayerId;
   const viewerCanResolveAction = snapshot.pendingAction?.sourcePlayerId === snapshot.viewerPlayerId;
+  const flip3State = snapshot.pendingFlip3;
+  const isInFlip3 = flip3State && flip3State.targetPlayerId === snapshot.viewerPlayerId && flip3State.cardsRemaining > 0;
 
   if (snapshot.status === "completed") {
     return null;
@@ -52,32 +54,23 @@ export function TurnControls({
   if (snapshot.pendingAction) {
     const pendingAction: PendingAction = snapshot.pendingAction;
 
-    return (
-      <div className="border-border bg-muted/30 flex flex-col gap-4 rounded-xl border p-4">
-        <div className="space-y-1">
-          <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-            {t("actionCardTitle")}
-          </div>
-          <div className="text-foreground text-sm">
+    if (viewerCanResolveAction) {
+      return (
+        <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
+          <div className="text-muted-foreground text-sm">
             {pendingAction.actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt")}
           </div>
+          <div className="text-muted-foreground text-xs">
+            {t("selectTargetHint")}
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {snapshot.players
-            .filter((player) => pendingAction.eligibleTargetIds.includes(player.playerId))
-            .map((player) => (
-              <div key={player.playerId}>
-                <Button
-                  variant="outline"
-                  disabled={!viewerCanResolveAction}
-                  onClick={() => onResolveAction(player.playerId as Id<"players">)}
-                  className="rounded-full"
-                >
-                  <WandSparklesIcon />
-                  {player.displayName}
-                </Button>
-              </div>
-            ))}
+      );
+    }
+
+    return (
+      <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
+        <div className="text-muted-foreground text-sm">
+          {pendingAction.actionKind === "freeze" ? t("waitingFreeze") : t("waitingFlipThree")}
         </div>
       </div>
     );
@@ -91,12 +84,12 @@ export function TurnControls({
     <div className="flex flex-wrap items-center gap-3">
       <Button onClick={onHit} disabled={!viewerControlsTurn} size="lg" className="rounded-full px-6">
         <HandIcon />
-        {t("hitFor", { name: activePlayer.displayName })}
+        {isInFlip3 ? t("hitFlip3", { count: flip3State.cardsRemaining }) : t("hitFor", { name: activePlayer.displayName })}
       </Button>
       <Button
         variant="outline"
         onClick={onStay}
-        disabled={!viewerControlsTurn}
+        disabled={!viewerControlsTurn || !!isInFlip3}
         size="lg"
         className="rounded-full px-6"
       >
