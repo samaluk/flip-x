@@ -9,6 +9,7 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
 - Tailwind CSS v4
 - shadcn/ui
 - Convex for database and functions
+- Effect-TS for incremental typed config and error handling adoption
 - Vitest for unit, contract, and integration tests
 - Oxc for linting and formatting
 - pnpm for package management
@@ -56,6 +57,12 @@ pnpm build
 ## CI
 
 GitHub Actions runs install, Convex API generation, lint, test, and build on pushes and pull requests.
+
+## Effect migration
+
+- Incremental adoption notes live in `docs/effect-migration.md`.
+- Early PRs are limited to `Config`, `Data.TaggedError`, `Effect.gen`, and `Effect.tryPromise`.
+- Broad service/layer rollouts and Confect are intentionally deferred.
 
 ## Deployment
 
