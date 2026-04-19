@@ -27,10 +27,15 @@ import {
 import type { MutationCtx } from "./_generated/server";
 import { query as convexQuery } from "./_generated/server";
 import {
+  InvalidHostName,
+  InvalidMatchState,
   InvalidPlayerName,
+  InsufficientPlayers,
+  LobbyCodeUnavailable,
   LobbyNotFound,
   MatchNotFound,
   NameAlreadyTaken,
+  NotHost,
 } from "../shared/lib/errors/domain";
 
 async function generateUniqueLobbyCode(ctx: MutationCtx) {
@@ -51,7 +56,7 @@ async function generateUniqueLobbyCode(ctx: MutationCtx) {
   }
 
   if (existing) {
-    throw new Error("LOBBY_CODE_UNAVAILABLE");
+    throw new LobbyCodeUnavailable();
   }
 
   return lobbyCode;
@@ -67,7 +72,7 @@ export const createMatch = mutationWithSession({
     const hostName = args.hostName.trim();
 
     if (!hostName || hostName.length > 20) {
-      throw new Error("INVALID_HOST_NAME");
+      throw new InvalidHostName();
     }
 
     const timestamp = Date.now();
@@ -95,7 +100,7 @@ export const createMatch = mutationWithSession({
 
     const match = await ctx.db.get(matchId);
     if (!match) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(matchId) });
     }
 
     return await buildSnapshot(ctx, match, null, args.sessionId);
@@ -251,17 +256,17 @@ export const startMatch = mutationWithSession({
     const match = await ctx.db.get(args.matchId);
 
     if (!match || match.status !== "setup") {
-      throw new Error("INVALID_MATCH_STATE");
+      throw new InvalidMatchState();
     }
 
     const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
     if (match.hostPlayerId !== viewerPlayerId) {
-      throw new Error("NOT_HOST");
+      throw new NotHost();
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
     if (players.length < 2) {
-      throw new Error("INSUFFICIENT_PLAYERS");
+      throw new InsufficientPlayers({ minPlayers: 2 });
     }
 
     const orderedPlayers = buildOrderedPlayers(players);
@@ -304,7 +309,7 @@ export const startMatch = mutationWithSession({
     const nextRound = await getLatestRound(ctx, args.matchId);
 
     if (!nextMatch || !nextRound) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     return await buildSnapshot(ctx, nextMatch, nextRound, args.sessionId);
