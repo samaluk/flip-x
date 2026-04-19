@@ -8,6 +8,7 @@ import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../game/logi
 import type { Doc, Id } from "../_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../_generated/server";
 import { getPlayerIdForSession } from "./session_store";
+import { PlayerNotJoined } from "../../shared/lib/errors/domain";
 
 function normalizePlayerRoundState(doc: Doc<"roundPlayerStates">): PlayerRoundState {
   return {
@@ -80,7 +81,7 @@ export async function requireViewerPlayerId(
   const playerId = await getViewerPlayerId(ctx, matchId, sessionId);
 
   if (!playerId) {
-    throw new Error("PLAYER_NOT_JOINED");
+    throw new PlayerNotJoined();
   }
 
   return playerId;
