@@ -26,6 +26,12 @@ import {
 } from "./lib/store";
 import type { MutationCtx } from "./_generated/server";
 import { query as convexQuery } from "./_generated/server";
+import {
+  InvalidPlayerName,
+  LobbyNotFound,
+  MatchNotFound,
+  NameAlreadyTaken,
+} from "../shared/lib/errors/domain";
 
 async function generateUniqueLobbyCode(ctx: MutationCtx) {
   let lobbyCode = generateLobbyCode();
@@ -148,7 +154,7 @@ export const joinByCode = mutationWithSession({
 
     const normalized = args.lobbyCode.trim().toUpperCase();
     if (normalized.length !== 4) {
-      throw new Error("LOBBY_NOT_FOUND");
+      throw new LobbyNotFound();
     }
 
     const match = await ctx.db
@@ -157,7 +163,7 @@ export const joinByCode = mutationWithSession({
       .first();
 
     if (!match || match.status !== "setup") {
-      throw new Error("LOBBY_NOT_FOUND");
+      throw new LobbyNotFound();
     }
 
     return {
@@ -178,12 +184,12 @@ export const joinMatch = mutationWithSession({
     const match = await ctx.db.get(args.matchId);
 
     if (!match || match.status !== "setup") {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     const playerName = args.playerName.trim();
     if (!playerName || playerName.length > 20) {
-      throw new Error("INVALID_PLAYER_NAME");
+      throw new InvalidPlayerName();
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
@@ -192,14 +198,14 @@ export const joinMatch = mutationWithSession({
     if (existingViewerPlayerId) {
       const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
       if (!existingViewerPlayer) {
-        throw new Error("MATCH_NOT_FOUND");
+        throw new MatchNotFound({ matchId: String(args.matchId) });
       }
 
       if (
         existingViewerPlayer.displayName.toLowerCase() !== playerName.toLowerCase() &&
         players.some((player) => player.displayName.toLowerCase() === playerName.toLowerCase())
       ) {
-        throw new Error("NAME_ALREADY_TAKEN");
+        throw new NameAlreadyTaken({ name: playerName });
       }
 
       await ctx.db.patch(existingViewerPlayerId, { displayName: playerName });
@@ -207,7 +213,7 @@ export const joinMatch = mutationWithSession({
       const nextMatch = await ctx.db.get(args.matchId);
 
       if (!nextMatch) {
-        throw new Error("MATCH_NOT_FOUND");
+        throw new MatchNotFound({ matchId: String(args.matchId) });
       }
 
       return await buildSnapshot(ctx, nextMatch, round, args.sessionId);
@@ -215,7 +221,7 @@ export const joinMatch = mutationWithSession({
 
     const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
     if (existingNames.has(playerName.toLowerCase())) {
-      throw new Error("NAME_ALREADY_TAKEN");
+      throw new NameAlreadyTaken({ name: playerName });
     }
 
     const nextSeat =
