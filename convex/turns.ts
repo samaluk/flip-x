@@ -20,6 +20,11 @@ import {
 } from "./lib/store";
 import type { ActionCard, Card } from "../game/logic/card-types";
 import { mutationWithSession } from "./lib/session_functions";
+import {
+  InvalidAction,
+  InvalidTurn,
+  MatchNotFound,
+} from "../shared/lib/errors/domain";
 
 function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRound>>>) {
   return {
@@ -82,14 +87,14 @@ export const takeTurn = mutationWithSession({
     const round = await getLatestRound(ctx, args.matchId);
 
     if (!match || !round) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
     const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
 
     if (!round.activePlayerId || round.activePlayerId !== viewerPlayerId) {
-      throw new Error("INVALID_TURN");
+      throw new InvalidTurn();
     }
 
     const orderedPlayers = buildOrderedPlayers(players);
@@ -151,7 +156,7 @@ export const takeTurn = mutationWithSession({
     const nextRound = await getLatestRound(ctx, args.matchId);
 
     if (!nextMatch || !nextRound) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     return await buildSnapshot(ctx, nextMatch, nextRound, args.sessionId);
@@ -168,14 +173,14 @@ export const resolveAction = mutationWithSession({
     const round = await getLatestRound(ctx, args.matchId);
 
     if (!match || !round) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
     const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
 
     if (!round.pendingAction || round.pendingAction.sourcePlayerId !== viewerPlayerId) {
-      throw new Error("INVALID_ACTION");
+      throw new InvalidAction();
     }
 
     const orderedPlayers = buildOrderedPlayers(players);
@@ -198,7 +203,7 @@ export const resolveAction = mutationWithSession({
     const nextRound = await getLatestRound(ctx, args.matchId);
 
     if (!nextMatch || !nextRound) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     return await buildSnapshot(ctx, nextMatch, nextRound, args.sessionId);
