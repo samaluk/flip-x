@@ -1,6 +1,7 @@
 import { HOUR, MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
 
 import { components } from "../_generated/api";
+import { RateLimited } from "../../shared/lib/errors/domain";
 
 export const rateLimiter = new RateLimiter(components.rateLimiter, {
   createMatch: { kind: "fixed window", rate: 30, period: HOUR },
@@ -18,6 +19,6 @@ export async function enforceRateLimit(
 ) {
   const status = await rateLimiter.limit(ctx, name, { key });
   if (!status.ok) {
-    throw new Error("RATE_LIMITED");
+    throw new RateLimited();
   }
 }
