@@ -1,3 +1,5 @@
 import { Spec } from "@confect/core";
 
-export default Spec.make();
+import { settings } from "./settings.spec";
+
+export default Spec.make().add(settings);

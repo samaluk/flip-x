@@ -17,6 +17,8 @@ Confect adoption should stay incremental and should not begin with a schema rewr
 - Only one migration PR may be in flight at a time.
 - Before starting a PR, confirm the previous PR is merged.
 - After merge, update local `master` before creating the next branch.
+- Confect can coexist with plain Convex functions, but only after those functions are represented in the Confect spec/impl tree.
+- Treat `confect codegen` as owning `convex/`; if a group is not in the Confect spec, codegen may remove its generated module.
 - Keep public Convex API behavior stable unless a PR explicitly includes a client migration.
 - Keep `convex/schema.ts` as-is until the final schema reassessment step.
 - Keep pure game logic in `game/logic/` framework-agnostic.

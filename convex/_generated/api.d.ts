@@ -20,6 +20,7 @@ import type * as matches from "../matches.js";
 import type * as migrations from "../migrations.js";
 import type * as presence from "../presence.js";
 import type * as rounds from "../rounds.js";
+import type * as settings from "../settings.js";
 import type * as turns from "../turns.js";
 
 import type {
@@ -41,6 +42,7 @@ declare const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   presence: typeof presence;
   rounds: typeof rounds;
+  settings: typeof settings;
   turns: typeof turns;
 }>;
 
