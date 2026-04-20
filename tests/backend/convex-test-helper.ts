@@ -11,7 +11,9 @@ export function asSessionId(value: string) {
 }
 
 export function createTestClient() {
-  return new ConvexTestingHelper();
+  return new ConvexTestingHelper({
+    backendUrl: process.env.NEXT_PUBLIC_CONVEX_URL,
+  });
 }
 
 export async function resetTestClient(client: ConvexTestingHelper) {

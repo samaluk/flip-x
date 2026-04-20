@@ -35,7 +35,17 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
     );
   }).pipe(Effect.orDie),
 );
-const startMatch = FunctionImpl.make(api, "matches", "startMatch", matchFns.startMatch);
+const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
+  Effect.gen(function* () {
+    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.startMatchForSession>[0];
+    return yield* Effect.promise(() =>
+      matchFns.startMatchForSession(ctx, {
+        ...args,
+        matchId: args.matchId as Parameters<typeof matchFns.startMatchForSession>[1]["matchId"],
+      }),
+    );
+  }).pipe(Effect.orDie),
+);
 
 export const matches = GroupImpl.make(api, "matches").pipe(
   Layer.provide(createMatch),

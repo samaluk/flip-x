@@ -50,7 +50,14 @@ const joinMatch = FunctionSpec.publicMutation({
   }),
   returns: MatchSnapshot,
 });
-const startMatch = FunctionSpec.convexPublicMutation<typeof matchFns.startMatch>()("startMatch");
+const startMatch = FunctionSpec.publicMutation({
+  name: "startMatch",
+  args: Schema.Struct({
+    ...SessionIdField,
+    matchId: Schema.String,
+  }),
+  returns: MatchSnapshot,
+});
 
 export const matches = GroupSpec.make("matches")
   .addFunction(createMatch)
