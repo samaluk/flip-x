@@ -24,7 +24,17 @@ const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
     return yield* Effect.promise(() => matchFns.joinByCodeForSession(ctx, args));
   }).pipe(Effect.orDie),
 );
-const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", matchFns.joinMatch);
+const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
+  Effect.gen(function* () {
+    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.joinMatchForSession>[0];
+    return yield* Effect.promise(() =>
+      matchFns.joinMatchForSession(ctx, {
+        ...args,
+        matchId: args.matchId as Parameters<typeof matchFns.joinMatchForSession>[1]["matchId"],
+      }),
+    );
+  }).pipe(Effect.orDie),
+);
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", matchFns.startMatch);
 
 export const matches = GroupImpl.make(api, "matches").pipe(

@@ -41,7 +41,15 @@ const joinByCode = FunctionSpec.publicMutation({
     lobbyCode: Schema.String,
   }),
 });
-const joinMatch = FunctionSpec.convexPublicMutation<typeof matchFns.joinMatch>()("joinMatch");
+const joinMatch = FunctionSpec.publicMutation({
+  name: "joinMatch",
+  args: Schema.Struct({
+    ...SessionIdField,
+    matchId: Schema.String,
+    playerName: Schema.String,
+  }),
+  returns: MatchSnapshot,
+});
 const startMatch = FunctionSpec.convexPublicMutation<typeof matchFns.startMatch>()("startMatch");
 
 export const matches = GroupSpec.make("matches")
