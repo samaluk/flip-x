@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "confect:codegen": "confect codegen",
+    "confect:dev": "confect dev",
     "dev": "next dev",
     "convex:dev": "CONVEX_AGENT_MODE=anonymous convex dev",
     "build": "next build",
@@ -22,6 +24,8 @@
   },
   "dependencies": {
     "@base-ui/react": "1.4.0",
+    "@confect/core": "5.0.0",
+    "@confect/server": "5.0.0",
     "@convex-dev/migrations": "0.3.3",
     "@convex-dev/presence": "0.3.0",
     "@convex-dev/rate-limiter": "0.3.2",
@@ -44,6 +48,7 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@confect/cli": "5.0.0",
     "@playwright/test": "1.59.1",
     "@tailwindcss/postcss": "4.2.2",
     "@tailwindcss/vite": "4.2.2",
