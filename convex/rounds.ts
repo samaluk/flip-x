@@ -20,6 +20,10 @@ import {
   requireViewerPlayerId,
   serializeRoundRuntime,
 } from "./lib/store";
+import {
+  InvalidMatchState,
+  MatchNotFound,
+} from "../shared/lib/errors/domain";
 
 export const startNextRound = mutationWithSession({
   args: {
@@ -29,7 +33,7 @@ export const startNextRound = mutationWithSession({
     const match = await ctx.db.get(args.matchId);
 
     if (!match || match.status !== "in_progress") {
-      throw new Error("INVALID_MATCH_STATE");
+      throw new InvalidMatchState();
     }
 
     const players = await getPlayersByMatch(ctx, args.matchId);
@@ -73,7 +77,7 @@ export const startNextRound = mutationWithSession({
     const nextRound = await getLatestRound(ctx, args.matchId);
 
     if (!nextMatch || !nextRound) {
-      throw new Error("MATCH_NOT_FOUND");
+      throw new MatchNotFound({ matchId: String(args.matchId) });
     }
 
     return await buildSnapshot(ctx, nextMatch, nextRound, args.sessionId);
