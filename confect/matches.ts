@@ -83,6 +83,32 @@ export async function lookupSetupMatchByCode(ctx: QueryCtx, lobbyCode: string) {
   };
 }
 
+export async function joinByCodeForSession(
+  ctx: MutationCtx,
+  args: { lobbyCode: string; sessionId: string },
+) {
+  await enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
+
+  const normalized = args.lobbyCode.trim().toUpperCase();
+  if (normalized.length !== 4) {
+    throw new LobbyNotFound();
+  }
+
+  const match = await ctx.db
+    .query("matches")
+    .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
+    .first();
+
+  if (!match || match.status !== "setup") {
+    throw new LobbyNotFound();
+  }
+
+  return {
+    matchId: String(match._id),
+    lobbyCode: match.lobbyCode,
+  };
+}
+
 export const createMatch = mutationWithSession({
   args: {
     hostName: v.string(),
@@ -148,28 +174,7 @@ export const joinByCode = mutationWithSession({
   args: {
     lobbyCode: v.string(),
   },
-  handler: async (ctx, args) => {
-    await enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
-
-    const normalized = args.lobbyCode.trim().toUpperCase();
-    if (normalized.length !== 4) {
-      throw new LobbyNotFound();
-    }
-
-    const match = await ctx.db
-      .query("matches")
-      .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
-      .first();
-
-    if (!match || match.status !== "setup") {
-      throw new LobbyNotFound();
-    }
-
-    return {
-      matchId: String(match._id),
-      lobbyCode: match.lobbyCode,
-    };
-  },
+  handler: async (ctx, args) => await joinByCodeForSession(ctx, args),
 });
 
 export const joinMatch = mutationWithSession({

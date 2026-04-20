@@ -2,6 +2,7 @@ import { FunctionSpec, GroupSpec } from "@confect/core";
 import { Schema } from "effect";
 
 import * as matchFns from "./matches";
+import { SessionIdField } from "./session";
 
 const MatchLookupResult = Schema.Struct({
   matchId: Schema.String,
@@ -21,7 +22,17 @@ const createMatch = FunctionSpec.convexPublicMutation<typeof matchFns.createMatc
 const getMatchSnapshot = FunctionSpec.convexPublicQuery<typeof matchFns.getMatchSnapshot>()(
   "getMatchSnapshot",
 );
-const joinByCode = FunctionSpec.convexPublicMutation<typeof matchFns.joinByCode>()("joinByCode");
+const joinByCode = FunctionSpec.publicMutation({
+  name: "joinByCode",
+  args: Schema.Struct({
+    ...SessionIdField,
+    lobbyCode: Schema.String,
+  }),
+  returns: Schema.Struct({
+    matchId: Schema.String,
+    lobbyCode: Schema.String,
+  }),
+});
 const joinMatch = FunctionSpec.convexPublicMutation<typeof matchFns.joinMatch>()("joinMatch");
 const startMatch = FunctionSpec.convexPublicMutation<typeof matchFns.startMatch>()("startMatch");
 

@@ -2,7 +2,7 @@ import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
 import api from "./_generated/api";
-import { QueryCtx } from "./_generated/services";
+import { MutationCtx, QueryCtx } from "./_generated/services";
 import * as matchFns from "./matches";
 
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", matchFns.createMatch);
@@ -13,7 +13,12 @@ const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lo
     return yield* Effect.promise(() => matchFns.lookupSetupMatchByCode(ctx, lobbyCode));
   }).pipe(Effect.orDie),
 );
-const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", matchFns.joinByCode);
+const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
+  Effect.gen(function* () {
+    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.joinByCodeForSession>[0];
+    return yield* Effect.promise(() => matchFns.joinByCodeForSession(ctx, args));
+  }).pipe(Effect.orDie),
+);
 const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", matchFns.joinMatch);
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", matchFns.startMatch);
 
