@@ -84,7 +84,7 @@ describe("Convex matches", () => {
         playerName: "guest",
         sessionId: asSessionId("session-guest-b"),
       }),
-    ).rejects.toThrow("NAME_ALREADY_TAKEN");
+    ).rejects.toThrow("NameAlreadyTaken");
   });
 
   it("joinMatch updates the existing player for the same session", async () => {
@@ -129,7 +129,7 @@ describe("Convex matches", () => {
         matchId,
         sessionId: asSessionId("session-guest"),
       }),
-    ).rejects.toThrow("NOT_HOST");
+    ).rejects.toThrow("NotHost");
   });
 
   it("startMatch rejects matches with fewer than two players", async () => {
@@ -143,7 +143,7 @@ describe("Convex matches", () => {
         matchId: created.matchId as Id<"matches">,
         sessionId: asSessionId("session-host"),
       }),
-    ).rejects.toThrow("INSUFFICIENT_PLAYERS");
+    ).rejects.toThrow("InsufficientPlayers");
   });
 
   it("startMatch creates the first round snapshot", async () => {

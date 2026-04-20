@@ -8,6 +8,11 @@ import type { ActionCtx } from "./_generated/server";
 import { action, internalMutation, internalQuery } from "./_generated/server";
 import { cascadingDeletes } from "./lib/cascading_deletes";
 import { rateLimiter } from "./lib/rate_limiter";
+import {
+  InvalidConfirmation,
+  UnsupportedRelationship,
+  UnsupportedTable,
+} from "../shared/lib/errors/domain";
 
 const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
 const presence = new Presence(components.presence);
@@ -103,7 +108,7 @@ export const resolveDependents = internalQuery({
         return rows.map((row) => String(row._id));
       }
       default:
-        throw new Error("UNSUPPORTED_RELATIONSHIP");
+        throw new UnsupportedRelationship();
     }
   },
 });
@@ -137,7 +142,7 @@ export const deleteDocument = internalMutation({
         await ctx.db.delete(args.id as Id<"scoreBreakdowns">);
         return;
       default:
-        throw new Error("UNSUPPORTED_TABLE");
+        throw new UnsupportedTable();
     }
   },
 });
@@ -156,7 +161,7 @@ async function runClearAllAppData(
   confirm: string,
 ): Promise<ClearAllAppDataResult> {
   if (confirm !== DELETE_ALL_APP_DATA_CONFIRMATION) {
-    throw new Error("INVALID_CONFIRMATION");
+    throw new InvalidConfirmation();
   }
 
   const matchIds = await ctx.runQuery(internal.admin.listMatchIds, {});

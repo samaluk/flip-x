@@ -2,7 +2,11 @@ import { Data } from "effect";
 
 export class MatchNotFound extends Data.TaggedError("MatchNotFound")<{
   matchId: string;
-}> {}
+}> {
+  get message() {
+    return this._tag;
+  }
+}
 
 export class InvalidTurn extends Data.TaggedError("InvalidTurn")<{
   _tag: "InvalidTurn";
@@ -34,7 +38,11 @@ export class InvalidPlayerName extends Data.TaggedError("InvalidPlayerName")<{
 
 export class NameAlreadyTaken extends Data.TaggedError("NameAlreadyTaken")<{
   name: string;
-}> {}
+}> {
+  get message() {
+    return this._tag;
+  }
+}
 
 export class NotHost extends Data.TaggedError("NotHost")<{
   _tag: "NotHost";
@@ -42,7 +50,11 @@ export class NotHost extends Data.TaggedError("NotHost")<{
 
 export class InsufficientPlayers extends Data.TaggedError("InsufficientPlayers")<{
   minPlayers: number;
-}> {}
+}> {
+  get message() {
+    return this._tag;
+  }
+}
 
 export class PlayerNotJoined extends Data.TaggedError("PlayerNotJoined")<{
   _tag: "PlayerNotJoined";
@@ -54,6 +66,18 @@ export class RateLimited extends Data.TaggedError("RateLimited")<{
 
 export class InvalidMatchState extends Data.TaggedError("InvalidMatchState")<{
   _tag: "InvalidMatchState";
+}> {}
+
+export class UnsupportedRelationship extends Data.TaggedError("UnsupportedRelationship")<{
+  _tag: "UnsupportedRelationship";
+}> {}
+
+export class UnsupportedTable extends Data.TaggedError("UnsupportedTable")<{
+  _tag: "UnsupportedTable";
+}> {}
+
+export class InvalidConfirmation extends Data.TaggedError("InvalidConfirmation")<{
+  _tag: "InvalidConfirmation";
 }> {}
 
 export type AppError =
@@ -70,7 +94,10 @@ export type AppError =
   | InsufficientPlayers
   | PlayerNotJoined
   | RateLimited
-  | InvalidMatchState;
+  | InvalidMatchState
+  | UnsupportedRelationship
+  | UnsupportedTable
+  | InvalidConfirmation;
 
 export function errorToCode(error: AppError): string {
   return error._tag;

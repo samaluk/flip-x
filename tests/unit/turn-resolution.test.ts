@@ -5,10 +5,12 @@ import {
   continueRound,
   createPlayerRoundStates,
   createRoundRuntime,
+  resolvePendingAction,
   takeTurnAction,
   type PlayerRoundState,
   type RoundRuntime,
 } from "@/game/logic/turn-resolution";
+import { InvalidAction, InvalidTarget, InvalidTurn } from "@/shared/lib/errors/domain";
 
 const players = [
   { playerId: "p1", seatIndex: 0 },
@@ -251,8 +253,33 @@ describe("turn resolution", () => {
       deferredActionCards: [],
     };
 
-    expect(() => takeTurnAction(players, round, playerStates, "p1", "stay")).toThrow(
-      "INVALID_TURN",
+    expect(() => takeTurnAction(players, round, playerStates, "p1", "stay")).toThrowError(
+      InvalidTurn,
+    );
+  });
+
+  it("rejects resolving an action when none is pending", () => {
+    const playerStates = createActivePlayerStates();
+    const round = createTurnRound();
+    round.pendingAction = null;
+
+    expect(() => resolvePendingAction(players, round, playerStates, "p2")).toThrowError(
+      InvalidAction,
+    );
+  });
+
+  it("rejects resolving an action with an invalid target", () => {
+    const playerStates = createActivePlayerStates();
+    const round = createTurnRound();
+    round.pendingAction = {
+      sourcePlayerId: "p1",
+      actionKind: "freeze",
+      eligibleTargetIds: ["p2"],
+      resume: "turns",
+    };
+
+    expect(() => resolvePendingAction(players, round, playerStates, "p3")).toThrowError(
+      InvalidTarget,
     );
   });
 });
