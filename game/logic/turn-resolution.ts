@@ -8,6 +8,7 @@ import {
   type ModifierCard,
   type NumberCard,
 } from "./card-types";
+import { InvalidAction, InvalidTarget, InvalidTurn } from "../../shared/lib/errors/domain";
 import { scoreRound } from "./scoring";
 
 export type PlayerRoundStatus = "waiting" | "active" | "stayed" | "busted" | "frozen" | "completed";
@@ -688,12 +689,12 @@ export function takeTurnAction(
   const currentState = playerStates[playerId];
 
   if (!currentState || round.phase !== "player_turns" || round.activePlayerId !== playerId) {
-    throw new Error("INVALID_TURN");
+    throw new InvalidTurn();
   }
 
   if (action === "stay") {
     if (isFlip3ActiveForPlayer(round, playerId)) {
-      throw new Error("INVALID_TURN");
+      throw new InvalidTurn();
     }
     currentState.status = "stayed";
     currentState.roundScore = currentState.pointsAtRisk;
@@ -778,7 +779,7 @@ export function resolvePendingAction(
   targetPlayerId: string,
 ) {
   if (!roundInput.pendingAction) {
-    throw new Error("INVALID_ACTION");
+    throw new InvalidAction();
   }
 
   const round: RoundRuntime = {
@@ -793,11 +794,11 @@ export function resolvePendingAction(
   const pendingAction = round.pendingAction;
 
   if (!pendingAction) {
-    throw new Error("INVALID_ACTION");
+    throw new InvalidAction();
   }
 
   if (!pendingAction.eligibleTargetIds.includes(targetPlayerId)) {
-    throw new Error("INVALID_TARGET");
+    throw new InvalidTarget();
   }
 
   round.pendingAction = null;

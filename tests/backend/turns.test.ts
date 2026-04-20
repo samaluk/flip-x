@@ -29,7 +29,7 @@ describe("Convex turns", () => {
         action: "hit",
         sessionId: inactiveSession!.sessionId,
       }),
-    ).rejects.toThrow("INVALID_TURN");
+    ).rejects.toThrow("InvalidTurn");
   });
 
   it("takeTurn updates the round state and latest event for the active session", async () => {
@@ -81,7 +81,7 @@ describe("Convex turns", () => {
         targetPlayerId,
         sessionId: invalidSession!.sessionId,
       }),
-    ).rejects.toThrow("INVALID_ACTION");
+    ).rejects.toThrow("InvalidAction");
   });
 
   it("completes a two-player round and keeps scores consistent", async () => {
