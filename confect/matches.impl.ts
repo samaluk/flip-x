@@ -5,7 +5,12 @@ import api from "./_generated/api";
 import { MutationCtx, QueryCtx } from "./_generated/services";
 import * as matchFns from "./matches";
 
-const createMatch = FunctionImpl.make(api, "matches", "createMatch", matchFns.createMatch);
+const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
+  Effect.gen(function* () {
+    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.createMatchForSession>[0];
+    return yield* Effect.promise(() => matchFns.createMatchForSession(ctx, args));
+  }).pipe(Effect.orDie),
+);
 const getMatchSnapshot = FunctionImpl.make(api, "matches", "getMatchSnapshot", matchFns.getMatchSnapshot);
 const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lobbyCode }) =>
   Effect.gen(function* () {

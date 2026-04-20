@@ -1,4 +1,5 @@
 import { v } from "convex/values";
+import type { SessionId } from "convex-helpers/server/sessions";
 
 import {
   continueRound,
@@ -83,6 +84,51 @@ export async function lookupSetupMatchByCode(ctx: QueryCtx, lobbyCode: string) {
   };
 }
 
+export async function createMatchForSession(
+  ctx: MutationCtx,
+  args: { hostName: string; sessionId: string },
+) {
+  const sessionId = args.sessionId as SessionId;
+
+  await enforceRateLimit(ctx, "createMatch", String(args.sessionId));
+
+  const hostName = args.hostName.trim();
+
+  if (!hostName || hostName.length > 20) {
+    throw new InvalidHostName();
+  }
+
+  const timestamp = Date.now();
+  const lobbyCode = await generateUniqueLobbyCode(ctx);
+  const matchId = await ctx.db.insert("matches", {
+    status: "setup",
+    lobbyCode,
+    targetScore: 200,
+    currentRoundNumber: 0,
+    dealerSeat: 0,
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  });
+
+  const hostPlayerId = await ctx.db.insert("players", {
+    matchId,
+    displayName: hostName,
+    seatIndex: 0,
+    totalScore: 0,
+    hasWon: false,
+  });
+
+  await setPlayerSession(ctx, sessionId, hostPlayerId);
+  await ctx.db.patch(matchId, { hostPlayerId });
+
+  const match = await ctx.db.get(matchId);
+  if (!match) {
+    throw new MatchNotFound({ matchId: String(matchId) });
+  }
+
+  return await buildSnapshot(ctx, match, null, sessionId);
+}
+
 export async function joinByCodeForSession(
   ctx: MutationCtx,
   args: { lobbyCode: string; sessionId: string },
@@ -113,45 +159,7 @@ export const createMatch = mutationWithSession({
   args: {
     hostName: v.string(),
   },
-  handler: async (ctx, args) => {
-    await enforceRateLimit(ctx, "createMatch", String(args.sessionId));
-
-    const hostName = args.hostName.trim();
-
-    if (!hostName || hostName.length > 20) {
-      throw new InvalidHostName();
-    }
-
-    const timestamp = Date.now();
-    const lobbyCode = await generateUniqueLobbyCode(ctx);
-    const matchId = await ctx.db.insert("matches", {
-      status: "setup",
-      lobbyCode,
-      targetScore: 200,
-      currentRoundNumber: 0,
-      dealerSeat: 0,
-      createdAt: timestamp,
-      updatedAt: timestamp,
-    });
-
-    const hostPlayerId = await ctx.db.insert("players", {
-      matchId,
-      displayName: hostName,
-      seatIndex: 0,
-      totalScore: 0,
-      hasWon: false,
-    });
-
-    await setPlayerSession(ctx, args.sessionId, hostPlayerId);
-    await ctx.db.patch(matchId, { hostPlayerId });
-
-    const match = await ctx.db.get(matchId);
-    if (!match) {
-      throw new MatchNotFound({ matchId: String(matchId) });
-    }
-
-    return await buildSnapshot(ctx, match, null, args.sessionId);
-  },
+  handler: async (ctx, args) => await createMatchForSession(ctx, args),
 });
 
 export const getMatchSnapshot = queryWithSession({
