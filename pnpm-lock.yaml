@@ -42,7 +42,7 @@ importers:
         specifier: 0.1.114
         version: 0.1.114(@standard-schema/spec@1.1.0)(convex@1.35.1(react@19.2.5))(hono@4.12.12)(react@19.2.5)(typescript@6.0.3)(zod@4.3.6)
       effect:
-        specifier: ^3.21.1
+        specifier: 3.21.1
         version: 3.21.1
       lucide-react:
         specifier: 1.8.0
