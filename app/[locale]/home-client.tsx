@@ -3,7 +3,7 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
-import { startTransition, type FormEvent, useState, useEffect } from "react";
+import { startTransition, type FormEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
@@ -52,9 +52,10 @@ export function HomeClient() {
     }
   }, [joinCode]);
 
-  async function handleCreate(formData: FormData) {
-    const playerName = formData.get("playerName") as string;
-    const trimmedName = playerName?.trim();
+  async function handleCreate(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const trimmedName = name.trim();
 
     localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
 
@@ -167,8 +168,7 @@ export function HomeClient() {
 
           {!isJoinMode ? (
             <div className="space-y-6">
-              <form action={handleCreate}>
-                <input type="hidden" name="playerName" value={name} />
+              <form onSubmit={handleCreate}>
                 <Button
                   type="submit"
                   size="lg"

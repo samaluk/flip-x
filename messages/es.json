@@ -32,7 +32,8 @@
     "joinTableBody": "El código {code} está listo. Escribe tu nombre para ocupar un sitio."
   },
   "Lobby": {
-    "codePlaceholder": "ABCD"
+    "codePlaceholder": "ABCD",
+    "lobbyCode": "Código del lobby"
   },
   "MatchSetup": {
     "yourName": "Tu nombre",
