@@ -27,7 +27,18 @@ export default defineConfig({
             "game/**/*.test.ts",
             "game/**/*.test.tsx",
           ],
-          exclude: ["tests/backend/**/*.test.ts"],
+          exclude: ["tests/backend/**/*.test.ts", "tests/confect/**/*.test.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "confect",
+          environment: "node",
+          include: ["tests/confect/**/*.test.ts"],
+          fileParallelism: false,
+          testTimeout: 60_000,
+          hookTimeout: 60_000,
         },
       },
       {
