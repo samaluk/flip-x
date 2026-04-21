@@ -1,15 +1,14 @@
 "use client";
 
-import { useSessionMutation } from "convex-helpers/react/sessions";
 import { motion } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import refs from "@/confect/_generated/refs";
 import { Button } from "@/shared/ui/button";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
+import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 
 interface StartGameButtonProps {
@@ -19,7 +18,7 @@ interface StartGameButtonProps {
 }
 
 export function StartGameButton({ matchId, isHost, playerCount }: StartGameButtonProps) {
-  const startMatch = useSessionMutation(api.matches.startMatch);
+  const startMatch = useSessionConfectMutation(refs.public.matches.startMatch);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("StartGameButton");
   const tErrors = useTranslations("Errors");
@@ -28,7 +27,7 @@ export function StartGameButton({ matchId, isHost, playerCount }: StartGameButto
     setIsSubmitting(true);
     try {
       await startMatch({
-        matchId: matchId as Id<"matches">,
+        matchId,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";

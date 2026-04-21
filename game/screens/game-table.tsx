@@ -1,21 +1,21 @@
 "use client";
 
-import { useSessionMutation } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { useCallback, useTransition } from "react";
 import { toast } from "sonner";
 
+import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const [isPending, startTransition] = useTransition();
-  const takeTurn = useSessionMutation(api.turns.takeTurn);
-  const resolveAction = useSessionMutation(api.turns.resolveAction);
-  const startNextRound = useSessionMutation(api.rounds.startNextRound);
+  const takeTurn = useSessionConfectMutation(refs.public.turns.takeTurn);
+  const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
+  const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
   const tErrors = useTranslations("Errors");
   const matchId = snapshot.matchId as Id<"matches">;
 
