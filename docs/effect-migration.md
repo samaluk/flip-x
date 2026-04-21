@@ -1,464 +1,282 @@
-## Confect Migration Path
+## Confect Full Integration Plan
 
-Confect adoption should stay incremental and should not begin with a schema rewrite or a gameplay rewrite. The migration order is:
+This document replaces the earlier low-risk incremental migration plan.
 
-1. Scaffold Confect.
-2. Add one small Config-backed Confect endpoint.
-3. Bridge `convex/admin.ts` into the Confect spec/impl tree using plain Convex function support.
-4. Migrate one read-only match query to a true Confect function.
-5. Lock the session-handling pattern for Confect functions.
-6. Migrate low-risk `matches` write endpoints.
-7. Migrate `rounds` before `turns`.
-8. Adopt Confect client refs selectively.
-9. Reassess whether Confect schema migration is worth the churn.
+The current state of the repo is already beyond the initial scaffold and endpoint-by-endpoint pilot phase. The remaining work is to make the codebase maximally Confect while preserving product behavior and keeping each PR mergeable.
 
-### Execution Rules
+## End State
 
-- Only one migration PR may be in flight at a time.
-- Before starting a PR, confirm the previous PR is merged.
-- After merge, update local `master` before creating the next branch.
-- Confect can coexist with plain Convex functions, but only after those functions are represented in the Confect spec/impl tree.
-- Treat `confect codegen` as owning `convex/`; if a group is not in the Confect spec, codegen may remove its generated module.
-- Keep public Convex API behavior stable unless a PR explicitly includes a client migration.
-- Keep `convex/schema.ts` as-is until the final schema reassessment step.
-- Keep pure game logic in `game/logic/` framework-agnostic.
+The target architecture is:
 
-### Standard PR Workflow
+1. `confect/` is the authored backend source of truth.
+2. `confect/schema.ts` owns the real database schema.
+3. `confect/spec.ts` and group specs own the backend function contract.
+4. `confect/impl.ts` and group impls own backend implementation wiring.
+5. `confect/_generated/refs.ts` is the public function reference surface for frontend code.
+6. Frontend app code uses `@confect/react` and app-local session-aware Confect hooks.
+7. `convex/` is treated as Confect codegen output and Convex runtime plumbing, not as the primary home for authored business logic.
 
-Use this checklist before every migration PR:
+## Allowed Convex Exceptions
 
-- Confirm the previous migration PR is merged.
-- Run `git checkout master`.
-- Run `git pull --ff-only origin master`.
-- Re-read the checklist for the next PR before making changes.
-- Create a new branch from updated `master`.
-- Keep the PR scoped to a single migration objective.
-- Run the smallest relevant verification commands for that PR.
-- Open and merge the PR.
-- Repeat from updated `master` for the next PR.
+This plan is intentionally maximal Confect, not zero Convex.
 
-### PR 1 Checklist: Scaffold Confect
+The following exceptions are expected and allowed:
 
-Goal: add Confect infrastructure with no behavior changes.
+1. `convex/convex.config.ts` remains authored Convex configuration for component registration.
+2. Presence remains a sanctioned Convex component island.
+3. Presence functions may still be plain Convex functions, but should be represented in the Confect spec/impl tree using the plain-function pattern described in the Confect docs.
+4. During the transition, generated wrapper files in `convex/*.ts` continue to exist as the deployable surface produced by Confect codegen.
 
-Before coding:
+## Non-Goals
 
-- Confirm no existing `confect/` directory is present.
-- Confirm current Convex dev flow is working.
-- Confirm this PR does not migrate any existing production endpoint.
+The plan is not trying to:
+
+1. Rewrite pure gameplay logic into Effect for its own sake.
+2. Replace `convex-helpers` anonymous sessions.
+3. Eliminate every Convex API concept from the repo.
+4. Land a flag-day backend and frontend rewrite in one PR.
+
+## Stable Design Decisions
+
+These choices are locked unless a later PR explicitly revisits them:
+
+1. Anonymous sessions remain based on `convex-helpers`.
+2. Frontend session behavior is wrapped behind app-local Confect hooks rather than duplicated in every component.
+3. Pure game logic under `game/logic/` remains plain TypeScript.
+4. Frontend migration ends in a fully Confect client model, but proceeds incrementally through mergeable PRs.
+5. Presence is the one explicit component-driven island.
+
+## Current State
+
+The following groups are already represented in Confect:
+
+1. `admin`
+2. `matches`
+3. `rounds`
+4. `settings`
+5. `turns`
+
+The remaining major gaps are:
+
+1. `confect/schema.ts` is still not the real schema.
+2. Authored helper code still lives under `convex/lib/*`.
+3. Presence is not yet represented in the Confect spec/impl tree.
+4. Frontend feature code still imports `convex/_generated/api`.
+5. `@confect/react` is not yet adopted.
+6. Backend integration tests are still largely Convex-first instead of refs-first.
+
+## Execution Rules
+
+Use these rules for every remaining migration PR:
+
+1. Only one migration PR may be in flight at a time.
+2. Before starting a PR, confirm the previous PR is merged.
+3. After merge, update local `master` before creating the next branch.
+4. Keep each PR scoped to one migration objective.
+5. Preserve current product behavior and payload shapes unless the PR explicitly changes the client contract.
+6. Treat `confect:codegen` as owning `convex/`.
+7. If codegen removes untouched handwritten files that still matter during the transition, restore them before continuing.
+8. If CI or local verification fails, try one targeted fix. If the pipeline fails again, stop and debug before proceeding.
+
+## Standard Verification Pattern
+
+Unless a PR explicitly needs more or less, use this verification baseline:
+
+1. `pnpm confect:codegen`
+2. restore untouched handwritten `convex/*` files that codegen removed during the transition
+3. `pnpm lint`
+4. `pnpm test`
+5. `pnpm build`
+6. focused local smoke test for the feature path being changed
+
+## PR Sequence
+
+### PR 1: Architecture Lock
+
+Goal: document the final maximal-Confect target and the sanctioned Convex exceptions.
 
 Changes:
 
-- Add Confect packages required for server-side adoption.
-- Add `confect/schema.ts`.
-- Add `confect/spec.ts`.
-- Add `confect/impl.ts`.
-- Add minimal codegen/dev wiring required for local generation.
-- Keep the initial spec/impl surface minimal.
-- Commit `confect/_generated/*` so the scaffold type-checks without taking over `convex/` yet.
+1. Rewrite this migration document around the new end-state.
+2. Replace the earlier “selective refs, schema maybe later” framing.
+3. Explicitly document Presence and `convex/convex.config.ts` as deliberate exceptions.
+4. Explicitly document the session-wrapper strategy for frontend Confect hooks.
+
+Merge gate:
+
+1. The repo has a clear target architecture.
+2. The remaining PR sequence is documented.
+
+### PR 2: Confect Schema Foundation
+
+Goal: make `confect/schema.ts` the real schema source of truth.
+
+Changes:
+
+1. Port the full schema from `convex/schema.ts` into Confect form.
+2. Preserve all table names, field semantics, and indexes.
+3. Regenerate Confect services against the real schema.
 
 Do not do in this PR:
 
-- No schema migration.
-- No client hook migration.
-- No endpoint behavior changes.
-- Do not let Confect codegen replace the existing hand-written `convex/` directory yet.
-
-Verification:
-
-- Install succeeds.
-- Confect codegen runs and generates `confect/_generated/*`.
-- Existing `convex/` files are restored after codegen so runtime behavior remains unchanged.
-- Existing app tests still pass at the current baseline.
+1. No frontend migration.
+2. No helper relocation.
+3. No gameplay behavior changes.
 
 Merge gate:
 
-- Confect scaffolding exists and the repo still behaves exactly as before.
+1. `confect/schema.ts` fully models the current app schema.
+2. Generated Confect services reflect the real data model.
 
-After merge:
+### PR 3: Backend Helper Relocation
 
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### PR 2 Checklist: Add Config Pilot Endpoint
-
-Goal: get the first real runtime benefit from Effect + Confect.
-
-Recommended target:
-
-- Add a small `runtime` or `settings` query implemented in Confect.
-
-Before coding:
-
-- Confirm PR 1 is merged and `master` is up to date locally.
-- Pick a single endpoint with a tiny return shape.
-- Decide whether it is public or internal.
+Goal: move authored helper ownership out of `convex/lib/*`.
 
 Changes:
 
-- Add one Confect group spec for the endpoint.
-- Add one Confect impl that reads environment/config via Effect `Config`.
-- Wire the group into `confect/spec.ts` and `confect/impl.ts`.
-- Add focused tests if the endpoint has behavior worth asserting.
-
-Do not do in this PR:
-
-- No migration of existing `matches`, `rounds`, or `turns` functions.
-- No shared service/layer abstraction beyond what the endpoint needs.
-
-Verification:
-
-- Confect codegen runs.
-- The new endpoint works locally.
-- Existing tests remain green.
+1. Move pure helpers into `shared/` or `game/`.
+2. Move backend orchestration helpers into `confect/`.
+3. Reduce imports from `../convex/lib/*` in Confect-authored files.
 
 Merge gate:
 
-- The repo now uses Effect `Config` in one production Confect handler.
+1. Authored app helper logic is no longer centered in `convex/lib/*`.
 
-After merge:
+### PR 4: Confect Services Adoption
 
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### PR 3 Checklist: Bridge Admin Through Confect
-
-Goal: register existing admin Convex functions in the Confect spec/impl tree without rewriting their logic.
-
-Before coding:
-
-- Confirm PR 2 is merged and `master` is current.
-- Re-read Confect plain Convex function support docs.
-- Keep `convex/admin.ts` logic intact unless a small fix is required.
+Goal: make Confect impls use more of the real Confect service model.
 
 Changes:
 
-- Add `confect/admin.spec.ts` using `FunctionSpec.convex*` constructors.
-- Add `confect/admin.impl.ts` that registers the existing Convex functions.
-- Wire the admin group into `confect/spec.ts` and `confect/impl.ts`.
-
-Do not do in this PR:
-
-- No admin behavior rewrite.
-- No move of admin logic into `Effect.gen` unless strictly necessary.
-
-Verification:
-
-- Confect codegen runs.
-- Existing backend admin test/reset flow still works.
+1. Adopt generated services like `DatabaseReader`, `DatabaseWriter`, and runners where that improves ownership and clarity.
+2. Reduce purely mechanical dependence on raw Convex ctx access.
 
 Merge gate:
 
-- Admin functions are represented in Confect and still behave identically.
+1. Backend Confect code is more service-native, without behavior changes.
 
-After merge:
+### PR 5: Presence Backend Integration
 
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### PR 4 Checklist: Migrate First True Confect Read Query
-
-Goal: convert one low-risk match query to a true Confect function with Effect schemas.
-
-Recommended target:
-
-- `getMatchByCode`
-
-Before coding:
-
-- Confirm PR 3 is merged and local `master` is current.
-- Confirm the query input/output shape is stable and small.
+Goal: bring Presence into the Confect spec/impl tree while keeping it a sanctioned component island.
 
 Changes:
 
-- Add or extend `confect/matches.spec.ts`.
-- Add or extend `confect/matches.impl.ts`.
-- Define Effect `Schema` for args and returns.
-- Migrate only the chosen query.
-
-Do not do in this PR:
-
-- No session-heavy mutations.
-- No start of schema/table migration.
-
-Verification:
-
-- Confect codegen runs.
-- Query tests pass.
-- Frontend callers still receive compatible data.
+1. Add a Confect `presence` group.
+2. Use plain Convex function support where required by the Presence component.
+3. Keep `convex/convex.config.ts` as the component registration home.
 
 Merge gate:
 
-- One business query is fully Confect-native and behavior-compatible.
+1. Presence is represented in Confect.
+2. Presence behavior is unchanged.
 
-After merge:
+### PR 6: Admin and Migrations Integration Cleanup
 
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### PR 5 Checklist: Lock Session Pattern
-
-Goal: define how Confect functions in this repo will handle `sessionId`.
-
-Before coding:
-
-- Confirm PR 4 is merged and `master` is current.
-- Review `convex/lib/session_functions.ts` and the endpoints that depend on it.
-- Pick one pattern and document it in the PR description and code.
-
-Recommended pattern:
-
-- Keep `sessionId` explicit in Confect args initially.
+Goal: reduce remaining Convex-only operational seams.
 
 Changes:
 
-- Add the minimal helpers or conventions needed for session-aware Confect functions.
-- Migrate one small session-aware endpoint only if needed to prove the pattern.
-
-Do not do in this PR:
-
-- No broad migration of all session-aware functions.
-
-Verification:
-
-- Session-aware tests still pass for the migrated endpoint.
-- The pattern is simple enough to reuse in later PRs.
+1. Refine `admin` and migration-related integration so remaining direct Convex internals are deliberate and minimal.
+2. Keep any required component-oriented plumbing explicit.
 
 Merge gate:
 
-- There is one clear session strategy for all future Confect migrations.
+1. Admin and migration wiring matches the final Confect-first architecture.
 
-After merge:
+### PR 7: Frontend Confect Foundation
 
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### PR 6 Checklist: Migrate Low-Risk `matches` Mutation
-
-Goal: migrate the simplest write path in `matches`.
-
-Recommended order:
-
-- `joinByCode`
-- then `createMatch`
-- then `joinMatch`
-- then `startMatch`
-
-Before coding:
-
-- Confirm PR 5 is merged and local `master` is up to date.
-- Pick exactly one mutation from the recommended order.
+Goal: prepare the client for Confect refs without rewriting all feature paths yet.
 
 Changes:
 
-- Extend `confect/matches.spec.ts` and `confect/matches.impl.ts`.
-- Migrate only the chosen mutation.
-- Keep error behavior and payload shapes stable.
-
-Do not do in this PR:
-
-- No migration of multiple write endpoints at once.
-- No gameplay orchestration changes.
-
-Verification:
-
-- Focused backend tests for the chosen mutation pass.
-- Existing client flows remain compatible.
+1. Add `@confect/react`.
+2. Keep `ConvexProvider` and `ConvexReactClient`.
+3. Keep anonymous sessions backed by `convex-helpers`.
+4. Add app-local session-aware Confect hooks that inject `sessionId` automatically.
 
 Merge gate:
 
-- One low-risk `matches` write endpoint is Confect-native.
+1. Frontend has a stable Confect hook layer.
+2. Anonymous session behavior is unchanged.
 
-After merge:
+### PR 8: Frontend Migration - Lobby Flow
 
-- `git checkout master`
-- `git pull --ff-only origin master`
+Goal: migrate the create/join/lookup lobby flow to Confect refs.
 
-### PR 7 Checklist: Migrate Remaining `matches` Mutations One At A Time
+Merge gate:
 
-Goal: finish the `matches` slice before entering gameplay orchestration.
+1. Lobby lookup, create, and join flows work through Confect hooks.
 
-Before coding:
+### PR 9: Frontend Migration - Match Page Data
 
-- Confirm the previous `matches` migration PR is merged.
-- Pull latest `master`.
-- Pick only the next mutation in order.
+Goal: migrate the main match page query and join flow to Confect refs.
+
+Merge gate:
+
+1. Match page data flow is Confect-native and behavior-compatible.
+
+### PR 10: Frontend Migration - Gameplay Controls
+
+Goal: migrate gameplay action hooks to Confect refs.
+
+Merge gate:
+
+1. Gameplay controls use Confect refs and session wrappers end-to-end.
+
+### PR 11: Presence Frontend Alignment
+
+Goal: make Presence the only intentional client-side special case.
+
+Merge gate:
+
+1. Presence still works.
+2. Presence is the only expected component-driven exception on the client.
+
+### PR 12: Confect Test Foundation
+
+Goal: add a Confect-native refs-first testing path.
 
 Changes:
 
-- Migrate the next single `matches` mutation.
-- Keep helper extraction minimal and local.
-
-Special caution:
-
-- Treat `startMatch` as the last `matches` mutation because it begins round setup orchestration.
-
-Verification:
-
-- Relevant backend match tests pass.
-- No cross-slice changes leak into `rounds` or `turns`.
+1. Add `@confect/test` and related test dependencies.
+2. Add a reusable `TestConfect` harness.
 
 Merge gate:
 
-- The `matches` slice is complete and stable before starting gameplay PRs.
+1. At least one backend suite runs through Confect refs and decoded schemas.
 
-After merge:
+### PR 13: Test Migration
 
-- `git checkout master`
-- `git pull --ff-only origin master`
+Goal: migrate core backend behavior tests toward the Confect-native test model.
 
-### PR 8 Checklist: Migrate `startNextRound`
+Merge gate:
 
-Goal: enter gameplay through the simpler orchestration path in `convex/rounds.ts`.
+1. Core backend behavior is covered by Confect-native tests.
+2. A narrow live Convex smoke layer still exists for runtime realism.
 
-Before coding:
+### PR 14: Cleanup and Enforcement
 
-- Confirm all intended `matches` migrations are merged.
-- Pull latest `master`.
-- Re-check current tests around round startup.
+Goal: make the final architecture true in practice.
 
 Changes:
 
-- Add or extend a `rounds` Confect group.
-- Migrate only `startNextRound`.
-- Keep pure game logic in `game/logic/turn-resolution.ts` unchanged unless a bug fix is necessary.
-
-Do not do in this PR:
-
-- No `takeTurn` migration.
-- No broad Effect rewrite of gameplay logic.
-
-Verification:
-
-- Focused round-start tests pass.
-- Match progression still works locally.
+1. Remove remaining feature-code imports from `convex/_generated/api`.
+2. Remove obsolete Convex-first helpers.
+3. Reduce authored code in `convex/` to generated/runtime plumbing and sanctioned exceptions.
 
 Merge gate:
 
-- Round start orchestration is Confect-native and behavior-compatible.
+1. Backend authored source of truth is Confect.
+2. Frontend feature code is Confect-driven.
+3. Presence remains the one explicit island.
 
-After merge:
+## Final Success Criteria
 
-- `git checkout master`
-- `git pull --ff-only origin master`
+This migration is complete when:
 
-### PR 9 Checklist: Migrate `resolveAction`
-
-Goal: migrate the narrower turn mutation before `takeTurn`.
-
-Before coding:
-
-- Confirm PR 8 is merged and `master` is current.
-- Re-read the turn-resolution boundary between Convex orchestration and pure logic.
-
-Changes:
-
-- Extend the Confect turn group.
-- Migrate only `resolveAction`.
-
-Do not do in this PR:
-
-- No migration of `takeTurn` in the same PR.
-
-Verification:
-
-- Focused backend turn tests for action resolution pass.
-- Pending-action flows remain stable.
-
-Merge gate:
-
-- Action resolution is Confect-native and isolated from the denser `takeTurn` flow.
-
-After merge:
-
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### PR 10 Checklist: Migrate `takeTurn`
-
-Goal: finish Confect adoption for the highest-churn gameplay mutation.
-
-Before coding:
-
-- Confirm PR 9 is merged and `master` is current.
-- Re-run the current turn and round tests before changing code.
-
-Changes:
-
-- Migrate only `takeTurn`.
-- Keep pure gameplay helpers plain TypeScript.
-- Introduce Clock/Random service seams only if they directly help this migration and stay small.
-
-Do not do in this PR:
-
-- No schema rewrite.
-- No unrelated gameplay refactor.
-
-Verification:
-
-- Focused backend turn tests pass.
-- Unit tests around `game/logic/turn-resolution.ts` remain green.
-- Manual gameplay smoke test still works.
-
-Merge gate:
-
-- The most stateful mutation is migrated without changing user-visible gameplay.
-
-After merge:
-
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### Optional PR 11 Checklist: Adopt Confect Client Refs Selectively
-
-Goal: use generated Confect client refs where they improve ergonomics, without a frontend rewrite.
-
-Before coding:
-
-- Confirm enough public functions are already Confect-native to justify client adoption.
-
-Changes:
-
-- Migrate one UI path to use Confect refs/hooks.
-- Keep the scope limited to one feature path.
-
-Do not do in this PR:
-
-- No whole-app client migration.
-
-Verification:
-
-- The migrated UI path works locally.
-- Existing data flow and loading states still behave correctly.
-
-Merge gate:
-
-- Client adoption proves useful without broad frontend churn.
-
-After merge:
-
-- `git checkout master`
-- `git pull --ff-only origin master`
-
-### Optional PR 12 Checklist: Reassess Schema Migration
-
-Goal: decide whether to move `convex/schema.ts` to Confect-backed Effect schemas.
-
-Before coding:
-
-- Confirm the function migration delivered enough value to justify schema churn.
-- Inventory repeated validators and shape duplication first.
-
-Decision criteria:
-
-- Proceed only if shared schemas now solve a concrete maintenance problem.
-- Skip if the existing Convex schema remains simpler and stable.
-
-If proceeding:
-
-- Do the schema migration in its own PR.
-- Keep it separate from business-logic migrations.
-
-Merge gate:
-
-- Schema migration is justified by concrete duplication or type-safety gains, not by completeness alone.
+1. `confect/schema.ts` is authoritative.
+2. App backend features are authored in Confect.
+3. Frontend features use `@confect/react` and Confect refs.
+4. Anonymous sessions still work, but only through app-local Confect wrappers.
+5. Presence remains operational through the documented plain-Convex component pattern.
+6. `convex/` is no longer the primary home for authored business logic.
