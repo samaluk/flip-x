@@ -84,6 +84,65 @@ describe("Convex turns", () => {
     ).rejects.toThrow("InvalidAction");
   });
 
+  it("resolveAction updates the round state for the source session", async () => {
+    const { matchId, sessions } = await createStartedMatch(client, ["Host", "Guest", "Third"]);
+
+    let snapshot = null;
+    let guard = 0;
+    while (guard < 50) {
+      guard += 1;
+      const snapshots = await Promise.all(
+        sessions.map((session) =>
+          client.query(api.matches.getMatchSnapshot, {
+            matchId,
+            sessionId: session.sessionId,
+          }),
+        ),
+      );
+      snapshot = snapshots.find((value) => value?.pendingAction) ?? snapshots.find((value) => value !== null) ?? null;
+
+      if (!snapshot) {
+        throw new Error("Expected a match snapshot while waiting for a pending action");
+      }
+
+      if (snapshot.pendingAction) {
+        break;
+      }
+
+      const activeSession = sessions.find(
+        (session) => snapshot?.activePlayerId === snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
+      );
+
+      if (!activeSession) {
+        break;
+      }
+
+      await client.mutation(api.turns.takeTurn, {
+        matchId,
+        action: "hit",
+        sessionId: activeSession.sessionId,
+      });
+    }
+
+    expect(snapshot?.pendingAction).toBeTruthy();
+
+    const sourceSession = sessions.find(
+      (session) =>
+        snapshot?.pendingAction?.sourcePlayerId ===
+        snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
+    );
+    const targetPlayerId = snapshot!.pendingAction!.eligibleTargetIds[0];
+
+    const updated = await client.mutation(api.turns.resolveAction, {
+      matchId,
+      targetPlayerId: targetPlayerId as never,
+      sessionId: sourceSession!.sessionId,
+    });
+
+    expect(updated.latestEvent).not.toBeNull();
+    expect(updated.pendingAction).not.toEqual(snapshot!.pendingAction);
+  });
+
   it("completes a two-player round and keeps scores consistent", async () => {
     const { matchId, sessions } = await createStartedMatch(client, ["Host", "Guest"]);
 
