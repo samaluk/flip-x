@@ -1,0 +1,38 @@
+{
+  "skill_name": "confect-dev",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm adding comments to my Confect app. Please add a `Comments` table, wire a public query to list comments for a note, and a public mutation to create a comment. Keep it consistent with Confect's schema/spec/impl structure and tell me what generated files need refreshing.",
+      "expected_output": "The response should guide a Confect-native change touching schema, spec, impl, and codegen rather than suggesting plain Convex validators or editing generated files.",
+      "files": [],
+      "expectations": [
+        "Mentions authored Confect files for the change, including schema plus spec and impl layers",
+        "Avoids recommending edits under `confect/_generated/` and instead calls for `confect codegen` or `confect dev` to refresh derived files",
+        "Uses Confect-native APIs such as `Table.make`, `FunctionSpec`, `FunctionImpl`, `GroupSpec`, or `GroupImpl` instead of plain Convex validators as the primary pattern"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My repo has `confect/http.ts` and I want a `/api/projects/:id` endpoint that returns a project by calling an existing public query through Confect. Show me the right pattern for the HTTP API layer and where the docs page will show up.",
+      "expected_output": "The response should use Confect's HTTP API integration with Effect platform modules and generated runner services, and mention the docs route.",
+      "files": [],
+      "expectations": [
+        "Uses Confect's HTTP API pattern with `@effect/platform` modules and a generated runner service such as `QueryRunner`",
+        "Explains that the endpoint should be mounted from `confect/http.ts` via `HttpApi.make` or equivalent Confect HTTP router wiring",
+        "Mentions that interactive docs are available at the configured path prefix plus `docs`"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I ran `confect codegen` but my React screen still can't find `refs.public.tasks.list`. How would you debug this in a Confect project without patching anything under `_generated`?",
+      "expected_output": "The response should provide a Confect-specific debugging checklist around schema/spec/impl wiring, codegen, and generated refs.",
+      "files": [],
+      "expectations": [
+        "Provides a debugging sequence that checks Confect authored files before blaming generated output",
+        "Explicitly says not to patch `confect/_generated/` directly",
+        "Mentions spec wiring, impl wiring, or rerunning codegen as likely causes of missing generated refs"
+      ]
+    }
+  ]
+}
