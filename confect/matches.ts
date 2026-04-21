@@ -26,7 +26,7 @@ import {
   requireViewerPlayerId,
   serializeRoundRuntime,
 } from "./lib/store";
-import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
+import type { MutationCtx } from "../convex/_generated/server";
 import {
   InvalidHostName,
   InvalidMatchState,
@@ -61,28 +61,6 @@ async function generateUniqueLobbyCode(ctx: MutationCtx) {
   }
 
   return lobbyCode;
-}
-
-export async function lookupSetupMatchByCode(ctx: QueryCtx, lobbyCode: string) {
-  const normalized = lobbyCode.trim().toUpperCase();
-  if (normalized.length !== 4) {
-    return null;
-  }
-
-  const match = await ctx.db
-    .query("matches")
-    .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
-    .first();
-
-  if (!match || match.status !== "setup") {
-    return null;
-  }
-
-  return {
-    matchId: String(match._id),
-    lobbyCode: match.lobbyCode,
-    status: match.status,
-  };
 }
 
 export async function createMatchForSession(

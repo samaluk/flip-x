@@ -1,8 +1,8 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
-import { Effect, Layer } from "effect";
+import { Effect, Layer, Option } from "effect";
 
 import api from "./_generated/api";
-import { MutationCtx, QueryCtx } from "./_generated/services";
+import { DatabaseReader, MutationCtx } from "./_generated/services";
 import * as matchFns from "./matches";
 
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
@@ -14,8 +14,27 @@ const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
 const getMatchSnapshot = FunctionImpl.make(api, "matches", "getMatchSnapshot", matchFns.getMatchSnapshot);
 const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lobbyCode }) =>
   Effect.gen(function* () {
-    const ctx = (yield* QueryCtx) as unknown as Parameters<typeof matchFns.lookupSetupMatchByCode>[0];
-    return yield* Effect.promise(() => matchFns.lookupSetupMatchByCode(ctx, lobbyCode));
+    const reader = yield* DatabaseReader;
+    const normalized = lobbyCode.trim().toUpperCase();
+
+    if (normalized.length !== 4) {
+      return null;
+    }
+
+    const match = yield* reader
+      .table("matches")
+      .index("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
+      .first();
+
+    if (Option.isNone(match) || match.value.status !== "setup") {
+      return null;
+    }
+
+    return {
+      matchId: String(match.value._id),
+      lobbyCode: match.value.lobbyCode,
+      status: match.value.status,
+    };
   }).pipe(Effect.orDie),
 );
 const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
