@@ -1,11 +1,12 @@
 "use client";
 
-import { useSessionId, useSessionMutation, useSessionQuery } from "convex-helpers/react/sessions";
+import { useSessionId } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 
+import refs from "@/confect/_generated/refs";
 import { GameTable } from "@/game/screens/game-table";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
 import { StartGameButton } from "@/game/screens/start-game-button";
@@ -14,16 +15,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 
 export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const [sessionId] = useSessionId();
-  const joinMatch = useSessionMutation(api.matches.joinMatch);
+  const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
   const [isJoining, setIsJoining] = useState(false);
-  const snapshot = useSessionQuery(api.matches.getMatchSnapshot, { matchId });
+  const snapshot = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, { matchId });
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
   const viewerPlayerId = snapshot?.viewerPlayerId ? (snapshot.viewerPlayerId as Id<"players">) : undefined;
