@@ -5,7 +5,17 @@ import api from "./_generated/api";
 import { MutationCtx } from "./_generated/services";
 import * as turnFns from "./turns";
 
-const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", turnFns.takeTurn);
+const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
+  Effect.gen(function* () {
+    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof turnFns.takeTurnForSession>[0];
+    return yield* Effect.promise(() =>
+      turnFns.takeTurnForSession(ctx, {
+        ...args,
+        matchId: args.matchId as Parameters<typeof turnFns.takeTurnForSession>[1]["matchId"],
+      }),
+    );
+  }).pipe(Effect.orDie),
+);
 const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
   Effect.gen(function* () {
     const ctx = (yield* MutationCtx) as unknown as Parameters<typeof turnFns.resolveActionForSession>[0];

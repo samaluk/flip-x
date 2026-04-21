@@ -1,4 +1,3 @@
-import { v } from "convex/values";
 import type { SessionId } from "convex-helpers/server/sessions";
 
 import {
@@ -9,7 +8,6 @@ import {
 import type { ActionCard, Card } from "../game/logic/card-types";
 import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
-import { mutationWithSession } from "../convex/lib/session_functions";
 import {
   buildOrderedPlayers,
   buildPlayerIdMap,
@@ -76,89 +74,88 @@ function normalizePlayerStates(
   );
 }
 
-export const takeTurn = mutationWithSession({
-  args: {
-    matchId: v.id("matches"),
-    action: v.union(v.literal("hit"), v.literal("stay")),
-  },
-  handler: async (ctx, args) => {
-    const match = await ctx.db.get(args.matchId);
-    const round = await getLatestRound(ctx, args.matchId);
+export async function takeTurnForSession(
+  ctx: MutationCtx,
+  args: { matchId: Id<"matches">; action: "hit" | "stay"; sessionId: string },
+) {
+  const sessionId = args.sessionId as SessionId;
 
-    if (!match || !round) {
-      throw new MatchNotFound({ matchId: String(args.matchId) });
+  const match = await ctx.db.get(args.matchId);
+  const round = await getLatestRound(ctx, args.matchId);
+
+  if (!match || !round) {
+    throw new MatchNotFound({ matchId: String(args.matchId) });
+  }
+
+  const players = await getPlayersByMatch(ctx, args.matchId);
+  const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, sessionId);
+
+  if (!round.activePlayerId || round.activePlayerId !== viewerPlayerId) {
+    throw new InvalidTurn();
+  }
+
+  const orderedPlayers = buildOrderedPlayers(players);
+  const roundPlayerStates = await getRoundPlayerStateDocs(ctx, round._id);
+  const playerStates = normalizePlayerStates(roundPlayerStates);
+
+  const resolved = takeTurnAction(
+    orderedPlayers,
+    normalizeRound(round),
+    playerStates,
+    String(viewerPlayerId),
+    args.action,
+  );
+
+  const playerIdMap = buildPlayerIdMap(players);
+  await persistPlayerStates(ctx, round._id, resolved.playerStates, playerIdMap);
+  await persistRoundRuntime(ctx, round._id, resolved.round, playerIdMap);
+  await persistEvents(ctx, round._id, resolved.events, playerIdMap);
+
+  if (resolved.round.phase === "scoring") {
+    const finalized = finalizeRound(resolved.round, resolved.playerStates);
+    await persistPlayerStates(ctx, round._id, finalized.playerStates, playerIdMap);
+    await persistRoundRuntime(ctx, round._id, finalized.round, playerIdMap);
+    await persistEvents(ctx, round._id, finalized.events, playerIdMap);
+    await persistScoreBreakdowns(ctx, round._id, finalized.playerStates, playerIdMap);
+
+    for (const player of players) {
+      const nextState = finalized.playerStates[String(player._id)];
+      await ctx.db.patch(player._id, {
+        totalScore: player.totalScore + nextState.roundScore,
+      });
     }
 
-    const players = await getPlayersByMatch(ctx, args.matchId);
-    const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, args.sessionId);
+    const updatedPlayers = await getPlayersByMatch(ctx, args.matchId);
+    const winners = updatedPlayers.filter((player) => player.totalScore >= match.targetScore);
 
-    if (!round.activePlayerId || round.activePlayerId !== viewerPlayerId) {
-      throw new InvalidTurn();
-    }
+    if (winners.length > 0) {
+      const winner = updatedPlayers.toSorted((left, right) => right.totalScore - left.totalScore)[0];
 
-    const orderedPlayers = buildOrderedPlayers(players);
-    const roundPlayerStates = await getRoundPlayerStateDocs(ctx, round._id);
-    const playerStates = normalizePlayerStates(roundPlayerStates);
+      await ctx.db.patch(args.matchId, {
+        status: "completed",
+        winnerPlayerId: winner._id,
+        updatedAt: Date.now(),
+      });
 
-    const resolved = takeTurnAction(
-      orderedPlayers,
-      normalizeRound(round),
-      playerStates,
-      String(viewerPlayerId),
-      args.action,
-    );
-
-    const playerIdMap = buildPlayerIdMap(players);
-    await persistPlayerStates(ctx, round._id, resolved.playerStates, playerIdMap);
-    await persistRoundRuntime(ctx, round._id, resolved.round, playerIdMap);
-    await persistEvents(ctx, round._id, resolved.events, playerIdMap);
-
-    if (resolved.round.phase === "scoring") {
-      const finalized = finalizeRound(resolved.round, resolved.playerStates);
-      await persistPlayerStates(ctx, round._id, finalized.playerStates, playerIdMap);
-      await persistRoundRuntime(ctx, round._id, finalized.round, playerIdMap);
-      await persistEvents(ctx, round._id, finalized.events, playerIdMap);
-      await persistScoreBreakdowns(ctx, round._id, finalized.playerStates, playerIdMap);
-
-      for (const player of players) {
-        const nextState = finalized.playerStates[String(player._id)];
-        await ctx.db.patch(player._id, {
-          totalScore: player.totalScore + nextState.roundScore,
-        });
+      for (const player of updatedPlayers) {
+        await ctx.db.patch(player._id, { hasWon: player._id === winner._id });
       }
-
-      const updatedPlayers = await getPlayersByMatch(ctx, args.matchId);
-      const winners = updatedPlayers.filter((player) => player.totalScore >= match.targetScore);
-
-      if (winners.length > 0) {
-        const winner = updatedPlayers.toSorted((left, right) => right.totalScore - left.totalScore)[0];
-
-        await ctx.db.patch(args.matchId, {
-          status: "completed",
-          winnerPlayerId: winner._id,
-          updatedAt: Date.now(),
-        });
-
-        for (const player of updatedPlayers) {
-          await ctx.db.patch(player._id, { hasWon: player._id === winner._id });
-        }
-      } else {
-        await ctx.db.patch(args.matchId, {
-          updatedAt: Date.now(),
-        });
-      }
+    } else {
+      await ctx.db.patch(args.matchId, {
+        updatedAt: Date.now(),
+      });
     }
+  }
 
-    const nextMatch = await ctx.db.get(args.matchId);
-    const nextRound = await getLatestRound(ctx, args.matchId);
+  const nextMatch = await ctx.db.get(args.matchId);
+  const nextRound = await getLatestRound(ctx, args.matchId);
 
-    if (!nextMatch || !nextRound) {
-      throw new MatchNotFound({ matchId: String(args.matchId) });
-    }
+  if (!nextMatch || !nextRound) {
+    throw new MatchNotFound({ matchId: String(args.matchId) });
+  }
 
-    return await buildSnapshot(ctx, nextMatch, nextRound, args.sessionId);
-  },
-});
+  return await buildSnapshot(ctx, nextMatch, nextRound, sessionId);
+}
 
 export async function resolveActionForSession(
   ctx: MutationCtx,
