@@ -1,10 +1,11 @@
 "use client";
 
-import { useSessionId, useSessionMutation } from "convex-helpers/react/sessions";
+import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
+import refs from "@/confect/_generated/refs";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +16,8 @@ import {
 } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/shared/i18n/navigation";
+import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 
 interface JoinLobbyDialogProps {
@@ -27,8 +27,8 @@ interface JoinLobbyDialogProps {
 export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
   const router = useRouter();
   const [sessionId] = useSessionId();
-  const joinByCode = useSessionMutation(api.matches.joinByCode);
-  const joinMatch = useSessionMutation(api.matches.joinMatch);
+  const joinByCode = useSessionConfectMutation(refs.public.matches.joinByCode);
+  const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
@@ -67,7 +67,7 @@ export function JoinLobbyDialog({ trigger }: JoinLobbyDialogProps) {
     try {
       const result = await joinByCode({ lobbyCode: trimmedCode.toUpperCase() });
       await joinMatch({
-        matchId: result.matchId as Id<"matches">,
+        matchId: result.matchId,
         playerName: trimmedName,
       });
       startTransition(() => {

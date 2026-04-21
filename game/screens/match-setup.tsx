@@ -1,11 +1,12 @@
 "use client";
 
-import { useSessionId, useSessionMutation } from "convex-helpers/react/sessions";
+import { useSessionId } from "convex-helpers/react/sessions";
 import { SparklesIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState } from "react";
 import { toast } from "sonner";
 
+import refs from "@/confect/_generated/refs";
 import {
   Dialog,
   DialogContent,
@@ -16,9 +17,8 @@ import {
 } from "@/shared/ui/dialog";
 import { Button, buttonVariants } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "@/shared/i18n/navigation";
+import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 import { cn } from "@/shared/lib/utils";
 
@@ -30,8 +30,8 @@ interface MatchSetupProps {
 export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
   const router = useRouter();
   const [sessionId] = useSessionId();
-  const createMatch = useSessionMutation(api.matches.createMatch);
-  const joinMatch = useSessionMutation(api.matches.joinMatch);
+  const createMatch = useSessionConfectMutation(refs.public.matches.createMatch);
+  const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [hostName, setHostName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("MatchSetup");
@@ -68,7 +68,7 @@ export function MatchSetup({ joinCode, existingMatchId }: MatchSetupProps) {
         targetMatchId = match.matchId;
       } else {
         await joinMatch({
-          matchId: targetMatchId as Id<"matches">,
+          matchId: targetMatchId,
           playerName: trimmedName,
         });
       }

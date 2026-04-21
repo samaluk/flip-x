@@ -1,17 +1,17 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery } from "@confect/react";
 import { useTranslations } from "next-intl";
 
+import refs from "@/confect/_generated/refs";
 import { MatchSetup } from "@/game/screens/match-setup";
 import { Button } from "@/shared/ui/button";
 import { Skeleton } from "@/shared/ui/skeleton";
-import { api } from "@/convex/_generated/api";
 import { Link } from "@/shared/i18n/navigation";
 
 export function HomeLobbyCodeGate({ code }: { code: string }) {
   const t = useTranslations("Home");
-  const getMatchByCode = useQuery(api.matches.getMatchByCode, { lobbyCode: code });
+  const getMatchByCode = useQuery(refs.public.matches.getMatchByCode, { lobbyCode: code });
 
   if (getMatchByCode === undefined) {
     return (
