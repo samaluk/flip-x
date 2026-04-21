@@ -5,7 +5,7 @@ import { Effect } from "effect";
 import refs from "@/confect/_generated/refs";
 
 import * as TestConfect from "./TestConfect";
-import { createStartedMatch, getSnapshotForAnySession, type SessionRecord } from "./helpers";
+import { createStartedMatch, getSnapshotForAnySession } from "./helpers";
 
 describe("Confect turns", () => {
   it.effect("takeTurn updates the round state for the active player", () =>
