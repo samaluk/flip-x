@@ -50,11 +50,9 @@ test.describe("gameplay", () => {
         await hitControl(activePage).click();
 
         const roundEnds = await Promise.race([
-          expect(hostPage.locator(".game-match-status")).toHaveAttribute(
-            "data-status",
-            "setup",
-            { timeout: 20_000 },
-          ).then(() => true),
+          expect(hostPage.locator(".game-match-status"))
+            .toHaveAttribute("data-status", "setup", { timeout: 20_000 })
+            .then(() => true),
           new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 18_000)),
         ]);
 
@@ -117,9 +115,7 @@ test.describe("gameplay", () => {
     await joinForm.getByRole("button", { name: /join lobby/i }).click();
 
     await guestPage.waitForURL(/\/game\/[^/?#]+/);
-    await expect(
-      guestPage.getByRole("heading", { name: /join the game/i }),
-    ).not.toBeVisible();
+    await expect(guestPage.getByRole("heading", { name: /join the game/i })).not.toBeVisible();
     await expect(guestPage.getByText(`You are playing as Guest ${suffix}`).first()).toBeVisible();
   });
 

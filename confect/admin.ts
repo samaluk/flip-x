@@ -5,7 +5,11 @@ import { internal, components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import type { ActionCtx } from "../convex/_generated/server";
 import { action, internalMutation, internalQuery } from "../convex/_generated/server";
-import { UnsupportedRelationship, UnsupportedTable, InvalidConfirmation } from "../shared/lib/errors/domain";
+import {
+  UnsupportedRelationship,
+  UnsupportedTable,
+  InvalidConfirmation,
+} from "../shared/lib/errors/domain";
 import { cascadingDeletes } from "./lib/cascading_deletes";
 import { rateLimiter } from "./lib/rate_limiter";
 
@@ -77,7 +81,9 @@ export const resolveDependents = internalQuery({
       case "playerSessions:players": {
         const rows = await ctx.db
           .query("playerSessions")
-          .withIndex("by_player_id", (query) => query.eq("playerId", args.parentId as Id<"players">))
+          .withIndex("by_player_id", (query) =>
+            query.eq("playerId", args.parentId as Id<"players">),
+          )
           .collect();
         return rows.map((row) => String(row._id));
       }
@@ -151,10 +157,7 @@ export const clearAllAppDataViaCli = action({
   },
 });
 
-async function runClearAllAppData(
-  ctx: ActionCtx,
-  confirm: string,
-): Promise<ClearAllAppDataResult> {
+async function runClearAllAppData(ctx: ActionCtx, confirm: string): Promise<ClearAllAppDataResult> {
   if (confirm !== DELETE_ALL_APP_DATA_CONFIRMATION) {
     throw new InvalidConfirmation();
   }

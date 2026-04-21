@@ -41,7 +41,11 @@ export async function startNextRoundForSession(
   const playerIdMap = buildPlayerIdMap(players);
   const nextDealerSeat = (match.dealerSeat + 1) % players.length;
   const playerStates = createPlayerRoundStates(orderedPlayers);
-  const baseRound = createRoundRuntime(orderedPlayers, match.currentRoundNumber + 1, nextDealerSeat);
+  const baseRound = createRoundRuntime(
+    orderedPlayers,
+    match.currentRoundNumber + 1,
+    nextDealerSeat,
+  );
   const resolved = continueRound(orderedPlayers, baseRound, playerStates);
 
   const roundId = await ctx.db.insert("rounds", {

@@ -25,10 +25,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/shared/ui/accordion";
-import {
-  Card,
-  CardContent,
-} from "@/shared/ui/card"
+import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 
 const listStagger = {
@@ -102,10 +99,14 @@ export function GameTableView({
 
   const pendingAction = snapshot.pendingAction;
   const viewerIsSource = Boolean(
-    pendingAction && snapshot.viewerPlayerId && snapshot.viewerPlayerId === pendingAction.sourcePlayerId,
+    pendingAction &&
+    snapshot.viewerPlayerId &&
+    snapshot.viewerPlayerId === pendingAction.sourcePlayerId,
   );
   const viewerCanTargetSelf = Boolean(
-    viewerIsSource && pendingAction && pendingAction.eligibleTargetIds.includes(snapshot.viewerPlayerId ?? ""),
+    viewerIsSource &&
+    pendingAction &&
+    pendingAction.eligibleTargetIds.includes(snapshot.viewerPlayerId ?? ""),
   );
 
   const renderPlayerLane = (
@@ -116,9 +117,10 @@ export function GameTableView({
     } = {},
   ) => {
     const isTargetable =
-      viewerIsSource && !!pendingAction && pendingAction.eligibleTargetIds.includes(player.playerId);
-    const isSelfTargeting =
-      !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
+      viewerIsSource &&
+      !!pendingAction &&
+      pendingAction.eligibleTargetIds.includes(player.playerId);
+    const isSelfTargeting = !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
     const incomingActionKindVal: "flip_three" | "freeze" | null =
       !pendingAction || player.playerId === pendingAction.sourcePlayerId
         ? null
@@ -207,11 +209,7 @@ export function GameTableView({
           </div>
 
           <div className="ml-auto flex flex-wrap items-center gap-1.5">
-            <Badge
-              variant="outline"
-              className="game-match-status"
-              data-status={snapshot.status}
-            >
+            <Badge variant="outline" className="game-match-status" data-status={snapshot.status}>
               {t(`matchStatus.${snapshot.status}`)}
             </Badge>
             <Badge variant="outline" className="hidden sm:inline-flex">
@@ -220,9 +218,7 @@ export function GameTableView({
             {activePlayer ? (
               <Badge variant="default" className="max-w-[12rem]">
                 <UserRoundIcon className="size-3" aria-hidden />
-                <span className="truncate">
-                  {t("turnFor", { name: activePlayer.displayName })}
-                </span>
+                <span className="truncate">{t("turnFor", { name: activePlayer.displayName })}</span>
               </Badge>
             ) : null}
             {isPending ? (
@@ -280,9 +276,7 @@ export function GameTableView({
           {freezeLaneLayout ? (
             <div className={cn("grid gap-3", opponentsGridClass)}>
               {opponents.map((player) => (
-                <div key={player.playerId}>
-                  {renderPlayerLane(player, { compact: true })}
-                </div>
+                <div key={player.playerId}>{renderPlayerLane(player, { compact: true })}</div>
               ))}
             </div>
           ) : (
@@ -325,11 +319,7 @@ export function GameTableView({
       {/* ─────────── Collapsible round breakdown ─────────── */}
       <Card className="w-full">
         <CardContent>
-
-          <Accordion
-            value={showBreakdown}
-            onValueChange={setShowBreakdown}
-          >
+          <Accordion value={showBreakdown} onValueChange={setShowBreakdown}>
             <AccordionItem value="summary">
               <AccordionTrigger className="text-xl">{tScore("title")}</AccordionTrigger>
               <AccordionContent>

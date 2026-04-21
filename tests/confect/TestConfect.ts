@@ -1,10 +1,7 @@
 import { Ref } from "@confect/core";
 import type { DatabaseSchema, DataModel } from "@confect/server";
 import { RegisteredConvexFunction } from "@confect/server";
-import type {
-  TestConvexForDataModel,
-  TestConvexForDataModelAndIdentity,
-} from "convex-test";
+import type { TestConvexForDataModel, TestConvexForDataModelAndIdentity } from "convex-test";
 import { convexTest } from "convex-test";
 import type { GenericMutationCtx, UserIdentity } from "convex/server";
 import type { Value } from "convex/values";
@@ -38,18 +35,10 @@ type TestConfectWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWithProp
   ) => Effect.Effect<Ref.Returns<ActionRef>, ParseResult.ParseError>;
   run: {
     <E>(
-      handler: Effect.Effect<
-        void,
-        E,
-        RegisteredConvexFunction.MutationServices<ConfectSchema>
-      >,
+      handler: Effect.Effect<void, E, RegisteredConvexFunction.MutationServices<ConfectSchema>>,
     ): Effect.Effect<void>;
     <A, B extends Value, E>(
-      handler: Effect.Effect<
-        A,
-        E,
-        RegisteredConvexFunction.MutationServices<ConfectSchema>
-      >,
+      handler: Effect.Effect<A, E, RegisteredConvexFunction.MutationServices<ConfectSchema>>,
       returns: Schema.Schema<A, B>,
     ): Effect.Effect<A, ParseResult.ParseError>;
   };
@@ -66,9 +55,9 @@ export const TestConfect = Context.GenericTag<TestConfectService<typeof confectS
   "@/tests/confect/TestConfect",
 );
 
-class TestConfectImplWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWithProps>
-  implements TestConfectWithoutIdentity<ConfectSchema>
-{
+class TestConfectImplWithoutIdentity<
+  ConfectSchema extends DatabaseSchema.AnyWithProps,
+> implements TestConfectWithoutIdentity<ConfectSchema> {
   constructor(
     private schema: ConfectSchema,
     private testConvex: TestConvexForDataModel<
@@ -89,7 +78,10 @@ class TestConfectImplWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWit
       (this.testConvex.mutation as any)(functionReference, encodedArgs),
     ) as Effect.Effect<Ref.Returns<MutationRef>, ParseResult.ParseError>;
 
-  readonly action = <ActionRef extends Ref.AnyAction>(actionRef: ActionRef, args: Ref.Args<ActionRef>) =>
+  readonly action = <ActionRef extends Ref.AnyAction>(
+    actionRef: ActionRef,
+    args: Ref.Args<ActionRef>,
+  ) =>
     Ref.runWithCodec(actionRef, args, (functionReference, encodedArgs) =>
       (this.testConvex.action as any)(functionReference, encodedArgs),
     ) as Effect.Effect<Ref.Returns<ActionRef>, ParseResult.ParseError>;
@@ -101,15 +93,16 @@ class TestConfectImplWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWit
     const makeMutationLayer = (
       mutationCtx: GenericMutationCtx<DataModel.ToConvex<DataModel.FromSchema<ConfectSchema>>>,
     ): Layer.Layer<RegisteredConvexFunction.MutationServices<ConfectSchema>> =>
-      RegisteredConvexFunction.mutationLayer(
-        this.schema,
-        mutationCtx,
-      ) as Layer.Layer<RegisteredConvexFunction.MutationServices<ConfectSchema>>;
+      RegisteredConvexFunction.mutationLayer(this.schema, mutationCtx) as Layer.Layer<
+        RegisteredConvexFunction.MutationServices<ConfectSchema>
+      >;
 
     return returns === undefined
       ? Effect.promise(() =>
           this.testConvex.run((mutationCtx) =>
-            Effect.runPromise(handler.pipe(Effect.asVoid, Effect.provide(makeMutationLayer(mutationCtx)))),
+            Effect.runPromise(
+              handler.pipe(Effect.asVoid, Effect.provide(makeMutationLayer(mutationCtx))),
+            ),
           ),
         )
       : Effect.promise(() =>
@@ -134,9 +127,9 @@ class TestConfectImplWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWit
     Effect.promise(() => this.testConvex.finishAllScheduledFunctions(advanceTimers));
 }
 
-class TestConfectImpl<ConfectSchema extends DatabaseSchema.AnyWithProps>
-  implements TestConfectService<ConfectSchema>
-{
+class TestConfectImpl<
+  ConfectSchema extends DatabaseSchema.AnyWithProps,
+> implements TestConfectService<ConfectSchema> {
   private readonly testConfectImplWithoutIdentity: TestConfectImplWithoutIdentity<ConfectSchema>;
 
   constructor(
@@ -159,11 +152,16 @@ class TestConfectImpl<ConfectSchema extends DatabaseSchema.AnyWithProps>
     args: Ref.Args<MutationRef>,
   ) => this.testConfectImplWithoutIdentity.mutation(mutationRef, args);
 
-  readonly action = <ActionRef extends Ref.AnyAction>(actionRef: ActionRef, args: Ref.Args<ActionRef>) =>
-    this.testConfectImplWithoutIdentity.action(actionRef, args);
+  readonly action = <ActionRef extends Ref.AnyAction>(
+    actionRef: ActionRef,
+    args: Ref.Args<ActionRef>,
+  ) => this.testConfectImplWithoutIdentity.action(actionRef, args);
 
   readonly run: TestConfectService<ConfectSchema>["run"] = ((handler: any, returns?: any) =>
-    this.testConfectImplWithoutIdentity.run(handler, returns)) as TestConfectService<ConfectSchema>["run"];
+    this.testConfectImplWithoutIdentity.run(
+      handler,
+      returns,
+    )) as TestConfectService<ConfectSchema>["run"];
 
   readonly fetch = (pathQueryFragment: string, init?: RequestInit) =>
     this.testConfectImplWithoutIdentity.fetch(pathQueryFragment, init);
@@ -175,7 +173,9 @@ class TestConfectImpl<ConfectSchema extends DatabaseSchema.AnyWithProps>
     this.testConfectImplWithoutIdentity.finishAllScheduledFunctions(advanceTimers);
 }
 
-const appModules = (import.meta as ImportMetaWithGlob).glob("../../convex/**/*.{ts,tsx,js,mjs,cjs}");
+const appModules = (import.meta as ImportMetaWithGlob).glob(
+  "../../convex/**/*.{ts,tsx,js,mjs,cjs}",
+);
 const migrationsModules = (import.meta as ImportMetaWithGlob).glob(
   "../../node_modules/@convex-dev/migrations/dist/component/**/*.{js,mjs,cjs}",
 );
@@ -190,7 +190,9 @@ const cascadingDeletesModules = (import.meta as ImportMetaWithGlob).glob(
 );
 
 function registerAppComponents(
-  testConvex: TestConvexForDataModelAndIdentity<DataModel.ToConvex<DataModel.FromSchema<typeof confectSchema>>>,
+  testConvex: TestConvexForDataModelAndIdentity<
+    DataModel.ToConvex<DataModel.FromSchema<typeof confectSchema>>
+  >,
 ) {
   testConvex.registerComponent("migrations", migrationsComponentSchema, migrationsModules);
   testConvex.registerComponent("presence", presenceComponentSchema, presenceModules);
@@ -204,7 +206,10 @@ function registerAppComponents(
 
 export const layer = () =>
   Layer.sync(TestConfect, () => {
-    const testConvex = convexTest(confectSchema.convexSchemaDefinition, appModules) as TestConvexForDataModelAndIdentity<
+    const testConvex = convexTest(
+      confectSchema.convexSchemaDefinition,
+      appModules,
+    ) as TestConvexForDataModelAndIdentity<
       DataModel.ToConvex<DataModel.FromSchema<typeof confectSchema>>
     >;
 

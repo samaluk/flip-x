@@ -1,10 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 
-import {
-  finalizeRound,
-  resolvePendingAction,
-  takeTurnAction,
-} from "../game/logic/turn-resolution";
+import { finalizeRound, resolvePendingAction, takeTurnAction } from "../game/logic/turn-resolution";
 import type { ActionCard, Card } from "../game/logic/card-types";
 import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
@@ -129,7 +125,9 @@ export async function takeTurnForSession(
     const winners = updatedPlayers.filter((player) => player.totalScore >= match.targetScore);
 
     if (winners.length > 0) {
-      const winner = updatedPlayers.toSorted((left, right) => right.totalScore - left.totalScore)[0];
+      const winner = updatedPlayers.toSorted(
+        (left, right) => right.totalScore - left.totalScore,
+      )[0];
 
       await ctx.db.patch(args.matchId, {
         status: "completed",

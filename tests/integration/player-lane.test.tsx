@@ -5,7 +5,9 @@ import { PlayerLane } from "@/game/ui/player-lane";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { withIntlEn } from "@/tests/test-intl";
 
-function player(overrides: Partial<MatchSnapshot["players"][number]> = {}): MatchSnapshot["players"][number] {
+function player(
+  overrides: Partial<MatchSnapshot["players"][number]> = {},
+): MatchSnapshot["players"][number] {
   return {
     playerId: "p1",
     displayName: "Alex",
@@ -34,12 +36,12 @@ describe("player lane", () => {
   it("rerenders when targeting state changes", () => {
     const onSelectTarget = vi.fn();
     const { rerender } = render(
-      withIntlEn(
-        <PlayerLane player={player()} isActive={false} onSelectTarget={onSelectTarget} />,
-      ),
+      withIntlEn(<PlayerLane player={player()} isActive={false} onSelectTarget={onSelectTarget} />),
     );
 
-    expect(screen.queryByRole("button", { name: /select alex as target/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /select alex as target/i }),
+    ).not.toBeInTheDocument();
 
     rerender(
       withIntlEn(

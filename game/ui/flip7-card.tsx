@@ -165,9 +165,7 @@ function areFlip7CardPropsEqual(left: Flip7CardProps, right: Flip7CardProps) {
     case "number":
       return left.numberValue === (right.kind === "number" ? right.numberValue : undefined);
     case "modifier":
-      return (
-        left.modifierValue === (right.kind === "modifier" ? right.modifierValue : undefined)
-      );
+      return left.modifierValue === (right.kind === "modifier" ? right.modifierValue : undefined);
     case "action":
       return left.actionKind === (right.kind === "action" ? right.actionKind : undefined);
     default:

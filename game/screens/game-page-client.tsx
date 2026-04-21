@@ -27,42 +27,47 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const snapshot = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, { matchId });
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
-  const viewerPlayerId = snapshot?.viewerPlayerId ? (snapshot.viewerPlayerId as Id<"players">) : undefined;
+  const viewerPlayerId = snapshot?.viewerPlayerId
+    ? (snapshot.viewerPlayerId as Id<"players">)
+    : undefined;
   const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId);
 
-  const handleJoin = useCallback(async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleJoin = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    const trimmedName = playerName.trim();
-    if (!trimmedName) {
-      toast.error(t("toastNameRequired"));
-      return;
-    }
+      const trimmedName = playerName.trim();
+      if (!trimmedName) {
+        toast.error(t("toastNameRequired"));
+        return;
+      }
 
-    if (trimmedName.length > 20) {
-      toast.error(t("toastNameLength"));
-      return;
-    }
+      if (trimmedName.length > 20) {
+        toast.error(t("toastNameLength"));
+        return;
+      }
 
-    if (!sessionId) {
-      toast.error(t("toastSession"));
-      return;
-    }
+      if (!sessionId) {
+        toast.error(t("toastSession"));
+        return;
+      }
 
-    setIsJoining(true);
-    try {
-      await joinMatch({
-        matchId,
-        playerName: trimmedName,
-      });
-      setPlayerName("");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexError(message, tErrors) : t("toastJoinFailed"));
-    } finally {
-      setIsJoining(false);
-    }
-  }, [joinMatch, matchId, playerName, sessionId, t, tErrors]);
+      setIsJoining(true);
+      try {
+        await joinMatch({
+          matchId,
+          playerName: trimmedName,
+        });
+        setPlayerName("");
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "";
+        toast.error(message ? translateConvexError(message, tErrors) : t("toastJoinFailed"));
+      } finally {
+        setIsJoining(false);
+      }
+    },
+    [joinMatch, matchId, playerName, sessionId, t, tErrors],
+  );
 
   const copyInviteLink = useCallback(async () => {
     try {
@@ -149,7 +154,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
           </Button>
         </div>
       )}
-    
+
       {!snapshotWithPresence.viewerPlayerId && isSetup ? (
         <div className="surface-elevated rounded-2xl p-6">
           <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
@@ -164,7 +169,11 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
               maxLength={20}
               className="max-w-xs"
             />
-            <Button type="submit" disabled={isJoining || !playerName.trim()} className="font-medium">
+            <Button
+              type="submit"
+              disabled={isJoining || !playerName.trim()}
+              className="font-medium"
+            >
               {t("joinGame")}
             </Button>
           </form>

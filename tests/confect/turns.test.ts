@@ -41,5 +41,4 @@ describe("Confect turns", () => {
       }
     }).pipe(Effect.provide(TestConfect.layer())),
   );
-
 });

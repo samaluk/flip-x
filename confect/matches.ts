@@ -242,7 +242,8 @@ export async function joinMatchForSession(
     throw new NameAlreadyTaken({ name: playerName });
   }
 
-  const nextSeat = players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
+  const nextSeat =
+    players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
   const playerId = await ctx.db.insert("players", {
     matchId: args.matchId,
     displayName: playerName,

@@ -231,7 +231,6 @@
 }
 
 @keyframes flip7-card-active {
-
   0%,
   100% {
     box-shadow: 0 0 0 0 oklch(0.55 0.18 160 / 0);

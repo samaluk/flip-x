@@ -57,7 +57,9 @@ describe("Convex rounds", () => {
       }
 
       const activeSession = sessions.find(
-        (session) => snapshot.activePlayerId === snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+        (session) =>
+          snapshot.activePlayerId ===
+          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
       );
 
       if (!activeSession) {

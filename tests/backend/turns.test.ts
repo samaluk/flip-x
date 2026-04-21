@@ -18,7 +18,9 @@ describe("Convex turns", () => {
   it("takeTurn rejects a session that does not own the active player", async () => {
     const { matchId, sessions, started } = await createStartedMatch(client, ["Host", "Guest"]);
     const inactiveSession = sessions.find(
-      (session) => started.activePlayerId !== started.players.find((player) => player.displayName === session.name)?.playerId,
+      (session) =>
+        started.activePlayerId !==
+        started.players.find((player) => player.displayName === session.name)?.playerId,
     );
 
     expect(inactiveSession).toBeDefined();
@@ -63,7 +65,11 @@ describe("Convex turns", () => {
   });
 
   it("resolveAction rejects sessions when no matching pending action is available", async () => {
-    const { matchId, sessions, started } = await createStartedMatch(client, ["Host", "Guest", "Third"]);
+    const { matchId, sessions, started } = await createStartedMatch(client, [
+      "Host",
+      "Guest",
+      "Third",
+    ]);
     const targetPlayerId = started.players[0].playerId as never;
     const invalidSession = started.pendingAction
       ? sessions.find(
@@ -99,7 +105,10 @@ describe("Convex turns", () => {
           }),
         ),
       );
-      snapshot = snapshots.find((value) => value?.pendingAction) ?? snapshots.find((value) => value !== null) ?? null;
+      snapshot =
+        snapshots.find((value) => value?.pendingAction) ??
+        snapshots.find((value) => value !== null) ??
+        null;
 
       if (!snapshot) {
         throw new Error("Expected a match snapshot while waiting for a pending action");
@@ -110,7 +119,9 @@ describe("Convex turns", () => {
       }
 
       const activeSession = sessions.find(
-        (session) => snapshot?.activePlayerId === snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
+        (session) =>
+          snapshot?.activePlayerId ===
+          snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
       );
 
       if (!activeSession) {
@@ -169,7 +180,9 @@ describe("Convex turns", () => {
 
       if (snapshot.pendingAction) {
         const sourceSession = sessions.find(
-          (session) => snapshot.pendingAction?.sourcePlayerId === snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+          (session) =>
+            snapshot.pendingAction?.sourcePlayerId ===
+            snapshot.players.find((player) => player.displayName === session.name)?.playerId,
         );
         const targetPlayerId = snapshot.pendingAction.eligibleTargetIds[0];
 
@@ -182,7 +195,9 @@ describe("Convex turns", () => {
       }
 
       const activeSession = sessions.find(
-        (session) => snapshot.activePlayerId === snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+        (session) =>
+          snapshot.activePlayerId ===
+          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
       );
 
       if (!activeSession) {

@@ -144,7 +144,9 @@ export function HomeClient() {
         <div className="text-center">
           <h1 className="text-foreground text-5xl font-medium tracking-tighter">FLIP 7</h1>
           <p className="text-muted-foreground mt-2 text-sm">
-            {isJoinMode ? "Enter your name and join the game" : "Create a game or join an existing one"}
+            {isJoinMode
+              ? "Enter your name and join the game"
+              : "Create a game or join an existing one"}
           </p>
         </div>
 
@@ -228,7 +230,9 @@ export function HomeClient() {
                   type="submit"
                   size="lg"
                   className="h-12 flex-1 text-base font-medium"
-                  disabled={isSubmitting || !name.trim() || (joinCode?.length ?? 0) !== 4 || !sessionId}
+                  disabled={
+                    isSubmitting || !name.trim() || (joinCode?.length ?? 0) !== 4 || !sessionId
+                  }
                 >
                   Join Game
                 </Button>

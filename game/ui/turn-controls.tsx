@@ -29,7 +29,10 @@ export function TurnControls({
   const viewerControlsTurn = snapshot.viewerPlayerId === snapshot.activePlayerId;
   const viewerCanResolveAction = snapshot.pendingAction?.sourcePlayerId === snapshot.viewerPlayerId;
   const flip3State = snapshot.pendingFlip3;
-  const isInFlip3 = flip3State && flip3State.targetPlayerId === snapshot.viewerPlayerId && flip3State.cardsRemaining > 0;
+  const isInFlip3 =
+    flip3State &&
+    flip3State.targetPlayerId === snapshot.viewerPlayerId &&
+    flip3State.cardsRemaining > 0;
 
   if (snapshot.status === "completed") {
     return null;
@@ -60,9 +63,7 @@ export function TurnControls({
           <div className="text-muted-foreground text-sm">
             {pendingAction.actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt")}
           </div>
-          <div className="text-muted-foreground text-xs">
-            {t("selectTargetHint")}
-          </div>
+          <div className="text-muted-foreground text-xs">{t("selectTargetHint")}</div>
         </div>
       );
     }
@@ -82,9 +83,16 @@ export function TurnControls({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button onClick={onHit} disabled={!viewerControlsTurn} size="lg" className="rounded-full px-6">
+      <Button
+        onClick={onHit}
+        disabled={!viewerControlsTurn}
+        size="lg"
+        className="rounded-full px-6"
+      >
         <HandIcon />
-        {isInFlip3 ? t("hitFlip3", { count: flip3State.cardsRemaining }) : t("hitFor", { name: activePlayer.displayName })}
+        {isInFlip3
+          ? t("hitFlip3", { count: flip3State.cardsRemaining })
+          : t("hitFor", { name: activePlayer.displayName })}
       </Button>
       <Button
         variant="outline"

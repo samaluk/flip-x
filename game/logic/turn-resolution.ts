@@ -261,9 +261,7 @@ function applyResolvedTargetAction(
     return;
   }
 
-  const cardIndex = sourceState.heldActionCards.findIndex(
-    (c) => c.actionKind === actionKind,
-  );
+  const cardIndex = sourceState.heldActionCards.findIndex((c) => c.actionKind === actionKind);
   if (cardIndex !== -1) {
     const [card] = sourceState.heldActionCards.splice(cardIndex, 1);
     targetState.receivedActionCards.push(card);
@@ -363,9 +361,9 @@ function resolveDeferredFlip3Actions(
     return;
   }
 
-  const deferredCards = [
-    ...flip3.deferredActionCards,
-  ] as Array<ActionCard & { actionKind: PendingAction["actionKind"] }>;
+  const deferredCards = [...flip3.deferredActionCards] as Array<
+    ActionCard & { actionKind: PendingAction["actionKind"] }
+  >;
   flip3.deferredActionCards = [];
 
   for (const card of deferredCards) {
@@ -750,7 +748,10 @@ export function takeTurnAction(
                 deferredActionCards: deferredCards,
               };
               resolveDeferredFlip3Actions(round, players, playerStates, playerId, events);
-              if (round.pendingFlip3?.targetPlayerId === playerId && round.pendingFlip3.cardsRemaining === 0) {
+              if (
+                round.pendingFlip3?.targetPlayerId === playerId &&
+                round.pendingFlip3.cardsRemaining === 0
+              ) {
                 round.pendingFlip3 = null;
               }
             }

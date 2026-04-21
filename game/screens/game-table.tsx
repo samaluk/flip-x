@@ -21,12 +21,14 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
 
   const runAction = useCallback(
     (action: () => Promise<unknown>) => {
-    startTransition(() => {
-      action().catch((error) => {
-        const message = error instanceof Error ? error.message : "";
-        toast.error(message ? translateConvexError(message, tErrors) : tErrors("gameActionFailed"));
+      startTransition(() => {
+        action().catch((error) => {
+          const message = error instanceof Error ? error.message : "";
+          toast.error(
+            message ? translateConvexError(message, tErrors) : tErrors("gameActionFailed"),
+          );
+        });
       });
-    });
     },
     [tErrors],
   );

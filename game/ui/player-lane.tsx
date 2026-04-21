@@ -235,7 +235,8 @@ export const PlayerLane = memo(function PlayerLane({
         isPinned && "border-primary/30 bg-primary/[0.03]",
         compact ? "p-3" : "p-4",
         overlapCards && "relative z-0 hover:z-40 focus-within:z-40",
-        (isTargetable || isSelfTargeting) && "ring-2 ring-yellow-500/70 ring-offset-2 ring-offset-background cursor-pointer",
+        (isTargetable || isSelfTargeting) &&
+          "ring-2 ring-yellow-500/70 ring-offset-2 ring-offset-background cursor-pointer",
       )}
       onClick={() => {
         if (onSelectTarget && (isTargetable || isSelfTargeting)) {
@@ -276,7 +277,10 @@ export const PlayerLane = memo(function PlayerLane({
               </Badge>
             ) : null}
             {isSelfTargeting ? (
-              <Badge variant="outline" className="border-yellow-500 text-yellow-600 dark:text-yellow-500 text-[0.65rem]">
+              <Badge
+                variant="outline"
+                className="border-yellow-500 text-[0.65rem] text-yellow-600 dark:text-yellow-500"
+              >
                 <UserIcon className="size-3" />
                 {t("selfTarget")}
               </Badge>
@@ -288,7 +292,10 @@ export const PlayerLane = memo(function PlayerLane({
               </Badge>
             ) : null}
             {flip3Remaining !== null && flip3Remaining > 0 ? (
-              <Badge variant="outline" className="border-blue-500 text-blue-600 dark:text-blue-500 text-[0.65rem]">
+              <Badge
+                variant="outline"
+                className="border-blue-500 text-[0.65rem] text-blue-600 dark:text-blue-500"
+              >
                 <RefreshCwIcon className="size-3 animate-spin" />
                 {t("flip3Remaining", { count: flip3Remaining })}
               </Badge>

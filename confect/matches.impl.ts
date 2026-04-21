@@ -7,11 +7,18 @@ import * as matchFns from "./matches";
 
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.createMatchForSession>[0];
+    const ctx = (yield* MutationCtx) as unknown as Parameters<
+      typeof matchFns.createMatchForSession
+    >[0];
     return yield* Effect.promise(() => matchFns.createMatchForSession(ctx, args));
   }).pipe(Effect.orDie),
 );
-const getMatchSnapshot = FunctionImpl.make(api, "matches", "getMatchSnapshot", matchFns.getMatchSnapshot);
+const getMatchSnapshot = FunctionImpl.make(
+  api,
+  "matches",
+  "getMatchSnapshot",
+  matchFns.getMatchSnapshot,
+);
 const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lobbyCode }) =>
   Effect.gen(function* () {
     const reader = yield* DatabaseReader;
@@ -39,13 +46,17 @@ const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lo
 );
 const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.joinByCodeForSession>[0];
+    const ctx = (yield* MutationCtx) as unknown as Parameters<
+      typeof matchFns.joinByCodeForSession
+    >[0];
     return yield* Effect.promise(() => matchFns.joinByCodeForSession(ctx, args));
   }).pipe(Effect.orDie),
 );
 const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.joinMatchForSession>[0];
+    const ctx = (yield* MutationCtx) as unknown as Parameters<
+      typeof matchFns.joinMatchForSession
+    >[0];
     return yield* Effect.promise(() =>
       matchFns.joinMatchForSession(ctx, {
         ...args,
@@ -56,7 +67,9 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
 );
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof matchFns.startMatchForSession>[0];
+    const ctx = (yield* MutationCtx) as unknown as Parameters<
+      typeof matchFns.startMatchForSession
+    >[0];
     return yield* Effect.promise(() =>
       matchFns.startMatchForSession(ctx, {
         ...args,

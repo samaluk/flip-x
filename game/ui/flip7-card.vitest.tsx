@@ -109,7 +109,9 @@ describe("Flip7Card VRT", () => {
 
     render(
       withIntlEn(
-        cardShell(<Flip7Card kind="modifier" modifierValue={modifierValue} label="M" disableFlip3d />),
+        cardShell(
+          <Flip7Card kind="modifier" modifierValue={modifierValue} label="M" disableFlip3d />,
+        ),
       ),
     );
 

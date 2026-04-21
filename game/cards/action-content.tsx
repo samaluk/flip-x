@@ -4,12 +4,7 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
 import { CardFrame } from "@/game/cards/card-frame";
-import {
-  FannedCardsIcon,
-  HeartIcon,
-  LightningBolt,
-  PadlockIcon,
-} from "@/game/cards/card-graphics";
+import { FannedCardsIcon, HeartIcon, LightningBolt, PadlockIcon } from "@/game/cards/card-graphics";
 import { ACTION_CARD_PALETTES } from "@/game/cards/card-palettes";
 import type { ActionKind } from "@/game/logic/card-types";
 import { cardTw } from "@/game/logic/card-responsive";

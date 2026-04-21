@@ -27,9 +27,8 @@ const createMatch = FunctionSpec.publicMutation({
   }),
   returns: MatchSnapshot,
 });
-const getMatchSnapshot = FunctionSpec.convexPublicQuery<typeof matchFns.getMatchSnapshot>()(
-  "getMatchSnapshot",
-);
+const getMatchSnapshot =
+  FunctionSpec.convexPublicQuery<typeof matchFns.getMatchSnapshot>()("getMatchSnapshot");
 const joinByCode = FunctionSpec.publicMutation({
   name: "joinByCode",
   args: Schema.Struct({

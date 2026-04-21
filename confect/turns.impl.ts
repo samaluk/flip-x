@@ -18,15 +18,22 @@ const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
 );
 const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof turnFns.resolveActionForSession>[0];
+    const ctx = (yield* MutationCtx) as unknown as Parameters<
+      typeof turnFns.resolveActionForSession
+    >[0];
     return yield* Effect.promise(() =>
       turnFns.resolveActionForSession(ctx, {
         ...args,
         matchId: args.matchId as Parameters<typeof turnFns.resolveActionForSession>[1]["matchId"],
-        targetPlayerId: args.targetPlayerId as Parameters<typeof turnFns.resolveActionForSession>[1]["targetPlayerId"],
+        targetPlayerId: args.targetPlayerId as Parameters<
+          typeof turnFns.resolveActionForSession
+        >[1]["targetPlayerId"],
       }),
     );
   }).pipe(Effect.orDie),
 );
 
-export const turns = GroupImpl.make(api, "turns").pipe(Layer.provide(takeTurn), Layer.provide(resolveAction));
+export const turns = GroupImpl.make(api, "turns").pipe(
+  Layer.provide(takeTurn),
+  Layer.provide(resolveAction),
+);
