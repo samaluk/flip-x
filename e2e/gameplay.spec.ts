@@ -108,11 +108,11 @@ test.describe("gameplay", () => {
     const lobbyCode = await getLobbyCode(hostPage);
 
     await guestPage.goto(`/?code=${lobbyCode}`, { waitUntil: "domcontentloaded" });
-    await expect(guestPage.locator("#hostName")).toBeVisible();
+    await expect(guestPage.locator("#playerName")).toBeVisible();
     const joinForm = matchSetupForm(guestPage);
     await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
     await waitForCreateLobbyEnabled(guestPage);
-    await joinForm.getByRole("button", { name: /join lobby/i }).click();
+    await joinForm.getByRole("button", { name: /Join Game/i }).click();
 
     await guestPage.waitForURL(/\/game\/[^/?#]+/);
     await expect(guestPage.getByRole("heading", { name: /join the game/i })).not.toBeVisible();

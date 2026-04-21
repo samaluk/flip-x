@@ -10,7 +10,8 @@ const convexUrlFromPreviewCmd = process.env.NEXT_PUBLIC_CONVEX_URL;
 
 export default defineConfig({
   testDir: "./e2e",
-  // Helpers poll up to 90s (e.g. hit button); default 60s would cut those off.
+  // Helpers can legitimately spend close to 90s waiting for game state changes,
+  // so the overall test budget needs to stay comfortably above that.
   timeout: 180_000,
   expect: { timeout: 15_000 },
   fullyParallel: false,

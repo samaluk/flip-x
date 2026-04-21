@@ -12,14 +12,14 @@ export function matchIdFromGameUrl(url: string): string | null {
   return m?.[1] ?? null;
 }
 
-/** MatchSetup form on home or join-by-code flow (contains the host name field). */
+/** MatchSetup form on home or join-by-code flow (contains the player name field). */
 export function matchSetupForm(page: Page) {
-  return page.locator("form").filter({ has: page.locator("#hostName") });
+  return page.locator('main:has(#playerName)');
 }
 
 /** Claim-seat form on the game page before the viewer has joined. */
 export function joinSeatForm(page: Page) {
-  return page.locator("form").filter({ has: page.getByRole("button", { name: /join game/i }) });
+  return page.locator("form").filter({ has: page.getByRole("button", { name: /^join game$/i }) });
 }
 
 export type TwoPlayerContext = {
@@ -52,7 +52,7 @@ export async function withTwoPlayerMatch(
 /** Session id is set in useEffect; button also requires a non-empty name. */
 export async function waitForCreateLobbyEnabled(page: Page) {
   await expect(
-    matchSetupForm(page).getByRole("button", { name: /create lobby|join lobby/i }),
+    page.getByRole("button", { name: /Create New Game|Join Game/ }),
   ).toBeEnabled({
     timeout: 20_000,
   });
@@ -60,10 +60,9 @@ export async function waitForCreateLobbyEnabled(page: Page) {
 
 export async function createLobbyAsHost(page: Page, hostName: string) {
   await page.goto("/");
-  const form = matchSetupForm(page);
-  await form.getByLabel("Your name").fill(hostName);
+  await page.locator("#playerName").fill(hostName);
   await waitForCreateLobbyEnabled(page);
-  await form.getByRole("button", { name: /create lobby|join lobby/i }).click();
+  await page.getByRole("button", { name: /Create New Game/i }).click();
   await page.waitForURL(/\/game\/[^/?#]+/);
   const id = matchIdFromGameUrl(page.url());
   if (!id) {
