@@ -1,4 +1,5 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "sortTailwindcss": true
+  "sortTailwindcss": true,
+  "ignorePatterns": ["*.md", "*/_generated/*"]
 }
