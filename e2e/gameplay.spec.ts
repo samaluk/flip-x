@@ -46,17 +46,8 @@ test.describe("gameplay", () => {
           return hostCards >= 1 && guestCards >= 1;
         }).toPass({ timeout: 30_000, intervals: [500, 1000, 2000] });
 
-        const pages = await Promise.all(
-          [hostPage, guestPage].map(async (p) => ({
-            page: p,
-            isActive:
-              (await p.locator('[data-slot="button"]').filter({ hasText: /^Hit for /i }).count()) > 0,
-          })),
-        );
-        const activePage = pages.find((p) => p.isActive)?.page;
-        if (activePage) {
-          await hitControl(activePage).click();
-        }
+        const activePage = await findPageWithEnabledHitButton([hostPage, guestPage]);
+        await hitControl(activePage).click();
 
         const roundEnds = await Promise.race([
           expect(hostPage.locator(".game-match-status")).toHaveAttribute(
