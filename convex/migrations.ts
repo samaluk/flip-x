@@ -1,7 +1,3 @@
-import { Migrations } from "@convex-dev/migrations";
+import registeredFunctions from "../confect/_generated/registeredFunctions";
 
-import { components } from "./_generated/api";
-import type { DataModel } from "./_generated/dataModel";
-
-export const migrations = new Migrations<DataModel>(components.migrations);
-export const run = migrations.runner();
+export const run = registeredFunctions.migrations.run;
