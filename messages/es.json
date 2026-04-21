@@ -49,7 +49,9 @@
     "toastNameRequired": "Escribe tu nombre.",
     "toastNameLength": "El nombre debe tener 20 caracteres o menos.",
     "toastSession": "Sesión no disponible.",
-    "toastCreateFailed": "No se pudo crear la partida."
+    "toastCreateFailed": "No se pudo crear la partida.",
+    "toastJoinFailed": "No se pudo unir a la partida.",
+    "toastCodeLength": "Introduce un código de 4 caracteres."
   },
   "JoinLobby": {
     "title": "Unirse a una partida",

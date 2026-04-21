@@ -49,7 +49,9 @@
     "toastNameRequired": "Please enter your name.",
     "toastNameLength": "Name must be 20 characters or less.",
     "toastSession": "Session not available.",
-    "toastCreateFailed": "Could not create the match."
+    "toastCreateFailed": "Could not create the match.",
+    "toastJoinFailed": "Could not join the game.",
+    "toastCodeLength": "Please enter a 4-character code."
   },
   "JoinLobby": {
     "title": "Join a Game",

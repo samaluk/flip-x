@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import type { SessionId } from "convex-helpers/server/sessions";
+import { getOneFrom } from "convex-helpers/server/relationships";
 
 import {
   continueRound,
@@ -139,6 +140,32 @@ export const createMatch = mutationWithSession({
     hostName: v.string(),
   },
   handler: async (ctx, args) => await createMatchForSession(ctx, args),
+});
+
+export const getCurrentPlayer = queryWithSession({
+  args: {},
+  handler: async (ctx, args) => {
+    const playerSession = await getOneFrom(
+      ctx.db,
+      "playerSessions",
+      "by_session_id",
+      args.sessionId,
+      "sessionId",
+    );
+
+    if (!playerSession) {
+      return null;
+    }
+
+    const player = await ctx.db.get(playerSession.playerId);
+    if (!player) {
+      return null;
+    }
+
+    return {
+      displayName: player.displayName,
+    };
+  },
 });
 
 export const getMatchSnapshot = queryWithSession({
