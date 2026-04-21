@@ -1,11 +1,12 @@
 import { HomeClient } from "./home-client";
+import { searchParamsCache } from "@/lib/search-params";
 
 export default async function Home({
-  searchParams,
+	searchParams,
 }: {
-  searchParams: Promise<{ code?: string }>;
+	searchParams: Promise<{ code?: string }>;
 }) {
-  const { code } = await searchParams;
+	await searchParamsCache.parse(searchParams);
 
-  return <HomeClient code={code?.toUpperCase()} />;
+	return <HomeClient />;
 }

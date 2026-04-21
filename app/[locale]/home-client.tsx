@@ -1,5 +1,6 @@
 "use client";
 
+import { parseAsString, useQueryState } from "nuqs";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { startTransition, type FormEvent, useState, useEffect } from "react";
@@ -14,12 +15,16 @@ import refs from "@/confect/_generated/refs";
 
 const NAME_STORAGE_KEY = "flip7_player_name";
 
-export function HomeClient({ code }: { code?: string }) {
+export function HomeClient() {
   const router = useRouter();
   const [sessionId] = useSessionId();
   const [name, setName] = useState("");
-  const [joinCode, setJoinCode] = useState(code?.toUpperCase() || "");
-  const [isJoinMode, setIsJoinMode] = useState(!!code);
+  const [joinCode, setJoinCode] = useQueryState("code", {
+    ...parseAsString,
+    parse: (value) => value.toUpperCase(),
+    serialize: (value) => value.toUpperCase(),
+  });
+  const [isJoinMode, setIsJoinMode] = useState(!!joinCode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasLoadedName, setHasLoadedName] = useState(false);
 
@@ -42,11 +47,10 @@ export function HomeClient({ code }: { code?: string }) {
   }, [hasLoadedName]);
 
   useEffect(() => {
-    if (code) {
-      setJoinCode(code.toUpperCase());
+    if (joinCode) {
       setIsJoinMode(true);
     }
-  }, [code]);
+  }, [joinCode]);
 
   async function handleCreate(formData: FormData) {
     const playerName = formData.get("playerName") as string;
@@ -91,7 +95,7 @@ export function HomeClient({ code }: { code?: string }) {
     event.preventDefault();
 
     const playerName = name.trim();
-    const lobbyCode = joinCode.trim();
+    const lobbyCode = (joinCode ?? "").trim();
 
     localStorage.setItem(NAME_STORAGE_KEY, playerName);
 
@@ -199,7 +203,7 @@ export function HomeClient({ code }: { code?: string }) {
                 </label>
                 <Input
                   id="joinCode"
-                  value={joinCode}
+                  value={joinCode ?? ""}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   placeholder={tLobby("codePlaceholder")}
                   maxLength={4}
@@ -215,7 +219,7 @@ export function HomeClient({ code }: { code?: string }) {
                   className="h-12 flex-1"
                   onClick={() => {
                     setIsJoinMode(false);
-                    setJoinCode("");
+                    setJoinCode(null);
                   }}
                 >
                   Cancel
@@ -224,7 +228,7 @@ export function HomeClient({ code }: { code?: string }) {
                   type="submit"
                   size="lg"
                   className="h-12 flex-1 text-base font-medium"
-                  disabled={isSubmitting || !name.trim() || joinCode.length !== 4 || !sessionId}
+                  disabled={isSubmitting || !name.trim() || (joinCode?.length ?? 0) !== 4 || !sessionId}
                 >
                   Join Game
                 </Button>
