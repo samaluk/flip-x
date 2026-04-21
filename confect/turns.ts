@@ -20,7 +20,7 @@ import {
   persistRoundRuntime,
   persistScoreBreakdowns,
   requireViewerPlayerId,
-} from "../convex/lib/store";
+} from "./lib/store";
 import { InvalidAction, InvalidTurn, MatchNotFound } from "../shared/lib/errors/domain";
 
 function normalizeRound(round: NonNullable<Awaited<ReturnType<typeof getLatestRound>>>) {

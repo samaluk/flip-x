@@ -1,7 +1,7 @@
 import { customMutation, customQuery } from "convex-helpers/server/customFunctions";
 import { SessionIdArg } from "convex-helpers/server/sessions";
 
-import { mutation, query } from "../_generated/server";
+import { mutation, query } from "../../convex/_generated/server";
 
 export const queryWithSession = customQuery(query, {
   args: SessionIdArg,

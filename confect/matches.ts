@@ -7,10 +7,10 @@ import {
   createRoundRuntime,
   finalizeRound,
 } from "../game/logic/turn-resolution";
-import { generateLobbyCode } from "../convex/lib/lobby_code";
-import { enforceRateLimit } from "../convex/lib/rate_limiter";
-import { mutationWithSession, queryWithSession } from "../convex/lib/session_functions";
-import { setPlayerSession } from "../convex/lib/session_store";
+import { generateLobbyCode } from "../shared/lib/lobby-code";
+import { enforceRateLimit } from "./lib/rate_limiter";
+import { mutationWithSession, queryWithSession } from "./lib/session_functions";
+import { setPlayerSession } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
 import {
   buildOrderedPlayers,
@@ -25,7 +25,7 @@ import {
   persistScoreBreakdowns,
   requireViewerPlayerId,
   serializeRoundRuntime,
-} from "../convex/lib/store";
+} from "./lib/store";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
 import {
   InvalidHostName,

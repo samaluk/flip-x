@@ -1,6 +1,6 @@
 import { CascadingDeletes } from "@sholajegede/convex-cascading-deletes";
 
-import { components } from "../_generated/api";
+import { components } from "../../convex/_generated/api";
 
 export const cascadingDeletes = new CascadingDeletes(components.convexCascadingDeletes, {
   relationships: [

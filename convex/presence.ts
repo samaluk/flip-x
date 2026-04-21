@@ -4,7 +4,7 @@ import { Presence } from "@convex-dev/presence";
 import { components } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import { mutation, query } from "./_generated/server";
-import { mutationWithSession } from "./lib/session_functions";
+import { mutationWithSession } from "../confect/lib/session_functions";
 
 const presence = new Presence(components.presence);
 

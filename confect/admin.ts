@@ -6,8 +6,8 @@ import type { Id } from "../convex/_generated/dataModel";
 import type { ActionCtx } from "../convex/_generated/server";
 import { action, internalMutation, internalQuery } from "../convex/_generated/server";
 import { UnsupportedRelationship, UnsupportedTable, InvalidConfirmation } from "../shared/lib/errors/domain";
-import { cascadingDeletes } from "../convex/lib/cascading_deletes";
-import { rateLimiter } from "../convex/lib/rate_limiter";
+import { cascadingDeletes } from "./lib/cascading_deletes";
+import { rateLimiter } from "./lib/rate_limiter";
 
 const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
 const presence = new Presence(components.presence);

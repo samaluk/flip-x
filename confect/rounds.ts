@@ -19,7 +19,7 @@ import {
   persistScoreBreakdowns,
   requireViewerPlayerId,
   serializeRoundRuntime,
-} from "../convex/lib/store";
+} from "./lib/store";
 import type { MutationCtx } from "../convex/_generated/server";
 import { InvalidMatchState, MatchNotFound } from "../shared/lib/errors/domain";
 

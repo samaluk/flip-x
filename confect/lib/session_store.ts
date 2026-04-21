@@ -1,8 +1,8 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
-import type { Id } from "../_generated/dataModel";
-import type { QueryCtx, MutationCtx } from "../_generated/server";
+import type { Id } from "../../convex/_generated/dataModel";
+import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 
 type Ctx = QueryCtx | MutationCtx;
 

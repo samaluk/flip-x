@@ -5,8 +5,8 @@ import { buildMatchSnapshot, toOrderedPlayers } from "../../game/logic/view-mode
 import { scoreRound } from "../../game/logic/scoring";
 import type { ActionCard, Card } from "../../game/logic/card-types";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../game/logic/turn-resolution";
-import type { Doc, Id } from "../_generated/dataModel";
-import type { QueryCtx, MutationCtx } from "../_generated/server";
+import type { Doc, Id } from "../../convex/_generated/dataModel";
+import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "./session_store";
 import { PlayerNotJoined } from "../../shared/lib/errors/domain";
 
@@ -153,15 +153,15 @@ export async function buildSnapshot(
     dealerSeat: match.dealerSeat,
     viewerPlayerId: viewerPlayerId ? String(viewerPlayerId) : null,
     round: round ? normalizeRoundRuntime(round) : null,
-      players: players.map((player) => ({
-        playerId: String(player._id),
-        displayName: player.displayName,
-        seatIndex: player.seatIndex,
-        totalScore: player.totalScore,
-        isOnline: false,
-      })),
-      playerStates,
-      latestEvent,
+    players: players.map((player) => ({
+      playerId: String(player._id),
+      displayName: player.displayName,
+      seatIndex: player.seatIndex,
+      totalScore: player.totalScore,
+      isOnline: false,
+    })),
+    playerStates,
+    latestEvent,
   });
 }
 
