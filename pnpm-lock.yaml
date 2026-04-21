@@ -14,6 +14,9 @@ importers:
       '@confect/core':
         specifier: 5.0.0
         version: 5.0.0(convex@1.35.1(react@19.2.5))(effect@3.21.1)
+      '@confect/react':
+        specifier: 5.0.0
+        version: 5.0.0(@confect/core@5.0.0(convex@1.35.1(react@19.2.5))(effect@3.21.1))(convex@1.35.1(react@19.2.5))(effect@3.21.1)(react@19.2.5)
       '@confect/server':
         specifier: 5.0.0
         version: 5.0.0(4caf1c99d7e3adf0c5bc5ec85ead2f76)
@@ -342,6 +345,15 @@ packages:
     peerDependencies:
       convex: ^1.30.0
       effect: ^3.19.16
+
+  '@confect/react@5.0.0':
+    resolution: {integrity: sha512-LIHz3wHYodzKv/zeWSZRmNgrtqe9sMwIIN6oox0F7LanT4ebO2n9VtgAdFEcDXOMpzu/bF/+urqwkWME+E/8xQ==}
+    engines: {node: '>=22', pnpm: '>=10'}
+    peerDependencies:
+      '@confect/core': 5.0.0
+      convex: ^1.30.0
+      effect: ^3.19.16
+      react: ^18.0.0 || ^19.0.0
 
   '@confect/server@5.0.0':
     resolution: {integrity: sha512-Nc/NGK89/er9Hxhc6GyO9fLGJtlEa32TzCuoZ3HKKEYPUHBXDNpVfE+SWST10D7IBfKoulg8S62oOVOM073sEg==}
@@ -4153,6 +4165,13 @@ snapshots:
     dependencies:
       convex: 1.35.1(react@19.2.5)
       effect: 3.21.1
+
+  '@confect/react@5.0.0(@confect/core@5.0.0(convex@1.35.1(react@19.2.5))(effect@3.21.1))(convex@1.35.1(react@19.2.5))(effect@3.21.1)(react@19.2.5)':
+    dependencies:
+      '@confect/core': 5.0.0(convex@1.35.1(react@19.2.5))(effect@3.21.1)
+      convex: 1.35.1(react@19.2.5)
+      effect: 3.21.1
+      react: 19.2.5
 
   '@confect/server@5.0.0(4caf1c99d7e3adf0c5bc5ec85ead2f76)':
     dependencies:
