@@ -48,22 +48,31 @@ These choices are locked unless a later PR explicitly revisits them:
 
 ## Current State
 
-The following groups are already represented in Confect:
+The main migration goals in this plan are now complete.
+
+The following groups are represented in Confect:
 
 1. `admin`
 2. `matches`
-3. `rounds`
-4. `settings`
-5. `turns`
+3. `migrations`
+4. `presence`
+5. `rounds`
+6. `settings`
+7. `turns`
 
-The remaining major gaps are:
+The following architecture goals are now true:
 
-1. `confect/schema.ts` is still not the real schema.
-2. Authored helper code still lives under `convex/lib/*`.
-3. Presence is not yet represented in the Confect spec/impl tree.
-4. Frontend feature code still imports `convex/_generated/api`.
-5. `@confect/react` is not yet adopted.
-6. Backend integration tests are still largely Convex-first instead of refs-first.
+1. `confect/schema.ts` is the authored schema source of truth.
+2. Authored helper logic has been moved out of `convex/lib/*`.
+3. Frontend feature flows use Confect refs and app-local session-aware Confect hooks.
+4. `@confect/react` is adopted for frontend feature usage.
+5. Confect-native refs-based backend tests exist alongside a narrower live Convex smoke layer.
+
+The remaining intentional exceptions are:
+
+1. `convex/convex.config.ts` for component registration.
+2. Generated wrapper files in `convex/*.ts`.
+3. Presence's component subscription hook on the client, which still uses the Convex component API while routing sync mutations through Confect refs.
 
 ## Execution Rules
 
@@ -280,3 +289,7 @@ This migration is complete when:
 4. Anonymous sessions still work, but only through app-local Confect wrappers.
 5. Presence remains operational through the documented plain-Convex component pattern.
 6. `convex/` is no longer the primary home for authored business logic.
+
+## Completion Status
+
+This plan's intended end-state has been reached, with Presence preserved as the single sanctioned component-driven exception.

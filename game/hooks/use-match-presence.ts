@@ -12,6 +12,7 @@ import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 export function useMatchPresence(matchId: Id<"matches">, playerId: Id<"players"> | undefined) {
   const [sessionId] = useSessionId();
   const syncPlayer = useSessionConfectMutation(refs.public.presence.syncPlayer);
+  // Presence subscriptions still come from the Convex component client API.
   const presence = usePresence(api.presence, String(matchId), sessionId ?? `pending:${String(matchId)}`);
 
   useEffect(() => {
