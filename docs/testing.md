@@ -119,3 +119,61 @@ pnpm test:vrt
 CONVEX_DEPLOY_KEY=... pnpm test:backend
 CONVEX_DEPLOY_KEY=... pnpm test:e2e
 ```
+
+## Deterministic tests
+
+Deterministic tests replay a recorded game using the exact same player decisions and deck order. They verify that the game produces the same outcome from the same input without relying on randomness.
+
+### When to use
+
+- Reproduce a bug with a specific player order and deck sequence
+- Verify scoring or winner logic for a known game outcome
+- Create regression tests for rule interactions
+- Document edge case behavior
+
+### Writing a deterministic scenario
+
+1. **Define players in seat order**: list the player names that will occupy seats 0-N.
+
+2. **Capture the deck**: record the exact card sequence from the draw pile. Cards are identified by rank and suit (e.g., `"7♥"`, `"A♠"`).
+
+3. **Script decisions**: for each turn that requires a player choice, record:
+   - `hit` or `stay`
+   - Freeze target confirmation (when the active player plays Freeze)
+   - Flip Three target confirmation (when the active player plays Flip Three)
+
+4. **Record step states**: after each decision, capture the canonical game state (active player, round status, hands, scores).
+
+### Available helpers
+
+Fixtures and runners are in `tests/fixtures/deterministic/`:
+
+- `scenario-types.ts`: type definitions for deterministic scenarios
+- `setup-scenarios.ts`: round and match setup fixtures
+- `replay-scenarios.ts`: full replay scenarios with decisions and expected states
+- `divergence-scenarios.ts`: mismatch and invalid script fixtures
+- `scenario-runner.ts`: runs a deterministic scenario against a test harness
+- `replay-assertions.ts`: verifies step states and reports divergence
+
+### Running deterministic tests
+
+```bash
+pnpm test:unit
+pnpm test:confect
+pnpm test:contract
+```
+
+For preview-backed coverage:
+
+```bash
+CONVEX_DEPLOY_KEY=... pnpm test:backend
+```
+
+### Validating replay fidelity
+
+Each deterministic scenario should:
+
+- Run identically at least 10 times in a row
+- Match every expected step state, not only the final result
+- Stop at the first mismatch with a readable divergence report
+- Fail cleanly for invalid or incomplete scripts

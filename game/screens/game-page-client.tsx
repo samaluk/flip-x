@@ -3,7 +3,7 @@
 import { useSessionId } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type FormEvent, useCallback, useState } from "react";
+import { type SubmitEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -33,7 +33,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId);
 
   const handleJoin = useCallback(
-    async (event: FormEvent<HTMLFormElement>) => {
+    async (event: SubmitEvent<HTMLFormElement>) => {
       event.preventDefault();
 
       const trimmedName = playerName.trim();

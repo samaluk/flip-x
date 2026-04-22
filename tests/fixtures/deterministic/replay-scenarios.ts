@@ -1,0 +1,333 @@
+import type { ActionCard, Card, NumberCard } from "@/game/logic/card-types";
+
+import type {
+  CanonicalReplaySnapshot,
+  DeterministicReplayScenario,
+} from "./scenario-types";
+import { cloneDeterministicStartOptions } from "./scenario-runner";
+
+function numberCard(id: string, numberValue: number): NumberCard {
+  return {
+    id,
+    type: "number",
+    label: String(numberValue),
+    numberValue,
+  };
+}
+
+function actionCard(id: string, actionKind: ActionCard["actionKind"]): ActionCard {
+  return {
+    id,
+    type: "action",
+    label: actionKind,
+    actionKind,
+  };
+}
+
+function withFillerCards(...cards: Card[]) {
+  return [
+    ...cards,
+    numberCard("fill-1", 11),
+    numberCard("fill-2", 12),
+    actionCard("fill-3", "second_chance"),
+  ];
+}
+
+function state(snapshot: CanonicalReplaySnapshot): CanonicalReplaySnapshot {
+  return snapshot;
+}
+
+export const MATCH_REPLAY_SCENARIO: DeterministicReplayScenario = {
+  name: "match-replay-stays",
+  scope: "match",
+  playerNames: ["Host", "Guest"],
+  setupMatch: {
+    roundSeed: {
+      drawPile: withFillerCards(numberCard("m-open-1", 1), numberCard("m-open-2", 7)),
+    },
+  },
+  decisionScript: [
+    { stepNumber: 1, actor: "Host", decisionType: "turn_action", choice: "stay" },
+    { stepNumber: 2, actor: "Guest", decisionType: "turn_action", choice: "stay" },
+  ],
+  expectedStates: [
+    state({
+      status: "in_progress",
+      currentRoundNumber: 1,
+      dealerSeat: 0,
+      activePlayer: "Guest",
+      roundStatus: "player_turns",
+      endedBy: "unknown",
+      pendingAction: null,
+      pendingFlip3: null,
+      players: [
+        {
+          displayName: "Host",
+          seatIndex: 0,
+          totalScore: 0,
+          roundStatus: "stayed",
+          pointsAtRisk: 1,
+          numberCards: [1],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Guest",
+          seatIndex: 1,
+          totalScore: 0,
+          roundStatus: "active",
+          pointsAtRisk: 7,
+          numberCards: [7],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+      ],
+      latestEvent: {
+        type: "stay",
+        payload: {},
+        playerNames: "Host",
+      },
+    }),
+    state({
+      status: "in_progress",
+      currentRoundNumber: 1,
+      dealerSeat: 0,
+      activePlayer: null,
+      roundStatus: "completed",
+      endedBy: "all_inactive",
+      pendingAction: null,
+      pendingFlip3: null,
+      players: [
+        {
+          displayName: "Host",
+          seatIndex: 0,
+          totalScore: 1,
+          roundStatus: "completed",
+          pointsAtRisk: 1,
+          numberCards: [1],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Guest",
+          seatIndex: 1,
+          totalScore: 7,
+          roundStatus: "completed",
+          pointsAtRisk: 7,
+          numberCards: [7],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+      ],
+      latestEvent: {
+        type: "round_scored",
+        payload: { finalRoundScore: 7 },
+        playerNames: "Guest",
+      },
+    }),
+  ],
+};
+
+export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
+  name: "round-replay-freeze",
+  scope: "round",
+  playerNames: ["Host", "Guest", "Third"],
+  setupMatch: {
+    roundSeed: {
+      drawPile: withFillerCards(numberCard("s-open-1", 1), numberCard("s-open-2", 2), numberCard("s-open-3", 3)),
+    },
+  },
+  setupRound: {
+    roundSeed: {
+      drawPile: withFillerCards(
+        numberCard("r-open-1", 4),
+        numberCard("r-open-2", 5),
+        actionCard("r-hit-1", "freeze"),
+        numberCard("r-fill-1", 6),
+      ),
+    },
+  },
+  decisionScript: [
+    { stepNumber: 1, actor: "Guest", decisionType: "turn_action", choice: "hit" },
+    {
+      stepNumber: 2,
+      actor: "Guest",
+      decisionType: "target_confirmation",
+      promptKind: "freeze",
+      choice: "Third",
+    },
+    { stepNumber: 3, actor: "Guest", decisionType: "turn_action", choice: "stay" },
+  ],
+  expectedStates: [
+    state({
+      status: "in_progress",
+      currentRoundNumber: 2,
+      dealerSeat: 1,
+      activePlayer: "Guest",
+      roundStatus: "resolving_action",
+      endedBy: "unknown",
+      pendingAction: {
+        actionKind: "freeze",
+        sourcePlayer: "Guest",
+        eligibleTargets: ["Guest", "Third"],
+        resume: "turns",
+      },
+      pendingFlip3: null,
+      players: [
+        {
+          displayName: "Host",
+          seatIndex: 0,
+          totalScore: 1,
+          roundStatus: "waiting",
+          pointsAtRisk: 0,
+          numberCards: [],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Guest",
+          seatIndex: 1,
+          totalScore: 2,
+          roundStatus: "active",
+          pointsAtRisk: 4,
+          numberCards: [4],
+          modifierCards: [],
+          heldActionCards: ["freeze"],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Third",
+          seatIndex: 2,
+          totalScore: 3,
+          roundStatus: "active",
+          pointsAtRisk: 5,
+          numberCards: [5],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+      ],
+      latestEvent: {
+        type: "pending_action",
+        payload: { actionKind: "freeze" },
+        playerNames: "Guest",
+      },
+    }),
+    state({
+      status: "in_progress",
+      currentRoundNumber: 2,
+      dealerSeat: 1,
+      activePlayer: "Guest",
+      roundStatus: "player_turns",
+      endedBy: "unknown",
+      pendingAction: null,
+      pendingFlip3: null,
+      players: [
+        {
+          displayName: "Host",
+          seatIndex: 0,
+          totalScore: 1,
+          roundStatus: "waiting",
+          pointsAtRisk: 0,
+          numberCards: [],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Guest",
+          seatIndex: 1,
+          totalScore: 2,
+          roundStatus: "active",
+          pointsAtRisk: 4,
+          numberCards: [4],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Third",
+          seatIndex: 2,
+          totalScore: 3,
+          roundStatus: "frozen",
+          pointsAtRisk: 5,
+          numberCards: [5],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: ["freeze"],
+        },
+      ],
+      latestEvent: {
+        type: "freeze_applied",
+        payload: {},
+        playerNames: "Guest → Third",
+      },
+    }),
+    state({
+      status: "in_progress",
+      currentRoundNumber: 2,
+      dealerSeat: 1,
+      activePlayer: null,
+      roundStatus: "completed",
+      endedBy: "all_inactive",
+      pendingAction: null,
+      pendingFlip3: null,
+      players: [
+        {
+          displayName: "Host",
+          seatIndex: 0,
+          totalScore: 1,
+          roundStatus: "completed",
+          pointsAtRisk: 0,
+          numberCards: [],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Guest",
+          seatIndex: 1,
+          totalScore: 6,
+          roundStatus: "completed",
+          pointsAtRisk: 4,
+          numberCards: [4],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+        },
+        {
+          displayName: "Third",
+          seatIndex: 2,
+          totalScore: 8,
+          roundStatus: "completed",
+          pointsAtRisk: 5,
+          numberCards: [5],
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: ["freeze"],
+        },
+      ],
+      latestEvent: {
+        type: "round_scored",
+        payload: { finalRoundScore: 5 },
+        playerNames: "Third",
+      },
+    }),
+  ],
+};
+
+export function cloneReplayScenario<T extends DeterministicReplayScenario>(scenario: T): T {
+  return {
+    ...scenario,
+    playerNames: [...scenario.playerNames] as T["playerNames"],
+    setupMatch: cloneDeterministicStartOptions(scenario.setupMatch),
+    setupRound: scenario.setupRound ? cloneDeterministicStartOptions(scenario.setupRound) : undefined,
+    decisionScript: scenario.decisionScript.map((step) => ({ ...step })) as T["decisionScript"],
+    expectedStates: scenario.expectedStates.map((expectedState) => structuredClone(expectedState)) as T["expectedStates"],
+  };
+}

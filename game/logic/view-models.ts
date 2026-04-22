@@ -50,6 +50,21 @@ export type MatchSnapshot = {
   } | null;
 };
 
+export type CanonicalReplayStepState = Pick<
+  MatchSnapshot,
+  | "status"
+  | "currentRoundNumber"
+  | "dealerSeat"
+  | "activePlayerId"
+  | "pendingAction"
+  | "pendingFlip3"
+  | "roundStatus"
+  | "endedBy"
+  | "latestEvent"
+> & {
+  players: MatchSnapshot["players"];
+};
+
 export function buildMatchSnapshot(args: {
   matchId: string;
   status: MatchSnapshot["status"];
@@ -181,4 +196,27 @@ export function toOrderedPlayers(players: Array<{ playerId: string; seatIndex: n
       playerId: player.playerId,
       seatIndex: player.seatIndex,
     })) satisfies OrderedPlayer[];
+}
+
+export function toCanonicalReplayStepState(snapshot: MatchSnapshot): CanonicalReplayStepState {
+  return {
+    status: snapshot.status,
+    currentRoundNumber: snapshot.currentRoundNumber,
+    dealerSeat: snapshot.dealerSeat,
+    activePlayerId: snapshot.activePlayerId,
+    pendingAction: snapshot.pendingAction,
+    pendingFlip3: snapshot.pendingFlip3,
+    roundStatus: snapshot.roundStatus,
+    endedBy: snapshot.endedBy,
+    players: [...snapshot.players].toSorted((left, right) => left.seatIndex - right.seatIndex),
+    latestEvent: snapshot.latestEvent
+      ? {
+          type: snapshot.latestEvent.type,
+          payload: snapshot.latestEvent.payload,
+          actorPlayerId: snapshot.latestEvent.actorPlayerId,
+          targetPlayerId: snapshot.latestEvent.targetPlayerId,
+          playerNames: snapshot.latestEvent.playerNames,
+        }
+      : null,
+  };
 }
