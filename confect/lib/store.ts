@@ -1,7 +1,11 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getManyFrom } from "convex-helpers/server/relationships";
 
-import { buildMatchSnapshot, toOrderedPlayers } from "../../game/logic/view-models";
+import {
+  buildMatchSnapshot,
+  toCanonicalReplayStepState,
+  toOrderedPlayers,
+} from "../../game/logic/view-models";
 import { scoreRound } from "../../game/logic/scoring";
 import type { ActionCard, Card } from "../../game/logic/card-types";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../../game/logic/turn-resolution";
@@ -163,6 +167,16 @@ export async function buildSnapshot(
     playerStates,
     latestEvent,
   });
+}
+
+export async function buildCanonicalReplayStepState(
+  ctx: QueryCtx | MutationCtx,
+  match: Doc<"matches">,
+  round: Doc<"rounds"> | null,
+  sessionId?: SessionId,
+) {
+  const snapshot = await buildSnapshot(ctx, match, round, sessionId);
+  return toCanonicalReplayStepState(snapshot);
 }
 
 export async function persistRoundRuntime(

@@ -2,6 +2,7 @@ import { v } from "convex/values";
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
+import type { Card } from "../game/logic/card-types";
 import {
   continueRound,
   createPlayerRoundStates,
@@ -268,7 +269,11 @@ export const joinMatch = mutationWithSession({
 
 export async function startMatchForSession(
   ctx: MutationCtx,
-  args: { matchId: Id<"matches">; sessionId: string },
+  args: {
+    matchId: Id<"matches">;
+    sessionId: string;
+    deterministicStart?: { roundSeed: { drawPile: Card[] } };
+  },
 ) {
   const sessionId = args.sessionId as SessionId;
 
@@ -293,7 +298,9 @@ export async function startMatchForSession(
   const orderedPlayers = buildOrderedPlayers(players);
   const playerIdMap = buildPlayerIdMap(players);
   const playerStates = createPlayerRoundStates(orderedPlayers);
-  const baseRound = createRoundRuntime(orderedPlayers, 1, match.dealerSeat);
+  const baseRound = createRoundRuntime(orderedPlayers, 1, match.dealerSeat, {
+    drawPile: args.deterministicStart?.roundSeed.drawPile,
+  });
   const resolved = continueRound(orderedPlayers, baseRound, playerStates);
 
   const roundId = await ctx.db.insert("rounds", {

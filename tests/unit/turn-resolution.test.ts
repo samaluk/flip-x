@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { buildOrderedDeck } from "@/game/logic/card-types";
 import type { ActionCard, ModifierCard, NumberCard } from "@/game/logic/card-types";
 import {
   continueRound,
@@ -74,6 +75,28 @@ describe("turn resolution", () => {
     expect(resolved.playerStates.p1.numberCards[0]?.numberValue).toBe(1);
     expect(resolved.playerStates.p2.numberCards[0]?.numberValue).toBe(2);
     expect(resolved.playerStates.p3.numberCards[0]?.numberValue).toBe(3);
+  });
+
+  it("buildOrderedDeck returns the full deck without shuffling", () => {
+    const deck = buildOrderedDeck();
+
+    expect(deck).toHaveLength(94);
+    expect(deck[0]).toMatchObject({ type: "number", numberValue: 0 });
+    expect(deck[1]).toMatchObject({ type: "number", numberValue: 1 });
+    expect(deck[2]).toMatchObject({ type: "number", numberValue: 2 });
+  });
+
+  it("createRoundRuntime accepts an injected draw pile", () => {
+    const customDrawPile = [numberCard("c1", 9), numberCard("c2", 4)];
+
+    const round = createRoundRuntime(players, 3, 1, {
+      drawPile: customDrawPile,
+    });
+
+    expect(round.roundNumber).toBe(3);
+    expect(round.dealerSeat).toBe(1);
+    expect(round.drawPile).toEqual(customDrawPile);
+    expect(round.drawPile).not.toBe(customDrawPile);
   });
 
   it("busts a player when they hit a duplicate number without Second Chance", () => {

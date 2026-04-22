@@ -7,6 +7,8 @@ This version has breaking changes — APIs, conventions, and file structure may 
 <!-- END:nextjs-agent-rules -->
 
 ## Active Technologies
+- TypeScript 6.0.3 on Node test runtimes, Next.js 16.2.4, React 19.2.5 + Next.js, Convex 1.35.1, Confect 5.0.0, Effect 3.21.1, Vitest 4.1.4, Playwright 1.59.1 (004-deterministic-game-tests)
+- Convex tables for matches, players, rounds, round player states, round events, and score breakdowns; repo fixtures for deterministic scenarios (004-deterministic-game-tests)
 
 - TypeScript (Next.js 16.2.3, React 19.2.4) + Convex (backend), Next.js, shadcn/ui, Lucide icons (003-lobby-code-system)
 - Convex serverless database (003-lobby-code-system)

@@ -1,6 +1,6 @@
 import { createSearchParamsCache, parseAsString } from "nuqs/server";
 
-export const searchParamsParsers = {
+const searchParamsParsers = {
   code: parseAsString,
 } as const;
 

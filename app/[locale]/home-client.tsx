@@ -3,7 +3,7 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
-import { startTransition, type FormEvent, useEffect, useState } from "react";
+import { startTransition, type SubmitEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
@@ -52,7 +52,7 @@ export function HomeClient() {
     }
   }, [joinCode]);
 
-  async function handleCreate(event: FormEvent<HTMLFormElement>) {
+  async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedName = name.trim();
@@ -92,7 +92,7 @@ export function HomeClient() {
     }
   }
 
-  async function handleJoin(event: FormEvent<HTMLFormElement>) {
+  async function handleJoin(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const playerName = name.trim();
@@ -140,7 +140,7 @@ export function HomeClient() {
   }
 
   return (
-    <main className="selection:bg-primary/20 relative flex min-h-[100dvh] flex-1 items-center justify-center px-6">
+    <main className="selection:bg-primary/20 relative flex min-h-dvh flex-1 items-center justify-center px-6">
       <div className="w-full max-w-md space-y-10">
         <div className="text-center">
           <h1 className="text-foreground text-5xl font-medium tracking-tighter">FLIP 7</h1>

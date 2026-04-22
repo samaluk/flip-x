@@ -1,9 +1,25 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer, Option } from "effect";
 
+import type { Card } from "../game/logic/card-types";
+
 import api from "./_generated/api";
 import { DatabaseReader, MutationCtx } from "./_generated/services";
 import * as matchFns from "./matches";
+
+function normalizeDeterministicStart(
+  deterministicStart: { readonly roundSeed: { readonly drawPile: readonly Card[] } } | undefined,
+) {
+  if (!deterministicStart) {
+    return undefined;
+  }
+
+  return {
+    roundSeed: {
+      drawPile: [...deterministicStart.roundSeed.drawPile],
+    },
+  };
+}
 
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   Effect.gen(function* () {
@@ -74,6 +90,7 @@ const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
       matchFns.startMatchForSession(ctx, {
         ...args,
         matchId: args.matchId as Parameters<typeof matchFns.startMatchForSession>[1]["matchId"],
+        deterministicStart: normalizeDeterministicStart(args.deterministicStart),
       }),
     );
   }).pipe(Effect.orDie),

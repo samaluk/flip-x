@@ -75,6 +75,21 @@ const LatestEvent = Schema.Struct({
   playerNames: Schema.optional(Schema.String),
 });
 
+export const CanonicalReplayStepState = Schema.Struct({
+  status: Schema.Literal("setup", "in_progress", "completed"),
+  currentRoundNumber: Schema.Number,
+  dealerSeat: Schema.Number,
+  activePlayerId: Schema.NullOr(Schema.String),
+  pendingAction: Schema.NullOr(PendingAction),
+  pendingFlip3: Schema.NullOr(PendingFlip3),
+  roundStatus: Schema.NullOr(
+    Schema.Literal("dealing", "player_turns", "resolving_action", "scoring", "completed"),
+  ),
+  endedBy: Schema.NullOr(Schema.Literal("all_inactive", "flip7", "unknown")),
+  players: Schema.Array(PlayerSnapshot),
+  latestEvent: Schema.NullOr(LatestEvent),
+});
+
 export const MatchSnapshot = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.optional(Schema.String),

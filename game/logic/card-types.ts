@@ -40,7 +40,7 @@ function shuffle<T>(items: T[]): T[] {
   return next;
 }
 
-export function createDeck() {
+export function buildOrderedDeck() {
   const cards: Card[] = [];
 
   let sequence = 0;
@@ -85,7 +85,15 @@ export function createDeck() {
     });
   }
 
-  return shuffle(cards);
+  return cards;
+}
+
+function shuffleDeck(cards: readonly Card[]) {
+  return shuffle([...cards]);
+}
+
+export function createDeck() {
+  return shuffleDeck(buildOrderedDeck());
 }
 
 export function isNumberCard(card: Card): card is NumberCard {
@@ -96,10 +104,6 @@ export function isModifierCard(card: Card): card is ModifierCard {
   return card.type === "modifier";
 }
 
-export function isActionCard(card: Card): card is ActionCard {
-  return card.type === "action";
-}
-
 export function countDeckCards() {
-  return createDeck().length;
+  return buildOrderedDeck().length;
 }

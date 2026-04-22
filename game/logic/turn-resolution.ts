@@ -67,7 +67,19 @@ export type RoundEvent = {
   payload: Record<string, unknown>;
 };
 
-export function cardEventPayload(card: Card): Record<string, unknown> {
+export type CreateRoundRuntimeOptions = {
+  drawPile?: Card[];
+  discardPile?: Card[];
+  openingSeatIndex?: number;
+  turnSeatIndex?: number;
+  activePlayerId?: string | null;
+  endedBy?: RoundRuntime["endedBy"];
+  pendingAction?: PendingAction | null;
+  pendingFlip3?: PendingFlip3 | null;
+  phase?: RoundPhase;
+};
+
+function cardEventPayload(card: Card): Record<string, unknown> {
   if (isNumberCard(card)) {
     return { cardKind: "number", numberValue: card.numberValue };
   }
@@ -587,21 +599,22 @@ export function createRoundRuntime(
   players: OrderedPlayer[],
   roundNumber: number,
   dealerSeat: number,
+  options: CreateRoundRuntimeOptions = {},
 ) {
   const firstPlayer = getPlayerBySeat(players, dealerSeat);
 
   return {
-    phase: "dealing",
+    phase: options.phase ?? "dealing",
     roundNumber,
     dealerSeat,
-    drawPile: createDeck(),
-    discardPile: [],
-    openingSeatIndex: firstPlayer.seatIndex,
-    turnSeatIndex: firstPlayer.seatIndex,
-    activePlayerId: firstPlayer.playerId,
-    endedBy: "unknown",
-    pendingAction: null,
-    pendingFlip3: null,
+    drawPile: [...(options.drawPile ?? createDeck())],
+    discardPile: [...(options.discardPile ?? [])],
+    openingSeatIndex: options.openingSeatIndex ?? firstPlayer.seatIndex,
+    turnSeatIndex: options.turnSeatIndex ?? firstPlayer.seatIndex,
+    activePlayerId: options.activePlayerId ?? firstPlayer.playerId,
+    endedBy: options.endedBy ?? "unknown",
+    pendingAction: options.pendingAction ?? null,
+    pendingFlip3: options.pendingFlip3 ? clonePendingFlip3(options.pendingFlip3) : null,
   } satisfies RoundRuntime;
 }
 

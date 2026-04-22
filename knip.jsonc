@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@6.6.0/schema.json",
+  "entry": ["app/**/{page,layout,loading,error,not-found}.{ts,tsx}", "convex/**/*.ts"],
+  "project": ["**/*.{ts,tsx}"],
+  "ignore": [
+    "convex/_generated/**",
+    ".next/**",
+    "tests/**",
+    "e2e/**",
+    "scripts/**",
+    "confect/_generated/**"
+  ],
+  "ignoreDependencies": [
+    "shadcn",
+    "tw-animate-css",
+    "tailwindcss",
+    "@confect/test"
+  ]
+}

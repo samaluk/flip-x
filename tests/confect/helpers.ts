@@ -3,6 +3,11 @@ import { Effect } from "effect";
 import type { SessionId } from "convex-helpers/server/sessions";
 
 import refs from "@/confect/_generated/refs";
+import {
+  describeReplayResult,
+  type DeterministicStartOptions,
+  type ReplayResult,
+} from "@/tests/fixtures/deterministic";
 
 import { TestConfect } from "./TestConfect";
 
@@ -14,6 +19,13 @@ export type SessionRecord = {
 };
 
 export function createStartedMatch(playerNames: string[]) {
+  return createStartedMatchWithOptions(playerNames, {});
+}
+
+export function createStartedMatchWithOptions(
+  playerNames: string[],
+  options: { deterministicStart?: DeterministicStartOptions },
+) {
   return Effect.gen(function* () {
     const client = yield* TestConfect;
 
@@ -39,6 +51,7 @@ export function createStartedMatch(playerNames: string[]) {
     const started = yield* client.mutation(refs.public.matches.startMatch, {
       matchId: created.matchId,
       sessionId: sessions[0]!.sessionId,
+      deterministicStart: options.deterministicStart,
     });
 
     return {
@@ -47,6 +60,47 @@ export function createStartedMatch(playerNames: string[]) {
       started,
     };
   });
+}
+
+export function startDeterministicNextRound(
+  matchId: string,
+  sessionId: SessionId,
+  deterministicStart?: DeterministicStartOptions,
+) {
+  return Effect.gen(function* () {
+    const client = yield* TestConfect;
+    return yield* client.mutation(refs.public.rounds.startNextRound, {
+      matchId: matchId as never,
+      sessionId,
+      deterministicStart,
+    });
+  });
+}
+
+export function takeTurn(matchId: string, sessionId: SessionId, action: "hit" | "stay") {
+  return Effect.gen(function* () {
+    const client = yield* TestConfect;
+    return yield* client.mutation(refs.public.turns.takeTurn, {
+      matchId: matchId as never,
+      sessionId,
+      action,
+    });
+  });
+}
+
+export function resolveAction(matchId: string, sessionId: SessionId, targetPlayerId: string) {
+  return Effect.gen(function* () {
+    const client = yield* TestConfect;
+    return yield* client.mutation(refs.public.turns.resolveAction, {
+      matchId: matchId as never,
+      sessionId,
+      targetPlayerId: targetPlayerId as never,
+    });
+  });
+}
+
+export function describeConfectReplayResult(result: ReplayResult) {
+  return `[confect] ${describeReplayResult(result)}`;
 }
 
 export function getSnapshotForAnySession(matchId: string, sessions: SessionRecord[]) {
