@@ -9,7 +9,7 @@ import {
   hitControl,
   latestResolutionBodyLocator,
   matchSetupForm,
-  waitForCreateLobbyEnabled,
+  waitForEnabled,
   withThreePlayerMatch,
   withTwoPlayerMatch,
 } from "./helpers/match";
@@ -110,9 +110,10 @@ test.describe("gameplay", () => {
     await guestPage.goto(`/?code=${lobbyCode}`, { waitUntil: "domcontentloaded" });
     await expect(guestPage.locator("#playerName")).toBeVisible();
     const joinForm = matchSetupForm(guestPage);
-    await joinForm.getByLabel("Your name").fill(`Guest ${suffix}`);
-    await waitForCreateLobbyEnabled(guestPage);
-    await joinForm.getByRole("button", { name: /Join Game/i }).click();
+    await guestPage.locator("#playerName").fill(`Guest ${suffix}`);
+    const joinButton = joinForm.getByRole("button", { name: /Join Game/i });
+    await waitForEnabled(joinButton);
+    await joinButton.click();
 
     await guestPage.waitForURL(/\/game\/[^/?#]+/);
     await expect(guestPage.getByRole("heading", { name: /join the game/i })).not.toBeVisible();

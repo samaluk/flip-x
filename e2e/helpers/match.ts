@@ -1,4 +1,4 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 import type { IsolatedContexts } from "../fixtures";
 
@@ -49,11 +49,9 @@ export async function withTwoPlayerMatch(
   await fn({ hostPage, guestPage, matchId });
 }
 
-/** Session id is set in useEffect; button also requires a non-empty name. */
-export async function waitForCreateLobbyEnabled(page: Page) {
-  await expect(
-    page.getByRole("button", { name: /Create New Game|Join Game/ }),
-  ).toBeEnabled({
+/** Session id is set in useEffect; the target submit button should become enabled once ready. */
+export async function waitForEnabled(button: Locator) {
+  await expect(button).toBeEnabled({
     timeout: 20_000,
   });
 }
@@ -61,8 +59,9 @@ export async function waitForCreateLobbyEnabled(page: Page) {
 export async function createLobbyAsHost(page: Page, hostName: string) {
   await page.goto("/");
   await page.locator("#playerName").fill(hostName);
-  await waitForCreateLobbyEnabled(page);
-  await page.getByRole("button", { name: /Create New Game/i }).click();
+  const createButton = page.getByRole("button", { name: /Create New Game/i });
+  await waitForEnabled(createButton);
+  await createButton.click();
   await page.waitForURL(/\/game\/[^/?#]+/);
   const id = matchIdFromGameUrl(page.url());
   if (!id) {
