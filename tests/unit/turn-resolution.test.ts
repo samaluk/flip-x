@@ -153,6 +153,24 @@ describe("turn resolution", () => {
     expect(resolved.events.some((event) => event.eventType === "flip3_completed")).toBe(true);
   });
 
+  it("advances to the next active player after staying", () => {
+    const playerStates = createActivePlayerStates();
+    const round = createTurnRound();
+    round.activePlayerId = "p2";
+    round.turnSeatIndex = 1;
+    playerStates.p1.status = "active";
+    playerStates.p1.pointsAtRisk = 12;
+    playerStates.p2.status = "active";
+    playerStates.p2.pointsAtRisk = 10;
+    playerStates.p3.status = "stayed";
+
+    const resolved = takeTurnAction(players, round, playerStates, "p2", "stay");
+
+    expect(resolved.playerStates.p2.status).toBe("stayed");
+    expect(resolved.round.activePlayerId).toBe("p1");
+    expect(resolved.round.turnSeatIndex).toBe(0);
+  });
+
   it("clears Flip Three when the target busts", () => {
     const playerStates = createActivePlayerStates();
     playerStates.p1.numberCards = [numberCard("n1", 7)];

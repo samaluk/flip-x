@@ -777,7 +777,12 @@ export function takeTurnAction(
   maybeFinishRound(round, players, playerStates);
 
   if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
-    const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
+    const currentSeat = players.find((player) => player.playerId === playerId)?.seatIndex;
+    const nextSeat = nextActiveSeatIndex(
+      players,
+      playerStates,
+      currentSeat ?? round.turnSeatIndex,
+    );
     round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
     round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
     maybeFinishRound(round, players, playerStates);
