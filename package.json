@@ -12,15 +12,15 @@
     "lint": "oxlint .",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
-    "test": "vitest run --project unit --project confect",
-    "test:convex": "bash scripts/convex-local-test.sh",
-    "test:all": "vitest run --project unit && bash scripts/vrt-docker.sh",
-    "test:watch": "vitest --project unit",
-    "test:e2e": "playwright test",
+    "test": "vitest run --project unit --project contract --project integration --project confect",
+    "test:unit": "vitest run --project unit",
+    "test:contract": "vitest run --project contract",
+    "test:integration": "vitest run --project integration",
+    "test:confect": "vitest run --project confect",
+    "test:backend": "IS_TEST=1 bash scripts/convex-preview-test.sh pnpm vitest run --config vitest.convex.config.ts",
+    "test:e2e": "bash scripts/convex-preview-test.sh pnpm playwright test",
     "test:vrt": "bash scripts/vrt-docker.sh",
-    "test:vrt:update": "bash scripts/vrt-docker.sh --update",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:preview": "bash scripts/convex-preview-e2e.sh"
+    "test:vrt:update": "bash scripts/vrt-docker.sh --update"
   },
   "dependencies": {
     "@base-ui/react": "1.4.0",

@@ -14,6 +14,8 @@ concurrency:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    env:
+      CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -32,13 +34,19 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Generate Convex API
-        run: CONVEX_AGENT_MODE=anonymous npx convex dev --once
+      - name: Resolve Convex preview deployment name
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            echo "PREVIEW_DEPLOYMENT_NAME=pr-${{ github.event.pull_request.number }}" >> "$GITHUB_ENV"
+            echo "GITHUB_PR_NUMBER=${{ github.event.pull_request.number }}" >> "$GITHUB_ENV"
+          else
+            echo "PREVIEW_DEPLOYMENT_NAME=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+          fi
 
       - name: Lint
         run: pnpm lint
 
-      - name: Test
+      - name: Run fast Vitest suites
         run: pnpm test
 
       - name: Cache Next.js
@@ -64,7 +72,8 @@ jobs:
       - name: Install Playwright Chromium
         run: pnpm exec playwright install chromium
 
-      - name: Run E2E (local Convex)
-        env:
-          CONVEX_AGENT_MODE: anonymous
-        run: bash scripts/convex-preview-e2e.sh
+      - name: Run backend tests (Convex preview)
+        run: pnpm test:backend
+
+      - name: Run E2E (Convex preview)
+        run: pnpm test:e2e

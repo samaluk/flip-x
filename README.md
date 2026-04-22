@@ -23,10 +23,10 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
    pnpm install
    ```
 
-2. Start the local Convex backend:
+2. Start Convex development sync:
 
    ```bash
-   CONVEX_AGENT_MODE=anonymous npx convex dev
+    CONVEX_AGENT_MODE=anonymous npx convex dev
    ```
 
 3. Start the app:
@@ -36,6 +36,34 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
    ```
 
 4. Open `http://localhost:3000` and create a 3-player match.
+
+## Testing
+
+- Detailed reference: `docs/testing.md`
+- `pnpm test`: fast local default. Runs the Vitest `unit`, `contract`, `integration`, and `confect` suites.
+- `pnpm test:unit`: isolated logic and lightweight UI tests in `tests/unit/**` and `game/**/*.test.tsx`.
+- `pnpm test:contract`: Vitest contract tests in `tests/contract/**`.
+- `pnpm test:integration`: Vitest integration tests in `tests/integration/**`.
+- `pnpm test:confect`: Node-based Confect tests in `tests/confect/**`.
+- `pnpm test:backend`: preview-backed Convex backend tests in `tests/backend/**`.
+- `pnpm test:vrt`: visual regression tests with Vitest browser in Linux Docker.
+- `pnpm test:vrt:update`: refresh visual regression baselines.
+- `pnpm test:e2e`: Playwright end-to-end tests against a Convex preview deployment.
+
+Tooling split:
+
+- Vitest jsdom: `pnpm test`, `pnpm test:unit`, `pnpm test:contract`, `pnpm test:integration`
+- Vitest node: `pnpm test:confect`, `pnpm test:backend`
+- Vitest browser: `pnpm test:vrt`
+- Playwright: `pnpm test:e2e`
+
+Preview-backed suites:
+
+- Backend and E2E tests always run against a Convex preview deployment.
+- Set `CONVEX_DEPLOY_KEY` before running `pnpm test:backend` or `pnpm test:e2e`.
+- Local preview names use `local-<user>-<git-branch>` so local runs do not replace CI previews.
+- CI preview names use `pr-<number>` for pull requests and the branch name for push builds.
+- Backend tests clear all app data in the target preview deployment, so do not point them at a shared deployment.
 
 ## Quality checks
 
@@ -56,7 +84,7 @@ pnpm build
 
 ## CI
 
-GitHub Actions runs install, Convex API generation, lint, test, and build on pushes and pull requests.
+GitHub Actions runs the fast Vitest suites, build, visual regression, backend tests, and E2E on pushes and pull requests using Convex preview deployments.
 
 ## Effect migration
 

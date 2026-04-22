@@ -22,12 +22,29 @@ export default defineConfig({
           environment: "jsdom",
           setupFiles: ["./tests/setup.ts"],
           include: [
-            "tests/**/*.test.ts",
-            "tests/**/*.test.tsx",
+            "tests/unit/**/*.test.ts",
+            "tests/unit/**/*.test.tsx",
             "game/**/*.test.ts",
             "game/**/*.test.tsx",
           ],
-          exclude: ["tests/backend/**/*.test.ts", "tests/confect/**/*.test.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "contract",
+          environment: "jsdom",
+          setupFiles: ["./tests/setup.ts"],
+          include: ["tests/contract/**/*.test.ts", "tests/contract/**/*.test.tsx"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          environment: "jsdom",
+          setupFiles: ["./tests/setup.ts"],
+          include: ["tests/integration/**/*.test.ts", "tests/integration/**/*.test.tsx"],
         },
       },
       {
