@@ -60,7 +60,7 @@ Tooling split:
 Preview-backed suites:
 
 - Backend and E2E tests always run against a Convex preview deployment.
-- Set `CONVEX_DEPLOY_KEY` before running `pnpm test:backend` or `pnpm test:e2e`.
+- Set `CONVEX_DEPLOY_KEY` before running `pnpm test:backend` or `pnpm test:e2e`, or keep it in `.env.local` for local runs.
 - Local preview names use `local-<user>-<git-branch>` so local runs do not replace CI previews.
 - CI preview names use `pr-<number>` for pull requests and the branch name for push builds.
 - Backend tests clear all app data in the target preview deployment, so do not point them at a shared deployment.

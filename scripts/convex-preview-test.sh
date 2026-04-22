@@ -7,16 +7,48 @@ if [[ $# -lt 1 ]]; then
   exit 1
 fi
 
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+read_env_file_value() {
+  local name file line value
+  name="$1"
+  file="$2"
+
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    case "$line" in
+      "$name"=*)
+        value="${line#*=}"
+        if [[ "$value" == \"*\" && "$value" == *\" ]]; then
+          value="${value#\"}"
+          value="${value%\"}"
+        elif [[ "$value" == \'*\' && "$value" == *\' ]]; then
+          value="${value#\'}"
+          value="${value%\'}"
+        fi
+        printf '%s' "$value"
+        return 0
+        ;;
+    esac
+  done < "$file"
+
+  return 1
+}
+
+if [[ -z "${CONVEX_DEPLOY_KEY:-}" && -f "$ROOT/.env.local" ]]; then
+  local_deploy_key="$(read_env_file_value CONVEX_DEPLOY_KEY "$ROOT/.env.local" || true)"
+  if [[ -n "$local_deploy_key" ]]; then
+    export CONVEX_DEPLOY_KEY="$local_deploy_key"
+  fi
+fi
+
 if [[ -z "${CONVEX_DEPLOY_KEY:-}" ]]; then
   printf 'CONVEX_DEPLOY_KEY is required for preview-backed tests.\n' >&2
   exit 1
 fi
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-
 slugify() {
   local value
-  value="${1,,}"
+  value="$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')"
   value="${value//[^a-z0-9-]/-}"
   value="$(printf '%s' "$value" | tr -s '-')"
   value="${value#-}"

@@ -95,7 +95,7 @@ describe("Convex turns", () => {
 
     let snapshot = null;
     let guard = 0;
-    while (guard < 50) {
+    while (guard < 150) {
       guard += 1;
       const snapshots = await Promise.all(
         sessions.map((session) =>
@@ -116,6 +116,16 @@ describe("Convex turns", () => {
 
       if (snapshot.pendingAction) {
         break;
+      }
+
+      if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
+        snapshot = await client.mutation(api.rounds.startNextRound, {
+          matchId,
+          sessionId: sessions[0]!.sessionId,
+        });
+        if (snapshot.pendingAction) {
+          break;
+        }
       }
 
       const activeSession = sessions.find(

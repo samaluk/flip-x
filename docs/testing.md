@@ -80,7 +80,7 @@ This suite is destructive for its target deployment. It clears all app data betw
 
 Requirements:
 
-- `CONVEX_DEPLOY_KEY` must be set
+- `CONVEX_DEPLOY_KEY` must be set, either exported in the shell or present in `.env.local`
 
 Preview naming:
 
@@ -90,6 +90,7 @@ Preview naming:
 
 Notes:
 
+- The preview wrapper sources `.env.local` for local runs before checking for `CONVEX_DEPLOY_KEY`
 - Local and CI preview-backed tests do not use `convex dev --local`
 - Do not point backend tests at a shared deployment
 
