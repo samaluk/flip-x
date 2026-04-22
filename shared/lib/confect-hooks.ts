@@ -44,18 +44,4 @@ export function useSessionConfectMutation<Mutation extends Ref.AnyPublicMutation
   };
 }
 
-export function useSessionConfectAction<Action extends Ref.AnyPublicAction>(ref: Action) {
-  const [sessionId] = useSessionId();
-  const act = useConfectAction(ref);
 
-  return async (args: SessionlessArgs<Action>) => {
-    if (!sessionId) {
-      throw new Error("Session unavailable");
-    }
-
-    return await act({
-      ...(args as object),
-      sessionId,
-    } as Ref.Args<Action>);
-  };
-}

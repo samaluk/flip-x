@@ -17,10 +17,12 @@
     "test:contract": "vitest run --project contract",
     "test:integration": "vitest run --project integration",
     "test:confect": "vitest run --project confect",
-    "test:backend": "IS_TEST=1 bash scripts/convex-preview-test.sh pnpm vitest run --config vitest.convex.config.ts",
+    "test:backend": "bash scripts/convex-preview-test.sh pnpm vitest run --config vitest.convex.config.ts",
     "test:e2e": "bash scripts/convex-preview-test.sh pnpm playwright test",
     "test:vrt": "bash scripts/vrt-docker.sh",
-    "test:vrt:update": "bash scripts/vrt-docker.sh --update"
+    "test:vrt:update": "bash scripts/vrt-docker.sh --update",
+    "knip": "knip",
+    "knip:fix": "knip --fix"
   },
   "dependencies": {
     "@base-ui/react": "1.4.0",
@@ -58,7 +60,7 @@
     "@tailwindcss/vite": "4.2.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
-    "@testing-library/user-event": "14.6.1",
+    
     "@types/node": "24.12.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
@@ -68,6 +70,7 @@
     "@vitest/coverage-v8": "4.1.4",
     "convex-test": "0.0.49",
     "jsdom": "29.0.2",
+    "knip": "^6.6.0",
     "oxfmt": "0.45.0",
     "oxlint": "1.60.0",
     "tailwindcss": "4.2.2",

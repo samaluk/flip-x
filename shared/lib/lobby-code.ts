@@ -8,10 +8,4 @@ export function generateLobbyCode(): string {
   return code;
 }
 
-export function isValidLobbyCodeFormat(code: string): boolean {
-  if (code.length !== 4) return false;
-  for (const char of code) {
-    if (!LOBBY_CODE_CHARS.includes(char)) return false;
-  }
-  return true;
-}
+

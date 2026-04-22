@@ -9,7 +9,7 @@ export type ScoreBreakdown = {
   finalRoundScore: number;
 };
 
-export function sumNumberCards(numberCards: NumberCard[]) {
+function sumNumberCards(numberCards: NumberCard[]) {
   return numberCards.reduce((total, card) => total + card.numberValue, 0);
 }
 

@@ -99,6 +99,4 @@ export type AppError =
   | UnsupportedTable
   | InvalidConfirmation;
 
-export function errorToCode(error: AppError): string {
-  return error._tag;
-}
+

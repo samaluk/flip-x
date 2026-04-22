@@ -20,7 +20,7 @@ function modifierLabel(modifierValue: unknown, tCards: Translate): string {
 }
 
 /** Card face label for event copy (number value, modifier, or action name). */
-export function cardPayloadLabel(payload: Record<string, unknown>, tCards: Translate): string {
+function cardPayloadLabel(payload: Record<string, unknown>, tCards: Translate): string {
   const cardKind = payload.cardKind;
   if (cardKind === "number" && typeof payload.numberValue === "number") {
     return String(payload.numberValue);
