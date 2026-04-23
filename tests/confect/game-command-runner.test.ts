@@ -196,42 +196,43 @@ describe("runGameCommand", () => {
 
   it.effect("RESOLVE_ACTION updates pending-action state through the runner seam", () =>
     Effect.gen(function* () {
-      const { matchId, sessions } = yield* createStartedMatch(["Host", "Guest", "Third"]);
+      const deterministicStart: DeterministicStartOptions = {
+        roundSeed: {
+          drawPile: [
+            { id: "resolve-open-1", type: "number", label: "1", numberValue: 1 },
+            { id: "resolve-open-2", type: "number", label: "2", numberValue: 2 },
+            { id: "resolve-open-3", type: "number", label: "3", numberValue: 3 },
+            { id: "resolve-freeze-1", type: "action", label: "freeze", actionKind: "freeze" },
+          ],
+        },
+      };
+      const { matchId, sessions } = yield* createStartedMatchWithOptions(
+        ["Host", "Guest", "Third"],
+        { deterministicStart },
+      );
 
-      let snapshot = yield* getSnapshotForAnySession(matchId, sessions);
-      let guard = 0;
+      const startingSnapshot = yield* getSnapshotForAnySession(matchId, sessions);
 
-      while ((!snapshot || !snapshot.pendingAction) && guard < 150) {
-        guard += 1;
-
-        if (!snapshot) {
-          throw new Error("Expected a snapshot while waiting for pending action");
-        }
-
-        if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
-          snapshot = yield* runCommand(matchId, sessions[0]!.sessionId, {
-            type: "START_NEXT_ROUND",
-          });
-          continue;
-        }
-
-        const activeSession = sessions.find(
-          (session) =>
-            snapshot?.activePlayerId ===
-            snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
-        );
-
-        if (!activeSession) {
-          throw new Error("Expected an active session while waiting for pending action");
-        }
-
-        snapshot = yield* runCommand(matchId, activeSession.sessionId, {
-          type: "TAKE_TURN",
-          action: "hit",
-        });
+      if (!startingSnapshot) {
+        throw new Error("Expected a snapshot before TAKE_TURN");
       }
 
-      if (!snapshot?.pendingAction) {
+      const activeSession = sessions.find(
+        (session) =>
+          startingSnapshot.activePlayerId ===
+          startingSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      );
+
+      if (!activeSession) {
+        throw new Error("Expected an active session before TAKE_TURN");
+      }
+
+      const snapshot = yield* runCommand(matchId, activeSession.sessionId, {
+        type: "TAKE_TURN",
+        action: "hit",
+      });
+
+      if (!snapshot.pendingAction) {
         throw new Error("Expected a pending action before RESOLVE_ACTION");
       }
 
