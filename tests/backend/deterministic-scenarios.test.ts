@@ -7,8 +7,10 @@ import {
   cloneSetupScenario,
   expectSnapshotsToMatch,
 } from "@/tests/fixtures/deterministic";
+import type { DeterministicStartOptions } from "@/tests/fixtures/deterministic";
 
 import {
+  advanceUntilRoundBoundary,
   createStartedMatch,
   createTestClient,
   resetTestClient,
@@ -74,8 +76,49 @@ describe("Convex deterministic setup", () => {
     );
 
     expect(nextRound.currentRoundNumber).toBe(2);
+    expect(nextRound.roundStatus).toBe("resolving_action");
     expect(nextRound.players[1]?.modifierCards[0]?.modifierValue).toBe(4);
-    expect(nextRound.players[0]?.heldActionCards).toHaveLength(0);
-    expect(nextRound.activePlayerId).toBe(nextRound.players[1]?.playerId);
+    expect(nextRound.players[0]?.heldActionCards).toEqual([
+      { label: "freeze", actionKind: "freeze" },
+    ]);
+    expect(nextRound.pendingAction).toMatchObject({
+      sourcePlayerId: nextRound.players[0]?.playerId,
+      actionKind: "freeze",
+      resume: "dealing",
+    });
+  });
+
+  it("startNextRound deals every player after dealer rotation in a three-player match", async () => {
+    const nextRoundStart: DeterministicStartOptions = {
+      roundSeed: {
+        drawPile: [
+          { id: "r2-seat-1", type: "number", label: "1", numberValue: 1 },
+          { id: "r2-seat-2", type: "number", label: "2", numberValue: 2 },
+          { id: "r2-seat-0", type: "number", label: "3", numberValue: 3 },
+          { id: "r2-fill-1", type: "number", label: "11", numberValue: 11 },
+        ],
+      },
+    };
+
+    const { matchId, sessions } = await createStartedMatch(client, ["Host", "Guest", "Third"]);
+
+    await advanceUntilRoundBoundary(client, matchId, sessions);
+
+    const nextRound = await startDeterministicNextRound(
+      client,
+      matchId as Id<"matches">,
+      sessions[0]!.sessionId,
+      nextRoundStart,
+    );
+
+    const byName = new Map(nextRound.players.map((player) => [player.displayName, player]));
+
+    expect(nextRound.currentRoundNumber).toBe(2);
+    expect(nextRound.dealerSeat).toBe(1);
+    expect(nextRound.roundStatus).toBe("player_turns");
+    expect(byName.get("Host")?.numberCards.map((card) => card.numberValue)).toEqual([3]);
+    expect(byName.get("Guest")?.numberCards.map((card) => card.numberValue)).toEqual([1]);
+    expect(byName.get("Third")?.numberCards.map((card) => card.numberValue)).toEqual([2]);
+    expect(nextRound.activePlayerId).toBe(byName.get("Guest")?.playerId);
   });
 });

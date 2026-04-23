@@ -77,6 +77,77 @@ describe("turn resolution", () => {
     expect(resolved.playerStates.p3.numberCards[0]?.numberValue).toBe(3);
   });
 
+  it("deals every player when round 2 starts with dealer seat 1 in a three-player game", () => {
+    const playerStates = createPlayerRoundStates(players);
+    const round = createRoundRuntime(players, 2, 1);
+
+    round.drawPile = [numberCard("c1", 1), numberCard("c2", 2), numberCard("c3", 3)];
+
+    const resolved = continueRound(players, round, playerStates);
+
+    expect(resolved.round.phase).toBe("player_turns");
+    expect(resolved.playerStates.p2.numberCards[0]?.numberValue).toBe(1);
+    expect(resolved.playerStates.p3.numberCards[0]?.numberValue).toBe(2);
+    expect(resolved.playerStates.p1.numberCards[0]?.numberValue).toBe(3);
+  });
+
+  it("deals both players when round 2 starts with dealer seat 1 in a two-player game", () => {
+    const twoPlayers = [
+      { playerId: "p1", seatIndex: 0 },
+      { playerId: "p2", seatIndex: 1 },
+    ];
+    const playerStates = createPlayerRoundStates(twoPlayers);
+    const round = createRoundRuntime(twoPlayers, 2, 1);
+
+    round.drawPile = [numberCard("c1", 4), numberCard("c2", 9)];
+
+    const resolved = continueRound(twoPlayers, round, playerStates);
+
+    expect(resolved.round.phase).toBe("player_turns");
+    expect(resolved.playerStates.p2.numberCards[0]?.numberValue).toBe(4);
+    expect(resolved.playerStates.p1.numberCards[0]?.numberValue).toBe(9);
+  });
+
+  it("resumes opening deal from the next undealt seat after a pending action resolves", () => {
+    const fourPlayers = [
+      { playerId: "p1", seatIndex: 0 },
+      { playerId: "p2", seatIndex: 1 },
+      { playerId: "p3", seatIndex: 2 },
+      { playerId: "p4", seatIndex: 3 },
+    ];
+    const playerStates = createPlayerRoundStates(fourPlayers);
+    const round = createRoundRuntime(fourPlayers, 1, 0);
+
+    round.drawPile = [
+      numberCard("c1", 1),
+      numberCard("c2", 2),
+      actionCard("freeze-opening", "freeze"),
+      numberCard("c4", 4),
+    ];
+
+    const paused = continueRound(fourPlayers, round, playerStates);
+
+    expect(paused.round.phase).toBe("resolving_action");
+    expect(paused.round.pendingAction).toMatchObject({
+      sourcePlayerId: "p3",
+      actionKind: "freeze",
+      resume: "dealing",
+    });
+
+    const resumed = resolvePendingAction(
+      fourPlayers,
+      paused.round,
+      paused.playerStates,
+      "p1",
+    );
+
+    expect(resumed.round.phase).toBe("player_turns");
+    expect(resumed.playerStates.p4.numberCards[0]?.numberValue).toBe(4);
+    expect(resumed.playerStates.p1.receivedActionCards).toEqual([
+      actionCard("freeze-opening", "freeze"),
+    ]);
+  });
+
   it("buildOrderedDeck returns the full deck without shuffling", () => {
     const deck = buildOrderedDeck();
 

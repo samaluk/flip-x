@@ -258,7 +258,7 @@ describe("Confect deterministic replay", () => {
         throw new Error(JSON.stringify(result, null, 2));
       }
       assertEquals(result.status, "matched");
-      assertEquals(result.stepsConsumed, 3);
+      assertEquals(result.stepsConsumed, 4);
       assertEquals(result.finalOutcome.players[2]?.receivedActionCards[0], "freeze");
     }).pipe(Effect.provide(TestConfect.layer())),
   );

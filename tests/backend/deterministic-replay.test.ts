@@ -82,7 +82,7 @@ describe("Convex deterministic replay", () => {
       return;
     }
 
-    expect(result.stepsConsumed).toBe(3);
+    expect(result.stepsConsumed).toBe(4);
     expect(result.finalOutcome.players[2]?.receivedActionCards[0]).toBe("freeze");
   });
 

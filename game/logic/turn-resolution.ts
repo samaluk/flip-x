@@ -198,13 +198,6 @@ function createPendingTargetAction(
     return null;
   }
 
-  if (resume === "dealing") {
-    if (eligibleTargetIds.length === 1) {
-      return eligibleTargetIds[0];
-    }
-    return null;
-  }
-
   if (eligibleTargetIds.length === 1) {
     return eligibleTargetIds[0];
   }
@@ -651,6 +644,11 @@ export function continueRound(
       break;
     }
 
+    const nextOpeningSeatIndex = round.openingSeatIndex + 1;
+    const wrappedToDealer =
+      getPlayerBySeat(players, nextOpeningSeatIndex).seatIndex === round.dealerSeat;
+    round.openingSeatIndex = nextOpeningSeatIndex;
+
     addEvent(events, {
       eventType: "initial_deal",
       actorPlayerId: player.playerId,
@@ -664,9 +662,7 @@ export function continueRound(
       break;
     }
 
-    round.openingSeatIndex += 1;
-
-    if (round.openingSeatIndex >= players.length) {
+    if (wrappedToDealer) {
       round.phase = "player_turns";
       const firstActiveSeat = nextActiveSeatIndex(players, playerStates, round.dealerSeat - 1);
       round.turnSeatIndex = firstActiveSeat ?? round.dealerSeat;

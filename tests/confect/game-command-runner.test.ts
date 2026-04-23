@@ -8,9 +8,15 @@ import { MatchSnapshot } from "@/confect/match-snapshot-schema";
 import { MutationCtx } from "@/confect/_generated/services";
 import { runGameCommand } from "@/game/application/run-command";
 import { cloneSetupScenario } from "@/tests/fixtures/deterministic/setup-scenarios";
+import type { DeterministicStartOptions } from "@/tests/fixtures/deterministic";
 
 import * as TestConfect from "./TestConfect";
-import { createStartedMatch, getSnapshotForAnySession, type SessionRecord } from "./helpers";
+import {
+  createStartedMatch,
+  createStartedMatchWithOptions,
+  getSnapshotForAnySession,
+  type SessionRecord,
+} from "./helpers";
 
 function runCommand(
   matchId: string,
@@ -148,7 +154,18 @@ describe("runGameCommand", () => {
 
   it.effect("TAKE_TURN persists the updated round state and appended event", () =>
     Effect.gen(function* () {
-      const { matchId, sessions } = yield* createStartedMatch(["Host", "Guest"]);
+      const deterministicStart: DeterministicStartOptions = {
+        roundSeed: {
+          drawPile: [
+            { id: "runner-open-1", type: "number", label: "1", numberValue: 1 },
+            { id: "runner-open-2", type: "number", label: "7", numberValue: 7 },
+            { id: "runner-hit-1", type: "number", label: "4", numberValue: 4 },
+          ],
+        },
+      };
+      const { matchId, sessions } = yield* createStartedMatchWithOptions(["Host", "Guest"], {
+        deterministicStart,
+      });
       const snapshot = yield* getSnapshotForAnySession(matchId, sessions);
 
       if (!snapshot) {

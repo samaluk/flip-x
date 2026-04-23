@@ -1,5 +1,5 @@
 import { describe, it } from "@effect/vitest";
-import { assertEquals } from "@effect/vitest/utils";
+import { assertEquals, assertTrue } from "@effect/vitest/utils";
 import { Effect } from "effect";
 
 import {
@@ -7,6 +7,7 @@ import {
   cloneSetupScenario,
   expectSnapshotsToMatch,
 } from "@/tests/fixtures/deterministic";
+import type { DeterministicStartOptions } from "@/tests/fixtures/deterministic";
 
 import * as TestConfect from "./TestConfect";
 import {
@@ -54,10 +55,61 @@ describe("Confect deterministic setup", () => {
         scenario.startNextRound,
       );
 
+      const host = nextRound.players[0]!;
+
       assertEquals(nextRound.currentRoundNumber, 2);
+      assertEquals(nextRound.roundStatus, "resolving_action");
       assertEquals(nextRound.players[1]?.modifierCards[0]?.modifierValue, 4);
-      assertEquals(nextRound.players[0]?.heldActionCards.length, 0);
-      assertEquals(nextRound.activePlayerId, nextRound.players[1]?.playerId);
+      assertEquals(host.heldActionCards.length, 1);
+      assertEquals(host.heldActionCards[0]?.actionKind, "freeze");
+      assertEquals(host.heldActionCards[0]?.label, "freeze");
+      assertEquals(nextRound.pendingAction?.sourcePlayerId, host.playerId);
+      assertEquals(nextRound.pendingAction?.actionKind, "freeze");
+      assertEquals(nextRound.pendingAction?.resume, "dealing");
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("startNextRound deals every player after dealer rotation in a three-player match", () =>
+    Effect.gen(function* () {
+      const nextRoundStart: DeterministicStartOptions = {
+        roundSeed: {
+          drawPile: [
+            { id: "r2-seat-1", type: "number", label: "1", numberValue: 1 },
+            { id: "r2-seat-2", type: "number", label: "2", numberValue: 2 },
+            { id: "r2-seat-0", type: "number", label: "3", numberValue: 3 },
+            { id: "r2-fill-1", type: "number", label: "11", numberValue: 11 },
+          ],
+        },
+      };
+
+      const { matchId, sessions } = yield* createStartedMatchWithOptions(["Host", "Guest", "Third"], {});
+
+      yield* advanceUntilRoundBoundary(matchId, sessions);
+
+      const nextRound = yield* startDeterministicNextRound(
+        matchId,
+        sessions[0]!.sessionId,
+        nextRoundStart,
+      );
+
+      const byName = new Map(nextRound.players.map((player) => [player.displayName, player]));
+      const host = byName.get("Host");
+      const guest = byName.get("Guest");
+      const third = byName.get("Third");
+
+      assertEquals(nextRound.currentRoundNumber, 2);
+      assertEquals(nextRound.dealerSeat, 1);
+      assertEquals(nextRound.roundStatus, "player_turns");
+      assertTrue(host !== undefined);
+      assertTrue(guest !== undefined);
+      assertTrue(third !== undefined);
+      assertEquals(host.numberCards.length, 1);
+      assertEquals(host.numberCards[0]?.numberValue, 3);
+      assertEquals(guest.numberCards.length, 1);
+      assertEquals(guest.numberCards[0]?.numberValue, 1);
+      assertEquals(third.numberCards.length, 1);
+      assertEquals(third.numberCards[0]?.numberValue, 2);
+      assertEquals(nextRound.activePlayerId, guest.playerId);
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 });
