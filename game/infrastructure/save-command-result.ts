@@ -1,6 +1,6 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
-import { scoreRound } from "../logic/scoring";
+import { computeScoreBreakdown } from "../logic/scoring";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../logic/turn-resolution";
 import type { GameCommand } from "../application/game-command";
 
@@ -186,7 +186,7 @@ async function rewriteScoreBreakdowns(
     await ctx.db.insert("scoreBreakdowns", {
       roundId,
       playerId: playerIdMap.get(playerId)!,
-      ...scoreRound(playerState.numberCards, playerState.modifierCards, playerState.hasFlip7),
+      ...computeScoreBreakdown(playerState),
     });
   }
 }

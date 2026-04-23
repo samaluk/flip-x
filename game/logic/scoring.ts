@@ -1,4 +1,5 @@
 import type { ModifierCard, NumberCard } from "./card-types";
+import type { PlayerRoundState } from "./turn-resolution";
 
 export type ScoreBreakdown = {
   numberCardTotal: number;
@@ -39,4 +40,23 @@ export function scoreRound(
     flip7Bonus,
     finalRoundScore,
   };
+}
+
+export function computeScoreBreakdown(playerState: PlayerRoundState): ScoreBreakdown {
+  if (playerState.bustCard) {
+    return {
+      numberCardTotal: 0,
+      multiplierApplied: false,
+      multipliedTotal: 0,
+      additiveModifierTotal: 0,
+      flip7Bonus: 0,
+      finalRoundScore: 0,
+    };
+  }
+
+  return scoreRound(
+    playerState.numberCards,
+    playerState.modifierCards,
+    playerState.hasFlip7,
+  );
 }
