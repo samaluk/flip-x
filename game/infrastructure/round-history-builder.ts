@@ -37,11 +37,11 @@ export function calculateRoundHistory(args: {
   );
   const runningTotals = new Map(orderedPlayers.map((player) => [player.playerId, 0]));
 
-  const history = [...args.completedRounds]
+  const history: RoundHistoryEntry[] = [...args.completedRounds]
     .toSorted((left, right) => left.roundNumber - right.roundNumber)
     .map((round) => ({
       roundNumber: round.roundNumber,
-      phase: "completed" as const,
+      phase: "completed",
       isCurrentRound: false,
       scores: orderedPlayers.map((player) => {
         const roundScore = round.scoreByPlayerId.get(player.playerId) ?? 0;
