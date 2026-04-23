@@ -2,7 +2,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { api } from "@/convex/_generated/api";
 
-import { createStartedMatch, createTestClient, resetTestClient } from "./convex-test-helper";
+import {
+  advanceOneGameplayStep,
+  createStartedMatch,
+  createTestClient,
+  getSnapshotForAnySession,
+  resetTestClient,
+} from "./convex-test-helper";
 
 describe("Convex rounds", () => {
   let client = createTestClient();
@@ -18,59 +24,23 @@ describe("Convex rounds", () => {
   it("startNextRound advances to the next round after round completion", async () => {
     const { matchId, sessions } = await createStartedMatch(client, ["Host", "Guest"]);
 
-    let completedSnapshot = null;
-    let guard = 0;
-    while (guard < 50) {
-      guard += 1;
-      const snapshots = await Promise.all(
-        sessions.map((session) =>
-          client.query(api.matches.getMatchSnapshot, {
-            matchId,
-            sessionId: session.sessionId,
-          }),
-        ),
-      );
-      const snapshot = snapshots.find((value) => value !== null);
+    const initialSnapshot = await getSnapshotForAnySession(client, matchId, sessions);
+    expect(initialSnapshot).not.toBeNull();
+    if (!initialSnapshot) {
+      throw new Error("Expected a match snapshot while resolving turns");
+    }
 
-      if (!snapshot) {
-        throw new Error("Expected a match snapshot while resolving turns");
-      }
+    let completedSnapshot = initialSnapshot;
 
-      if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
-        completedSnapshot = snapshot;
+    for (let guard = 0; guard < 50; guard += 1) {
+      if (
+        completedSnapshot.roundStatus === "scoring" ||
+        completedSnapshot.roundStatus === "completed"
+      ) {
         break;
       }
 
-      if (snapshot.pendingAction) {
-        const sourceSession = sessions.find(
-          (session) =>
-            snapshot.pendingAction?.sourcePlayerId ===
-            snapshot.players.find((player) => player.displayName === session.name)?.playerId,
-        );
-
-        await client.mutation(api.turns.resolveAction, {
-          matchId,
-          targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0] as never,
-          sessionId: sourceSession!.sessionId,
-        });
-        continue;
-      }
-
-      const activeSession = sessions.find(
-        (session) =>
-          snapshot.activePlayerId ===
-          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
-      );
-
-      if (!activeSession) {
-        break;
-      }
-
-      await client.mutation(api.turns.takeTurn, {
-        matchId,
-        action: "stay",
-        sessionId: activeSession.sessionId,
-      });
+      completedSnapshot = await advanceOneGameplayStep(client, matchId, sessions, completedSnapshot);
     }
 
     expect(completedSnapshot).not.toBeNull();

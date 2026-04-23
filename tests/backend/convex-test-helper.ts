@@ -10,6 +10,9 @@ import {
 import type { SessionId } from "convex-helpers/server/sessions";
 
 const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
+const DEFAULT_GAMEPLAY_GUARD_LIMIT = 150;
+
+type TestSession = { name: string; sessionId: SessionId };
 
 export function asSessionId(value: string) {
   return value as SessionId;
@@ -98,55 +101,133 @@ export async function getSnapshotForAnySession(
   return null;
 }
 
-export async function advanceUntilRoundBoundary(
+type BackendSnapshot = NonNullable<Awaited<ReturnType<typeof getSnapshotForAnySession>>>;
+
+function asBackendSnapshot(snapshot: unknown) {
+  return snapshot as BackendSnapshot;
+}
+
+function getSessionForPlayerId(
+  snapshot: BackendSnapshot,
+  sessions: TestSession[],
+  playerId: string,
+) {
+  const player = snapshot.players.find((candidate) => candidate.playerId === playerId);
+  if (!player) {
+    return null;
+  }
+
+  return sessions.find((session) => session.name === player.displayName) ?? null;
+}
+
+export async function advanceOneGameplayStep(
   client: ConvexTestingHelper,
   matchId: Id<"matches">,
-  sessions: Array<{ name: string; sessionId: SessionId }>,
+  sessions: TestSession[],
+  snapshot: BackendSnapshot,
+  options: { turnAction?: "hit" | "stay" } = {},
 ) {
-  for (let guard = 0; guard < 50; guard += 1) {
-    const snapshot = await getSnapshotForAnySession(client, matchId, sessions);
+  const turnAction = options.turnAction ?? "stay";
 
-    if (!snapshot) {
-      throw new Error("Expected a match snapshot while resolving gameplay");
-    }
+  if (snapshot.pendingAction) {
+    const sourceSession = getSessionForPlayerId(
+      snapshot,
+      sessions,
+      snapshot.pendingAction.sourcePlayerId,
+    );
 
-    if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
-      return snapshot;
-    }
-
-    if (snapshot.pendingAction) {
-      const sourceSession = sessions.find(
-        (session) =>
-          snapshot.pendingAction?.sourcePlayerId ===
-          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+    if (!sourceSession) {
+      throw new Error(
+        `Expected a source session for pending action owned by ${snapshot.pendingAction.sourcePlayerId}`,
       );
+    }
 
-      if (!sourceSession) {
-        throw new Error("Expected a source session for pending action");
-      }
-
+    return asBackendSnapshot(
       await client.mutation(api.turns.resolveAction, {
         matchId,
         targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0] as Id<"players">,
         sessionId: sourceSession.sessionId,
-      });
+      }),
+    );
+  }
+
+  if (snapshot.roundStatus !== "player_turns" || !snapshot.activePlayerId) {
+    return snapshot;
+  }
+
+  const activeSession = getSessionForPlayerId(snapshot, sessions, snapshot.activePlayerId);
+
+  if (!activeSession) {
+    throw new Error(`Expected an active session for player ${snapshot.activePlayerId}`);
+  }
+
+  return asBackendSnapshot(
+    await client.mutation(api.turns.takeTurn, {
+      matchId,
+      action: turnAction,
+      sessionId: activeSession.sessionId,
+    }),
+  );
+}
+
+export async function waitForPendingAction(
+  client: ConvexTestingHelper,
+  matchId: Id<"matches">,
+  sessions: TestSession[],
+  options: { guardLimit?: number } = {},
+) {
+  const guardLimit = options.guardLimit ?? DEFAULT_GAMEPLAY_GUARD_LIMIT;
+  const initialSnapshot = await getSnapshotForAnySession(client, matchId, sessions);
+
+  if (!initialSnapshot) {
+    throw new Error("Expected a match snapshot while waiting for a pending action");
+  }
+
+  let snapshot: BackendSnapshot = initialSnapshot;
+
+  for (let guard = 0; guard < guardLimit; guard += 1) {
+    if (snapshot.pendingAction) {
+      return snapshot;
+    }
+
+    if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
+      snapshot = asBackendSnapshot(
+        await client.mutation(api.rounds.startNextRound, {
+          matchId,
+          sessionId: sessions[0]!.sessionId,
+        }),
+      );
       continue;
     }
 
-    const activeSession = sessions.find(
-      (session) =>
-        snapshot.activePlayerId ===
-        snapshot.players.find((player) => player.displayName === session.name)?.playerId,
-    );
+    snapshot = await advanceOneGameplayStep(client, matchId, sessions, snapshot, {
+      turnAction: "hit",
+    });
+  }
 
-    if (!activeSession) {
-      throw new Error("Expected an active session while round is in progress");
+  throw new Error(`Timed out while waiting for a pending action after ${guardLimit} steps`);
+}
+
+export async function advanceUntilRoundBoundary(
+  client: ConvexTestingHelper,
+  matchId: Id<"matches">,
+  sessions: TestSession[],
+) {
+  const initialSnapshot = await getSnapshotForAnySession(client, matchId, sessions);
+
+  if (!initialSnapshot) {
+    throw new Error("Expected a match snapshot while resolving gameplay");
+  }
+
+  let snapshot: BackendSnapshot = initialSnapshot;
+
+  for (let guard = 0; guard < 50; guard += 1) {
+    if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
+      return snapshot;
     }
 
-    await client.mutation(api.turns.takeTurn, {
-      matchId,
-      action: "stay",
-      sessionId: activeSession.sessionId,
+    snapshot = await advanceOneGameplayStep(client, matchId, sessions, snapshot, {
+      turnAction: "stay",
     });
   }
 
