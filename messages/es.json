@@ -37,6 +37,7 @@
   },
   "MatchSetup": {
     "yourName": "Tu nombre",
+    "playerColor": "Color del jugador",
     "namePlaceholder": "Escribe tu nombre",
     "rulesHelp": "Ayuda de reglas",
     "rulesTitle": "Cómo juega esta mesa a Flip 7",
@@ -74,6 +75,7 @@
     "joinTitle": "Unirse a la partida",
     "joinSubtitle": "Escribe tu nombre para ocupar un sitio en la mesa.",
     "namePlaceholder": "Tu nombre",
+    "playerColor": "Color del jugador",
     "joinGame": "Entrar",
     "toastNameRequired": "Escribe tu nombre.",
     "toastNameLength": "El nombre debe tener 20 caracteres o menos.",
@@ -96,6 +98,10 @@
     "LOBBY_NOT_FOUND": "No hay lobby con ese código.",
     "INVALID_PLAYER_NAME": "Introduce un nombre de jugador válido.",
     "NAME_ALREADY_TAKEN": "Ese nombre ya está cogido en esta mesa.",
+    "INVALID_PLAYER_COLOR": "Elige un color de jugador válido.",
+    "PLAYER_COLOR_ALREADY_TAKEN": "Ese color ya está cogido en esta mesa.",
+    "InvalidPlayerColor": "Elige un color de jugador válido.",
+    "PlayerColorAlreadyTaken": "Ese color ya está cogido en esta mesa.",
     "NOT_HOST": "Solo el anfitrión puede hacer eso.",
     "INSUFFICIENT_PLAYERS": "Al menos dos jugadores deben unirse antes de empezar.",
     "PLAYER_NOT_JOINED": "Primero únete a la partida.",
@@ -208,7 +214,10 @@
     "statusStayed": "Asegurado",
     "statusFrozen": "Congelado",
     "statusCompleted": "Puntuado",
-    "statusWaiting": "Esperando"
+    "statusWaiting": "Esperando",
+    "selfTarget": "Yo",
+    "incomingAction": "Entrante",
+    "flip3Remaining": "{count} por robar"
   },
   "TurnControls": {
     "startNextRound": "Empezar siguiente ronda",

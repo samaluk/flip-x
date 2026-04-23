@@ -55,6 +55,7 @@ const PendingFlip3 = Schema.Struct({
 const PlayerSnapshot = Schema.Struct({
   playerId: Schema.String,
   displayName: Schema.String,
+  colorId: Schema.optional(Schema.String),
   seatIndex: Schema.Number,
   totalScore: Schema.Number,
   isOnline: Schema.Boolean,

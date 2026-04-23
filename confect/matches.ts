@@ -11,12 +11,19 @@ import type { Id } from "../convex/_generated/dataModel";
 import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
 import type { MutationCtx } from "../convex/_generated/server";
 import {
+  firstAvailablePlayerColorId,
+  isPlayerColorId,
+  type PlayerColorId,
+} from "../shared/lib/player-colors";
+import {
   InvalidHostName,
+  InvalidPlayerColor,
   InvalidPlayerName,
   LobbyCodeUnavailable,
   LobbyNotFound,
   MatchNotFound,
   NameAlreadyTaken,
+  PlayerColorAlreadyTaken,
 } from "../shared/lib/errors/domain";
 import { runGameCommand } from "../game/application/run-command";
 import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
@@ -47,7 +54,7 @@ async function generateUniqueLobbyCode(ctx: MutationCtx) {
 
 export async function createMatchForSession(
   ctx: MutationCtx,
-  args: { hostName: string; sessionId: string },
+  args: { hostName: string; hostColorId?: string; sessionId: string },
 ) {
   const sessionId = args.sessionId as SessionId;
 
@@ -58,6 +65,8 @@ export async function createMatchForSession(
   if (!hostName || hostName.length > 20) {
     throw new InvalidHostName();
   }
+
+  const hostColorId = normalizePlayerColorId(args.hostColorId, []);
 
   const timestamp = Date.now();
   const lobbyCode = await generateUniqueLobbyCode(ctx);
@@ -74,6 +83,7 @@ export async function createMatchForSession(
   const hostPlayerId = await ctx.db.insert("players", {
     matchId,
     displayName: hostName,
+    colorId: hostColorId,
     seatIndex: 0,
     totalScore: 0,
     hasWon: false,
@@ -119,6 +129,7 @@ export async function joinByCodeForSession(
 export const createMatch = mutationWithSession({
   args: {
     hostName: v.string(),
+    hostColorId: v.optional(v.string()),
   },
   handler: async (ctx, args) => await createMatchForSession(ctx, args),
 });
@@ -174,7 +185,7 @@ export const joinByCode = mutationWithSession({
 
 export async function joinMatchForSession(
   ctx: MutationCtx,
-  args: { matchId: Id<"matches">; playerName: string; sessionId: string },
+  args: { matchId: Id<"matches">; playerName: string; playerColorId?: string; sessionId: string },
 ) {
   const sessionId = args.sessionId as SessionId;
 
@@ -193,6 +204,11 @@ export async function joinMatchForSession(
 
   const players = await getPlayersByMatch(ctx, args.matchId);
   const existingViewerPlayerId = await getViewerPlayerId(ctx, args.matchId, sessionId);
+  const takenColorIds = players
+    .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
+    .map((player) => player.colorId)
+    .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
+  const playerColorId = normalizePlayerColorId(args.playerColorId, takenColorIds);
 
   if (existingViewerPlayerId) {
     const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
@@ -207,7 +223,7 @@ export async function joinMatchForSession(
       throw new NameAlreadyTaken({ name: playerName });
     }
 
-    await ctx.db.patch(existingViewerPlayerId, { displayName: playerName });
+    await ctx.db.patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId });
     const round = await getLatestRound(ctx, args.matchId);
     const nextMatch = await ctx.db.get(args.matchId);
 
@@ -228,6 +244,7 @@ export async function joinMatchForSession(
   const playerId = await ctx.db.insert("players", {
     matchId: args.matchId,
     displayName: playerName,
+    colorId: playerColorId,
     seatIndex: nextSeat,
     totalScore: 0,
     hasWon: false,
@@ -243,9 +260,26 @@ export const joinMatch = mutationWithSession({
   args: {
     matchId: v.id("matches"),
     playerName: v.string(),
+    playerColorId: v.optional(v.string()),
   },
   handler: async (ctx, args) => await joinMatchForSession(ctx, args),
 });
+
+function normalizePlayerColorId(colorId: string | undefined, takenColorIds: string[]) {
+  if (!colorId) {
+    return firstAvailablePlayerColorId(takenColorIds);
+  }
+
+  if (!isPlayerColorId(colorId)) {
+    throw new InvalidPlayerColor({ colorId });
+  }
+
+  if (takenColorIds.includes(colorId)) {
+    throw new PlayerColorAlreadyTaken({ colorId });
+  }
+
+  return colorId;
+}
 
 export async function startMatchForSession(
   ctx: MutationCtx,

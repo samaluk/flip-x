@@ -1,10 +1,10 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
-import { Effect, Layer, Option } from "effect";
+import { Effect, Layer } from "effect";
 
 import type { Card } from "../game/logic/card-types";
 
 import api from "./_generated/api";
-import { DatabaseReader, MutationCtx } from "./_generated/services";
+import { MutationCtx, QueryCtx } from "./_generated/services";
 import * as matchFns from "./matches";
 
 function normalizeDeterministicStart(
@@ -37,26 +37,38 @@ const getMatchSnapshot = FunctionImpl.make(
 );
 const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lobbyCode }) =>
   Effect.gen(function* () {
-    const reader = yield* DatabaseReader;
+    const ctx = yield* QueryCtx;
     const normalized = lobbyCode.trim().toUpperCase();
 
     if (normalized.length !== 4) {
       return null;
     }
 
-    const match = yield* reader
-      .table("matches")
-      .index("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
-      .first();
+    const match = yield* Effect.promise(() =>
+      ctx.db
+        .query("matches")
+        .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
+        .first(),
+    );
 
-    if (Option.isNone(match) || match.value.status !== "setup") {
+    if (!match || match.status !== "setup") {
       return null;
     }
 
+    const players = yield* Effect.promise(() =>
+      ctx.db
+        .query("players")
+        .withIndex("by_match", (query) => query.eq("matchId", match._id))
+        .collect(),
+    );
+
     return {
-      matchId: String(match.value._id),
-      lobbyCode: match.value.lobbyCode,
-      status: match.value.status,
+      matchId: String(match._id),
+      lobbyCode: match.lobbyCode,
+      status: match.status,
+      usedColorIds: players
+        .map((player) => player.colorId)
+        .filter((colorId): colorId is string => typeof colorId === "string"),
     };
   }).pipe(Effect.orDie),
 );

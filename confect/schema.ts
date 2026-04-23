@@ -51,6 +51,7 @@ export const Players = Table.make(
   Schema.Struct({
     matchId: GenericId.GenericId("matches"),
     displayName: Schema.String,
+    colorId: Schema.optional(Schema.String),
     seatIndex: Schema.Number,
     totalScore: Schema.Number,
     hasWon: Schema.Boolean,

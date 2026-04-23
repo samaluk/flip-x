@@ -2,12 +2,22 @@
 
 import { CrosshairIcon, RefreshCwIcon, UserIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { memo, type ReactElement, useEffect, useMemo, useRef, useState } from "react";
+import {
+  memo,
+  type CSSProperties,
+  type ReactElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import { Flip7Card } from "@/game/ui/flip7-card";
 import { Badge } from "@/shared/ui/badge";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
+import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
+import { getPlayerColor, playerInitials } from "@/shared/lib/player-colors";
 
 type LaneRoundStatus = MatchSnapshot["players"][number]["roundStatus"];
 
@@ -179,6 +189,8 @@ export const PlayerLane = memo(function PlayerLane({
 
   const cardStateAnimation = stateAnimation ?? poseFromStatus(displayStatus);
   const roundStatusLabelKey = statusLabelKey(displayStatus);
+  const playerColor = getPlayerColor(player.colorId, player.seatIndex);
+  const initials = playerInitials(player.displayName);
 
   const cardElements: ReactElement[] = [
     ...player.modifierCards.map((card) => (
@@ -278,12 +290,43 @@ export const PlayerLane = memo(function PlayerLane({
       tabIndex={targetingActive ? 0 : undefined}
       aria-label={targetingActive ? `Select ${player.displayName} as target` : undefined}
     >
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1.5">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="font-heading text-foreground text-base font-medium tracking-tight">
+      <div className="flex items-stretch gap-4">
+        <div className={cn("flex shrink-0 flex-col items-center gap-2", compact ? "w-24" : "w-32")}>
+          <Avatar size="lg" className={cn("ring-2 ring-border", compact ? "size-11" : "size-14")}>
+            <AvatarFallback
+              className="text-base font-semibold tracking-tight"
+              style={
+                {
+                  backgroundColor: playerColor.background,
+                  color: playerColor.foreground,
+                } satisfies CSSProperties
+              }
+            >
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+
+          <div className="flex w-full min-w-0 flex-col items-center gap-0.5 text-center">
+            <h3 className="font-heading text-foreground w-full truncate text-sm font-medium tracking-tight">
               {player.displayName}
             </h3>
+            <div className="text-muted-foreground text-xs tabular-nums">
+              {t("totalScore", { score: player.totalScore })}
+            </div>
+            <div className="text-foreground text-lg font-semibold tabular-nums">
+              {player.pointsAtRisk}
+            </div>
+            <div className="text-muted-foreground text-[0.65rem] leading-none">
+              {t("pointsAtRisk")}
+            </div>
+          </div>
+
+          <div className="flex w-full flex-col items-center gap-1">
+            {roundStatusLabelKey ? (
+              <Badge variant={statusVariant(displayStatus)} className="max-w-full text-[0.65rem]">
+                {t(roundStatusLabelKey)}
+              </Badge>
+            ) : null}
             {isDealer ? (
               <Badge variant="default" className="text-[0.65rem]">
                 {t("dealer")}
@@ -303,10 +346,7 @@ export const PlayerLane = memo(function PlayerLane({
               </Badge>
             ) : null}
             {isSelfTargeting ? (
-              <Badge
-                variant="outline"
-                className="border-yellow-500 text-[0.65rem] text-yellow-600 dark:text-yellow-500"
-              >
+              <Badge variant="outline" className="text-[0.65rem]">
                 <UserIcon className="size-3" />
                 {t("selfTarget")}
               </Badge>
@@ -318,66 +358,19 @@ export const PlayerLane = memo(function PlayerLane({
               </Badge>
             ) : null}
             {flip3Remaining !== null && flip3Remaining > 0 ? (
-              <Badge
-                variant="outline"
-                className="border-blue-500 text-[0.65rem] text-blue-600 dark:text-blue-500"
-              >
+              <Badge variant="outline" className="text-[0.65rem]">
                 <RefreshCwIcon className="size-3 animate-spin" />
                 {t("flip3Remaining", { count: flip3Remaining })}
               </Badge>
             ) : null}
           </div>
-          <div className="text-muted-foreground text-sm">
-            {t("totalScore", { score: player.totalScore })}
-          </div>
         </div>
 
-        {!compact && (
-          <div className="grid min-w-[9rem] gap-0.5 text-right text-sm">
-            {roundStatusLabelKey ? (
-              <Badge
-                variant={statusVariant(displayStatus)}
-                className="justify-end text-[0.65rem]"
-              >
-                {t(roundStatusLabelKey)}
-              </Badge>
-            ) : null}
-            <div className="text-foreground text-2xl font-semibold tabular-nums">
-              {player.pointsAtRisk}
-            </div>
-            <div className="text-muted-foreground text-xs">{t("pointsAtRisk")}</div>
+        <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain pb-1">
+          <div className={cn("flex flex-nowrap items-start", compact ? "gap-1.5" : "gap-3")}>
+            {cardElements.length > 0 ? cardElements : null}
           </div>
-        )}
-        {compact && roundStatusLabelKey && displayStatus !== "active" && displayStatus !== "waiting" ? (
-          <Badge
-            variant={statusVariant(displayStatus)}
-            className="text-[0.65rem]"
-          >
-            {t(roundStatusLabelKey)}
-          </Badge>
-        ) : null}
-      </div>
-
-      <div
-        className={cn(
-          "mt-3 flex flex-row items-start",
-          overlapCards
-            ? "group/cards max-w-[min(100%,26rem)] flex-nowrap overflow-x-auto overscroll-x-contain pb-1 [&>*]:transition-[margin-left] [&>*]:duration-300 [&>*]:ease-out [&>*:not(:first-child)]:-ml-7 sm:[&>*:not(:first-child)]:-ml-8 group-hover/cards:[&>*]:ml-0"
-            : compact
-              ? "flex-wrap gap-1.5"
-              : "flex-wrap gap-3",
-        )}
-      >
-        {overlapCards
-          ? cardElements.map((el, index) => {
-              const wrapKey = String(el.key ?? index);
-              return (
-                <div key={wrapKey} className="shrink-0" style={{ zIndex: index + 1 }}>
-                  {el}
-                </div>
-              );
-            })
-          : cardElements}
+        </div>
       </div>
     </section>
   );
@@ -409,6 +402,7 @@ function arePlayersEqual(
   return (
     left.playerId === right.playerId &&
     left.displayName === right.displayName &&
+    left.colorId === right.colorId &&
     left.seatIndex === right.seatIndex &&
     left.totalScore === right.totalScore &&
     left.isOnline === right.isOnline &&

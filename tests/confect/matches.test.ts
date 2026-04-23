@@ -1,6 +1,6 @@
 import { describe, it } from "@effect/vitest";
 import { assertEquals } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Cause, Effect, Exit } from "effect";
 
 import refs from "@/confect/_generated/refs";
 
@@ -13,12 +13,14 @@ describe("Confect matches", () => {
 
       const created = yield* client.mutation(refs.public.matches.createMatch, {
         hostName: "Host",
+        hostColorId: "cyan",
         sessionId: "session-host",
       });
 
       assertEquals(created.status, "setup");
       assertEquals(created.players.length, 1);
       assertEquals(created.players[0]?.displayName, "Host");
+      assertEquals(created.players[0]?.colorId, "cyan");
 
       const lookup = yield* client.query(refs.public.matches.getMatchByCode, {
         lobbyCode: created.lobbyCode,
@@ -26,6 +28,7 @@ describe("Confect matches", () => {
 
       assertEquals(lookup?.matchId, created.matchId);
       assertEquals(lookup?.status, "setup");
+      assertEquals(JSON.stringify(lookup?.usedColorIds), JSON.stringify(["cyan"]));
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 
@@ -35,18 +38,48 @@ describe("Confect matches", () => {
 
       const created = yield* client.mutation(refs.public.matches.createMatch, {
         hostName: "Host",
+        hostColorId: "cyan",
         sessionId: "session-host",
       });
 
       const joined = yield* client.mutation(refs.public.matches.joinMatch, {
         matchId: created.matchId,
         playerName: "Guest",
+        playerColorId: "rose",
         sessionId: "session-guest",
       });
 
       assertEquals(joined.players.length, 2);
       assertEquals(joined.players[1]?.displayName, "Guest");
+      assertEquals(joined.players[1]?.colorId, "rose");
       assertEquals(joined.viewerPlayerId, joined.players[1]?.playerId ?? null);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("rejects a color already used by another player", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* client.mutation(refs.public.matches.createMatch, {
+        hostName: "Host",
+        hostColorId: "cyan",
+        sessionId: "session-host",
+      });
+
+      const exit = yield* client
+        .mutation(refs.public.matches.joinMatch, {
+          matchId: created.matchId,
+          playerName: "Guest",
+          playerColorId: "cyan",
+          sessionId: "session-guest",
+        })
+        .pipe(Effect.exit);
+
+      if (Exit.isSuccess(exit)) {
+        throw new Error("Expected joining with a taken color to fail");
+      }
+
+      assertEquals(Cause.pretty(exit.cause).includes("PlayerColorAlreadyTaken"), true);
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 

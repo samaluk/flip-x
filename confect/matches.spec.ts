@@ -10,6 +10,7 @@ const MatchLookupResult = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.String,
   status: Schema.Literal("setup"),
+  usedColorIds: Schema.Array(Schema.String),
 });
 
 const getMatchByCode = FunctionSpec.publicQuery({
@@ -25,6 +26,7 @@ const createMatch = FunctionSpec.publicMutation({
   args: Schema.Struct({
     ...SessionIdField,
     hostName: Schema.String,
+    hostColorId: Schema.optional(Schema.String),
   }),
   returns: MatchSnapshot,
 });
@@ -47,6 +49,7 @@ const joinMatch = FunctionSpec.publicMutation({
     ...SessionIdField,
     matchId: Schema.String,
     playerName: Schema.String,
+    playerColorId: Schema.optional(Schema.String),
   }),
   returns: MatchSnapshot,
 });

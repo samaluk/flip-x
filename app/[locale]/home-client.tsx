@@ -1,11 +1,18 @@
 "use client";
 
 import { parseAsString, useQueryState } from "nuqs";
+import { useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { startTransition, type SubmitEvent, useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { PlayerColorPicker } from "@/game/ui/player-color-picker";
+import {
+  firstAvailablePlayerColorId,
+  isPlayerColorId,
+  type PlayerColorId,
+} from "@/shared/lib/player-colors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 import { Button } from "@/shared/ui/button";
@@ -14,11 +21,14 @@ import { useRouter } from "@/shared/i18n/navigation";
 import refs from "@/confect/_generated/refs";
 
 const NAME_STORAGE_KEY = "flip7_player_name";
+const COLOR_STORAGE_KEY = "flip7_player_color";
+const NO_USED_COLORS: readonly string[] = [];
 
 export function HomeClient() {
   const router = useRouter();
   const [sessionId] = useSessionId();
   const [name, setName] = useState("");
+  const [colorId, setColorId] = useState<PlayerColorId>("cyan");
   const [joinCode, setJoinCode] = useQueryState("code", {
     ...parseAsString,
     parse: (value) => value.toUpperCase(),
@@ -35,6 +45,11 @@ export function HomeClient() {
   const createMatch = useSessionConfectMutation(refs.public.matches.createMatch);
   const joinByCode = useSessionConfectMutation(refs.public.matches.joinByCode);
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
+  const lobbyLookup = useConfectQuery(
+    refs.public.matches.getMatchByCode,
+    joinCode && joinCode.length === 4 ? { lobbyCode: joinCode } : "skip",
+  );
+  const usedColorIds = lobbyLookup?.usedColorIds ?? NO_USED_COLORS;
 
   useEffect(() => {
     if (hasLoadedName) return;
@@ -43,8 +58,18 @@ export function HomeClient() {
     if (stored) {
       setName(stored);
     }
+    const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
+    if (storedColor && isPlayerColorId(storedColor)) {
+      setColorId(storedColor);
+    }
     setHasLoadedName(true);
   }, [hasLoadedName]);
+
+  useEffect(() => {
+    if (usedColorIds.includes(colorId)) {
+      setColorId(firstAvailablePlayerColorId(usedColorIds));
+    }
+  }, [colorId, usedColorIds]);
 
   useEffect(() => {
     if (joinCode) {
@@ -58,6 +83,7 @@ export function HomeClient() {
     const trimmedName = name.trim();
 
     localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
+    localStorage.setItem(COLOR_STORAGE_KEY, colorId);
 
     if (!trimmedName) {
       toast.error(t("toastNameRequired"));
@@ -79,6 +105,7 @@ export function HomeClient() {
     try {
       const match = await createMatch({
         hostName: trimmedName,
+        hostColorId: colorId,
       });
 
       startTransition(() => {
@@ -99,6 +126,7 @@ export function HomeClient() {
     const lobbyCode = (joinCode ?? "").trim();
 
     localStorage.setItem(NAME_STORAGE_KEY, playerName);
+    localStorage.setItem(COLOR_STORAGE_KEY, colorId);
 
     if (!playerName) {
       toast.error(t("toastNameRequired"));
@@ -127,6 +155,7 @@ export function HomeClient() {
       await joinMatch({
         matchId: result.matchId,
         playerName: playerName,
+        playerColorId: colorId,
       });
       startTransition(() => {
         router.push(`/game/${result.matchId}`);
@@ -165,6 +194,13 @@ export function HomeClient() {
               className="h-12"
             />
           </div>
+
+          <PlayerColorPicker
+            value={colorId}
+            onChange={setColorId}
+            usedColorIds={isJoinMode ? usedColorIds : []}
+            label={t("playerColor")}
+          />
 
           {!isJoinMode ? (
             <div className="space-y-6">

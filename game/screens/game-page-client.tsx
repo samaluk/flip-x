@@ -3,14 +3,20 @@
 import { useSessionId } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type SubmitEvent, useCallback, useState } from "react";
+import { type SubmitEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
+import { PlayerColorPicker } from "@/game/ui/player-color-picker";
 import { GameTable } from "@/game/screens/game-table";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
 import { StartGameButton } from "@/game/screens/start-game-button";
 import { useMatchPresence } from "@/game/hooks/use-match-presence";
+import {
+  firstAvailablePlayerColorId,
+  isPlayerColorId,
+  type PlayerColorId,
+} from "@/shared/lib/player-colors";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -19,10 +25,13 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 
+const COLOR_STORAGE_KEY = "flip7_player_color";
+
 export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   const [sessionId] = useSessionId();
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
+  const [colorId, setColorId] = useState<PlayerColorId>("cyan");
   const [isJoining, setIsJoining] = useState(false);
   const snapshot = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, { matchId });
   const t = useTranslations("Game");
@@ -31,6 +40,26 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
     ? (snapshot.viewerPlayerId as Id<"players">)
     : undefined;
   const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId);
+  const usedColorIds = useMemo(
+    () =>
+      snapshot?.players
+        .map((player) => player.colorId)
+        .filter((playerColorId): playerColorId is string => typeof playerColorId === "string") ?? [],
+    [snapshot?.players],
+  );
+
+  useEffect(() => {
+    const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
+    if (storedColor && isPlayerColorId(storedColor)) {
+      setColorId(storedColor);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (usedColorIds.includes(colorId)) {
+      setColorId(firstAvailablePlayerColorId(usedColorIds));
+    }
+  }, [colorId, usedColorIds]);
 
   const handleJoin = useCallback(
     async (event: SubmitEvent<HTMLFormElement>) => {
@@ -57,7 +86,9 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
         await joinMatch({
           matchId,
           playerName: trimmedName,
+          playerColorId: colorId,
         });
+        localStorage.setItem(COLOR_STORAGE_KEY, colorId);
         setPlayerName("");
       } catch (error) {
         const message = error instanceof Error ? error.message : "";
@@ -66,7 +97,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
         setIsJoining(false);
       }
     },
-    [joinMatch, matchId, playerName, sessionId, t, tErrors],
+    [colorId, joinMatch, matchId, playerName, sessionId, t, tErrors],
   );
 
   const copyInviteLink = useCallback(async () => {
@@ -161,21 +192,29 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
             {t("joinTitle")}
           </h2>
           <p className="text-muted-foreground mt-1 mb-4 text-sm">{t("joinSubtitle")}</p>
-          <form onSubmit={handleJoin} className="flex gap-3">
-            <Input
-              value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
-              placeholder={t("namePlaceholder")}
-              maxLength={20}
-              className="max-w-xs"
+          <form onSubmit={handleJoin} className="flex flex-col gap-4 sm:max-w-md">
+            <div className="flex gap-3">
+              <Input
+                value={playerName}
+                onChange={(e) => setPlayerName(e.target.value)}
+                placeholder={t("namePlaceholder")}
+                maxLength={20}
+                className="max-w-xs"
+              />
+              <Button
+                type="submit"
+                disabled={isJoining || !playerName.trim()}
+                className="font-medium"
+              >
+                {t("joinGame")}
+              </Button>
+            </div>
+            <PlayerColorPicker
+              value={colorId}
+              onChange={setColorId}
+              usedColorIds={usedColorIds}
+              label={t("playerColor")}
             />
-            <Button
-              type="submit"
-              disabled={isJoining || !playerName.trim()}
-              className="font-medium"
-            >
-              {t("joinGame")}
-            </Button>
           </form>
         </div>
       ) : null}

@@ -44,6 +44,22 @@ export class NameAlreadyTaken extends Data.TaggedError("NameAlreadyTaken")<{
   }
 }
 
+export class InvalidPlayerColor extends Data.TaggedError("InvalidPlayerColor")<{
+  colorId: string;
+}> {
+  get message() {
+    return this._tag;
+  }
+}
+
+export class PlayerColorAlreadyTaken extends Data.TaggedError("PlayerColorAlreadyTaken")<{
+  colorId: string;
+}> {
+  get message() {
+    return this._tag;
+  }
+}
+
 export class NotHost extends Data.TaggedError("NotHost")<{
   _tag: "NotHost";
 }> {}
@@ -90,6 +106,8 @@ export type AppError =
   | LobbyNotFound
   | InvalidPlayerName
   | NameAlreadyTaken
+  | InvalidPlayerColor
+  | PlayerColorAlreadyTaken
   | NotHost
   | InsufficientPlayers
   | PlayerNotJoined

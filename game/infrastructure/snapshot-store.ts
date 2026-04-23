@@ -136,6 +136,7 @@ export async function buildSnapshot(
     players: players.map((player) => ({
       playerId: String(player._id),
       displayName: player.displayName,
+      colorId: player.colorId,
       seatIndex: player.seatIndex,
       totalScore: player.totalScore,
       isOnline: false,

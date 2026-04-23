@@ -43,6 +43,7 @@ export type MatchSnapshot = {
   players: Array<{
     playerId: string;
     displayName: string;
+    colorId?: string;
     seatIndex: number;
     totalScore: number;
     isOnline: boolean;
@@ -93,6 +94,7 @@ export function buildMatchSnapshot(args: {
   players: Array<{
     playerId: string;
     displayName: string;
+    colorId?: string;
     seatIndex: number;
     totalScore: number;
     isOnline: boolean;
@@ -150,6 +152,7 @@ export function buildMatchSnapshot(args: {
       return {
         playerId: player.playerId,
         displayName: player.displayName,
+        colorId: player.colorId,
         seatIndex: player.seatIndex,
         totalScore: player.totalScore,
         isOnline: player.isOnline,
