@@ -100,4 +100,42 @@ describe("player lane", () => {
     expect(screen.getByText(/Busted/i)).toBeInTheDocument();
     expect(screen.getAllByText("7").length).toBeGreaterThanOrEqual(1);
   });
+
+  it("preserves busted label after round is completed with bustCard present", () => {
+    const bustCard = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
+    render(
+      withIntlEn(
+        <PlayerLane
+          player={player({
+            roundStatus: "completed",
+            numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
+            bustCard,
+          })}
+          isActive={false}
+        />,
+      ),
+    );
+
+    expect(screen.getByText(/Busted/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Scored/i)).not.toBeInTheDocument();
+  });
+
+  it("shows busted badge in compact mode when bustCard is present", () => {
+    const bustCard = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
+    render(
+      withIntlEn(
+        <PlayerLane
+          player={player({
+            roundStatus: "completed",
+            numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
+            bustCard,
+          })}
+          isActive={false}
+          compact
+        />,
+      ),
+    );
+
+    expect(screen.getByText(/Busted/i)).toBeInTheDocument();
+  });
 });

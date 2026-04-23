@@ -264,7 +264,14 @@ export const vrtSnapshotRoundComplete: MatchSnapshot = {
             roundStatus: "stayed" as const,
             pointsAtRisk: 18,
           }
-        : p,
+        : p.playerId === JORDAN
+          ? {
+              ...p,
+              roundStatus: "completed" as const,
+              pointsAtRisk: 0,
+              bustCard: p.bustCard,
+            }
+          : p,
   ),
   latestEvent: {
     type: "flip7",

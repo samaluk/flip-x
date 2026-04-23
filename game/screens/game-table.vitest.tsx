@@ -1,4 +1,4 @@
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { act } from "react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
@@ -64,9 +64,11 @@ describe("GameTable VRT", () => {
     );
   });
 
-  test("round complete with next round control", async () => {
+  test("round complete with next round control including busted opponent", async () => {
     await renderGameTable(vrtSnapshotRoundComplete);
     await page.viewport(1440, 2400);
+    expect(screen.getByRole("button", { name: /start next round/i })).toBeInTheDocument();
+    expect(screen.getByText("Busted")).toBeInTheDocument();
     await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
       "game-round-complete",
     );

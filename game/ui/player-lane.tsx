@@ -9,7 +9,18 @@ import { Badge } from "@/shared/ui/badge";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 
-function statusLabelKey(status: MatchSnapshot["players"][number]["roundStatus"]): string | null {
+type LaneRoundStatus = MatchSnapshot["players"][number]["roundStatus"];
+
+function getDisplayStatus(
+  player: MatchSnapshot["players"][number],
+): LaneRoundStatus {
+  if (player.bustCard !== null) {
+    return "busted";
+  }
+  return player.roundStatus;
+}
+
+function statusLabelKey(status: LaneRoundStatus): string | null {
   switch (status) {
     case "active":
       return null;
@@ -26,7 +37,7 @@ function statusLabelKey(status: MatchSnapshot["players"][number]["roundStatus"])
   }
 }
 
-function statusVariant(status: MatchSnapshot["players"][number]["roundStatus"]) {
+function statusVariant(status: LaneRoundStatus) {
   switch (status) {
     case "busted":
       return "destructive" as const;
@@ -39,9 +50,7 @@ function statusVariant(status: MatchSnapshot["players"][number]["roundStatus"]) 
   }
 }
 
-function poseFromStatus(
-  status: MatchSnapshot["players"][number]["roundStatus"],
-): "bust" | "stay" | null {
+function poseFromStatus(status: LaneRoundStatus): "bust" | "stay" | null {
   if (status === "busted") {
     return "bust";
   }
@@ -95,7 +104,8 @@ export const PlayerLane = memo(function PlayerLane({
   const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
   const initialCardSyncDone = useRef(false);
-  const previousStatus = useRef(player.roundStatus);
+  const displayStatus = getDisplayStatus(player);
+  const previousStatus = useRef(displayStatus);
   const [dealingIds, setDealingIds] = useState<string[]>([]);
   const [stateAnimation, setStateAnimation] = useState<"bust" | "stay" | null>(null);
 
@@ -145,30 +155,30 @@ export const PlayerLane = memo(function PlayerLane({
   }, [cardIds]);
 
   useEffect(() => {
-    if (previousStatus.current === player.roundStatus) {
+    if (previousStatus.current === displayStatus) {
       return;
     }
 
-    if (player.roundStatus === "busted") {
+    if (displayStatus === "busted") {
       setStateAnimation("bust");
-    } else if (player.roundStatus === "stayed" || player.roundStatus === "frozen") {
+    } else if (displayStatus === "stayed" || displayStatus === "frozen") {
       setStateAnimation("stay");
     }
 
-    previousStatus.current = player.roundStatus;
+    previousStatus.current = displayStatus;
 
     if (
-      player.roundStatus === "busted" ||
-      player.roundStatus === "stayed" ||
-      player.roundStatus === "frozen"
+      displayStatus === "busted" ||
+      displayStatus === "stayed" ||
+      displayStatus === "frozen"
     ) {
       const timeout = window.setTimeout(() => setStateAnimation(null), 900);
       return () => window.clearTimeout(timeout);
     }
-  }, [player.roundStatus]);
+  }, [displayStatus]);
 
-  const cardStateAnimation = stateAnimation ?? poseFromStatus(player.roundStatus);
-  const roundStatusLabelKey = statusLabelKey(player.roundStatus);
+  const cardStateAnimation = stateAnimation ?? poseFromStatus(displayStatus);
+  const roundStatusLabelKey = statusLabelKey(displayStatus);
 
   const cardElements: ReactElement[] = [
     ...player.modifierCards.map((card) => (
@@ -326,7 +336,7 @@ export const PlayerLane = memo(function PlayerLane({
           <div className="grid min-w-[9rem] gap-0.5 text-right text-sm">
             {roundStatusLabelKey ? (
               <Badge
-                variant={statusVariant(player.roundStatus)}
+                variant={statusVariant(displayStatus)}
                 className="justify-end text-[0.65rem]"
               >
                 {t(roundStatusLabelKey)}
@@ -338,6 +348,14 @@ export const PlayerLane = memo(function PlayerLane({
             <div className="text-muted-foreground text-xs">{t("pointsAtRisk")}</div>
           </div>
         )}
+        {compact && roundStatusLabelKey && displayStatus !== "active" && displayStatus !== "waiting" ? (
+          <Badge
+            variant={statusVariant(displayStatus)}
+            className="text-[0.65rem]"
+          >
+            {t(roundStatusLabelKey)}
+          </Badge>
+        ) : null}
       </div>
 
       <div
