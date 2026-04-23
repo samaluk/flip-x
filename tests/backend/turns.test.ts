@@ -128,6 +128,10 @@ describe("Convex turns", () => {
         }
       }
 
+      if (!snapshot?.activePlayerId) {
+        break;
+      }
+
       const activeSession = sessions.find(
         (session) =>
           snapshot?.activePlayerId ===
