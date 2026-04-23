@@ -43,6 +43,9 @@ jobs:
             echo "PREVIEW_DEPLOYMENT_NAME=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
           fi
 
+      - name: Lint DESIGN.md
+        run: pnpm design:lint
+
       - name: Lint
         run: pnpm lint
 
