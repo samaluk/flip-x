@@ -8,8 +8,8 @@ import {
   getLobbyCode,
   hitControl,
   latestResolutionBodyLocator,
-  matchSetupForm,
   waitForEnabled,
+  waitForHydratedJoinByCodeForm,
   withThreePlayerMatch,
   withTwoPlayerMatch,
 } from "./helpers/match";
@@ -108,9 +108,11 @@ test.describe("gameplay", () => {
     const lobbyCode = await getLobbyCode(hostPage);
 
     await guestPage.goto(`/?code=${lobbyCode}`, { waitUntil: "domcontentloaded" });
-    await expect(guestPage.locator("#playerName")).toBeVisible();
-    const joinForm = matchSetupForm(guestPage);
-    await guestPage.locator("#playerName").fill(`Guest ${suffix}`);
+    const joinForm = await waitForHydratedJoinByCodeForm(guestPage, lobbyCode);
+    const guestName = `Guest ${suffix}`;
+    const nameInput = joinForm.locator("#playerName");
+    await nameInput.fill(guestName);
+    await expect(nameInput).toHaveValue(guestName);
     const joinButton = joinForm.getByRole("button", { name: /Join Game/i });
     await waitForEnabled(joinButton);
     await joinButton.click();

@@ -19,6 +19,17 @@ export function matchSetupForm(page: Page) {
   return page.locator("main:has(#playerName)");
 }
 
+/** Home-page join-by-code form after the lobby code from the URL has hydrated into the input. */
+export async function waitForHydratedJoinByCodeForm(page: Page, lobbyCode: string) {
+  const form = matchSetupForm(page);
+  const joinCodeInput = form.locator("#joinCode");
+
+  await expect(joinCodeInput).toBeVisible({ timeout: SESSION_READY_TIMEOUT_MS });
+  await expect(joinCodeInput).toHaveValue(lobbyCode, { timeout: SESSION_READY_TIMEOUT_MS });
+
+  return form;
+}
+
 /** Claim-seat form on the game page before the viewer has joined. */
 export function joinSeatForm(page: Page) {
   return page.locator("form").filter({ has: page.getByRole("button", { name: /^join game$/i }) });
