@@ -74,6 +74,7 @@ Preview-backed suites:
 ## Quality checks
 
 ```bash
+pnpm design:lint
 pnpm lint
 pnpm test
 pnpm build
