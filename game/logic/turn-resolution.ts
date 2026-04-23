@@ -676,6 +676,22 @@ export function continueRound(
     }
   }
 
+  // Safety: if loop exited while still dealing, force valid phase
+  if (round.phase === "dealing" && !round.pendingAction && !round.pendingFlip3) {
+    const anyActive = Object.values(playerStates).some((s) => s.status === "active");
+    if (!anyActive) {
+      round.phase = "scoring";
+      round.endedBy = "all_inactive";
+      round.activePlayerId = null;
+    } else {
+      round.phase = "player_turns";
+      const firstActiveSeat = nextActiveSeatIndex(players, playerStates, round.dealerSeat - 1);
+      round.turnSeatIndex = firstActiveSeat ?? round.dealerSeat;
+      round.activePlayerId =
+        firstActiveSeat === null ? null : getPlayerBySeat(players, firstActiveSeat).playerId;
+    }
+  }
+
   maybeFinishRound(round, players, playerStates);
 
   return { round, playerStates, events } satisfies ResolveResult;
