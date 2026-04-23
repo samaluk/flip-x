@@ -2,6 +2,8 @@ import { expect, type Locator, type Page } from "@playwright/test";
 
 import type { IsolatedContexts } from "../fixtures";
 
+const SESSION_READY_TIMEOUT_MS = 45_000;
+
 /**
  * Locators use roles and copy from the default locale (`en`, `localePrefix: "never"`).
  * Run with another UI language only after aligning these strings or switching strategy.
@@ -14,7 +16,7 @@ export function matchIdFromGameUrl(url: string): string | null {
 
 /** MatchSetup form on home or join-by-code flow (contains the player name field). */
 export function matchSetupForm(page: Page) {
-  return page.locator('main:has(#playerName)');
+  return page.locator("main:has(#playerName)");
 }
 
 /** Claim-seat form on the game page before the viewer has joined. */
@@ -52,7 +54,7 @@ export async function withTwoPlayerMatch(
 /** Session id is set in useEffect; the target submit button should become enabled once ready. */
 export async function waitForEnabled(button: Locator) {
   await expect(button).toBeEnabled({
-    timeout: 20_000,
+    timeout: SESSION_READY_TIMEOUT_MS,
   });
 }
 
@@ -87,10 +89,9 @@ export async function joinGameAsGuest(page: Page, matchId: string, displayName: 
   await page.goto(`/game/${matchId}`);
   const form = joinSeatForm(page);
   await form.getByRole("textbox").fill(displayName);
-  await expect(form.getByRole("button", { name: /join game/i })).toBeEnabled({
-    timeout: 20_000,
-  });
-  await form.getByRole("button", { name: /join game/i }).click();
+  const joinButton = form.getByRole("button", { name: /join game/i });
+  await waitForEnabled(joinButton);
+  await joinButton.click();
   await expect(form).not.toBeVisible({ timeout: 20_000 });
 }
 

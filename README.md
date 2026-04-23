@@ -15,6 +15,12 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
 - pnpm for package management
 - GitHub Actions for CI
 
+## Architecture
+
+- Repo structure reference: `docs/repo-layout.md`
+- Gameplay mutations flow through thin `confect/` entrypoints into `game/application/run-command.ts`.
+- Pure rules stay in `game/logic/`, while `game/infrastructure/` owns Convex document loading, persistence, and snapshot rebuilding.
+
 ## Local development
 
 1. Install dependencies:

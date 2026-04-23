@@ -7,5 +7,3 @@ export function generateLobbyCode(): string {
   }
   return code;
 }
-
-

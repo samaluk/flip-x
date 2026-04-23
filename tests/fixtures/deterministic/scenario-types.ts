@@ -38,22 +38,18 @@ export type CanonicalReplaySnapshot = {
   activePlayer: string | null;
   roundStatus: MatchSnapshot["roundStatus"];
   endedBy: MatchSnapshot["endedBy"];
-  pendingAction:
-    | {
-        actionKind: "freeze" | "flip_three";
-        sourcePlayer: string;
-        eligibleTargets: string[];
-        resume: "dealing" | "turns";
-      }
-    | null;
-  pendingFlip3:
-    | {
-        sourcePlayer: string;
-        targetPlayer: string;
-        cardsRemaining: number;
-        deferredActionCards: Array<{ label: string; actionKind: string }>;
-      }
-    | null;
+  pendingAction: {
+    actionKind: "freeze" | "flip_three";
+    sourcePlayer: string;
+    eligibleTargets: string[];
+    resume: "dealing" | "turns";
+  } | null;
+  pendingFlip3: {
+    sourcePlayer: string;
+    targetPlayer: string;
+    cardsRemaining: number;
+    deferredActionCards: Array<{ label: string; actionKind: string }>;
+  } | null;
   players: Array<{
     displayName: string;
     seatIndex: number;
@@ -61,17 +57,17 @@ export type CanonicalReplaySnapshot = {
     roundStatus: MatchSnapshot["players"][number]["roundStatus"];
     pointsAtRisk: number;
     numberCards: number[];
-    modifierCards: Array<MatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]>;
+    modifierCards: Array<
+      MatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
+    >;
     heldActionCards: string[];
     receivedActionCards: string[];
   }>;
-  latestEvent:
-    | {
-        type: string;
-        payload: Record<string, unknown>;
-        playerNames: string | null;
-      }
-    | null;
+  latestEvent: {
+    type: string;
+    payload: Record<string, unknown>;
+    playerNames: string | null;
+  } | null;
 };
 
 export type DeterministicReplayScenario = {
@@ -124,7 +120,9 @@ export type CanonicalSetupSnapshot = Pick<
     totalScore: number;
     pointsAtRisk: number;
     numberCards: number[];
-    modifierCards: Array<MatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]>;
+    modifierCards: Array<
+      MatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
+    >;
     heldActionKinds: string[];
     receivedActionKinds: string[];
   }>;

@@ -10,10 +10,5 @@
     "scripts/**",
     "confect/_generated/**"
   ],
-  "ignoreDependencies": [
-    "shadcn",
-    "tw-animate-css",
-    "tailwindcss",
-    "@confect/test"
-  ]
+  "ignoreDependencies": ["shadcn", "tw-animate-css", "tailwindcss", "@confect/test"]
 }

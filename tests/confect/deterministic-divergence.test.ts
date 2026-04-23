@@ -22,7 +22,10 @@ describe("Confect deterministic divergence", () => {
       const harness: ReplayHarness = {
         createStartedMatch: async (playerNames, options) => {
           const [hostName, ...guestNames] = playerNames;
-          const sessions = playerNames.map((name, index) => ({ name, sessionId: `session-${index + 1}` }));
+          const sessions = playerNames.map((name, index) => ({
+            name,
+            sessionId: `session-${index + 1}`,
+          }));
           const created = await Effect.runPromise(
             client.mutation(refs.public.matches.createMatch, {
               hostName,
@@ -90,7 +93,10 @@ describe("Confect deterministic divergence", () => {
       const harness: ReplayHarness = {
         createStartedMatch: async (playerNames, options) => {
           const [hostName, ...guestNames] = playerNames;
-          const sessions = playerNames.map((name, index) => ({ name, sessionId: `session-${index + 1}` }));
+          const sessions = playerNames.map((name, index) => ({
+            name,
+            sessionId: `session-${index + 1}`,
+          }));
           const created = await Effect.runPromise(
             client.mutation(refs.public.matches.createMatch, {
               hostName,

@@ -35,7 +35,12 @@ describe("Convex deterministic replay", () => {
       advanceUntilRoundBoundary: async (matchId, sessions) =>
         await advanceUntilRoundBoundary(client, matchId as never, sessions as never),
       startDeterministicNextRound: async (matchId, sessionId, deterministicStart) =>
-        await startDeterministicNextRound(client, matchId as never, sessionId as never, deterministicStart),
+        await startDeterministicNextRound(
+          client,
+          matchId as never,
+          sessionId as never,
+          deterministicStart,
+        ),
       takeTurn: async (matchId, sessionId, action) =>
         await client.mutation(api.turns.takeTurn, {
           matchId: matchId as never,
@@ -82,7 +87,8 @@ describe("Convex deterministic replay", () => {
   });
 
   it("reruns deterministically 10 times with identical outcomes", async () => {
-    const results: Array<{ stepsConsumed: number; finalRound: string; winnerId: string | null }> = [];
+    const results: Array<{ stepsConsumed: number; finalRound: string; winnerId: string | null }> =
+      [];
     for (let run = 0; run < 10; run += 1) {
       const result = await runDeterministicReplayScenario(
         cloneReplayScenario(MATCH_REPLAY_SCENARIO),

@@ -39,9 +39,12 @@ describe("Confect deterministic setup", () => {
   it.effect("startNextRound uses the provided deterministic draw pile", () =>
     Effect.gen(function* () {
       const scenario = cloneSetupScenario(BASIC_DETERMINISTIC_SETUP_SCENARIO);
-      const { matchId, sessions } = yield* createStartedMatchWithOptions([...scenario.playerNames], {
-        deterministicStart: scenario.startMatch,
-      });
+      const { matchId, sessions } = yield* createStartedMatchWithOptions(
+        [...scenario.playerNames],
+        {
+          deterministicStart: scenario.startMatch,
+        },
+      );
 
       yield* advanceUntilRoundBoundary(matchId, sessions);
 

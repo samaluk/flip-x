@@ -1,9 +1,6 @@
 import type { ActionCard, Card, NumberCard } from "@/game/logic/card-types";
 
-import type {
-  CanonicalReplaySnapshot,
-  DeterministicReplayScenario,
-} from "./scenario-types";
+import type { CanonicalReplaySnapshot, DeterministicReplayScenario } from "./scenario-types";
 import { cloneDeterministicStartOptions } from "./scenario-runner";
 
 function numberCard(id: string, numberValue: number): NumberCard {
@@ -138,7 +135,11 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
   playerNames: ["Host", "Guest", "Third"],
   setupMatch: {
     roundSeed: {
-      drawPile: withFillerCards(numberCard("s-open-1", 1), numberCard("s-open-2", 2), numberCard("s-open-3", 3)),
+      drawPile: withFillerCards(
+        numberCard("s-open-1", 1),
+        numberCard("s-open-2", 2),
+        numberCard("s-open-3", 3),
+      ),
     },
   },
   setupRound: {
@@ -326,8 +327,12 @@ export function cloneReplayScenario<T extends DeterministicReplayScenario>(scena
     ...scenario,
     playerNames: [...scenario.playerNames] as T["playerNames"],
     setupMatch: cloneDeterministicStartOptions(scenario.setupMatch),
-    setupRound: scenario.setupRound ? cloneDeterministicStartOptions(scenario.setupRound) : undefined,
+    setupRound: scenario.setupRound
+      ? cloneDeterministicStartOptions(scenario.setupRound)
+      : undefined,
     decisionScript: scenario.decisionScript.map((step) => ({ ...step })) as T["decisionScript"],
-    expectedStates: scenario.expectedStates.map((expectedState) => structuredClone(expectedState)) as T["expectedStates"],
+    expectedStates: scenario.expectedStates.map((expectedState) =>
+      structuredClone(expectedState),
+    ) as T["expectedStates"],
   };
 }

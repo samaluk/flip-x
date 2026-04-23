@@ -212,7 +212,8 @@ describe("Confect deterministic replay", () => {
                 snapshot.activePlayerId ===
                 snapshot.players.find((player) => player.displayName === session.name)?.playerId,
             );
-            if (!activeSession) throw new Error("Expected an active session while round is in progress");
+            if (!activeSession)
+              throw new Error("Expected an active session while round is in progress");
             await Effect.runPromise(
               client.mutation(refs.public.turns.takeTurn, {
                 matchId: matchId as never,

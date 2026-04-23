@@ -5,20 +5,25 @@ import type { MatchSnapshot } from "@/game/logic/view-models";
 import type { CanonicalReplaySnapshot, ReplayResult } from "./scenario-types";
 
 export function canonicalizeSnapshot(snapshot: MatchSnapshot): CanonicalReplaySnapshot {
-  const playerNames = new Map(snapshot.players.map((player) => [player.playerId, player.displayName]));
+  const playerNames = new Map(
+    snapshot.players.map((player) => [player.playerId, player.displayName]),
+  );
 
   return {
     status: snapshot.status,
     currentRoundNumber: snapshot.currentRoundNumber,
     dealerSeat: snapshot.dealerSeat,
-    activePlayer: snapshot.activePlayerId ? playerNames.get(snapshot.activePlayerId) ?? null : null,
+    activePlayer: snapshot.activePlayerId
+      ? (playerNames.get(snapshot.activePlayerId) ?? null)
+      : null,
     roundStatus: snapshot.roundStatus,
     endedBy: snapshot.endedBy,
     pendingAction: snapshot.pendingAction
       ? {
           actionKind: snapshot.pendingAction.actionKind,
           sourcePlayer:
-            playerNames.get(snapshot.pendingAction.sourcePlayerId) ?? snapshot.pendingAction.sourcePlayerId,
+            playerNames.get(snapshot.pendingAction.sourcePlayerId) ??
+            snapshot.pendingAction.sourcePlayerId,
           eligibleTargets: snapshot.pendingAction.eligibleTargetIds.map(
             (playerId) => playerNames.get(playerId) ?? playerId,
           ),
@@ -28,9 +33,11 @@ export function canonicalizeSnapshot(snapshot: MatchSnapshot): CanonicalReplaySn
     pendingFlip3: snapshot.pendingFlip3
       ? {
           sourcePlayer:
-            playerNames.get(snapshot.pendingFlip3.sourcePlayerId) ?? snapshot.pendingFlip3.sourcePlayerId,
+            playerNames.get(snapshot.pendingFlip3.sourcePlayerId) ??
+            snapshot.pendingFlip3.sourcePlayerId,
           targetPlayer:
-            playerNames.get(snapshot.pendingFlip3.targetPlayerId) ?? snapshot.pendingFlip3.targetPlayerId,
+            playerNames.get(snapshot.pendingFlip3.targetPlayerId) ??
+            snapshot.pendingFlip3.targetPlayerId,
           cardsRemaining: snapshot.pendingFlip3.cardsRemaining,
           deferredActionCards: snapshot.pendingFlip3.deferredActionCards,
         }

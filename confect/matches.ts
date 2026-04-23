@@ -3,43 +3,23 @@ import type { SessionId } from "convex-helpers/server/sessions";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
 import type { Card } from "../game/logic/card-types";
-import {
-  continueRound,
-  createPlayerRoundStates,
-  createRoundRuntime,
-  finalizeRound,
-} from "../game/logic/turn-resolution";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimit } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession } from "./lib/session_functions";
 import { setPlayerSession } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
-import {
-  buildOrderedPlayers,
-  buildPlayerIdMap,
-  buildSnapshot,
-  getLatestRound,
-  getPlayersByMatch,
-  getViewerPlayerId,
-  persistEvents,
-  persistPlayerStates,
-  persistRoundRuntime,
-  persistScoreBreakdowns,
-  requireViewerPlayerId,
-  serializeRoundRuntime,
-} from "./lib/store";
+import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
 import type { MutationCtx } from "../convex/_generated/server";
 import {
   InvalidHostName,
-  InvalidMatchState,
   InvalidPlayerName,
-  InsufficientPlayers,
   LobbyCodeUnavailable,
   LobbyNotFound,
   MatchNotFound,
   NameAlreadyTaken,
-  NotHost,
 } from "../shared/lib/errors/domain";
+import { runGameCommand } from "../game/application/run-command";
+import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
 
 async function generateUniqueLobbyCode(ctx: MutationCtx) {
   let lobbyCode = generateLobbyCode();
@@ -279,66 +259,12 @@ export async function startMatchForSession(
 
   await enforceRateLimit(ctx, "startMatch", String(args.sessionId));
 
-  const match = await ctx.db.get(args.matchId);
-
-  if (!match || match.status !== "setup") {
-    throw new InvalidMatchState();
-  }
-
-  const viewerPlayerId = await requireViewerPlayerId(ctx, args.matchId, sessionId);
-  if (match.hostPlayerId !== viewerPlayerId) {
-    throw new NotHost();
-  }
-
-  const players = await getPlayersByMatch(ctx, args.matchId);
-  if (players.length < 2) {
-    throw new InsufficientPlayers({ minPlayers: 2 });
-  }
-
-  const orderedPlayers = buildOrderedPlayers(players);
-  const playerIdMap = buildPlayerIdMap(players);
-  const playerStates = createPlayerRoundStates(orderedPlayers);
-  const baseRound = createRoundRuntime(orderedPlayers, 1, match.dealerSeat, {
-    drawPile: args.deterministicStart?.roundSeed.drawPile,
-  });
-  const resolved = continueRound(orderedPlayers, baseRound, playerStates);
-
-  const roundId = await ctx.db.insert("rounds", {
+  return await runGameCommand(ctx, {
     matchId: args.matchId,
-    roundNumber: 1,
-    ...serializeRoundRuntime(resolved.round, playerIdMap),
-    startedAt: Date.now(),
+    sessionId,
+    command: {
+      type: "START_MATCH",
+      deterministicStart: args.deterministicStart,
+    },
   });
-
-  await persistPlayerStates(ctx, roundId, resolved.playerStates, playerIdMap);
-  await persistEvents(ctx, roundId, resolved.events, playerIdMap);
-
-  let finalRound = resolved.round;
-  let finalPlayerStates = resolved.playerStates;
-
-  if (resolved.round.phase === "scoring") {
-    const finalized = finalizeRound(resolved.round, resolved.playerStates);
-    finalRound = finalized.round;
-    finalPlayerStates = finalized.playerStates;
-
-    await persistPlayerStates(ctx, roundId, finalPlayerStates, playerIdMap);
-    await persistRoundRuntime(ctx, roundId, finalRound, playerIdMap);
-    await persistEvents(ctx, roundId, finalized.events, playerIdMap);
-    await persistScoreBreakdowns(ctx, roundId, finalPlayerStates, playerIdMap);
-  }
-
-  await ctx.db.patch(args.matchId, {
-    status: "in_progress",
-    currentRoundNumber: 1,
-    updatedAt: Date.now(),
-  });
-
-  const nextMatch = await ctx.db.get(args.matchId);
-  const nextRound = await getLatestRound(ctx, args.matchId);
-
-  if (!nextMatch || !nextRound) {
-    throw new MatchNotFound({ matchId: String(args.matchId) });
-  }
-
-  return await buildSnapshot(ctx, nextMatch, nextRound, sessionId);
 }

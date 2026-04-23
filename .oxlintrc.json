@@ -7,7 +7,8 @@
     "dist/**",
     "build/**",
     "convex/_generated/**",
-    "public/**"
+    "public/**",
+    "shared/ui/**"
   ],
   "categories": {
     "correctness": "error",

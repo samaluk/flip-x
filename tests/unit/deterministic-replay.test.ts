@@ -13,7 +13,9 @@ import {
 } from "@/tests/fixtures/deterministic";
 
 function snapshotFromCanonical(state: CanonicalReplaySnapshot): MatchSnapshot {
-  const playerIds = new Map(state.players.map((player, index) => [player.displayName, `p${index + 1}`]));
+  const playerIds = new Map(
+    state.players.map((player, index) => [player.displayName, `p${index + 1}`]),
+  );
 
   return {
     matchId: "match-1",
@@ -22,7 +24,7 @@ function snapshotFromCanonical(state: CanonicalReplaySnapshot): MatchSnapshot {
     currentRoundNumber: state.currentRoundNumber,
     dealerSeat: state.dealerSeat,
     viewerPlayerId: null,
-    activePlayerId: state.activePlayer ? playerIds.get(state.activePlayer) ?? null : null,
+    activePlayerId: state.activePlayer ? (playerIds.get(state.activePlayer) ?? null) : null,
     pendingAction: state.pendingAction
       ? {
           actionKind: state.pendingAction.actionKind,
@@ -63,7 +65,10 @@ function snapshotFromCanonical(state: CanonicalReplaySnapshot): MatchSnapshot {
         label: modifierValue === "x2" ? "x2" : `+${modifierValue}`,
         modifierValue,
       })),
-      heldActionCards: player.heldActionCards.map((actionKind) => ({ label: actionKind, actionKind: actionKind as never })),
+      heldActionCards: player.heldActionCards.map((actionKind) => ({
+        label: actionKind,
+        actionKind: actionKind as never,
+      })),
       receivedActionCards: player.receivedActionCards.map((actionKind) => ({
         label: actionKind,
         actionKind: actionKind as never,

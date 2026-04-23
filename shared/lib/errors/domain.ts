@@ -98,5 +98,3 @@ export type AppError =
   | UnsupportedRelationship
   | UnsupportedTable
   | InvalidConfirmation;
-
-

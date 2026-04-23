@@ -50,7 +50,10 @@ export const BASIC_DETERMINISTIC_SETUP_SCENARIO: DeterministicSetupScenario = {
   },
   startNextRound: {
     roundSeed: {
-      drawPile: withFillerCards(modifierCard("round-open-1", 4), actionCard("round-open-2", "freeze")),
+      drawPile: withFillerCards(
+        modifierCard("round-open-1", 4),
+        actionCard("round-open-2", "freeze"),
+      ),
     },
   },
 };

@@ -41,7 +41,10 @@ export type ReplayHarness = {
     sessions: ReplaySessionRecord[];
     started: MatchSnapshot;
   }>;
-  advanceUntilRoundBoundary: (matchId: string, sessions: ReplaySessionRecord[]) => Promise<MatchSnapshot>;
+  advanceUntilRoundBoundary: (
+    matchId: string,
+    sessions: ReplaySessionRecord[],
+  ) => Promise<MatchSnapshot>;
   startDeterministicNextRound: (
     matchId: string,
     sessionId: string,
@@ -140,7 +143,11 @@ export async function runDeterministicReplayScenario(
       snapshot = await harness.takeTurn(started.matchId, actorSession.sessionId, decision.choice);
     } else {
       if (!snapshot.pendingAction) {
-        return invalidResult(scenario, index, `Expected pending action for step ${decision.stepNumber}`);
+        return invalidResult(
+          scenario,
+          index,
+          `Expected pending action for step ${decision.stepNumber}`,
+        );
       }
       if (snapshot.pendingAction.actionKind !== decision.promptKind) {
         return invalidResult(
@@ -155,14 +162,22 @@ export async function runDeterministicReplayScenario(
         return invalidResult(scenario, index, `No target found for player ${decision.choice}`);
       }
 
-      snapshot = await harness.resolveAction(started.matchId, actorSession.sessionId, targetPlayerId);
+      snapshot = await harness.resolveAction(
+        started.matchId,
+        actorSession.sessionId,
+        targetPlayerId,
+      );
     }
 
     const actualState = canonicalizeSnapshot(snapshot);
     const expectedState = scenario.expectedStates[index];
 
     if (!expectedState) {
-      return invalidResult(scenario, index + 1, `Missing expected state for step ${decision.stepNumber}`);
+      return invalidResult(
+        scenario,
+        index + 1,
+        `Missing expected state for step ${decision.stepNumber}`,
+      );
     }
 
     if (JSON.stringify(actualState) !== JSON.stringify(expectedState)) {

@@ -1,7 +1,4 @@
-import {
-  MATCH_REPLAY_SCENARIO,
-  cloneReplayScenario,
-} from "./replay-scenarios";
+import { MATCH_REPLAY_SCENARIO, cloneReplayScenario } from "./replay-scenarios";
 
 export const DIVERGED_REPLAY_SCENARIO = (() => {
   const scenario = cloneReplayScenario(MATCH_REPLAY_SCENARIO);
