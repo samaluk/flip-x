@@ -19,6 +19,7 @@ function snapshot(): MatchSnapshot {
     roundStatus: "player_turns",
     endedBy: "unknown",
     latestEvent: null,
+    roundHistory: [],
     players: [
       {
         playerId: "p1",

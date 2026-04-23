@@ -8,6 +8,19 @@ import type {
   RoundRuntime,
 } from "./turn-resolution";
 
+export type RoundHistoryEntry = {
+  roundNumber: number;
+  phase: "completed" | "projected";
+  isCurrentRound: boolean;
+  scores: Array<{
+    playerId: string;
+    roundScore: number;
+    totalScore: number;
+    pointsToTarget: number;
+    reachedTarget: boolean;
+  }>;
+};
+
 export type MatchSnapshot = {
   matchId: string;
   lobbyCode?: string;
@@ -49,6 +62,7 @@ export type MatchSnapshot = {
     targetPlayerId?: string | null;
     playerNames?: string;
   } | null;
+  roundHistory: RoundHistoryEntry[];
 };
 
 export type CanonicalReplayStepState = Pick<
@@ -85,6 +99,7 @@ export function buildMatchSnapshot(args: {
   }>;
   playerStates: Record<string, PlayerRoundState>;
   latestEvent: RoundEvent | null;
+  roundHistory: RoundHistoryEntry[];
 }) {
   const result: Record<string, unknown> = {
     matchId: args.matchId,
@@ -108,6 +123,7 @@ export function buildMatchSnapshot(args: {
       : null,
     roundStatus: args.round?.phase ?? null,
     endedBy: args.round?.endedBy ?? null,
+    roundHistory: args.roundHistory,
   };
 
   if (args.lobbyCode) result.lobbyCode = args.lobbyCode;

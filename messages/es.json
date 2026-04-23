@@ -168,6 +168,21 @@
       "effectX2": "×2 LA SUMA DE TUS CARTAS NUMÉRICAS"
     }
   },
+  "RoundHistory": {
+    "title": "Puntuación por ronda",
+    "subtitle": "Sigue el total acumulado, lo que sumó cada ronda y quién se acerca a la meta.",
+    "empty": "Todavía no hay rondas para mostrar. El historial en vivo aparece en cuanto empieza la primera ronda.",
+    "playerColumn": "Jugador",
+    "seatLabel": "Puesto {seat}",
+    "roundHeader": "R{round}",
+    "roundHeaderLive": "R{round}*",
+    "liveBadge": "En vivo",
+    "gainLabel": "Ganancia {gain}",
+    "pointsToTarget": "{points} para la meta",
+    "winner": "Ganador",
+    "currentRoundBreakdownTitle": "Desglose de la ronda actual",
+    "currentRoundBreakdownSubtitle": "Puntuación detallada de la ronda activa o la más reciente que se completó."
+  },
   "ScoreSummary": {
     "title": "Desglose de la ronda",
     "subtitle": "Totales numéricos, multiplicadores, cartas bonus y la puntuación final que cada jugador se lleva de la ronda.",
@@ -233,6 +248,8 @@
     "roundTableHint": "Tu mano está abajo. Pasa el cursor sobre las cartas de los rivales para desplegarlas.",
     "opponents": "Rivales",
     "turnActions": "Acciones de turno",
+    "scoreHistory": "Historial de puntuación",
+    "currentRoundBreakdown": "Desglose de la ronda actual",
     "breakdownHint": "Despliega para ver números, bonus y multiplicadores.",
     "breakdownReady": "Ronda puntuada. Despliega para ver los totales de cada sitio."
   },

@@ -90,6 +90,7 @@ function snapshotFromCanonical(state: CanonicalReplaySnapshot): MatchSnapshot {
           playerNames: state.latestEvent.playerNames ?? undefined,
         }
       : null,
+    roundHistory: [],
   };
 }
 

@@ -67,6 +67,7 @@ describe("deterministic replay contract", () => {
         targetPlayerId: "p1",
         payload: {},
       },
+      roundHistory: [],
     });
 
     expect(canonicalizeSnapshot(snapshot)).toEqual(

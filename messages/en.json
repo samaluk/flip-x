@@ -170,6 +170,21 @@
       "effectX2": "×2 THE SUM OF YOUR NUMBER CARDS"
     }
   },
+  "RoundHistory": {
+    "title": "Score by round",
+    "subtitle": "Track the running total, the gain from each round, and who is closing in on the target score.",
+    "empty": "No rounds to show yet. Live history appears as soon as the first round starts.",
+    "playerColumn": "Player",
+    "seatLabel": "Seat {seat}",
+    "roundHeader": "R{round}",
+    "roundHeaderLive": "R{round}*",
+    "liveBadge": "Live",
+    "gainLabel": "Gain {gain}",
+    "pointsToTarget": "{points} to target",
+    "winner": "Winner",
+    "currentRoundBreakdownTitle": "Current round breakdown",
+    "currentRoundBreakdownSubtitle": "Detailed scoring for the active or most recently completed round."
+  },
   "ScoreSummary": {
     "title": "Round breakdown",
     "subtitle": "Number totals, multiplier effects, bonus cards, and the final score each seat carries out of the round.",
@@ -242,6 +257,8 @@
     "roundTableHint": "Your hand is below. Hover other players' cards to fan them out.",
     "opponents": "Opponents",
     "turnActions": "Turn actions",
+    "scoreHistory": "Score history",
+    "currentRoundBreakdown": "Current round breakdown",
     "breakdownHint": "Expand to review numbers, bonuses and multipliers.",
     "breakdownReady": "Round scored. Expand to see each seat's totals."
   },

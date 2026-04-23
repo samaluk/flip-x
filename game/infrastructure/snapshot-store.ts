@@ -5,6 +5,7 @@ import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import { buildMatchSnapshot, toCanonicalReplayStepState } from "../logic/view-models";
+import { buildRoundHistory } from "./round-history-builder";
 import type { ActionCard, Card } from "../logic/card-types";
 import type { MatchSnapshot } from "../logic/view-models";
 import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../logic/turn-resolution";
@@ -109,6 +110,19 @@ export async function buildSnapshot(
     latestEvent = latestRoundEvent ? normalizeLatestRoundEvent(latestRoundEvent) : null;
   }
 
+  const roundHistory = await buildRoundHistory(
+    ctx,
+    match._id,
+    match.targetScore,
+    match.currentRoundNumber,
+    match.status,
+    players.map((p) => ({
+      playerId: String(p._id),
+      totalScore: p.totalScore,
+      seatIndex: p.seatIndex,
+    })),
+  );
+
   return buildMatchSnapshot({
     matchId: String(match._id),
     status: match.status,
@@ -128,6 +142,7 @@ export async function buildSnapshot(
     })),
     playerStates,
     latestEvent,
+    roundHistory,
   });
 }
 

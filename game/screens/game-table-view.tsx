@@ -10,12 +10,13 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/logic/round-event-format";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { PlayerLane } from "@/game/ui/player-lane";
+import { RoundHistoryTable } from "@/game/ui/round-history-table";
 import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
 import { cn } from "@/shared/lib/utils";
@@ -77,11 +78,22 @@ export function GameTableView({
   const t = useTranslations("GameTable");
   const tEvents = useTranslations("Events");
   const tCards = useTranslations("Cards");
-  const tScore = useTranslations("ScoreSummary");
+  const tHistory = useTranslations("RoundHistory");
 
-  // Breakdown opens automatically once the round has been scored so players see results;
-  // otherwise stays collapsed to maximize board space during play.
-  const [showBreakdown, setShowBreakdown] = useState<string[]>(["summary"]);
+  // Round history opens by default; breakdown opens after round is scored.
+  const [expandedSections, setExpandedSections] = useState<string[]>(
+    snapshot.roundStatus === "completed" ? ["history", "breakdown"] : ["history"],
+  );
+  const previousRoundStatus = useRef(snapshot.roundStatus);
+
+  useEffect(() => {
+    if (snapshot.roundStatus === "completed" && previousRoundStatus.current !== "completed") {
+      setExpandedSections((current) =>
+        current.includes("breakdown") ? current : [...current, "breakdown"],
+      );
+    }
+    previousRoundStatus.current = snapshot.roundStatus;
+  }, [snapshot.roundStatus]);
 
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
@@ -316,13 +328,26 @@ export function GameTableView({
         </section>
       ) : null}
 
-      {/* ─────────── Collapsible round breakdown ─────────── */}
+      {/* ─────────── Round history and breakdown ─────────── */}
       <Card className="w-full">
         <CardContent>
-          <Accordion value={showBreakdown} onValueChange={setShowBreakdown}>
-            <AccordionItem value="summary">
-              <AccordionTrigger className="text-xl">{tScore("title")}</AccordionTrigger>
+          <Accordion value={expandedSections} onValueChange={setExpandedSections}>
+            <AccordionItem value="history">
+              <AccordionTrigger className="text-xl">{tHistory("title")}</AccordionTrigger>
               <AccordionContent>
+                <RoundHistoryTable history={snapshot.roundHistory} players={snapshot.players} />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="breakdown">
+              <AccordionTrigger className="text-xl">
+                {tHistory("currentRoundBreakdownTitle")}
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="px-5 pt-2">
+                  <p className="text-muted-foreground text-sm">
+                    {tHistory("currentRoundBreakdownSubtitle")}
+                  </p>
+                </div>
                 <ScoreSummary players={snapshot.players} />
               </AccordionContent>
             </AccordionItem>

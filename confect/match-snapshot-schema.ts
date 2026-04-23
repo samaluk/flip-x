@@ -91,6 +91,21 @@ export const CanonicalReplayStepState = Schema.Struct({
   latestEvent: Schema.NullOr(LatestEvent),
 });
 
+const RoundHistoryEntry = Schema.Struct({
+  roundNumber: Schema.Number,
+  phase: Schema.Literal("completed", "projected"),
+  isCurrentRound: Schema.Boolean,
+  scores: Schema.Array(
+    Schema.Struct({
+      playerId: Schema.String,
+      roundScore: Schema.Number,
+      totalScore: Schema.Number,
+      pointsToTarget: Schema.Number,
+      reachedTarget: Schema.Boolean,
+    }),
+  ),
+});
+
 export const MatchSnapshot = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.optional(Schema.String),
@@ -109,4 +124,5 @@ export const MatchSnapshot = Schema.Struct({
   endedBy: Schema.NullOr(Schema.Literal("all_inactive", "flip7", "unknown")),
   players: Schema.Array(PlayerSnapshot),
   latestEvent: Schema.NullOr(LatestEvent),
+  roundHistory: Schema.Array(RoundHistoryEntry),
 });

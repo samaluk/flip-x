@@ -62,6 +62,10 @@ function playerRow(args: PlayerArgs): MatchSnapshot["players"][number] {
   };
 }
 
+function roundHistory(entries: MatchSnapshot["roundHistory"]): MatchSnapshot["roundHistory"] {
+  return entries;
+}
+
 const RILEY = "p_riley_viewer";
 const SAM = "p_sam_opponent";
 const JORDAN = "p_jordan_opponent";
@@ -133,6 +137,92 @@ export const vrtSnapshotMidRound: MatchSnapshot = {
     targetPlayerId: RILEY,
     playerNames: "Riley",
   },
+  roundHistory: roundHistory([
+    {
+      roundNumber: 1,
+      phase: "completed",
+      isCurrentRound: false,
+      scores: [
+        {
+          playerId: RILEY,
+          roundScore: 18,
+          totalScore: 18,
+          pointsToTarget: 182,
+          reachedTarget: false,
+        },
+        {
+          playerId: SAM,
+          roundScore: 22,
+          totalScore: 22,
+          pointsToTarget: 178,
+          reachedTarget: false,
+        },
+        {
+          playerId: JORDAN,
+          roundScore: 12,
+          totalScore: 12,
+          pointsToTarget: 188,
+          reachedTarget: false,
+        },
+      ],
+    },
+    {
+      roundNumber: 2,
+      phase: "completed",
+      isCurrentRound: false,
+      scores: [
+        {
+          playerId: RILEY,
+          roundScore: 24,
+          totalScore: 42,
+          pointsToTarget: 158,
+          reachedTarget: false,
+        },
+        {
+          playerId: SAM,
+          roundScore: 33,
+          totalScore: 55,
+          pointsToTarget: 145,
+          reachedTarget: false,
+        },
+        {
+          playerId: JORDAN,
+          roundScore: 18,
+          totalScore: 30,
+          pointsToTarget: 170,
+          reachedTarget: false,
+        },
+      ],
+    },
+    {
+      roundNumber: 3,
+      phase: "projected",
+      isCurrentRound: true,
+      scores: [
+        {
+          playerId: RILEY,
+          roundScore: 28,
+          totalScore: 70,
+          pointsToTarget: 130,
+          reachedTarget: false,
+        },
+        {
+          playerId: SAM,
+          roundScore: 18,
+          totalScore: 73,
+          pointsToTarget: 127,
+          reachedTarget: false,
+        },
+        {
+          playerId: JORDAN,
+          roundScore: 0,
+          totalScore: 30,
+          pointsToTarget: 170,
+          reachedTarget: false,
+        },
+      ],
+    },
+  ]),
 };
 
 /** Viewer must pick a freeze target. */
@@ -183,6 +273,92 @@ export const vrtSnapshotRoundComplete: MatchSnapshot = {
     targetPlayerId: RILEY,
     playerNames: "Riley",
   },
+  roundHistory: roundHistory([
+    {
+      roundNumber: 1,
+      phase: "completed",
+      isCurrentRound: false,
+      scores: [
+        {
+          playerId: RILEY,
+          roundScore: 18,
+          totalScore: 18,
+          pointsToTarget: 182,
+          reachedTarget: false,
+        },
+        {
+          playerId: SAM,
+          roundScore: 22,
+          totalScore: 22,
+          pointsToTarget: 178,
+          reachedTarget: false,
+        },
+        {
+          playerId: JORDAN,
+          roundScore: 12,
+          totalScore: 12,
+          pointsToTarget: 188,
+          reachedTarget: false,
+        },
+      ],
+    },
+    {
+      roundNumber: 2,
+      phase: "completed",
+      isCurrentRound: false,
+      scores: [
+        {
+          playerId: RILEY,
+          roundScore: 24,
+          totalScore: 42,
+          pointsToTarget: 158,
+          reachedTarget: false,
+        },
+        {
+          playerId: SAM,
+          roundScore: 33,
+          totalScore: 55,
+          pointsToTarget: 145,
+          reachedTarget: false,
+        },
+        {
+          playerId: JORDAN,
+          roundScore: 18,
+          totalScore: 30,
+          pointsToTarget: 170,
+          reachedTarget: false,
+        },
+      ],
+    },
+    {
+      roundNumber: 3,
+      phase: "completed",
+      isCurrentRound: false,
+      scores: [
+        {
+          playerId: RILEY,
+          roundScore: 42,
+          totalScore: 84,
+          pointsToTarget: 116,
+          reachedTarget: false,
+        },
+        {
+          playerId: SAM,
+          roundScore: 20,
+          totalScore: 75,
+          pointsToTarget: 125,
+          reachedTarget: false,
+        },
+        {
+          playerId: JORDAN,
+          roundScore: 0,
+          totalScore: 30,
+          pointsToTarget: 170,
+          reachedTarget: false,
+        },
+      ],
+    },
+  ]),
 };
 
 /** Viewer has seven unique numbers (flip 7). */

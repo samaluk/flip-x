@@ -55,6 +55,22 @@ describe("game session contract", () => {
         targetPlayerId: "p1",
         payload: { cardKind: "number", numberValue: 7 },
       },
+      roundHistory: [
+        {
+          roundNumber: 1,
+          phase: "completed",
+          isCurrentRound: false,
+          scores: [
+            {
+              playerId: "p1",
+              roundScore: 0,
+              totalScore: 0,
+              pointsToTarget: 200,
+              reachedTarget: false,
+            },
+          ],
+        },
+      ],
     });
 
     expect(snapshot).toEqual(
@@ -65,6 +81,12 @@ describe("game session contract", () => {
         dealerSeat: 0,
         viewerPlayerId: "p1",
         activePlayerId: "p1",
+        roundHistory: expect.arrayContaining([
+          expect.objectContaining({
+            roundNumber: 1,
+            phase: "completed",
+          }),
+        ]),
       }),
     );
   });
@@ -94,11 +116,86 @@ describe("game session contract", () => {
       ],
       playerStates,
       latestEvent: null,
+      roundHistory: [
+        {
+          roundNumber: 1,
+          phase: "completed",
+          isCurrentRound: false,
+          scores: [
+            {
+              playerId: "p1",
+              roundScore: 15,
+              totalScore: 15,
+              pointsToTarget: 185,
+              reachedTarget: false,
+            },
+            {
+              playerId: "p2",
+              roundScore: 30,
+              totalScore: 30,
+              pointsToTarget: 170,
+              reachedTarget: false,
+            },
+            {
+              playerId: "p3",
+              roundScore: 25,
+              totalScore: 25,
+              pointsToTarget: 175,
+              reachedTarget: false,
+            },
+          ],
+        },
+        {
+          roundNumber: 2,
+          phase: "projected",
+          isCurrentRound: true,
+          scores: [
+            {
+              playerId: "p1",
+              roundScore: 8,
+              totalScore: 23,
+              pointsToTarget: 177,
+              reachedTarget: false,
+            },
+            {
+              playerId: "p2",
+              roundScore: 12,
+              totalScore: 42,
+              pointsToTarget: 158,
+              reachedTarget: false,
+            },
+            {
+              playerId: "p3",
+              roundScore: 0,
+              totalScore: 25,
+              pointsToTarget: 175,
+              reachedTarget: false,
+            },
+          ],
+        },
+      ],
     });
 
     expect(snapshot.currentRoundNumber).toBe(2);
     expect(snapshot.dealerSeat).toBe(1);
     expect(snapshot.players.map((player) => player.totalScore)).toEqual([15, 30, 25]);
+    expect(snapshot.roundHistory).toEqual([
+      expect.objectContaining({
+        roundNumber: 1,
+        phase: "completed",
+        scores: expect.arrayContaining([
+          expect.objectContaining({
+            playerId: "p2",
+            totalScore: 30,
+          }),
+        ]),
+      }),
+      expect.objectContaining({
+        roundNumber: 2,
+        phase: "projected",
+        isCurrentRound: true,
+      }),
+    ]);
   });
 
   it("projects bustCard onto the player snapshot", () => {
@@ -129,6 +226,7 @@ describe("game session contract", () => {
         },
       },
       latestEvent: null,
+      roundHistory: [],
     });
 
     expect(snapshot.players[0]?.bustCard).toEqual({
@@ -137,5 +235,91 @@ describe("game session contract", () => {
       label: "7",
       numberValue: 7,
     });
+  });
+
+  it("builds roundHistory with completed and projected entries", () => {
+    const snapshot = buildMatchSnapshot({
+      matchId: "match-4",
+      status: "in_progress",
+      hostPlayerId: null,
+      targetScore: 200,
+      currentRoundNumber: 2,
+      dealerSeat: 0,
+      viewerPlayerId: null,
+      round: null,
+      players: [
+        { playerId: "p1", displayName: "Alex", seatIndex: 0, totalScore: 45, isOnline: true },
+        { playerId: "p2", displayName: "Blair", seatIndex: 1, totalScore: 50, isOnline: true },
+      ],
+      playerStates: {},
+      latestEvent: null,
+      roundHistory: [
+        {
+          roundNumber: 1,
+          phase: "completed",
+          isCurrentRound: false,
+          scores: [
+            {
+              playerId: "p1",
+              roundScore: 20,
+              totalScore: 20,
+              pointsToTarget: 180,
+              reachedTarget: false,
+            },
+            {
+              playerId: "p2",
+              roundScore: 25,
+              totalScore: 25,
+              pointsToTarget: 175,
+              reachedTarget: false,
+            },
+          ],
+        },
+        {
+          roundNumber: 2,
+          phase: "completed",
+          isCurrentRound: false,
+          scores: [
+            {
+              playerId: "p1",
+              roundScore: 25,
+              totalScore: 45,
+              pointsToTarget: 155,
+              reachedTarget: false,
+            },
+            {
+              playerId: "p2",
+              roundScore: 25,
+              totalScore: 50,
+              pointsToTarget: 150,
+              reachedTarget: false,
+            },
+          ],
+        },
+      ],
+    });
+
+    expect(snapshot.roundHistory).toHaveLength(2);
+    expect(snapshot.roundHistory[1]).toEqual(
+      expect.objectContaining({
+        roundNumber: 2,
+        phase: "completed",
+        isCurrentRound: false,
+        scores: expect.arrayContaining([
+          expect.objectContaining({
+            playerId: "p1",
+            totalScore: 45,
+            pointsToTarget: 155,
+            reachedTarget: false,
+          }),
+          expect.objectContaining({
+            playerId: "p2",
+            totalScore: 50,
+            pointsToTarget: 150,
+            reachedTarget: false,
+          }),
+        ]),
+      }),
+    );
   });
 });
