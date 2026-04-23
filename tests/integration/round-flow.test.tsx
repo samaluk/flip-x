@@ -29,6 +29,7 @@ function snapshot(): MatchSnapshot {
         roundStatus: "active",
         pointsAtRisk: 12,
         numberCards: [],
+        bustCard: null,
         modifierCards: [],
         heldActionCards: [],
         receivedActionCards: [],

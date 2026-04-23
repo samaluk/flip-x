@@ -181,12 +181,16 @@ describe("turn resolution", () => {
     round.phase = "player_turns";
     round.activePlayerId = "p1";
     round.turnSeatIndex = 0;
-    round.drawPile = [numberCard("dup", 7)];
+    const dupCard = numberCard("dup", 7);
+    round.drawPile = [dupCard];
 
     const resolved = takeTurnAction(players, round, playerStates, "p1", "hit");
 
     expect(resolved.playerStates.p1.status).toBe("busted");
     expect(resolved.playerStates.p1.pointsAtRisk).toBe(0);
+    expect(resolved.playerStates.p1.numberCards).toEqual([numberCard("n1", 7)]);
+    expect(resolved.playerStates.p1.bustCard?.numberValue).toBe(7);
+    expect(resolved.playerStates.p1.bustCard?.id).toBe("dup");
   });
 
   it("keeps the Flip Three target on turn until all required cards are drawn", () => {
@@ -243,6 +247,20 @@ describe("turn resolution", () => {
     expect(resolved.round.pendingFlip3).toBeNull();
     expect(resolved.playerStates.p1.heldActionCards).toHaveLength(0);
     expect(resolved.round.activePlayerId).toBe("p2");
+  });
+
+  it("does not set bustCard when Second Chance prevents a duplicate bust", () => {
+    const playerStates = createActivePlayerStates();
+    playerStates.p1.numberCards = [numberCard("n1", 7)];
+    playerStates.p1.heldActionCards = [actionCard("sc-1", "second_chance")];
+    const round = createTurnRound();
+    round.drawPile = [numberCard("dup", 7)];
+
+    const resolved = takeTurnAction(players, round, playerStates, "p1", "hit");
+
+    expect(resolved.playerStates.p1.status).toBe("active");
+    expect(resolved.playerStates.p1.bustCard).toBeNull();
+    expect(resolved.playerStates.p1.numberCards).toEqual([numberCard("n1", 7)]);
   });
 
   it("clears Flip Three immediately when the target hits Flip 7", () => {

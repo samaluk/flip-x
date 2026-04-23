@@ -22,6 +22,7 @@ export function normalizePlayerRoundState(doc: Doc<"roundPlayerStates">): Player
     roundScore: doc.roundScore,
     pointsAtRisk: doc.pointsAtRisk,
     hasFlip7: doc.hasFlip7,
+    bustCard: doc.bustCard ? (doc.bustCard as PlayerRoundState["bustCard"]) : null,
   };
 }
 

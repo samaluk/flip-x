@@ -116,6 +116,7 @@ export const RoundPlayerStates = Table.make(
     roundScore: Schema.Number,
     pointsAtRisk: Schema.Number,
     hasFlip7: Schema.Boolean,
+    bustCard: Schema.optional(CardValue),
   }),
 )
   .index("by_round", ["roundId"])

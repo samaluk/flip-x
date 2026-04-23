@@ -19,6 +19,7 @@ describe("match flow UI", () => {
               roundStatus: "completed",
               pointsAtRisk: 30,
               numberCards: [],
+              bustCard: null,
               modifierCards: [],
               heldActionCards: [],
               receivedActionCards: [],

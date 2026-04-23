@@ -40,6 +40,7 @@ export type MatchSnapshot = {
     heldActionCards: Array<{ label: string; actionKind: ActionKind }>;
     receivedActionCards: Array<{ label: string; actionKind: ActionKind }>;
     scoreBreakdown: ReturnType<typeof scoreRound>;
+    bustCard: NumberCard | null;
   }>;
   latestEvent: {
     type: string;
@@ -127,6 +128,7 @@ export function buildMatchSnapshot(args: {
         roundScore: 0,
         pointsAtRisk: 0,
         hasFlip7: false,
+        bustCard: null,
       };
 
       return {
@@ -156,6 +158,7 @@ export function buildMatchSnapshot(args: {
           playerState.modifierCards,
           playerState.hasFlip7,
         ),
+        bustCard: playerState.bustCard ?? null,
       };
     });
 

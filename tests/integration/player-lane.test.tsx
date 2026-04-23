@@ -28,6 +28,7 @@ function player(
       multiplierApplied: false,
       numberCardTotal: 12,
     },
+    bustCard: null,
     ...overrides,
   };
 }
@@ -79,5 +80,24 @@ describe("player lane", () => {
     expect(screen.getByText(/2 to draw/i)).toBeInTheDocument();
     expect(screen.getByText(/incoming/i)).toBeInTheDocument();
     expect(screen.getAllByText(/freeze/i).length).toBeGreaterThan(0);
+  });
+
+  it("renders bust card in a busted lane", () => {
+    const bustCard = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
+    render(
+      withIntlEn(
+        <PlayerLane
+          player={player({
+            roundStatus: "busted",
+            numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
+            bustCard,
+          })}
+          isActive={false}
+        />,
+      ),
+    );
+
+    expect(screen.getByText(/Busted/i)).toBeInTheDocument();
+    expect(screen.getAllByText("7").length).toBeGreaterThanOrEqual(1);
   });
 });

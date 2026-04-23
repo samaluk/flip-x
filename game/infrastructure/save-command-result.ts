@@ -113,11 +113,12 @@ async function persistPlayerStates(
     const existing = docMap.get(playerId);
 
     if (!existing) {
-      const { playerId: _playerId, ...rest } = playerState;
+      const { playerId: _playerId, bustCard, ...rest } = playerState;
       await ctx.db.insert("roundPlayerStates", {
         roundId,
         playerId: playerIdMap.get(playerId)!,
         ...rest,
+        ...(bustCard ? { bustCard } : {}),
       });
       continue;
     }
@@ -131,6 +132,7 @@ async function persistPlayerStates(
       roundScore: playerState.roundScore,
       pointsAtRisk: playerState.pointsAtRisk,
       hasFlip7: playerState.hasFlip7,
+      ...(playerState.bustCard ? { bustCard: playerState.bustCard } : {}),
     });
   }
 }

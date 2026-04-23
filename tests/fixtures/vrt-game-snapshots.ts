@@ -37,6 +37,7 @@ type PlayerArgs = {
   roundStatus: PlayerRoundStatus;
   pointsAtRisk: number;
   numberCards: NumberCard[];
+  bustCard?: NumberCard | null;
   modifierCards: ModifierCard[];
   heldActionCards: Array<{ label: string; actionKind: ActionKind }>;
   receivedActionCards?: Array<{ label: string; actionKind: ActionKind }>;
@@ -53,6 +54,7 @@ function playerRow(args: PlayerArgs): MatchSnapshot["players"][number] {
     roundStatus: args.roundStatus as PlayerRoundStatus,
     pointsAtRisk: args.pointsAtRisk,
     numberCards: args.numberCards,
+    bustCard: args.bustCard ?? null,
     modifierCards: args.modifierCards,
     heldActionCards: args.heldActionCards,
     receivedActionCards: args.receivedActionCards ?? [],
@@ -120,6 +122,7 @@ export const vrtSnapshotMidRound: MatchSnapshot = {
         { label: "J1", value: 4 },
         { label: "J2", value: 9 },
       ]),
+      bustCard: { id: "n-J3-9", type: "number", label: "J3", numberValue: 9 },
       heldActionCards: held([{ label: "J3", kind: "flip_three" }]),
     }),
   ],

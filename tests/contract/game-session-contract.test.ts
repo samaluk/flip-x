@@ -40,6 +40,7 @@ describe("game session contract", () => {
           playerId: "p1",
           status: "active",
           numberCards: [],
+          bustCard: null,
           modifierCards: [],
           heldActionCards: [],
           receivedActionCards: [],
@@ -98,5 +99,43 @@ describe("game session contract", () => {
     expect(snapshot.currentRoundNumber).toBe(2);
     expect(snapshot.dealerSeat).toBe(1);
     expect(snapshot.players.map((player) => player.totalScore)).toEqual([15, 30, 25]);
+  });
+
+  it("projects bustCard onto the player snapshot", () => {
+    const snapshot = buildMatchSnapshot({
+      matchId: "match-3",
+      status: "in_progress",
+      hostPlayerId: null,
+      targetScore: 200,
+      currentRoundNumber: 1,
+      dealerSeat: 0,
+      viewerPlayerId: null,
+      round: null,
+      players: [
+        { playerId: "p1", displayName: "Alex", seatIndex: 0, totalScore: 0, isOnline: true },
+      ],
+      playerStates: {
+        p1: {
+          playerId: "p1",
+          status: "busted",
+          numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
+          bustCard: { id: "n2", type: "number", label: "7", numberValue: 7 },
+          modifierCards: [],
+          heldActionCards: [],
+          receivedActionCards: [],
+          roundScore: 0,
+          pointsAtRisk: 0,
+          hasFlip7: false,
+        },
+      },
+      latestEvent: null,
+    });
+
+    expect(snapshot.players[0]?.bustCard).toEqual({
+      id: "n2",
+      type: "number",
+      label: "7",
+      numberValue: 7,
+    });
   });
 });

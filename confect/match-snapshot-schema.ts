@@ -65,6 +65,7 @@ const PlayerSnapshot = Schema.Struct({
   heldActionCards: Schema.Array(ActionCardSummary),
   receivedActionCards: Schema.Array(ActionCardSummary),
   scoreBreakdown: ScoreBreakdown,
+  bustCard: Schema.NullOr(NumberCard),
 });
 
 const LatestEvent = Schema.Struct({

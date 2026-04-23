@@ -73,6 +73,7 @@ function snapshotFromCanonical(state: CanonicalReplaySnapshot): MatchSnapshot {
         label: actionKind,
         actionKind: actionKind as never,
       })),
+      bustCard: null,
       scoreBreakdown: {
         numberCardTotal: player.numberCards.reduce((sum, value) => sum + value, 0),
         multiplierApplied: false,

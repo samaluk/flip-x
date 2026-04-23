@@ -106,6 +106,7 @@ export const PlayerLane = memo(function PlayerLane({
     () => [
       ...player.modifierCards.map((card) => card.id),
       ...player.numberCards.map((card) => card.id),
+      ...(player.bustCard ? [player.bustCard.id] : []),
       ...player.heldActionCards.map(
         (card) => `${player.playerId}-${card.actionKind}-${card.label}`,
       ),
@@ -118,6 +119,7 @@ export const PlayerLane = memo(function PlayerLane({
       player.receivedActionCards,
       player.modifierCards,
       player.numberCards,
+      player.bustCard,
       player.playerId,
     ],
   );
@@ -193,6 +195,20 @@ export const PlayerLane = memo(function PlayerLane({
         disableFlip3d={disableCardFlip3d}
       />
     )),
+    ...(player.bustCard
+      ? [
+          <Flip7Card
+            key={player.bustCard.id}
+            kind="number"
+            numberValue={player.bustCard.numberValue}
+            label={player.bustCard.label}
+            dealing={dealingIdSet.has(player.bustCard.id)}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
+          />,
+        ]
+      : []),
     ...player.heldActionCards.map((card) => {
       const key = `${player.playerId}-${card.actionKind}-${card.label}`;
       return (
@@ -381,9 +397,21 @@ function arePlayersEqual(
     left.roundStatus === right.roundStatus &&
     left.pointsAtRisk === right.pointsAtRisk &&
     areNumberCardsEqual(left.numberCards, right.numberCards) &&
+    areNumberCardEqual(left.bustCard, right.bustCard) &&
     areModifierCardsEqual(left.modifierCards, right.modifierCards) &&
     areActionCardsEqual(left.heldActionCards, right.heldActionCards) &&
     areActionCardsEqual(left.receivedActionCards, right.receivedActionCards)
+  );
+}
+
+function areNumberCardEqual(
+  left: MatchSnapshot["players"][number]["bustCard"],
+  right: MatchSnapshot["players"][number]["bustCard"],
+) {
+  return (
+    left?.id === right?.id &&
+    left?.label === right?.label &&
+    left?.numberValue === right?.numberValue
   );
 }
 

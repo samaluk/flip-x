@@ -44,6 +44,7 @@ export type PlayerRoundState = {
   roundScore: number;
   pointsAtRisk: number;
   hasFlip7: boolean;
+  bustCard: NumberCard | null;
 };
 
 export type RoundRuntime = {
@@ -102,6 +103,7 @@ function clonePlayerState(playerState: PlayerRoundState): PlayerRoundState {
     modifierCards: [...playerState.modifierCards],
     heldActionCards: [...playerState.heldActionCards],
     receivedActionCards: [...playerState.receivedActionCards],
+    bustCard: playerState.bustCard,
   };
 }
 
@@ -415,6 +417,7 @@ function applyCardToPlayer(
         playerState.status = "busted";
         playerState.roundScore = 0;
         playerState.pointsAtRisk = 0;
+        playerState.bustCard = card;
         discardCard(round, card);
         addEvent(events, {
           eventType: "duplicate_bust",
@@ -583,6 +586,7 @@ export function createPlayerRoundStates(players: OrderedPlayer[]) {
         roundScore: 0,
         pointsAtRisk: 0,
         hasFlip7: false,
+        bustCard: null,
       } satisfies PlayerRoundState,
     ]),
   );
