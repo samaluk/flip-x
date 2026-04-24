@@ -139,6 +139,8 @@ describe("runGameCommand", () => {
 
       const directSnapshot = yield* runCommand(directCreated.matchId, sessions[0]!.sessionId, {
         type: "START_MATCH",
+        expectedVersion: directCreated.version,
+        idempotencyKey: "runner-start-match",
         deterministicStart: scenario.startMatch,
       });
       const openingValues = directSnapshot.players
@@ -184,6 +186,8 @@ describe("runGameCommand", () => {
 
       const updated = yield* runCommand(matchId, activeSession.sessionId, {
         type: "TAKE_TURN",
+        expectedVersion: snapshot.version,
+        idempotencyKey: "runner-take-turn",
         action: "hit",
       });
       const roundState = yield* readRoundState(matchId);
@@ -191,6 +195,60 @@ describe("runGameCommand", () => {
       assertEquals(updated.currentRoundNumber, 1);
       assertTrue(roundState.eventTypes.length > 0);
       assertEquals(updated.latestEvent?.type, roundState.eventTypes.at(-1) ?? null);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("rejects stale command versions", () =>
+    Effect.gen(function* () {
+      const { matchId, sessions, started } = yield* createStartedMatch(["Host", "Guest"]);
+      const activeSession = sessions.find(
+        (session) =>
+          started.activePlayerId ===
+          started.players.find((player) => player.displayName === session.name)?.playerId,
+      );
+
+      if (!activeSession) {
+        throw new Error("Expected active session for stale command test");
+      }
+
+      yield* Effect.exit(
+        runCommand(matchId, activeSession.sessionId, {
+          type: "TAKE_TURN",
+          expectedVersion: started.version - 1,
+          idempotencyKey: "runner-stale-version",
+          action: "stay",
+        }),
+      ).pipe(
+        Effect.map((exit) => {
+          expect(String(exit)).toContain("StaleGameState");
+        }),
+      );
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("returns the cached snapshot for duplicate idempotency keys", () =>
+    Effect.gen(function* () {
+      const { matchId, sessions, started } = yield* createStartedMatch(["Host", "Guest"]);
+      const activeSession = sessions.find(
+        (session) =>
+          started.activePlayerId ===
+          started.players.find((player) => player.displayName === session.name)?.playerId,
+      );
+
+      if (!activeSession) {
+        throw new Error("Expected active session for idempotency test");
+      }
+
+      const command = {
+        type: "TAKE_TURN" as const,
+        expectedVersion: started.version,
+        idempotencyKey: "runner-idempotent-turn",
+        action: "stay" as const,
+      };
+      const first = yield* runCommand(matchId, activeSession.sessionId, command);
+      const second = yield* runCommand(matchId, activeSession.sessionId, command);
+
+      expect(second).toEqual(first);
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 
@@ -229,6 +287,8 @@ describe("runGameCommand", () => {
 
       const snapshot = yield* runCommand(matchId, activeSession.sessionId, {
         type: "TAKE_TURN",
+        expectedVersion: startingSnapshot.version,
+        idempotencyKey: "runner-pending-action",
         action: "hit",
       });
 
@@ -248,6 +308,8 @@ describe("runGameCommand", () => {
 
       const updated = yield* runCommand(matchId, sourceSession.sessionId, {
         type: "RESOLVE_ACTION",
+        expectedVersion: snapshot.version,
+        idempotencyKey: "runner-resolve-action",
         targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0]!,
       });
 
@@ -293,6 +355,8 @@ describe("runGameCommand", () => {
 
           finalSnapshot = yield* runCommand(matchId, sourceSession.sessionId, {
             type: "RESOLVE_ACTION",
+            expectedVersion: finalSnapshot.version,
+            idempotencyKey: `runner-finalize-resolve-${guard}`,
             targetPlayerId: finalSnapshot.pendingAction.eligibleTargetIds[0]!,
           });
           continue;
@@ -310,6 +374,8 @@ describe("runGameCommand", () => {
 
         finalSnapshot = yield* runCommand(matchId, activeSession.sessionId, {
           type: "TAKE_TURN",
+          expectedVersion: finalSnapshot.version,
+          idempotencyKey: `runner-finalize-turn-${guard}`,
           action: "stay",
         });
       }

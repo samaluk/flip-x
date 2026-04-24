@@ -167,6 +167,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
             {isSetup ? (
               <StartGameButton
                 matchId={matchId}
+                version={snapshotWithPresence.version}
                 isHost={snapshotWithPresence.isHost ?? false}
                 playerCount={playerCount}
               />

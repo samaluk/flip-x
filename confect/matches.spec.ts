@@ -6,6 +6,11 @@ import { MatchSnapshot } from "./match-snapshot-schema";
 import * as matchFns from "./matches";
 import { SessionIdField } from "./session";
 
+const CommandMetadata = {
+  expectedVersion: Schema.Number,
+  idempotencyKey: Schema.String,
+};
+
 const MatchLookupResult = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.String,
@@ -58,6 +63,7 @@ const startMatch = FunctionSpec.publicMutation({
   args: Schema.Struct({
     ...SessionIdField,
     matchId: Schema.String,
+    ...CommandMetadata,
     deterministicStart: Schema.optional(DeterministicStartOptions),
   }),
   returns: MatchSnapshot,

@@ -76,6 +76,7 @@ export async function createMatchForSession(
     targetScore: 200,
     currentRoundNumber: 0,
     dealerSeat: 0,
+    version: 0,
     createdAt: timestamp,
     updatedAt: timestamp,
   });
@@ -286,6 +287,8 @@ export async function startMatchForSession(
   args: {
     matchId: Id<"matches">;
     sessionId: string;
+    expectedVersion: number;
+    idempotencyKey: string;
     deterministicStart?: { roundSeed: { drawPile: Card[] } };
   },
 ) {
@@ -298,6 +301,8 @@ export async function startMatchForSession(
     sessionId,
     command: {
       type: "START_MATCH",
+      expectedVersion: args.expectedVersion,
+      idempotencyKey: args.idempotencyKey,
       deterministicStart: args.deterministicStart,
     },
   });

@@ -8,6 +8,7 @@ import {
   MatchNotFound,
   NotHost,
   PlayerNotJoined,
+  StaleGameState,
 } from "../../shared/lib/errors/domain";
 import {
   continueRound,
@@ -18,6 +19,7 @@ import {
 } from "../logic/command-handler";
 import { finalizeRound } from "../logic/round-finalization";
 import type { GameCommand } from "./game-command";
+import type { MatchSnapshot } from "../logic/view-models";
 import { loadMatchAggregate } from "../infrastructure/load-match-aggregate";
 import { saveCommandResult, type GameTransition } from "../infrastructure/save-command-result";
 import { buildLatestMatchSnapshot } from "../infrastructure/snapshot-store";
@@ -65,6 +67,50 @@ function buildStartRoundTransition(
   });
 }
 
+const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
+
+async function getIdempotentResult(
+  ctx: MutationCtx,
+  matchId: Id<"matches">,
+  idempotencyKey: string,
+) {
+  const existing = await ctx.db
+    .query("idempotencyKeys")
+    .withIndex("by_idempotency_key", (query) => query.eq("idempotencyKey", idempotencyKey))
+    .first();
+
+  if (!existing) {
+    return null;
+  }
+
+  if (existing.matchId !== matchId) {
+    return null;
+  }
+
+  if (existing.expiresAt <= Date.now()) {
+    await ctx.db.delete(existing._id);
+    return null;
+  }
+
+  return existing.commandResult as MatchSnapshot;
+}
+
+async function storeIdempotentResult(
+  ctx: MutationCtx,
+  matchId: Id<"matches">,
+  command: GameCommand,
+  snapshot: MatchSnapshot,
+) {
+  await ctx.db.insert("idempotencyKeys", {
+    matchId,
+    idempotencyKey: command.idempotencyKey,
+    commandType: command.type,
+    commandResult: snapshot,
+    expiresAt: Date.now() + IDEMPOTENCY_TTL_MS,
+    createdAt: Date.now(),
+  });
+}
+
 export async function runGameCommand(
   ctx: MutationCtx,
   input: {
@@ -73,6 +119,15 @@ export async function runGameCommand(
     command: GameCommand;
   },
 ) {
+  const idempotentResult = await getIdempotentResult(
+    ctx,
+    input.matchId,
+    input.command.idempotencyKey,
+  );
+  if (idempotentResult) {
+    return idempotentResult;
+  }
+
   const aggregate = await loadMatchAggregate(ctx, input.matchId, input.sessionId as never);
   const {
     latestRound,
@@ -85,11 +140,22 @@ export async function runGameCommand(
     viewerPlayerId,
   } = aggregate;
 
+  if (!match) {
+    throw new MatchNotFound({ matchId: String(input.matchId) });
+  }
+
+  if (match.version !== input.command.expectedVersion) {
+    throw new StaleGameState({
+      expectedVersion: input.command.expectedVersion,
+      actualVersion: match.version,
+    });
+  }
+
   let transition: GameTransition;
 
   switch (input.command.type) {
     case "START_MATCH": {
-      if (!match || match.status !== "setup") {
+      if (match.status !== "setup") {
         throw new InvalidMatchState();
       }
       if (!viewerPlayerId) {
@@ -118,7 +184,7 @@ export async function runGameCommand(
     }
 
     case "START_NEXT_ROUND": {
-      if (!match || match.status !== "in_progress") {
+      if (match.status !== "in_progress") {
         throw new InvalidMatchState();
       }
       if (!viewerPlayerId) {
@@ -142,7 +208,7 @@ export async function runGameCommand(
     }
 
     case "TAKE_TURN": {
-      if (!match || !latestRound || !roundRuntime) {
+      if (!latestRound || !roundRuntime) {
         throw new MatchNotFound({ matchId: String(input.matchId) });
       }
       if (!viewerPlayerId) {
@@ -174,7 +240,7 @@ export async function runGameCommand(
     }
 
     case "RESOLVE_ACTION": {
-      if (!match || !latestRound || !roundRuntime) {
+      if (!latestRound || !roundRuntime) {
         throw new MatchNotFound({ matchId: String(input.matchId) });
       }
       if (!viewerPlayerId) {
@@ -208,10 +274,6 @@ export async function runGameCommand(
     }
   }
 
-  if (!match) {
-    throw new MatchNotFound({ matchId: String(input.matchId) });
-  }
-
   await saveCommandResult(ctx, {
     match,
     players,
@@ -223,6 +285,8 @@ export async function runGameCommand(
   if (!snapshot) {
     throw new MatchNotFound({ matchId: String(input.matchId) });
   }
+
+  await storeIdempotentResult(ctx, input.matchId, input.command, snapshot);
 
   return snapshot;
 }

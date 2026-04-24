@@ -74,6 +74,7 @@ const JORDAN = "p_jordan_opponent";
 export const vrtSnapshotMidRound: MatchSnapshot = {
   matchId: MATCH_ID,
   status: "in_progress",
+  version: 1,
   targetScore: 200,
   currentRoundNumber: 3,
   dealerSeat: 1,

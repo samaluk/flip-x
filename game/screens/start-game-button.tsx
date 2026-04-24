@@ -13,11 +13,12 @@ import { translateConvexError } from "@/shared/lib/convex-error";
 
 interface StartGameButtonProps {
   matchId: string;
+  version: number;
   isHost: boolean;
   playerCount: number;
 }
 
-export function StartGameButton({ matchId, isHost, playerCount }: StartGameButtonProps) {
+export function StartGameButton({ matchId, version, isHost, playerCount }: StartGameButtonProps) {
   const startMatch = useSessionConfectMutation(refs.public.matches.startMatch);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useTranslations("StartGameButton");
@@ -28,6 +29,8 @@ export function StartGameButton({ matchId, isHost, playerCount }: StartGameButto
     try {
       await startMatch({
         matchId,
+        expectedVersion: version,
+        idempotencyKey: crypto.randomUUID(),
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";

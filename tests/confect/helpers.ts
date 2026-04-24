@@ -12,6 +12,15 @@ import {
 import { TestConfect } from "./TestConfect";
 
 type Snapshot = Ref.Returns<typeof refs.public.matches.getMatchSnapshot>;
+let idempotencySequence = 0;
+
+function commandMetadata(expectedVersion: number) {
+  idempotencySequence += 1;
+  return {
+    expectedVersion,
+    idempotencyKey: `confect-test-${idempotencySequence}`,
+  };
+}
 
 export type SessionRecord = {
   name: string;
@@ -51,6 +60,7 @@ export function createStartedMatchWithOptions(
     const started = yield* client.mutation(refs.public.matches.startMatch, {
       matchId: created.matchId,
       sessionId: sessions[0]!.sessionId,
+      ...commandMetadata(created.version),
       deterministicStart: options.deterministicStart,
     });
 
@@ -69,31 +79,45 @@ export function startDeterministicNextRound(
 ) {
   return Effect.gen(function* () {
     const client = yield* TestConfect;
+    const snapshot = yield* getSnapshotForAnySession(matchId, [{ sessionId, name: "Host" }]);
     return yield* client.mutation(refs.public.rounds.startNextRound, {
       matchId: matchId as never,
       sessionId,
+      ...commandMetadata(snapshot?.version ?? 0),
       deterministicStart,
     });
   });
 }
 
-export function takeTurn(matchId: string, sessionId: SessionId, action: "hit" | "stay") {
+export function takeTurn(
+  matchId: string,
+  sessionId: SessionId,
+  action: "hit" | "stay",
+  expectedVersion: number,
+) {
   return Effect.gen(function* () {
     const client = yield* TestConfect;
     return yield* client.mutation(refs.public.turns.takeTurn, {
       matchId: matchId as never,
       sessionId,
+      ...commandMetadata(expectedVersion),
       action,
     });
   });
 }
 
-export function resolveAction(matchId: string, sessionId: SessionId, targetPlayerId: string) {
+export function resolveAction(
+  matchId: string,
+  sessionId: SessionId,
+  targetPlayerId: string,
+  expectedVersion: number,
+) {
   return Effect.gen(function* () {
     const client = yield* TestConfect;
     return yield* client.mutation(refs.public.turns.resolveAction, {
       matchId: matchId as never,
       sessionId,
+      ...commandMetadata(expectedVersion),
       targetPlayerId: targetPlayerId as never,
     });
   });
@@ -154,6 +178,7 @@ export function advanceUntilRoundBoundary(matchId: string, sessions: SessionReco
           matchId: matchId as never,
           targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0]!,
           sessionId: sourceSession.sessionId,
+          ...commandMetadata(snapshot.version),
         })) as Snapshot;
         continue;
       }
@@ -172,6 +197,7 @@ export function advanceUntilRoundBoundary(matchId: string, sessions: SessionReco
         matchId: matchId as never,
         action: "stay",
         sessionId: activeSession.sessionId,
+        ...commandMetadata(snapshot.version),
       })) as Snapshot;
     }
 

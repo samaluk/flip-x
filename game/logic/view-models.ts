@@ -38,6 +38,7 @@ export type MatchSnapshot = {
   lobbyCode?: string;
   isHost?: boolean;
   status: "setup" | "in_progress" | "completed";
+  version: number;
   targetScore: number;
   currentRoundNumber: number;
   dealerSeat: number;
@@ -90,6 +91,7 @@ export type CanonicalReplayStepState = Pick<
 export function buildMatchSnapshot(args: {
   matchId: string;
   status: MatchSnapshot["status"];
+  version: number;
   lobbyCode?: string;
   hostPlayerId?: string | null;
   targetScore: number;
@@ -112,6 +114,7 @@ export function buildMatchSnapshot(args: {
   const result: Record<string, unknown> = {
     matchId: args.matchId,
     status: args.status,
+    version: args.version,
     targetScore: args.targetScore,
     currentRoundNumber: args.currentRoundNumber,
     dealerSeat: args.dealerSeat,

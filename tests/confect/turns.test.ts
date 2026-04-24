@@ -33,6 +33,8 @@ describe("Confect turns", () => {
         matchId: matchId as never,
         action: "hit",
         sessionId: activeSession.sessionId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: "turns-take-turn",
       });
 
       assertEquals(updated.currentRoundNumber, 1);

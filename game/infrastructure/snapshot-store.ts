@@ -124,6 +124,7 @@ export async function buildSnapshot(
   return buildMatchSnapshot({
     matchId: String(match._id),
     status: match.status,
+    version: match.version,
     lobbyCode: match.lobbyCode,
     hostPlayerId: match.hostPlayerId ? String(match.hostPlayerId) : null,
     targetScore: match.targetScore,

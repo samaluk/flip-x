@@ -60,6 +60,7 @@ export const Matches = Table.make(
     targetScore: Schema.Number,
     currentRoundNumber: Schema.Number,
     dealerSeat: Schema.Number,
+    version: Schema.Number,
     winnerPlayerId: Schema.optional(GenericId.GenericId("players")),
     createdAt: Schema.Number,
     updatedAt: Schema.Number,
@@ -172,6 +173,18 @@ export const ScoreBreakdowns = Table.make(
   .index("by_round", ["roundId"])
   .index("by_round_player", ["roundId", "playerId"]);
 
+export const IdempotencyKeys = Table.make(
+  "idempotencyKeys",
+  Schema.Struct({
+    matchId: GenericId.GenericId("matches"),
+    idempotencyKey: Schema.String,
+    commandType: Schema.String,
+    commandResult: Schema.Any,
+    expiresAt: Schema.Number,
+    createdAt: Schema.Number,
+  }),
+).index("by_idempotency_key", ["idempotencyKey"]);
+
 export default DatabaseSchema.make()
   .addTable(Matches)
   .addTable(Players)
@@ -179,4 +192,5 @@ export default DatabaseSchema.make()
   .addTable(Rounds)
   .addTable(RoundPlayerStates)
   .addTable(RoundEvents)
-  .addTable(ScoreBreakdowns);
+  .addTable(ScoreBreakdowns)
+  .addTable(IdempotencyKeys);

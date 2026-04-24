@@ -230,6 +230,7 @@ async function carryForwardScoresAndMaybeCompleteMatch(
   await ctx.db.patch(match._id, {
     status: "completed",
     winnerPlayerId: winner._id,
+    version: match.version + 1,
     updatedAt: Date.now(),
   });
 
@@ -268,6 +269,7 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
 
   if (!matchCompleted) {
     const patch: Partial<Doc<"matches">> = {
+      version: match.version + 1,
       updatedAt: Date.now(),
     };
 

@@ -84,6 +84,15 @@ export class InvalidMatchState extends Data.TaggedError("InvalidMatchState")<{
   _tag: "InvalidMatchState";
 }> {}
 
+export class StaleGameState extends Data.TaggedError("StaleGameState")<{
+  expectedVersion: number;
+  actualVersion: number;
+}> {
+  get message() {
+    return this._tag;
+  }
+}
+
 export class UnsupportedRelationship extends Data.TaggedError("UnsupportedRelationship")<{
   _tag: "UnsupportedRelationship";
 }> {}
@@ -113,6 +122,7 @@ export type AppError =
   | PlayerNotJoined
   | RateLimited
   | InvalidMatchState
+  | StaleGameState
   | UnsupportedRelationship
   | UnsupportedTable
   | InvalidConfirmation;

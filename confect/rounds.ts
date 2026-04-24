@@ -10,6 +10,8 @@ export async function startNextRoundForSession(
   args: {
     matchId: Id<"matches">;
     sessionId: string;
+    expectedVersion: number;
+    idempotencyKey: string;
     deterministicStart?: { roundSeed: { drawPile: Card[] } };
   },
 ) {
@@ -19,6 +21,8 @@ export async function startNextRoundForSession(
     sessionId,
     command: {
       type: "START_NEXT_ROUND",
+      expectedVersion: args.expectedVersion,
+      idempotencyKey: args.idempotencyKey,
       deterministicStart: args.deterministicStart,
     },
   });

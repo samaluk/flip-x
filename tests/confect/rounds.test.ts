@@ -22,6 +22,8 @@ describe("Confect rounds", () => {
       const nextRound = yield* client.mutation(refs.public.rounds.startNextRound, {
         matchId: matchId as never,
         sessionId: sessions[0]!.sessionId,
+        expectedVersion: completedSnapshot.version,
+        idempotencyKey: "rounds-start-next-round",
       });
 
       assertEquals(nextRound.currentRoundNumber, 2);

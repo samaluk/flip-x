@@ -13,6 +13,7 @@ describe("deterministic replay contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-1",
       status: "in_progress",
+      version: 1,
       hostPlayerId: "p1",
       viewerPlayerId: "p1",
       targetScore: 200,

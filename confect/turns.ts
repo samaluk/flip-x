@@ -6,7 +6,13 @@ import { runGameCommand } from "../game/application/run-command";
 
 export async function takeTurnForSession(
   ctx: MutationCtx,
-  args: { matchId: Id<"matches">; action: "hit" | "stay"; sessionId: string },
+  args: {
+    matchId: Id<"matches">;
+    action: "hit" | "stay";
+    sessionId: string;
+    expectedVersion: number;
+    idempotencyKey: string;
+  },
 ) {
   const sessionId = args.sessionId as SessionId;
   return await runGameCommand(ctx, {
@@ -14,6 +20,8 @@ export async function takeTurnForSession(
     sessionId,
     command: {
       type: "TAKE_TURN",
+      expectedVersion: args.expectedVersion,
+      idempotencyKey: args.idempotencyKey,
       action: args.action,
     },
   });
@@ -21,7 +29,13 @@ export async function takeTurnForSession(
 
 export async function resolveActionForSession(
   ctx: MutationCtx,
-  args: { matchId: Id<"matches">; targetPlayerId: Id<"players">; sessionId: string },
+  args: {
+    matchId: Id<"matches">;
+    targetPlayerId: Id<"players">;
+    sessionId: string;
+    expectedVersion: number;
+    idempotencyKey: string;
+  },
 ) {
   const sessionId = args.sessionId as SessionId;
   return await runGameCommand(ctx, {
@@ -29,6 +43,8 @@ export async function resolveActionForSession(
     sessionId,
     command: {
       type: "RESOLVE_ACTION",
+      expectedVersion: args.expectedVersion,
+      idempotencyKey: args.idempotencyKey,
       targetPlayerId: args.targetPlayerId,
     },
   });

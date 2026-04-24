@@ -8,6 +8,7 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-1",
       status: "in_progress",
+      version: 1,
       hostPlayerId: "p1",
       viewerPlayerId: "p1",
       targetScore: 200,
@@ -103,6 +104,7 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-2",
       status: "in_progress",
+      version: 1,
       hostPlayerId: null,
       targetScore: 200,
       currentRoundNumber: 2,
@@ -202,6 +204,7 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-3",
       status: "in_progress",
+      version: 1,
       hostPlayerId: null,
       targetScore: 200,
       currentRoundNumber: 1,
@@ -241,6 +244,7 @@ describe("game session contract", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-4",
       status: "in_progress",
+      version: 1,
       hostPlayerId: null,
       targetScore: 200,
       currentRoundNumber: 2,

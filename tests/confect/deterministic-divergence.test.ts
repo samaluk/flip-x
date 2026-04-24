@@ -15,6 +15,16 @@ import {
 import * as TestConfect from "./TestConfect";
 import { describeConfectReplayResult } from "./helpers";
 
+let idempotencySequence = 0;
+
+function commandMetadata(expectedVersion: number) {
+  idempotencySequence += 1;
+  return {
+    expectedVersion,
+    idempotencyKey: `confect-divergence-${idempotencySequence}`,
+  };
+}
+
 describe("Confect deterministic divergence", () => {
   it.effect("stops at the first mismatched replay step", () =>
     Effect.gen(function* () {
@@ -45,6 +55,7 @@ describe("Confect deterministic divergence", () => {
             client.mutation(refs.public.matches.startMatch, {
               matchId: created.matchId,
               sessionId: sessions[0]!.sessionId as never,
+              ...commandMetadata(created.version),
               deterministicStart: options.deterministicStart,
             }),
           );
@@ -56,19 +67,21 @@ describe("Confect deterministic divergence", () => {
         startDeterministicNextRound: async () => {
           throw new Error("Not needed for this scenario");
         },
-        takeTurn: async (matchId, sessionId, action) =>
+        takeTurn: async (matchId, sessionId, action, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.takeTurn, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               action,
             }),
           ),
-        resolveAction: async (matchId, sessionId, targetPlayerId) =>
+        resolveAction: async (matchId, sessionId, targetPlayerId, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.resolveAction, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               targetPlayerId: targetPlayerId as never,
             }),
           ),
@@ -116,6 +129,7 @@ describe("Confect deterministic divergence", () => {
             client.mutation(refs.public.matches.startMatch, {
               matchId: created.matchId,
               sessionId: sessions[0]!.sessionId as never,
+              ...commandMetadata(created.version),
               deterministicStart: options.deterministicStart,
             }),
           );
@@ -127,19 +141,21 @@ describe("Confect deterministic divergence", () => {
         startDeterministicNextRound: async () => {
           throw new Error("Not needed for this scenario");
         },
-        takeTurn: async (matchId, sessionId, action) =>
+        takeTurn: async (matchId, sessionId, action, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.takeTurn, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               action,
             }),
           ),
-        resolveAction: async (matchId, sessionId, targetPlayerId) =>
+        resolveAction: async (matchId, sessionId, targetPlayerId, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.resolveAction, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               targetPlayerId: targetPlayerId as never,
             }),
           ),

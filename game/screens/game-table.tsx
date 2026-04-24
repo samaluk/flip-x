@@ -38,10 +38,12 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
       runAction(() =>
         takeTurn({
           matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
           action: "hit",
         }),
       ),
-    [matchId, runAction, takeTurn],
+    [matchId, runAction, snapshot.version, takeTurn],
   );
 
   const handleStay = useCallback(
@@ -49,10 +51,12 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
       runAction(() =>
         takeTurn({
           matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
           action: "stay",
         }),
       ),
-    [matchId, runAction, takeTurn],
+    [matchId, runAction, snapshot.version, takeTurn],
   );
 
   const handleResolveAction = useCallback(
@@ -60,10 +64,12 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
       runAction(() =>
         resolveAction({
           matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
           targetPlayerId,
         }),
       ),
-    [matchId, resolveAction, runAction],
+    [matchId, resolveAction, runAction, snapshot.version],
   );
 
   const handleStartNextRound = useCallback(
@@ -71,9 +77,11 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
       runAction(() =>
         startNextRound({
           matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
         }),
       ),
-    [matchId, runAction, startNextRound],
+    [matchId, runAction, snapshot.version, startNextRound],
   );
 
   return (

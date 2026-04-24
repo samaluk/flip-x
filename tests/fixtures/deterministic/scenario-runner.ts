@@ -48,13 +48,20 @@ export type ReplayHarness = {
   startDeterministicNextRound: (
     matchId: string,
     sessionId: string,
+    expectedVersion: number,
     deterministicStart?: DeterministicStartOptions,
   ) => Promise<MatchSnapshot>;
-  takeTurn: (matchId: string, sessionId: string, action: "hit" | "stay") => Promise<MatchSnapshot>;
+  takeTurn: (
+    matchId: string,
+    sessionId: string,
+    action: "hit" | "stay",
+    expectedVersion: number,
+  ) => Promise<MatchSnapshot>;
   resolveAction: (
     matchId: string,
     sessionId: string,
     targetPlayerId: string,
+    expectedVersion: number,
   ) => Promise<MatchSnapshot>;
 };
 
@@ -117,10 +124,11 @@ export async function runDeterministicReplayScenario(
       return invalidResult(scenario, 0, "Round-scope replay requires setupRound");
     }
 
-    await harness.advanceUntilRoundBoundary(started.matchId, started.sessions);
+    snapshot = await harness.advanceUntilRoundBoundary(started.matchId, started.sessions);
     snapshot = await harness.startDeterministicNextRound(
       started.matchId,
       started.sessions[0]!.sessionId,
+      snapshot.version,
       cloneDeterministicStartOptions(scenario.setupRound),
     );
   }
@@ -140,7 +148,12 @@ export async function runDeterministicReplayScenario(
     }
 
     if (decision.decisionType === "turn_action") {
-      snapshot = await harness.takeTurn(started.matchId, actorSession.sessionId, decision.choice);
+      snapshot = await harness.takeTurn(
+        started.matchId,
+        actorSession.sessionId,
+        decision.choice,
+        snapshot.version,
+      );
     } else {
       if (!snapshot.pendingAction) {
         return invalidResult(
@@ -166,6 +179,7 @@ export async function runDeterministicReplayScenario(
         started.matchId,
         actorSession.sessionId,
         targetPlayerId,
+        snapshot.version,
       );
     }
 

@@ -112,6 +112,7 @@ export const MatchSnapshot = Schema.Struct({
   lobbyCode: Schema.optional(Schema.String),
   isHost: Schema.optional(Schema.Boolean),
   status: Schema.Literal("setup", "in_progress", "completed"),
+  version: Schema.Number,
   targetScore: Schema.Number,
   currentRoundNumber: Schema.Number,
   dealerSeat: Schema.Number,

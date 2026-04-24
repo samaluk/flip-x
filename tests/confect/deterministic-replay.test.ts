@@ -13,6 +13,16 @@ import {
 
 import * as TestConfect from "./TestConfect";
 
+let idempotencySequence = 0;
+
+function commandMetadata(expectedVersion: number) {
+  idempotencySequence += 1;
+  return {
+    expectedVersion,
+    idempotencyKey: `confect-replay-${idempotencySequence}`,
+  };
+}
+
 describe("Confect deterministic replay", () => {
   it.effect("replays a deterministic full match step-by-step", () =>
     Effect.gen(function* () {
@@ -43,6 +53,7 @@ describe("Confect deterministic replay", () => {
             client.mutation(refs.public.matches.startMatch, {
               matchId: created.matchId,
               sessionId: sessions[0]!.sessionId as never,
+              ...commandMetadata(created.version),
               deterministicStart: options.deterministicStart,
             }),
           );
@@ -80,6 +91,7 @@ describe("Confect deterministic replay", () => {
                   matchId: matchId as never,
                   targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0]!,
                   sessionId: sourceSession.sessionId as never,
+                  ...commandMetadata(snapshot.version),
                 }),
               );
               continue;
@@ -97,32 +109,36 @@ describe("Confect deterministic replay", () => {
                 matchId: matchId as never,
                 action: "stay",
                 sessionId: activeSession.sessionId as never,
+                ...commandMetadata(snapshot.version),
               }),
             );
           }
           throw new Error("Timed out while advancing round state");
         },
-        startDeterministicNextRound: async (matchId, sessionId, deterministicStart) =>
+        startDeterministicNextRound: async (matchId, sessionId, expectedVersion, deterministicStart) =>
           await Effect.runPromise(
             client.mutation(refs.public.rounds.startNextRound, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               deterministicStart,
             }),
           ),
-        takeTurn: async (matchId, sessionId, action) =>
+        takeTurn: async (matchId, sessionId, action, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.takeTurn, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               action,
             }),
           ),
-        resolveAction: async (matchId, sessionId, targetPlayerId) =>
+        resolveAction: async (matchId, sessionId, targetPlayerId, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.resolveAction, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               targetPlayerId: targetPlayerId as never,
             }),
           ),
@@ -170,6 +186,7 @@ describe("Confect deterministic replay", () => {
             client.mutation(refs.public.matches.startMatch, {
               matchId: created.matchId,
               sessionId: sessions[0]!.sessionId as never,
+              ...commandMetadata(created.version),
               deterministicStart: options.deterministicStart,
             }),
           );
@@ -203,6 +220,7 @@ describe("Confect deterministic replay", () => {
                   matchId: matchId as never,
                   targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0]!,
                   sessionId: sourceSession.sessionId as never,
+                  ...commandMetadata(snapshot.version),
                 }),
               );
               continue;
@@ -219,32 +237,36 @@ describe("Confect deterministic replay", () => {
                 matchId: matchId as never,
                 action: "stay",
                 sessionId: activeSession.sessionId as never,
+                ...commandMetadata(snapshot.version),
               }),
             );
           }
           throw new Error("Timed out while advancing round state");
         },
-        startDeterministicNextRound: async (matchId, sessionId, deterministicStart) =>
+        startDeterministicNextRound: async (matchId, sessionId, expectedVersion, deterministicStart) =>
           await Effect.runPromise(
             client.mutation(refs.public.rounds.startNextRound, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               deterministicStart,
             }),
           ),
-        takeTurn: async (matchId, sessionId, action) =>
+        takeTurn: async (matchId, sessionId, action, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.takeTurn, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               action,
             }),
           ),
-        resolveAction: async (matchId, sessionId, targetPlayerId) =>
+        resolveAction: async (matchId, sessionId, targetPlayerId, expectedVersion) =>
           await Effect.runPromise(
             client.mutation(refs.public.turns.resolveAction, {
               matchId: matchId as never,
               sessionId: sessionId as never,
+              ...commandMetadata(expectedVersion),
               targetPlayerId: targetPlayerId as never,
             }),
           ),

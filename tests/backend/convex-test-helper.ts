@@ -11,6 +11,15 @@ import type { SessionId } from "convex-helpers/server/sessions";
 
 const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
 const DEFAULT_GAMEPLAY_GUARD_LIMIT = 150;
+let idempotencySequence = 0;
+
+function commandMetadata(expectedVersion: number) {
+  idempotencySequence += 1;
+  return {
+    expectedVersion,
+    idempotencyKey: `backend-test-${idempotencySequence}`,
+  };
+}
 
 type TestSession = { name: string; sessionId: SessionId };
 
@@ -59,6 +68,7 @@ export async function createStartedMatch(
   const started = await client.mutation(api.matches.startMatch, {
     matchId,
     sessionId: host.sessionId,
+    ...commandMetadata(created.version),
     deterministicStart: options.deterministicStart,
   });
 
@@ -75,9 +85,11 @@ export async function startDeterministicNextRound(
   sessionId: SessionId,
   deterministicStart?: DeterministicStartOptions,
 ) {
+  const snapshot = await client.query(api.matches.getMatchSnapshot, { matchId, sessionId });
   return await client.mutation(api.rounds.startNextRound, {
     matchId,
     sessionId,
+    ...commandMetadata(snapshot?.version ?? 0),
     deterministicStart,
   });
 }
@@ -147,6 +159,7 @@ export async function advanceOneGameplayStep(
         matchId,
         targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0] as Id<"players">,
         sessionId: sourceSession.sessionId,
+        ...commandMetadata(snapshot.version),
       }),
     );
   }
@@ -166,6 +179,7 @@ export async function advanceOneGameplayStep(
       matchId,
       action: turnAction,
       sessionId: activeSession.sessionId,
+      ...commandMetadata(snapshot.version),
     }),
   );
 }
@@ -195,6 +209,7 @@ export async function waitForPendingAction(
         await client.mutation(api.rounds.startNextRound, {
           matchId,
           sessionId: sessions[0]!.sessionId,
+          ...commandMetadata(snapshot.version),
         }),
       );
       continue;

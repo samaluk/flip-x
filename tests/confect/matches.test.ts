@@ -101,6 +101,8 @@ describe("Confect matches", () => {
       const started = yield* client.mutation(refs.public.matches.startMatch, {
         matchId: created.matchId,
         sessionId: "session-host",
+        expectedVersion: created.version,
+        idempotencyKey: "matches-start-match",
       });
 
       assertEquals(started.status, "in_progress");
