@@ -55,6 +55,17 @@ export type RoundEvent =
 
 export type RoundEventType = RoundEvent["eventType"];
 
+export type PersistedRoundEvent = {
+  eventType: string;
+  actorPlayerId: string | null;
+  targetPlayerId: string | null;
+  payload: unknown;
+};
+
+export type EncodedRoundEvent = Omit<PersistedRoundEvent, "eventType"> & {
+  eventType: RoundEventType;
+};
+
 const roundEventTypes = new Set<RoundEventType>([
   "initial_deal",
   "hit",
@@ -78,6 +89,133 @@ const roundEventTypes = new Set<RoundEventType>([
 
 export function isRoundEventType(value: string): value is RoundEventType {
   return roundEventTypes.has(value as RoundEventType);
+}
+
+function isActionKind(value: unknown): value is ActionKind {
+  return value === "flip_three" || value === "freeze" || value === "second_chance";
+}
+
+function isModifierValue(value: unknown): value is ModifierCard["modifierValue"] {
+  return value === "x2" || typeof value === "number";
+}
+
+function payloadRecord(payload: unknown): Record<string, unknown> {
+  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+    throw new Error("Round event payload must be an object");
+  }
+  return payload as Record<string, unknown>;
+}
+
+function decodeCardPayload(payload: unknown): CardEventPayload {
+  const record = payloadRecord(payload);
+
+  if (record.cardKind === "number" && typeof record.numberValue === "number") {
+    return { cardKind: "number", numberValue: record.numberValue };
+  }
+
+  if (record.cardKind === "modifier" && isModifierValue(record.modifierValue)) {
+    return { cardKind: "modifier", modifierValue: record.modifierValue };
+  }
+
+  if (record.cardKind === "action" && isActionKind(record.actionKind)) {
+    return { cardKind: "action", actionKind: record.actionKind };
+  }
+
+  throw new Error("Invalid card event payload");
+}
+
+function decodeEmptyPayload(payload: unknown): Record<string, never> {
+  payloadRecord(payload);
+  return {};
+}
+
+function decodeNumberPayload(payload: unknown, key: string) {
+  const record = payloadRecord(payload);
+  const value = record[key];
+  if (typeof value !== "number") {
+    throw new Error(`Round event payload field ${key} must be a number`);
+  }
+  return value;
+}
+
+function decodeActionPayload(payload: unknown) {
+  const record = payloadRecord(payload);
+  if (!isActionKind(record.actionKind)) {
+    throw new Error("Round event payload field actionKind must be an action kind");
+  }
+  return { actionKind: record.actionKind };
+}
+
+function decodeModifierPayload(payload: unknown) {
+  const record = payloadRecord(payload);
+  if (!isModifierValue(record.modifierValue)) {
+    throw new Error("Round event payload field modifierValue must be a modifier value");
+  }
+  return { modifierValue: record.modifierValue };
+}
+
+export function encodeRoundEvent(event: RoundEvent): EncodedRoundEvent {
+  return {
+    eventType: event.eventType,
+    actorPlayerId: event.actorPlayerId,
+    targetPlayerId: event.targetPlayerId,
+    payload: event.payload,
+  };
+}
+
+export function decodeRoundEvent(event: PersistedRoundEvent): RoundEvent {
+  const base = {
+    actorPlayerId: event.actorPlayerId,
+    targetPlayerId: event.targetPlayerId,
+  };
+
+  switch (event.eventType) {
+    case "initial_deal":
+    case "hit":
+    case "flip3_hit":
+      return { ...base, eventType: event.eventType, payload: decodeCardPayload(event.payload) };
+    case "number_drawn":
+      return {
+        ...base,
+        eventType: event.eventType,
+        payload: { numberValue: decodeNumberPayload(event.payload, "numberValue") },
+      };
+    case "modifier_drawn":
+      return { ...base, eventType: event.eventType, payload: decodeModifierPayload(event.payload) };
+    case "second_chance_held":
+    case "second_chance_discarded":
+    case "flip7":
+    case "freeze_applied":
+    case "stay":
+    case "flip3_completed":
+      return { ...base, eventType: event.eventType, payload: decodeEmptyPayload(event.payload) };
+    case "second_chance_passed":
+      return { ...base, eventType: event.eventType, payload: decodeEmptyPayload(event.payload) };
+    case "second_chance_used":
+    case "duplicate_bust":
+      return {
+        ...base,
+        eventType: event.eventType,
+        payload: { duplicate: decodeNumberPayload(event.payload, "duplicate") },
+      };
+    case "deferred_action":
+    case "pending_action":
+      return { ...base, eventType: event.eventType, payload: decodeActionPayload(event.payload) };
+    case "flip_three_targeted":
+      return {
+        ...base,
+        eventType: event.eventType,
+        payload: { cardsRemaining: decodeNumberPayload(event.payload, "cardsRemaining") },
+      };
+    case "round_scored":
+      return {
+        ...base,
+        eventType: event.eventType,
+        payload: { finalRoundScore: decodeNumberPayload(event.payload, "finalRoundScore") },
+      };
+    default:
+      throw new Error(`Unknown round event type: ${event.eventType}`);
+  }
 }
 
 export function cardEventPayload(card: Card): CardEventPayload {

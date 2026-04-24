@@ -21,6 +21,26 @@ const RoundPlayerStatus = Schema.Literal(
   "completed",
 );
 const RoundEndReason = Schema.Literal("all_inactive", "flip7", "unknown");
+const RoundEventType = Schema.Literal(
+  "initial_deal",
+  "hit",
+  "flip3_hit",
+  "number_drawn",
+  "modifier_drawn",
+  "second_chance_held",
+  "second_chance_passed",
+  "second_chance_discarded",
+  "second_chance_used",
+  "duplicate_bust",
+  "flip7",
+  "freeze_applied",
+  "stay",
+  "flip_three_targeted",
+  "flip3_completed",
+  "deferred_action",
+  "pending_action",
+  "round_scored",
+);
 
 const CardValue = Schema.Struct({
   id: Schema.String,
@@ -128,7 +148,7 @@ export const RoundEvents = Table.make(
   Schema.Struct({
     roundId: GenericId.GenericId("rounds"),
     sequence: Schema.Number,
-    eventType: Schema.String,
+    eventType: RoundEventType,
     actorPlayerId: Schema.optional(GenericId.GenericId("players")),
     targetPlayerId: Schema.optional(GenericId.GenericId("players")),
     payload: Schema.Any,

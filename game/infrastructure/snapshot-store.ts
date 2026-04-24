@@ -7,7 +7,7 @@ import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import { buildMatchSnapshot, toCanonicalReplayStepState } from "../logic/view-models";
 import { buildRoundHistory } from "./round-history-builder";
 import type { ActionCard, Card } from "../logic/card-types";
-import { isRoundEventType, type RoundEvent } from "../logic/events";
+import { decodeRoundEvent, type RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { MatchSnapshot } from "../logic/view-models";
 
@@ -59,19 +59,12 @@ export function normalizeRoundRuntime(doc: Doc<"rounds">): RoundRuntime {
 }
 
 function normalizeLatestRoundEvent(doc: Doc<"roundEvents">): RoundEvent {
-  if (!isRoundEventType(doc.eventType)) {
-    throw new Error(`Unknown round event type: ${doc.eventType}`);
-  }
-
-  return {
+  return decodeRoundEvent({
     eventType: doc.eventType,
     actorPlayerId: doc.actorPlayerId ? String(doc.actorPlayerId) : null,
     targetPlayerId: doc.targetPlayerId ? String(doc.targetPlayerId) : null,
-    payload:
-      typeof doc.payload === "object" && doc.payload
-        ? (doc.payload as Record<string, unknown>)
-        : {},
-  } as RoundEvent;
+    payload: doc.payload,
+  });
 }
 
 export async function getLatestRound(ctx: Ctx, matchId: Id<"matches">) {

@@ -1,7 +1,7 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
 import { computeScoreBreakdown } from "../logic/scoring";
-import type { RoundEvent } from "../logic/events";
+import { encodeRoundEvent, type RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "../application/game-command";
 
@@ -155,14 +155,19 @@ async function persistEvents(
   let sequence = existingEvents.length;
 
   for (const event of events) {
+    const persistedEvent = encodeRoundEvent(event);
     sequence += 1;
     await ctx.db.insert("roundEvents", {
       roundId,
       sequence,
-      eventType: event.eventType,
-      actorPlayerId: event.actorPlayerId ? playerIdMap.get(event.actorPlayerId) : undefined,
-      targetPlayerId: event.targetPlayerId ? playerIdMap.get(event.targetPlayerId) : undefined,
-      payload: event.payload,
+      eventType: persistedEvent.eventType,
+      actorPlayerId: persistedEvent.actorPlayerId
+        ? playerIdMap.get(persistedEvent.actorPlayerId)
+        : undefined,
+      targetPlayerId: persistedEvent.targetPlayerId
+        ? playerIdMap.get(persistedEvent.targetPlayerId)
+        : undefined,
+      payload: persistedEvent.payload,
       createdAt: Date.now(),
     });
   }
