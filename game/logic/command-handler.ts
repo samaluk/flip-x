@@ -123,11 +123,17 @@ export function continueRound(
       payload: cardEventPayload(card),
     });
 
-    applyCardToPlayer(round, players, playerStates, player.playerId, card, "dealing", events);
+      applyCardToPlayer(round, players, playerStates, player.playerId, card, "dealing", events);
 
-    if (round.phase !== "dealing") {
-      break;
-    }
+      // If Flip Three was dealt, transition to player_turns so the target can hit
+      if (round.pendingFlip3) {
+        round.phase = "player_turns";
+        break;
+      }
+
+      if (round.phase !== "dealing") {
+        break;
+      }
 
     if (wrappedToDealer) {
       round.phase = "player_turns";
@@ -306,6 +312,11 @@ export function resolvePendingAction(
     targetPlayerId,
     events,
   );
+
+  // If Flip Three was resolved, ensure phase is player_turns for target to hit
+  if (round.pendingFlip3) {
+    round.phase = "player_turns";
+  }
 
   maybeFinishRound(round, players, playerStates);
 
