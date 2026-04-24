@@ -2,7 +2,7 @@ import type { ActionCard } from "./card-types";
 import { addEvent, type RoundEvent } from "./events";
 import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
-import { activePlayerIds } from "./turn-order";
+import { activePlayerIds, orderedPlayerIds } from "./turn-order";
 
 export function createPendingTargetAction(
   round: RoundRuntime,
@@ -13,7 +13,16 @@ export function createPendingTargetAction(
   resume: PendingAction["resume"],
   events: RoundEvent[],
 ) {
-  const eligibleTargetIds = activePlayerIds(players, playerStates);
+  const eligibleTargetIds =
+    resume === "dealing"
+      ? orderedPlayerIds(players)
+          .filter(
+            (player) =>
+              playerStates[player.playerId]?.status === "active" ||
+              playerStates[player.playerId]?.status === "waiting",
+          )
+          .map((player) => player.playerId)
+      : activePlayerIds(players, playerStates);
 
   if (eligibleTargetIds.length === 0) {
     return null;

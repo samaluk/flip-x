@@ -140,14 +140,36 @@ describe("turn resolution", () => {
       "p1",
     );
 
-    expect(resumed.round.phase).toBe("player_turns");
-    expect(resumed.playerStates.p4.numberCards[0]?.numberValue).toBe(4);
-    expect(resumed.playerStates.p1.receivedActionCards).toEqual([
-      actionCard("freeze-opening", "freeze"),
-    ]);
-  });
+     expect(resumed.round.phase).toBe("player_turns");
+     expect(resumed.playerStates.p4.numberCards[0]?.numberValue).toBe(4);
+     expect(resumed.playerStates.p1.receivedActionCards).toEqual([
+       actionCard("freeze-opening", "freeze"),
+     ]);
+   });
 
-  it("buildOrderedDeck returns the full deck without shuffling", () => {
+   it("creates pending action when first player gets freeze as their first card", () => {
+     const playerStates = createPlayerRoundStates(players);
+     const round = createRoundRuntime(players, 1, 0);
+
+     round.drawPile = [
+       actionCard("freeze-first", "freeze"),
+       numberCard("c2", 2),
+       numberCard("c3", 3),
+     ];
+
+     const resolved = continueRound(players, round, playerStates);
+
+     expect(resolved.round.phase).toBe("resolving_action");
+     expect(resolved.round.pendingAction).toMatchObject({
+       sourcePlayerId: "p1",
+       actionKind: "freeze",
+       resume: "dealing",
+     });
+     expect(resolved.playerStates.p1.status).toBe("active");
+     expect(resolved.playerStates.p1.receivedActionCards).toHaveLength(0);
+   });
+
+   it("buildOrderedDeck returns the full deck without shuffling", () => {
     const deck = buildOrderedDeck();
 
     expect(deck).toHaveLength(94);

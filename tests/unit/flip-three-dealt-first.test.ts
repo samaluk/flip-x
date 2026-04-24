@@ -52,23 +52,22 @@ describe("Flip Three dealt as first card", () => {
     console.log("Events:", result.events.map((e) => ({ eventType: e.eventType, actor: e.actorPlayerId })));
 
     // Expectations:
-    // 1. Game should NOT be in "dealing" phase - should be "player_turns" for Flip Three target to hit
-    expect(result.round.phase).not.toBe("dealing");
-    expect(result.round.phase).toBe("player_turns");
+    // 1. Game should be in "resolving_action" phase - player must choose a target
+    expect(result.round.phase).toBe("resolving_action");
 
-    // 2. When only one active player exists, Flip Three auto-resolves (no pendingAction)
-    // Instead, pendingFlip3 is set directly
-    expect(result.round.pendingAction).toBeNull();
-    expect(result.round.pendingFlip3).toBeDefined();
-    expect(result.round.pendingFlip3?.sourcePlayerId).toBe("p1");
-    expect(result.round.pendingFlip3?.targetPlayerId).toBe("p1"); // Auto-resolved to self
-    expect(result.round.pendingFlip3?.cardsRemaining).toBe(3);
+    // 2. Pending action should exist with eligible targets (p2 and p3 are "waiting" but targetable during dealing)
+    expect(result.round.pendingAction).toBeDefined();
+    expect(result.round.pendingAction?.sourcePlayerId).toBe("p1");
+    expect(result.round.pendingAction?.actionKind).toBe("flip_three");
+    expect(result.round.pendingAction?.eligibleTargetIds).toContain("p2");
+    expect(result.round.pendingAction?.eligibleTargetIds).toContain("p3");
+    expect(result.round.pendingFlip3).toBeNull();
 
-    // 3. Player who drew Flip Three should NOT have it in held cards (it was used)
-    expect(result.playerStates.p1.heldActionCards).toHaveLength(0);
+    // 3. Player who drew Flip Three should have it in held cards (waiting for target selection)
+    expect(result.playerStates.p1.heldActionCards).toHaveLength(1);
+    expect(result.playerStates.p1.heldActionCards[0]?.actionKind).toBe("flip_three");
 
-    // 4. p1 should now be able to hit for the Flip Three draws
-    const isP1Target = result.round.pendingFlip3?.targetPlayerId === "p1";
-    expect(isP1Target).toBe(true);
+    // 4. After resolving pending action, Flip Three should be set up for the chosen target
+    // (This would be tested in a separate test that calls resolvePendingAction)
   });
 });

@@ -318,6 +318,16 @@ export function resolvePendingAction(
     round.phase = "player_turns";
   }
 
+  // Advance turn if current active player is no longer active (e.g., frozen by self-targeting)
+  if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
+    const currentPlayerState = round.activePlayerId ? playerStates[round.activePlayerId] : null;
+    if (currentPlayerState?.status !== "active") {
+      const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
+      round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
+      round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
+    }
+  }
+
   maybeFinishRound(round, players, playerStates);
 
   if (round.phase === "dealing" && !round.pendingAction) {

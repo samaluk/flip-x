@@ -2,16 +2,26 @@ import { describe, it } from "@effect/vitest";
 import { assertEquals } from "@effect/vitest/utils";
 import { Effect } from "effect";
 
+import type { Card } from "@/game/logic/card-types";
 import refs from "@/confect/_generated/refs";
 
 import * as TestConfect from "./TestConfect";
-import { createStartedMatch, getSnapshotForAnySession } from "./helpers";
+import { createStartedMatchWithOptions, getSnapshotForAnySession } from "./helpers";
+
+const nonActionDrawPile: Card[] = Array.from({ length: 50 }, (_, i) => ({
+  id: `num-${i}`,
+  type: "number" as const,
+  label: String((i % 7) + 1),
+  numberValue: ((i % 7) + 1) as 1 | 2 | 3 | 4 | 5 | 6 | 7,
+}));
 
 describe("Confect turns", () => {
   it.effect("takeTurn updates the round state for the active player", () =>
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;
-      const { matchId, sessions } = yield* createStartedMatch(["Host", "Guest"]);
+      const { matchId, sessions } = yield* createStartedMatchWithOptions(["Host", "Guest"], {
+        deterministicStart: { roundSeed: { drawPile: nonActionDrawPile } },
+      });
 
       const snapshot = yield* getSnapshotForAnySession(matchId, sessions);
 
