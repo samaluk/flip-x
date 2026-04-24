@@ -420,9 +420,11 @@ pnpm test:backend
 
 ---
 
-### PR 5: Clarify & Fix Flip Three Behavior (Possible Behavior Change)
+### PR 5: Clarify Flip Three Behavior (No Behavior Change)
 
-**Goal**: Clarify whether Flip Three draws automatically (once target is chosen) or requires manual hits.
+**Goal**: Clarify that Flip Three requires manual hits after target selection.
+
+**Decision**: Use option **B: Manual**. After `resolvePendingAction(targetId)` chooses the target, the target must click **hit** for each required Flip Three draw, up to three cards or until bust/Flip 7. This matches `docs/game-rules.md` and `docs/architecture.md`.
 
 **Current implementation**:
 - `pendingFlip3` is set when Flip Three is dealt.
@@ -430,36 +432,29 @@ pnpm test:backend
 - Player must then **manually click "hit"** for each of the up-to-3 cards.
 - Each hit decrements `cardsRemaining`.
 
-**Official rules** (from `docs/game-rules.md`):
-- "The player who is dealt Flip Three chooses any active player... That target **draws up to three cards, one at a time**."
-- Implies automatic drawing (no manual hit clicks needed).
+**App rules** (from `docs/game-rules.md`):
+- "In this app, Flip Three remains a manual sequence: after the target is chosen, the target manually hits for each required Flip Three draw."
 - "Every drawn card counts toward the three-card total" (modifier, action, Second Chance).
 - "If the target **busts before three cards are drawn, stop immediately**."
 - "If the target **flips 7 before three cards are drawn, stop immediately** and end the round."
 
-**Question**: Does "draws one at a time" mean:
-- (A) Automatic: `resolvePendingAction(targetId)` → engine draws up to 3 cards automatically, stopping on bust/flip7/complete → new phase.
-- (B) Manual: `resolvePendingAction(targetId)` → set `pendingFlip3`; player must then click "hit" three times (or until bust/flip7).
-
-**Current code implements (B)**. **Rules suggest (A)**.
+**Behavior**:
+- `resolvePendingAction(targetId)` sets `pendingFlip3` and returns to the turn phase.
+- While `pendingFlip3` is active, only the target can hit.
+- Each manual hit draws exactly one card and decrements `cardsRemaining`.
+- The sequence stops immediately on bust or Flip 7.
+- Deferred Freeze/Flip Three cards resolve only after the original Flip Three completes successfully.
 
 **Recommendation**:
-1. **Confirm the intended behavior** with product owner or game rules document.
-2. **If behavior change needed**, refactor Flip Three resolver:
-   - `resolvePendingAction()` with Flip Three target → automatically draw up to 3 cards → handle deferred Freeze/Flip Three → return to turn phase automatically.
-   - No more manual "hit" clicks during Flip Three.
-   - `pendingFlip3` state is used only for tracking, not blocking turns.
+1. Keep the current manual-hit behavior.
+2. Ensure tests keep covering pending Flip Three continuation, bust/Flip 7 stops, and deferred action resolution.
 
-**Files to modify** (if behavior change):
-- `game/logic/flip-three.ts` — New `resolveFlip3(target)` function that draws up to 3 cards in a loop.
-- `game/logic/turn-resolution.ts` — Update `resolvePendingAction()` to call new resolver.
-- `tests/confect/turns.test.ts` — Update Flip Three test expectations.
-- `tests/fixtures/deterministic/*.ts` — Update scenario assertions.
+**Files to modify**:
+- Documentation only, unless tests reveal missing manual-hit coverage.
 
 **Test strategy**:
-- If behavior changes, deterministic tests will break. Fix them to match new behavior.
-- Add new tests for the three-card draw loop: bust mid-draw, flip7 mid-draw, successful draw of 3.
-- Test deferred action card resolution after Flip Three completes.
+- Existing deterministic and turn-resolution tests should continue to pass.
+- Add tests only if manual-hit coverage regresses or an uncovered edge case is found.
 
 **Commands**:
 ```bash
@@ -469,15 +464,12 @@ pnpm test:backend
 ```
 
 **Expected changes**:
-- Possible: Flip Three resolves without manual hit clicks (behavior change).
+- Flip Three remains manual after target selection.
 - DB schema: No changes (same `pendingFlip3` structure).
-- Tests: May fail if behavior changes; must be fixed.
+- Tests: No behavior changes expected.
 
 **Risks**:
-- High if behavior change is incompatible with current UI assumptions (e.g., frontend expects manual hits).
-- Medium if tests rely on manual hit behavior.
-
-**Critical: Must clarify intent before implementation.**
+- Low. The decision aligns current rules, architecture, UI, and tests.
 
 ---
 
