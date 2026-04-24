@@ -8,6 +8,18 @@ import type {
 } from "./round-state";
 import type { RoundEvent } from "./events";
 
+type LatestRoundEvent = RoundEvent extends infer TEvent
+  ? TEvent extends RoundEvent
+    ? {
+        type: TEvent["eventType"];
+        payload: TEvent["payload"];
+        actorPlayerId?: TEvent["actorPlayerId"];
+        targetPlayerId?: TEvent["targetPlayerId"];
+        playerNames?: string;
+      }
+    : never
+  : never;
+
 export type RoundHistoryEntry = {
   roundNumber: number;
   phase: "completed" | "projected";
@@ -56,13 +68,7 @@ export type MatchSnapshot = {
     scoreBreakdown: ReturnType<typeof scoreRound>;
     bustCard: NumberCard | null;
   }>;
-  latestEvent: {
-    type: string;
-    payload: Record<string, unknown>;
-    actorPlayerId?: string | null;
-    targetPlayerId?: string | null;
-    playerNames?: string;
-  } | null;
+  latestEvent: LatestRoundEvent | null;
   roundHistory: RoundHistoryEntry[];
 };
 
@@ -231,14 +237,6 @@ export function toCanonicalReplayStepState(snapshot: MatchSnapshot): CanonicalRe
     roundStatus: snapshot.roundStatus,
     endedBy: snapshot.endedBy,
     players: [...snapshot.players].toSorted((left, right) => left.seatIndex - right.seatIndex),
-    latestEvent: snapshot.latestEvent
-      ? {
-          type: snapshot.latestEvent.type,
-          payload: snapshot.latestEvent.payload,
-          actorPlayerId: snapshot.latestEvent.actorPlayerId,
-          targetPlayerId: snapshot.latestEvent.targetPlayerId,
-          playerNames: snapshot.latestEvent.playerNames,
-        }
-      : null,
+    latestEvent: snapshot.latestEvent ? { ...snapshot.latestEvent } : null,
   };
 }
