@@ -4,7 +4,7 @@ import { getManyFrom } from "convex-helpers/server/relationships";
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
-import type { OrderedPlayer, PlayerRoundState, RoundRuntime } from "../logic/turn-resolution";
+import type { OrderedPlayer, PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import {
   getLatestRound,
   getRoundPlayerStateDocs,

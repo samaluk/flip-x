@@ -1,7 +1,8 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
 import { computeScoreBreakdown } from "../logic/scoring";
-import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../logic/turn-resolution";
+import type { RoundEvent } from "../logic/events";
+import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "../application/game-command";
 
 export type GameTransition = {

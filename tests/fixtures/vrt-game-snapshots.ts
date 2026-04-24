@@ -1,7 +1,7 @@
 import type { ActionKind, ModifierCard, NumberCard } from "@/game/logic/card-types";
 import { scoreRound } from "@/game/logic/scoring";
 import type { MatchSnapshot } from "@/game/logic/view-models";
-import type { PlayerRoundStatus } from "@/game/logic/turn-resolution";
+import type { PlayerRoundStatus } from "@/game/logic/round-state";
 
 const MATCH_ID = "jz7abcd1234567890";
 

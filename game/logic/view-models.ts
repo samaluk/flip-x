@@ -4,9 +4,9 @@ import type {
   OrderedPlayer,
   PendingAction,
   PlayerRoundState,
-  RoundEvent,
   RoundRuntime,
-} from "./turn-resolution";
+} from "./round-state";
+import type { RoundEvent } from "./events";
 
 export type RoundHistoryEntry = {
   roundNumber: number;

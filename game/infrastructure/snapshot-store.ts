@@ -7,8 +7,9 @@ import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import { buildMatchSnapshot, toCanonicalReplayStepState } from "../logic/view-models";
 import { buildRoundHistory } from "./round-history-builder";
 import type { ActionCard, Card } from "../logic/card-types";
+import type { RoundEvent } from "../logic/events";
+import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { MatchSnapshot } from "../logic/view-models";
-import type { PlayerRoundState, RoundEvent, RoundRuntime } from "../logic/turn-resolution";
 
 type Ctx = QueryCtx | MutationCtx;
 

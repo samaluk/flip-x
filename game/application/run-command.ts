@@ -13,10 +13,10 @@ import {
   continueRound,
   createPlayerRoundStates,
   createRoundRuntime,
-  finalizeRound,
   resolvePendingAction,
   takeTurnAction,
-} from "../logic/turn-resolution";
+} from "../logic/command-handler";
+import { finalizeRound } from "../logic/round-finalization";
 import type { GameCommand } from "./game-command";
 import { loadMatchAggregate } from "../infrastructure/load-match-aggregate";
 import { saveCommandResult, type GameTransition } from "../infrastructure/save-command-result";

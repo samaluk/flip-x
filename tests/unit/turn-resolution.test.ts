@@ -8,9 +8,8 @@ import {
   createRoundRuntime,
   resolvePendingAction,
   takeTurnAction,
-  type PlayerRoundState,
-  type RoundRuntime,
-} from "@/game/logic/turn-resolution";
+} from "@/game/logic/command-handler";
+import type { PlayerRoundState, RoundRuntime } from "@/game/logic/round-state";
 import { InvalidAction, InvalidTarget, InvalidTurn } from "@/shared/lib/errors/domain";
 
 const players = [
