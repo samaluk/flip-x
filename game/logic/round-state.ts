@@ -1,4 +1,5 @@
 import type { ActionCard, ActionKind, Card, ModifierCard, NumberCard } from "./card-types";
+import type { RngService } from "./rng";
 
 export type PlayerRoundStatus = "waiting" | "active" | "stayed" | "busted" | "frozen" | "completed";
 
@@ -60,6 +61,7 @@ export type CreateRoundRuntimeOptions = {
   pendingAction?: PendingAction | null;
   pendingFlip3?: PendingFlip3 | null;
   phase?: RoundPhase;
+  rng?: RngService;
 };
 
 export type ResolveResult = {

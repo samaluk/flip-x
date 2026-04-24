@@ -1,3 +1,5 @@
+import { productionRng, type RngService } from "./rng";
+
 export type NumberCard = {
   id: string;
   type: "number";
@@ -26,19 +28,6 @@ export type ActionCard = {
 export type Card = NumberCard | ModifierCard | ActionCard;
 
 export const MODIFIER_LABELS: ModifierValue[] = [2, 4, 6, 8, 10, "x2"];
-
-function shuffle<T>(items: T[]): T[] {
-  const next = [...items];
-
-  for (let index = next.length - 1; index > 0; index -= 1) {
-    const swapIndex = Math.floor(Math.random() * (index + 1));
-    const current = next[index];
-    next[index] = next[swapIndex];
-    next[swapIndex] = current;
-  }
-
-  return next;
-}
 
 export function buildOrderedDeck() {
   const cards: Card[] = [];
@@ -88,12 +77,12 @@ export function buildOrderedDeck() {
   return cards;
 }
 
-function shuffleDeck(cards: readonly Card[]) {
-  return shuffle([...cards]);
+function shuffleDeck(cards: readonly Card[], rng: RngService = productionRng) {
+  return rng.shuffle(cards);
 }
 
-export function createDeck() {
-  return shuffleDeck(buildOrderedDeck());
+export function createDeck(rng?: RngService) {
+  return shuffleDeck(buildOrderedDeck(), rng);
 }
 
 export function isNumberCard(card: Card): card is NumberCard {

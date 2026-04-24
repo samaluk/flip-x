@@ -67,7 +67,7 @@ export function createRoundRuntime(
     phase: options.phase ?? "dealing",
     roundNumber,
     dealerSeat,
-    drawPile: [...(options.drawPile ?? createDeck())],
+    drawPile: [...(options.drawPile ?? createDeck(options.rng))],
     discardPile: [...(options.discardPile ?? [])],
     openingSeatIndex: options.openingSeatIndex ?? firstPlayer.seatIndex,
     turnSeatIndex: options.turnSeatIndex ?? firstPlayer.seatIndex,
