@@ -1,9 +1,15 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
 import { computeScoreBreakdown } from "../logic/scoring";
-import { encodeRoundEvent, type RoundEvent } from "../logic/events";
+import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "../application/game-command";
+import {
+  serializePlayerRoundState,
+  serializePlayerRoundStatePatch,
+  serializeRoundEvent,
+  serializeRoundRuntime,
+} from "./serializers";
 
 export type GameTransition = {
   command: GameCommand["type"];
@@ -39,37 +45,6 @@ export type SaveCommandResultInput = {
   playerIdMap: Map<string, Id<"players">>;
   transition: GameTransition;
 };
-
-function serializeRoundRuntime(round: RoundRuntime, playerIdMap: Map<string, Id<"players">>) {
-  return {
-    phase: round.phase,
-    dealerSeat: round.dealerSeat,
-    activePlayerId: round.activePlayerId ? playerIdMap.get(round.activePlayerId) : undefined,
-    drawPile: round.drawPile,
-    discardPile: round.discardPile,
-    openingSeatIndex: round.openingSeatIndex,
-    turnSeatIndex: round.turnSeatIndex,
-    endedBy: round.endedBy,
-    pendingAction: round.pendingAction
-      ? {
-          sourcePlayerId: playerIdMap.get(round.pendingAction.sourcePlayerId)!,
-          actionKind: round.pendingAction.actionKind,
-          eligibleTargetIds: round.pendingAction.eligibleTargetIds.map(
-            (playerId) => playerIdMap.get(playerId)!,
-          ),
-          resume: round.pendingAction.resume,
-        }
-      : undefined,
-    pendingFlip3: round.pendingFlip3
-      ? {
-          sourcePlayerId: playerIdMap.get(round.pendingFlip3.sourcePlayerId)!,
-          targetPlayerId: playerIdMap.get(round.pendingFlip3.targetPlayerId)!,
-          cardsRemaining: round.pendingFlip3.cardsRemaining,
-          deferredActionCards: round.pendingFlip3.deferredActionCards,
-        }
-      : undefined,
-  };
-}
 
 async function createRound(
   ctx: MutationCtx,
@@ -114,27 +89,14 @@ async function persistPlayerStates(
     const existing = docMap.get(playerId);
 
     if (!existing) {
-      const { playerId: _playerId, bustCard, ...rest } = playerState;
-      await ctx.db.insert("roundPlayerStates", {
-        roundId,
-        playerId: playerIdMap.get(playerId)!,
-        ...rest,
-        ...(bustCard ? { bustCard } : {}),
-      });
+      await ctx.db.insert(
+        "roundPlayerStates",
+        serializePlayerRoundState(roundId, playerState, playerIdMap),
+      );
       continue;
     }
 
-    await ctx.db.patch(existing._id, {
-      status: playerState.status,
-      numberCards: playerState.numberCards,
-      modifierCards: playerState.modifierCards,
-      heldActionCards: playerState.heldActionCards,
-      receivedActionCards: playerState.receivedActionCards,
-      roundScore: playerState.roundScore,
-      pointsAtRisk: playerState.pointsAtRisk,
-      hasFlip7: playerState.hasFlip7,
-      ...(playerState.bustCard ? { bustCard: playerState.bustCard } : {}),
-    });
+    await ctx.db.patch(existing._id, serializePlayerRoundStatePatch(playerState));
   }
 }
 
@@ -155,18 +117,14 @@ async function persistEvents(
   let sequence = existingEvents.length;
 
   for (const event of events) {
-    const persistedEvent = encodeRoundEvent(event);
+    const persistedEvent = serializeRoundEvent(event, playerIdMap);
     sequence += 1;
     await ctx.db.insert("roundEvents", {
       roundId,
       sequence,
       eventType: persistedEvent.eventType,
-      actorPlayerId: persistedEvent.actorPlayerId
-        ? playerIdMap.get(persistedEvent.actorPlayerId)
-        : undefined,
-      targetPlayerId: persistedEvent.targetPlayerId
-        ? playerIdMap.get(persistedEvent.targetPlayerId)
-        : undefined,
+      actorPlayerId: persistedEvent.actorPlayerId,
+      targetPlayerId: persistedEvent.targetPlayerId,
       payload: persistedEvent.payload,
       createdAt: Date.now(),
     });

@@ -6,65 +6,27 @@ import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import { buildMatchSnapshot, toCanonicalReplayStepState } from "../logic/view-models";
 import { buildRoundHistory } from "./round-history-builder";
-import type { ActionCard, Card } from "../logic/card-types";
-import { decodeRoundEvent, type RoundEvent } from "../logic/events";
+import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { MatchSnapshot } from "../logic/view-models";
+import {
+  deserializePlayerRoundState,
+  deserializeRoundEvent,
+  deserializeRoundRuntime,
+} from "./serializers";
 
 type Ctx = QueryCtx | MutationCtx;
 
 export function normalizePlayerRoundState(doc: Doc<"roundPlayerStates">): PlayerRoundState {
-  return {
-    playerId: String(doc.playerId),
-    status: doc.status,
-    numberCards: doc.numberCards as PlayerRoundState["numberCards"],
-    modifierCards: doc.modifierCards as PlayerRoundState["modifierCards"],
-    heldActionCards: doc.heldActionCards as PlayerRoundState["heldActionCards"],
-    receivedActionCards: doc.receivedActionCards as PlayerRoundState["receivedActionCards"],
-    roundScore: doc.roundScore,
-    pointsAtRisk: doc.pointsAtRisk,
-    hasFlip7: doc.hasFlip7,
-    bustCard: doc.bustCard ? (doc.bustCard as PlayerRoundState["bustCard"]) : null,
-  };
+  return deserializePlayerRoundState(doc);
 }
 
 export function normalizeRoundRuntime(doc: Doc<"rounds">): RoundRuntime {
-  return {
-    phase: doc.phase,
-    roundNumber: doc.roundNumber,
-    dealerSeat: doc.dealerSeat,
-    activePlayerId: doc.activePlayerId ? String(doc.activePlayerId) : null,
-    drawPile: doc.drawPile as Card[],
-    discardPile: doc.discardPile as Card[],
-    openingSeatIndex: doc.openingSeatIndex,
-    turnSeatIndex: doc.turnSeatIndex,
-    endedBy: doc.endedBy,
-    pendingAction: doc.pendingAction
-      ? {
-          sourcePlayerId: String(doc.pendingAction.sourcePlayerId),
-          actionKind: doc.pendingAction.actionKind,
-          eligibleTargetIds: doc.pendingAction.eligibleTargetIds.map((id) => String(id)),
-          resume: doc.pendingAction.resume,
-        }
-      : null,
-    pendingFlip3: doc.pendingFlip3
-      ? {
-          sourcePlayerId: String(doc.pendingFlip3.sourcePlayerId),
-          targetPlayerId: String(doc.pendingFlip3.targetPlayerId),
-          cardsRemaining: doc.pendingFlip3.cardsRemaining,
-          deferredActionCards: doc.pendingFlip3.deferredActionCards as ActionCard[],
-        }
-      : null,
-  };
+  return deserializeRoundRuntime(doc);
 }
 
 function normalizeLatestRoundEvent(doc: Doc<"roundEvents">): RoundEvent {
-  return decodeRoundEvent({
-    eventType: doc.eventType,
-    actorPlayerId: doc.actorPlayerId ? String(doc.actorPlayerId) : null,
-    targetPlayerId: doc.targetPlayerId ? String(doc.targetPlayerId) : null,
-    payload: doc.payload,
-  });
+  return deserializeRoundEvent(doc);
 }
 
 export async function getLatestRound(ctx: Ctx, matchId: Id<"matches">) {
