@@ -1,5 +1,5 @@
 import type { ModifierCard, NumberCard } from "./card-types";
-import type { PlayerRoundState } from "./turn-resolution";
+import type { PlayerRoundState } from "./round-state";
 
 export type ScoreBreakdown = {
   numberCardTotal: number;
@@ -59,4 +59,14 @@ export function computeScoreBreakdown(playerState: PlayerRoundState): ScoreBreak
     playerState.modifierCards,
     playerState.hasFlip7,
   );
+}
+
+export function updatePointsAtRisk(playerState: PlayerRoundState) {
+  const breakdown = scoreRound(
+    playerState.numberCards,
+    playerState.modifierCards,
+    playerState.hasFlip7,
+  );
+  playerState.pointsAtRisk = breakdown.finalRoundScore;
+  return breakdown;
 }
