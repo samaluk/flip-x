@@ -13,7 +13,7 @@ const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
 const DEFAULT_GAMEPLAY_GUARD_LIMIT = 150;
 let idempotencySequence = 0;
 
-function commandMetadata(expectedVersion: number) {
+export function commandMetadata(expectedVersion: number) {
   idempotencySequence += 1;
   return {
     expectedVersion,

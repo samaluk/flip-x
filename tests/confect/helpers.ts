@@ -1,8 +1,12 @@
 import type { Ref } from "@confect/core";
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 import type { SessionId } from "convex-helpers/server/sessions";
 
 import refs from "@/confect/_generated/refs";
+import type { Id } from "@/convex/_generated/dataModel";
+import { MatchSnapshot } from "@/confect/match-snapshot-schema";
+import { MutationCtx } from "@/confect/_generated/services";
+import { runGameCommand } from "@/game/application/run-command";
 import {
   describeReplayResult,
   type DeterministicStartOptions,
@@ -123,6 +127,102 @@ export function resolveAction(
   });
 }
 
+export function runCommand(
+  matchId: string,
+  sessionId: SessionRecord["sessionId"],
+  command: Parameters<typeof runGameCommand>[1]["command"],
+) {
+  return Effect.gen(function* () {
+    const client = yield* TestConfect;
+    return yield* client.run(
+      Effect.gen(function* () {
+        const ctx = (yield* MutationCtx) as unknown as Parameters<typeof runGameCommand>[0];
+        return yield* Effect.promise(() =>
+          runGameCommand(ctx, {
+            matchId: matchId as never,
+            sessionId,
+            command,
+          }),
+        );
+      }),
+      MatchSnapshot as never,
+    );
+  });
+}
+
+export function readRoundState(matchId: string) {
+  const RoundStateSummary = Schema.Struct({
+    eventTypes: Schema.Array(Schema.String),
+    scoreBreakdownCount: Schema.Number,
+    matchStatus: Schema.String,
+    winnerPlayerId: Schema.NullOr(Schema.String),
+    players: Schema.Array(
+      Schema.Struct({
+        playerId: Schema.String,
+        displayName: Schema.String,
+        totalScore: Schema.Number,
+        hasWon: Schema.Boolean,
+      }),
+    ),
+  });
+
+  return Effect.gen(function* () {
+    const client = yield* TestConfect;
+    return yield* client.run(
+      Effect.gen(function* () {
+        const ctx = (yield* MutationCtx) as unknown as Parameters<typeof runGameCommand>[0];
+        const round = yield* Effect.promise(() =>
+          ctx.db
+            .query("rounds")
+            .withIndex("by_match", (query) => query.eq("matchId", matchId as never))
+            .order("desc")
+            .first(),
+        );
+
+        const events = round
+          ? yield* Effect.promise(() =>
+              ctx.db
+                .query("roundEvents")
+                .withIndex("by_round", (query) => query.eq("roundId", round._id))
+                .collect(),
+            )
+          : [];
+        const scoreBreakdowns = round
+          ? yield* Effect.promise(() =>
+              ctx.db
+                .query("scoreBreakdowns")
+                .withIndex("by_round", (query) => query.eq("roundId", round._id))
+                .collect(),
+            )
+          : [];
+        const match = yield* Effect.promise(() => ctx.db.get(matchId as Id<"matches">));
+        const players = yield* Effect.promise(() =>
+          ctx.db
+            .query("players")
+            .withIndex("by_match", (query) => query.eq("matchId", matchId as Id<"matches">))
+            .collect(),
+        );
+
+        return {
+          eventTypes: events.map((event) => event.eventType),
+          scoreBreakdownCount: scoreBreakdowns.length,
+          matchStatus: match?.status ?? "missing",
+          winnerPlayerId: match?.winnerPlayerId ? String(match.winnerPlayerId) : null,
+          players: players
+            .toSorted((left, right) => left.seatIndex - right.seatIndex)
+            .map((player) => ({
+              playerId: String(player._id),
+              displayName: player.displayName,
+              totalScore: player.totalScore,
+              hasWon: player.hasWon,
+            })),
+        };
+      }),
+      RoundStateSummary as never,
+    );
+  });
+}
+
 export function describeConfectReplayResult(result: ReplayResult) {
   return `[confect] ${describeReplayResult(result)}`;
 }
@@ -195,7 +295,7 @@ export function advanceUntilRoundBoundary(matchId: string, sessions: SessionReco
 
       snapshot = (yield* client.mutation(refs.public.turns.takeTurn, {
         matchId: matchId as never,
-        action: "stay",
+        action: snapshot.pendingFlip3 ? "hit" : "stay",
         sessionId: activeSession.sessionId,
         ...commandMetadata(snapshot.version),
       })) as Snapshot;

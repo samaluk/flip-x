@@ -18,33 +18,34 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: "unit",
-          environment: "jsdom",
-          setupFiles: ["./tests/setup.ts"],
-          include: [
-            "tests/unit/**/*.test.ts",
-            "tests/unit/**/*.test.tsx",
-            "game/**/*.test.ts",
-            "game/**/*.test.tsx",
-          ],
+          name: "engine",
+          environment: "node",
+          include: ["tests/unit/engine/**/*.test.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "infrastructure",
+          environment: "node",
+          include: ["tests/unit/infrastructure/**/*.test.ts"],
         },
       },
       {
         extends: true,
         test: {
           name: "contract",
-          environment: "jsdom",
-          setupFiles: ["./tests/setup.ts"],
-          include: ["tests/contract/**/*.test.ts", "tests/contract/**/*.test.tsx"],
+          environment: "node",
+          include: ["tests/contract/**/*.test.ts"],
         },
       },
       {
         extends: true,
         test: {
-          name: "integration",
+          name: "ui",
           environment: "jsdom",
           setupFiles: ["./tests/setup.ts"],
-          include: ["tests/integration/**/*.test.ts", "tests/integration/**/*.test.tsx"],
+          include: ["game/**/*.test.tsx", "tests/integration/**/*.test.tsx"],
         },
       },
       {
@@ -73,8 +74,6 @@ export default defineConfig({
             instances: [
               {
                 browser: "chromium",
-                // Tall enough for full-page element screenshots (Playwright composites only the
-                // visible viewport; 720px was truncating tall VRT targets with a white tail).
                 viewport: { width: 1440, height: 2400 },
               },
             ],
@@ -86,8 +85,6 @@ export default defineConfig({
                   threshold: 0.2,
                   allowedMismatchedPixelRatio: 0.02,
                 },
-                // Single baseline per assertion (no OS/browser suffix). Baselines are produced
-                // only via `pnpm test:vrt:update` in Linux Docker (Chromium) — see scripts/vrt-docker.sh.
                 resolveScreenshotPath: ({ root, testFileDirectory, testFileName, arg, ext }) =>
                   path.join(
                     root,
@@ -100,6 +97,7 @@ export default defineConfig({
             },
           },
           include: ["tests/**/*.vitest.tsx", "game/**/*.vitest.tsx"],
+          exclude: ["**/*.test.ts", "**/*.test.tsx"],
           setupFiles: ["./tests/browser-setup.ts"],
           css: true,
           testTimeout: 60_000,

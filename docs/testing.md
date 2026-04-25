@@ -1,80 +1,91 @@
 # Testing
 
-This repo uses multiple testing tools. Each suite has a specific scope and command.
+The repo is optimized for fast local PR signal first. Pure engine, infrastructure, contract, UI, and Confect-backed tests are the default confidence layer. Preview-backed Convex, VRT, and E2E suites are narrower and should only cover runtime wiring or user-visible regressions.
 
-## Fast local suites
+## Fast Local Default
 
-`pnpm test` runs the fast local default:
+`pnpm test` runs:
 
-- `pnpm test:unit`
+- `pnpm test:engine`
+- `pnpm test:infra`
 - `pnpm test:contract`
-- `pnpm test:integration`
+- `pnpm test:ui`
 - `pnpm test:confect`
 
 These suites do not require a Convex preview deployment.
 
-## Suite map
+## Suite Map
 
-### Unit
+### Engine Unit
 
-- Command: `pnpm test:unit`
-- Tool: Vitest with `jsdom`
-- Scope: isolated logic and lightweight UI tests
-- Paths:
-  - `tests/unit/**`
-  - `game/**/*.test.ts`
-  - `game/**/*.test.tsx`
+- Command: `pnpm test:engine`
+- Tool: Vitest with `node`
+- Paths: `tests/unit/engine/**`
+- Owns: pure game rules, scoring, turn resolution, Flip Three, card deck construction, deterministic RNG, and deterministic replay diagnostics.
+- Delete duplicate coverage when the assertion needs Convex, React, or persistence to be meaningful.
+
+### Infrastructure Unit
+
+- Command: `pnpm test:infra`
+- Tool: Vitest with `node`
+- Paths: `tests/unit/infrastructure/**`
+- Owns: serialization, persisted event mapping, round history projection, and other persistence-boundary helpers without a live database.
+- Delete duplicate coverage when it is only rechecking game rules already covered by engine tests.
 
 ### Contract
 
 - Command: `pnpm test:contract`
-- Tool: Vitest with `jsdom`
-- Scope: contract-level checks for stable app-facing shapes and behavior
-- Paths:
-  - `tests/contract/**`
+- Tool: Vitest with `node`
+- Paths: `tests/contract/**`
+- Owns: stable public shapes such as `MatchSnapshot`, round history entries, deterministic replay fixtures, and replay DSL invariants.
+- Delete duplicate coverage when it asserts component copy, layout, or detailed rule outcomes.
 
-### Integration
-
-- Command: `pnpm test:integration`
-- Tool: Vitest with `jsdom`
-- Scope: component and app-level integration tests
-- Paths:
-  - `tests/integration/**`
-
-### Confect
+### Confect Local Backend
 
 - Command: `pnpm test:confect`
-- Tool: Vitest with `node`
-- Scope: Confect-backed server-side tests
-- Paths:
-  - `tests/confect/**`
+- Tool: Vitest with `node` and `convex-test`
+- Paths: `tests/confect/**`
+- Owns: Confect refs, schema codecs, command runner behavior, idempotency, persistence, finalization, and deterministic backend replay.
+- Delete duplicate coverage from preview-backed tests unless the assertion depends on deployed runtime wiring.
 
-### Backend
+### React UI
 
-- Command: `pnpm test:backend`
-- Tool: Vitest with `node`
-- Scope: Convex backend integration tests against a real preview deployment
+- Command: `pnpm test:ui`
+- Tool: Vitest with `jsdom`
 - Paths:
-  - `tests/backend/**`
+  - `game/**/*.test.tsx`
+  - `tests/integration/**/*.test.tsx`
+- Owns: component behavior, controls, player lane rendering, score/history rendering, and lobby code copy.
+- Delete duplicate coverage when it tests game rules instead of rendered behavior.
+
+### Convex Preview Smoke
+
+- Command: `pnpm test:backend` or `pnpm test:smoke:backend`
+- Tool: Vitest with `node` against a real Convex preview deployment
+- Paths: `tests/backend/**`
+- Owns: deployed Convex wrapper registration, preview deployment config, presence component integration, create/join/start smoke, one valid turn, and one invalid actor rejection.
+- Delete duplicate coverage when it replays deterministic scenarios or exhaustively checks game rules.
 
 This suite is destructive for its target deployment. It clears all app data between tests.
 
-### Visual regression
+### Visual Regression
 
 - Command: `pnpm test:vrt`
 - Update baselines: `pnpm test:vrt:update`
 - Tool: Vitest browser with Playwright provider, executed in Linux Docker
-- Scope: screenshot-based visual regression tests
+- Paths: `game/**/*.vitest.tsx`
+- Owns: high-value visual states only. Prefer representative states over exhaustive card matrices unless visual styling genuinely varies by every value.
+- Delete duplicate baselines when the corresponding VRT file is removed or moved.
 
-### End-to-end
+### End-to-End
 
 - Command: `pnpm test:e2e`
-- Tool: Playwright
-- Scope: full user flows against the running app and Convex preview backend
-- Paths:
-  - `e2e/**`
+- Tool: Playwright against the running app and Convex preview backend
+- Paths: `e2e/**`
+- Owns: one or two critical browser journeys, currently create/join/start/hit and join-by-code seat claim.
+- Delete duplicate coverage when it tests game rules better covered by engine or Confect tests.
 
-## Preview-backed suites
+## Preview-Backed Suites
 
 `pnpm test:backend` and `pnpm test:e2e` always run against a Convex preview deployment.
 
@@ -94,7 +105,7 @@ Notes:
 - Local and CI preview-backed tests do not use `convex dev --local`
 - Do not point backend tests at a shared deployment
 
-## Typical commands
+## Typical Commands
 
 Fast local validation:
 
@@ -120,60 +131,8 @@ CONVEX_DEPLOY_KEY=... pnpm test:backend
 CONVEX_DEPLOY_KEY=... pnpm test:e2e
 ```
 
-## Deterministic tests
+## Deterministic Tests
 
 Deterministic tests replay a recorded game using the exact same player decisions and deck order. They verify that the game produces the same outcome from the same input without relying on randomness.
 
-### When to use
-
-- Reproduce a bug with a specific player order and deck sequence
-- Verify scoring or winner logic for a known game outcome
-- Create regression tests for rule interactions
-- Document edge case behavior
-
-### Writing a deterministic scenario
-
-1. **Define players in seat order**: list the player names that will occupy seats 0-N.
-
-2. **Capture the deck**: record the exact card sequence from the draw pile. Cards are identified by rank and suit (e.g., `"7♥"`, `"A♠"`).
-
-3. **Script decisions**: for each turn that requires a player choice, record:
-   - `hit` or `stay`
-   - Freeze target confirmation (when the active player plays Freeze)
-   - Flip Three target confirmation (when the active player plays Flip Three)
-
-4. **Record step states**: after each decision, capture the canonical game state (active player, round status, hands, scores).
-
-### Available helpers
-
-Fixtures and runners are in `tests/fixtures/deterministic/`:
-
-- `scenario-types.ts`: type definitions for deterministic scenarios
-- `setup-scenarios.ts`: round and match setup fixtures
-- `replay-scenarios.ts`: full replay scenarios with decisions and expected states
-- `divergence-scenarios.ts`: mismatch and invalid script fixtures
-- `scenario-runner.ts`: runs a deterministic scenario against a test harness
-- `replay-assertions.ts`: verifies step states and reports divergence
-
-### Running deterministic tests
-
-```bash
-pnpm test:unit
-pnpm test:confect
-pnpm test:contract
-```
-
-For preview-backed coverage:
-
-```bash
-CONVEX_DEPLOY_KEY=... pnpm test:backend
-```
-
-### Validating replay fidelity
-
-Each deterministic scenario should:
-
-- Run identically at least 10 times in a row
-- Match every expected step state, not only the final result
-- Stop at the first mismatch with a readable divergence report
-- Fail cleanly for invalid or incomplete scripts
+Fixtures and runners live in `tests/fixtures/deterministic/`. Local engine and Confect suites own deterministic behavior. Preview-backed backend tests should only keep deterministic setup coverage if it is needed to prove deployed wrapper/runtime wiring.

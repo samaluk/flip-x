@@ -5,6 +5,8 @@ import { defineConfig, devices } from "@playwright/test";
 // reuse an existing :3000 server that may be pointed at a different backend.
 
 const convexUrlFromPreviewCmd = process.env.NEXT_PUBLIC_CONVEX_URL;
+const e2ePort = process.env.E2E_PORT ?? (convexUrlFromPreviewCmd ? "3001" : "3000");
+const e2eBaseUrl = `http://127.0.0.1:${e2ePort}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -18,15 +20,15 @@ export default defineConfig({
   workers: 1,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: "http://127.0.0.1:3000",
+    baseURL: e2eBaseUrl,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "pnpm dev",
-    url: "http://127.0.0.1:3000",
+    command: `node scripts/stop-next-dev.mjs && pnpm dev --port ${e2ePort}`,
+    url: e2eBaseUrl,
     reuseExistingServer: !process.env.CI && !convexUrlFromPreviewCmd,
     timeout: 120_000,
     env: convexUrlFromPreviewCmd

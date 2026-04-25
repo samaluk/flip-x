@@ -3,14 +3,13 @@ import type { ReactNode } from "react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 
-import { MODIFIER_LABELS } from "@/game/logic/card-types";
 import { withIntlEn } from "@/tests/test-intl";
 
 import { Flip7Card } from "./flip7-card";
 import "./flip7-card.vrt.css";
 
-const NUMBER_VALUES = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
-
+const REPRESENTATIVE_NUMBER_VALUES = [0, 7, 12] as const;
+const REPRESENTATIVE_MODIFIER_VALUES = [2, 10, "x2"] as const;
 const ACTION_KINDS = ["freeze", "flip_three", "second_chance"] as const;
 
 function cardShell(card: ReactNode, snapshotWrap?: boolean) {
@@ -30,7 +29,7 @@ function cardShell(card: ReactNode, snapshotWrap?: boolean) {
 }
 
 describe("Flip7Card VRT", () => {
-  test.each(NUMBER_VALUES)("number %i face up", async (numberValue) => {
+  test.each(REPRESENTATIVE_NUMBER_VALUES)("number %i face up", async (numberValue) => {
     render(
       withIntlEn(
         cardShell(<Flip7Card kind="number" numberValue={numberValue} label="L" disableFlip3d />),
@@ -104,7 +103,7 @@ describe("Flip7Card VRT", () => {
     );
   });
 
-  test.each(MODIFIER_LABELS)("modifier %s", async (modifierValue) => {
+  test.each(REPRESENTATIVE_MODIFIER_VALUES)("modifier %s", async (modifierValue) => {
     const slug = typeof modifierValue === "number" ? String(modifierValue) : modifierValue;
 
     render(
