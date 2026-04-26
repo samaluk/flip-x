@@ -129,7 +129,7 @@ export function createMatchForSessionEffect(
       return yield* new InvalidHostName();
     }
 
-    const hostColorId = normalizePlayerColorId(args.hostColorId, []);
+    const hostColorId = yield* normalizePlayerColorIdEffect(args.hostColorId, []);
 
     const timestamp = Date.now();
     const lobbyCode = yield* generateUniqueLobbyCodeEffect(ctx);
@@ -294,7 +294,7 @@ export function joinMatchForSessionEffect(
       .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
       .map((player) => player.colorId)
       .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
-    const playerColorId = normalizePlayerColorId(args.playerColorId, takenColorIds);
+    const playerColorId = yield* normalizePlayerColorIdEffect(args.playerColorId, takenColorIds);
 
     if (existingViewerPlayerId) {
       const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
@@ -356,20 +356,22 @@ export const joinMatch = mutationWithSession({
   handler: async (ctx, args) => await joinMatchForSession(ctx, args),
 });
 
-function normalizePlayerColorId(colorId: string | undefined, takenColorIds: string[]) {
-  if (!colorId) {
-    return firstAvailablePlayerColorId(takenColorIds);
-  }
+function normalizePlayerColorIdEffect(colorId: string | undefined, takenColorIds: string[]) {
+  return Effect.gen(function* () {
+    if (!colorId) {
+      return firstAvailablePlayerColorId(takenColorIds);
+    }
 
-  if (!isPlayerColorId(colorId)) {
-    throw new InvalidPlayerColor({ colorId });
-  }
+    if (!isPlayerColorId(colorId)) {
+      return yield* new InvalidPlayerColor({ colorId });
+    }
 
-  if (takenColorIds.includes(colorId)) {
-    throw new PlayerColorAlreadyTaken({ colorId });
-  }
+    if (takenColorIds.includes(colorId)) {
+      return yield* new PlayerColorAlreadyTaken({ colorId });
+    }
 
-  return colorId;
+    return colorId;
+  });
 }
 
 export async function startMatchForSession(
