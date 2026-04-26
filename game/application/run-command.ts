@@ -1,6 +1,9 @@
+import { Effect } from "effect";
+
 import type { MutationCtx } from "../../convex/_generated/server";
 import type { Id } from "../../convex/_generated/dataModel";
 import {
+  type AppError,
   InvalidAction,
   InvalidMatchState,
   InvalidTurn,
@@ -111,182 +114,194 @@ async function storeIdempotentResult(
   });
 }
 
-export async function runGameCommand(
+export type RunGameCommandInput = {
+  matchId: Id<"matches">;
+  sessionId: string;
+  command: GameCommand;
+};
+
+export async function runGameCommand(ctx: MutationCtx, input: RunGameCommandInput) {
+  return await Effect.runPromise(runGameCommandEffect(ctx, input));
+}
+
+export function runGameCommandEffect(
   ctx: MutationCtx,
-  input: {
-    matchId: Id<"matches">;
-    sessionId: string;
-    command: GameCommand;
-  },
-) {
-  const idempotentResult = await getIdempotentResult(
-    ctx,
-    input.matchId,
-    input.command.idempotencyKey,
-  );
-  if (idempotentResult) {
-    return idempotentResult;
-  }
-
-  const aggregate = await loadMatchAggregate(ctx, input.matchId, input.sessionId as never);
-  const {
-    latestRound,
-    match,
-    orderedPlayers,
-    playerIdMap,
-    playerStates,
-    players,
-    roundRuntime,
-    viewerPlayerId,
-  } = aggregate;
-
-  if (!match) {
-    throw new MatchNotFound({ matchId: String(input.matchId) });
-  }
-
-  if (match.version !== input.command.expectedVersion) {
-    throw new StaleGameState({
-      expectedVersion: input.command.expectedVersion,
-      actualVersion: match.version,
-    });
-  }
-
-  let transition: GameTransition;
-
-  switch (input.command.type) {
-    case "START_MATCH": {
-      if (match.status !== "setup") {
-        throw new InvalidMatchState();
-      }
-      if (!viewerPlayerId) {
-        throw new PlayerNotJoined();
-      }
-      if (match.hostPlayerId !== viewerPlayerId) {
-        throw new NotHost();
-      }
-      if (players.length < 2) {
-        throw new InsufficientPlayers({ minPlayers: 2 });
-      }
-
-      transition = buildStartRoundTransition(
-        {
-          command: input.command,
-          roundNumber: 1,
-          dealerSeat: match.dealerSeat,
-          matchUpdateContext: {
-            nextMatchStatus: "in_progress",
-            nextCurrentRoundNumber: 1,
-          },
-        },
-        orderedPlayers,
-      );
-      break;
+  input: RunGameCommandInput,
+): Effect.Effect<MatchSnapshot, AppError> {
+  return Effect.gen(function* () {
+    const idempotentResult = yield* Effect.promise(() =>
+      getIdempotentResult(ctx, input.matchId, input.command.idempotencyKey),
+    );
+    if (idempotentResult) {
+      return idempotentResult;
     }
 
-    case "START_NEXT_ROUND": {
-      if (match.status !== "in_progress") {
-        throw new InvalidMatchState();
-      }
-      if (!viewerPlayerId) {
-        throw new PlayerNotJoined();
-      }
+    const aggregate = yield* Effect.promise(() =>
+      loadMatchAggregate(ctx, input.matchId, input.sessionId as never),
+    );
+    const {
+      latestRound,
+      match,
+      orderedPlayers,
+      playerIdMap,
+      playerStates,
+      players,
+      roundRuntime,
+      viewerPlayerId,
+    } = aggregate;
 
-      const nextDealerSeat = (match.dealerSeat + 1) % players.length;
-      transition = buildStartRoundTransition(
-        {
-          command: input.command,
-          roundNumber: match.currentRoundNumber + 1,
-          dealerSeat: nextDealerSeat,
-          matchUpdateContext: {
-            nextCurrentRoundNumber: match.currentRoundNumber + 1,
-            nextDealerSeat,
-          },
-        },
-        orderedPlayers,
-      );
-      break;
+    if (!match) {
+      return yield* new MatchNotFound({ matchId: String(input.matchId) });
     }
 
-    case "TAKE_TURN": {
-      if (!latestRound || !roundRuntime) {
-        throw new MatchNotFound({ matchId: String(input.matchId) });
-      }
-      if (!viewerPlayerId) {
-        throw new PlayerNotJoined();
-      }
-      if (roundRuntime.activePlayerId !== String(viewerPlayerId)) {
-        throw new InvalidTurn();
-      }
-
-      const resolved = takeTurnAction(
-        orderedPlayers,
-        roundRuntime,
-        playerStates,
-        String(viewerPlayerId),
-        input.command.action,
-      );
-      transition = finalizeIfNeeded({
-        command: input.command.type,
-        roundWrite: {
-          kind: "update",
-          roundId: latestRound._id,
-          round: resolved.round,
-        },
-        playerStates: resolved.playerStates,
-        events: resolved.events,
-        matchUpdateContext: {},
+    if (match.version !== input.command.expectedVersion) {
+      return yield* new StaleGameState({
+        expectedVersion: input.command.expectedVersion,
+        actualVersion: match.version,
       });
-      break;
     }
 
-    case "RESOLVE_ACTION": {
-      if (!latestRound || !roundRuntime) {
-        throw new MatchNotFound({ matchId: String(input.matchId) });
-      }
-      if (!viewerPlayerId) {
-        throw new PlayerNotJoined();
-      }
-      if (
-        !roundRuntime.pendingAction ||
-        roundRuntime.pendingAction.sourcePlayerId !== String(viewerPlayerId)
-      ) {
-        throw new InvalidAction();
+    let transition: GameTransition;
+
+    switch (input.command.type) {
+      case "START_MATCH": {
+        if (match.status !== "setup") {
+          return yield* new InvalidMatchState();
+        }
+        if (!viewerPlayerId) {
+          return yield* new PlayerNotJoined();
+        }
+        if (match.hostPlayerId !== viewerPlayerId) {
+          return yield* new NotHost();
+        }
+        if (players.length < 2) {
+          return yield* new InsufficientPlayers({ minPlayers: 2 });
+        }
+
+        transition = buildStartRoundTransition(
+          {
+            command: input.command,
+            roundNumber: 1,
+            dealerSeat: match.dealerSeat,
+            matchUpdateContext: {
+              nextMatchStatus: "in_progress",
+              nextCurrentRoundNumber: 1,
+            },
+          },
+          orderedPlayers,
+        );
+        break;
       }
 
-      const resolved = resolvePendingAction(
-        orderedPlayers,
-        roundRuntime,
-        playerStates,
-        input.command.targetPlayerId,
-      );
-      transition = finalizeIfNeeded({
-        command: input.command.type,
-        roundWrite: {
-          kind: "update",
-          roundId: latestRound._id,
-          round: resolved.round,
-        },
-        playerStates: resolved.playerStates,
-        events: resolved.events,
-        matchUpdateContext: {},
-      });
-      break;
+      case "START_NEXT_ROUND": {
+        if (match.status !== "in_progress") {
+          return yield* new InvalidMatchState();
+        }
+        if (!viewerPlayerId) {
+          return yield* new PlayerNotJoined();
+        }
+
+        const nextDealerSeat = (match.dealerSeat + 1) % players.length;
+        transition = buildStartRoundTransition(
+          {
+            command: input.command,
+            roundNumber: match.currentRoundNumber + 1,
+            dealerSeat: nextDealerSeat,
+            matchUpdateContext: {
+              nextCurrentRoundNumber: match.currentRoundNumber + 1,
+              nextDealerSeat,
+            },
+          },
+          orderedPlayers,
+        );
+        break;
+      }
+
+      case "TAKE_TURN": {
+        if (!latestRound || !roundRuntime) {
+          return yield* new MatchNotFound({ matchId: String(input.matchId) });
+        }
+        if (!viewerPlayerId) {
+          return yield* new PlayerNotJoined();
+        }
+        if (roundRuntime.activePlayerId !== String(viewerPlayerId)) {
+          return yield* new InvalidTurn();
+        }
+
+        const resolved = takeTurnAction(
+          orderedPlayers,
+          roundRuntime,
+          playerStates,
+          String(viewerPlayerId),
+          input.command.action,
+        );
+        transition = finalizeIfNeeded({
+          command: input.command.type,
+          roundWrite: {
+            kind: "update",
+            roundId: latestRound._id,
+            round: resolved.round,
+          },
+          playerStates: resolved.playerStates,
+          events: resolved.events,
+          matchUpdateContext: {},
+        });
+        break;
+      }
+
+      case "RESOLVE_ACTION": {
+        if (!latestRound || !roundRuntime) {
+          return yield* new MatchNotFound({ matchId: String(input.matchId) });
+        }
+        if (!viewerPlayerId) {
+          return yield* new PlayerNotJoined();
+        }
+        if (
+          !roundRuntime.pendingAction ||
+          roundRuntime.pendingAction.sourcePlayerId !== String(viewerPlayerId)
+        ) {
+          return yield* new InvalidAction();
+        }
+
+        const resolved = resolvePendingAction(
+          orderedPlayers,
+          roundRuntime,
+          playerStates,
+          input.command.targetPlayerId,
+        );
+        transition = finalizeIfNeeded({
+          command: input.command.type,
+          roundWrite: {
+            kind: "update",
+            roundId: latestRound._id,
+            round: resolved.round,
+          },
+          playerStates: resolved.playerStates,
+          events: resolved.events,
+          matchUpdateContext: {},
+        });
+        break;
+      }
     }
-  }
 
-  await saveCommandResult(ctx, {
-    match,
-    players,
-    playerIdMap,
-    transition,
+    yield* Effect.promise(() =>
+      saveCommandResult(ctx, {
+        match,
+        players,
+        playerIdMap,
+        transition,
+      }),
+    );
+
+    const snapshot = yield* Effect.promise(() =>
+      buildLatestMatchSnapshot(ctx, input.matchId, input.sessionId as never),
+    );
+    if (!snapshot) {
+      return yield* new MatchNotFound({ matchId: String(input.matchId) });
+    }
+
+    yield* Effect.promise(() => storeIdempotentResult(ctx, input.matchId, input.command, snapshot));
+
+    return snapshot;
   });
-
-  const snapshot = await buildLatestMatchSnapshot(ctx, input.matchId, input.sessionId as never);
-  if (!snapshot) {
-    throw new MatchNotFound({ matchId: String(input.matchId) });
-  }
-
-  await storeIdempotentResult(ctx, input.matchId, input.command, snapshot);
-
-  return snapshot;
 }

@@ -6,7 +6,7 @@ import refs from "@/confect/_generated/refs";
 import type { Id } from "@/convex/_generated/dataModel";
 import { MatchSnapshot } from "@/confect/match-snapshot-schema";
 import { MutationCtx } from "@/confect/_generated/services";
-import { runGameCommand } from "@/game/application/run-command";
+import { runGameCommandEffect, type RunGameCommandInput } from "@/game/application/run-command";
 import {
   describeReplayResult,
   type DeterministicStartOptions,
@@ -130,20 +130,18 @@ export function resolveAction(
 export function runCommand(
   matchId: string,
   sessionId: SessionRecord["sessionId"],
-  command: Parameters<typeof runGameCommand>[1]["command"],
+  command: RunGameCommandInput["command"],
 ) {
   return Effect.gen(function* () {
     const client = yield* TestConfect;
     return yield* client.run(
       Effect.gen(function* () {
-        const ctx = (yield* MutationCtx) as unknown as Parameters<typeof runGameCommand>[0];
-        return yield* Effect.promise(() =>
-          runGameCommand(ctx, {
-            matchId: matchId as never,
-            sessionId,
-            command,
-          }),
-        );
+        const ctx = (yield* MutationCtx) as unknown as Parameters<typeof runGameCommandEffect>[0];
+        return yield* runGameCommandEffect(ctx, {
+          matchId: matchId as never,
+          sessionId,
+          command,
+        });
       }),
       MatchSnapshot as never,
     );
@@ -170,7 +168,7 @@ export function readRoundState(matchId: string) {
     const client = yield* TestConfect;
     return yield* client.run(
       Effect.gen(function* () {
-        const ctx = (yield* MutationCtx) as unknown as Parameters<typeof runGameCommand>[0];
+        const ctx = (yield* MutationCtx) as unknown as Parameters<typeof runGameCommandEffect>[0];
         const round = yield* Effect.promise(() =>
           ctx.db
             .query("rounds")
