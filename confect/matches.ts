@@ -207,20 +207,20 @@ export const createMatch = mutationWithSession({
 
 export const getCurrentPlayer = queryWithSession({
   args: {},
-  handler: async (ctx, args) => {
-    const playerSession = await getOneFrom(
-      ctx.db,
-      "playerSessions",
-      "by_session_id",
-      args.sessionId,
-      "sessionId",
+  handler: async (ctx, args) => await Effect.runPromise(getCurrentPlayerEffect(ctx, args)),
+});
+
+export function getCurrentPlayerEffect(ctx: QueryCtx, args: { sessionId: string }) {
+  return Effect.gen(function* () {
+    const playerSession = yield* Effect.promise(() =>
+      getOneFrom(ctx.db, "playerSessions", "by_session_id", args.sessionId, "sessionId"),
     );
 
     if (!playerSession) {
       return null;
     }
 
-    const player = await ctx.db.get(playerSession.playerId);
+    const player = yield* Effect.promise(() => ctx.db.get(playerSession.playerId));
     if (!player) {
       return null;
     }
@@ -228,24 +228,31 @@ export const getCurrentPlayer = queryWithSession({
     return {
       displayName: player.displayName,
     };
-  },
-});
+  });
+}
 
 export const getMatchSnapshot = queryWithSession({
   args: {
     matchId: v.id("matches"),
   },
-  handler: async (ctx, args) => {
-    const match = await ctx.db.get(args.matchId);
+  handler: async (ctx, args) => await Effect.runPromise(getMatchSnapshotForSessionEffect(ctx, args)),
+});
+
+export function getMatchSnapshotForSessionEffect(
+  ctx: QueryCtx,
+  args: { matchId: Id<"matches">; sessionId: string },
+) {
+  return Effect.gen(function* () {
+    const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
     if (!match) {
       return null;
     }
 
-    const round = await getLatestRound(ctx, args.matchId);
-    return await buildSnapshot(ctx, match, round, args.sessionId);
-  },
-});
+    const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
+    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, args.sessionId));
+  });
+}
 
 export const joinByCode = mutationWithSession({
   args: {
