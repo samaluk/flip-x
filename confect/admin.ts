@@ -1,5 +1,6 @@
 import { Presence } from "@convex-dev/presence";
 import { v } from "convex/values";
+import { Effect } from "effect";
 
 import { internal, components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -42,18 +43,24 @@ type ClearAllAppDataResult = {
 
 export const listMatchIds = internalQuery({
   args: {},
-  handler: async (ctx) => {
-    const matches = await ctx.db.query("matches").collect();
-    return matches.map((match) => String(match._id));
-  },
+  handler: async (ctx) =>
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const matches = yield* Effect.promise(() => ctx.db.query("matches").collect());
+        return matches.map((match) => String(match._id));
+      }),
+    ),
 });
 
 export const listSessionIds = internalQuery({
   args: {},
-  handler: async (ctx) => {
-    const sessions = await ctx.db.query("playerSessions").collect();
-    return sessions.map((session) => String(session.sessionId));
-  },
+  handler: async (ctx) =>
+    await Effect.runPromise(
+      Effect.gen(function* () {
+        const sessions = yield* Effect.promise(() => ctx.db.query("playerSessions").collect());
+        return sessions.map((session) => String(session.sessionId));
+      }),
+    ),
 });
 
 export const resolveDependents = internalQuery({
@@ -62,56 +69,71 @@ export const resolveDependents = internalQuery({
     parentTable: v.string(),
     parentId: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args) =>
+    await Effect.runPromise(
+      Effect.gen(function* () {
     switch (`${args.sourceTable}:${args.parentTable}`) {
       case "players:matches": {
-        const rows = await ctx.db
-          .query("players")
-          .withIndex("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
-          .collect();
+        const rows = yield* Effect.promise(() =>
+          ctx.db
+            .query("players")
+            .withIndex("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
+            .collect(),
+        );
         return rows.map((row) => String(row._id));
       }
       case "rounds:matches": {
-        const rows = await ctx.db
-          .query("rounds")
-          .withIndex("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
-          .collect();
+        const rows = yield* Effect.promise(() =>
+          ctx.db
+            .query("rounds")
+            .withIndex("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
+            .collect(),
+        );
         return rows.map((row) => String(row._id));
       }
       case "playerSessions:players": {
-        const rows = await ctx.db
-          .query("playerSessions")
-          .withIndex("by_player_id", (query) =>
-            query.eq("playerId", args.parentId as Id<"players">),
-          )
-          .collect();
+        const rows = yield* Effect.promise(() =>
+          ctx.db
+            .query("playerSessions")
+            .withIndex("by_player_id", (query) =>
+              query.eq("playerId", args.parentId as Id<"players">),
+            )
+            .collect(),
+        );
         return rows.map((row) => String(row._id));
       }
       case "roundPlayerStates:rounds": {
-        const rows = await ctx.db
-          .query("roundPlayerStates")
-          .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
-          .collect();
+        const rows = yield* Effect.promise(() =>
+          ctx.db
+            .query("roundPlayerStates")
+            .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
+            .collect(),
+        );
         return rows.map((row) => String(row._id));
       }
       case "roundEvents:rounds": {
-        const rows = await ctx.db
-          .query("roundEvents")
-          .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
-          .collect();
+        const rows = yield* Effect.promise(() =>
+          ctx.db
+            .query("roundEvents")
+            .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
+            .collect(),
+        );
         return rows.map((row) => String(row._id));
       }
       case "scoreBreakdowns:rounds": {
-        const rows = await ctx.db
-          .query("scoreBreakdowns")
-          .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
-          .collect();
+        const rows = yield* Effect.promise(() =>
+          ctx.db
+            .query("scoreBreakdowns")
+            .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
+            .collect(),
+        );
         return rows.map((row) => String(row._id));
       }
       default:
-        throw new UnsupportedRelationship();
+        return yield* new UnsupportedRelationship();
     }
-  },
+      }),
+    ),
 });
 
 export const deleteDocument = internalMutation({
@@ -119,33 +141,36 @@ export const deleteDocument = internalMutation({
     table: v.string(),
     id: v.string(),
   },
-  handler: async (ctx, args) => {
+  handler: async (ctx, args) =>
+    await Effect.runPromise(
+      Effect.gen(function* () {
     switch (args.table as AppTableName) {
       case "matches":
-        await ctx.db.delete(args.id as Id<"matches">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"matches">));
         return;
       case "players":
-        await ctx.db.delete(args.id as Id<"players">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"players">));
         return;
       case "playerSessions":
-        await ctx.db.delete(args.id as Id<"playerSessions">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"playerSessions">));
         return;
       case "rounds":
-        await ctx.db.delete(args.id as Id<"rounds">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"rounds">));
         return;
       case "roundPlayerStates":
-        await ctx.db.delete(args.id as Id<"roundPlayerStates">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"roundPlayerStates">));
         return;
       case "roundEvents":
-        await ctx.db.delete(args.id as Id<"roundEvents">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"roundEvents">));
         return;
       case "scoreBreakdowns":
-        await ctx.db.delete(args.id as Id<"scoreBreakdowns">);
+        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"scoreBreakdowns">));
         return;
       default:
-        throw new UnsupportedTable();
+        return yield* new UnsupportedTable();
     }
-  },
+      }),
+    ),
 });
 
 export const clearAllAppDataViaCli = action({
@@ -153,17 +178,18 @@ export const clearAllAppDataViaCli = action({
     confirm: v.string(),
   },
   handler: async (ctx, args): Promise<ClearAllAppDataResult> => {
-    return await runClearAllAppData(ctx, args.confirm);
+    return await Effect.runPromise(runClearAllAppDataEffect(ctx, args.confirm));
   },
 });
 
-async function runClearAllAppData(ctx: ActionCtx, confirm: string): Promise<ClearAllAppDataResult> {
-  if (confirm !== DELETE_ALL_APP_DATA_CONFIRMATION) {
-    throw new InvalidConfirmation();
-  }
+function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
+  return Effect.gen(function* () {
+    if (confirm !== DELETE_ALL_APP_DATA_CONFIRMATION) {
+      return yield* new InvalidConfirmation();
+    }
 
-  const matchIds = await ctx.runQuery(internal.admin.listMatchIds, {});
-  const sessionIds = await ctx.runQuery(internal.admin.listSessionIds, {});
+  const matchIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listMatchIds, {}));
+  const sessionIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listSessionIds, {}));
   const deleted = {
     scoreBreakdowns: 0,
     roundEvents: 0,
@@ -177,12 +203,13 @@ async function runClearAllAppData(ctx: ActionCtx, confirm: string): Promise<Clea
   };
 
   for (const matchId of matchIds) {
-    await presence.removeRoom(ctx, matchId);
+    yield* Effect.promise(() => presence.removeRoom(ctx, matchId));
     deleted.presenceRooms += 1;
   }
 
   for (const matchId of matchIds) {
-    const counts = await cascadingDeletes.deleteWithCascade(ctx, {
+    const counts = yield* Effect.promise(() =>
+      cascadingDeletes.deleteWithCascade(ctx, {
       table: "matches",
       id: matchId,
       resolver: async (sourceTable, parentTable, parentId) =>
@@ -197,7 +224,8 @@ async function runClearAllAppData(ctx: ActionCtx, confirm: string): Promise<Clea
           id,
         });
       },
-    });
+      }),
+    );
 
     deleted.scoreBreakdowns += counts.scoreBreakdowns ?? 0;
     deleted.roundEvents += counts.roundEvents ?? 0;
@@ -209,10 +237,10 @@ async function runClearAllAppData(ctx: ActionCtx, confirm: string): Promise<Clea
   }
 
   for (const sessionId of sessionIds) {
-    await rateLimiter.reset(ctx, "createMatch", { key: sessionId });
-    await rateLimiter.reset(ctx, "joinByCode", { key: sessionId });
-    await rateLimiter.reset(ctx, "joinMatch", { key: sessionId });
-    await rateLimiter.reset(ctx, "startMatch", { key: sessionId });
+    yield* Effect.promise(() => rateLimiter.reset(ctx, "createMatch", { key: sessionId }));
+    yield* Effect.promise(() => rateLimiter.reset(ctx, "joinByCode", { key: sessionId }));
+    yield* Effect.promise(() => rateLimiter.reset(ctx, "joinMatch", { key: sessionId }));
+    yield* Effect.promise(() => rateLimiter.reset(ctx, "startMatch", { key: sessionId }));
     deleted.rateLimitKeysReset += 4;
   }
 
@@ -220,4 +248,5 @@ async function runClearAllAppData(ctx: ActionCtx, confirm: string): Promise<Clea
     deleted,
     confirmation: DELETE_ALL_APP_DATA_CONFIRMATION,
   };
+  });
 }
