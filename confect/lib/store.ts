@@ -1,5 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getManyFrom } from "convex-helpers/server/relationships";
+import { Effect } from "effect";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
@@ -9,18 +10,28 @@ import { PlayerNotJoined } from "../../shared/lib/errors/domain";
 type Ctx = QueryCtx | MutationCtx;
 
 export async function getPlayersByMatch(ctx: Ctx, matchId: Id<"matches">) {
-  return await getManyFrom(ctx.db, "players", "by_match", matchId, "matchId");
+  return await Effect.runPromise(getPlayersByMatchEffect(ctx, matchId));
+}
+
+export function getPlayersByMatchEffect(ctx: Ctx, matchId: Id<"matches">) {
+  return Effect.promise(() => getManyFrom(ctx.db, "players", "by_match", matchId, "matchId"));
 }
 
 export async function getViewerPlayerId(ctx: Ctx, matchId: Id<"matches">, sessionId?: SessionId) {
-  const playerId = await getPlayerIdForSession(ctx, sessionId);
+  return await Effect.runPromise(getViewerPlayerIdEffect(ctx, matchId, sessionId));
+}
 
-  if (!playerId) {
-    return null;
-  }
+export function getViewerPlayerIdEffect(ctx: Ctx, matchId: Id<"matches">, sessionId?: SessionId) {
+  return Effect.gen(function* () {
+    const playerId = yield* Effect.promise(() => getPlayerIdForSession(ctx, sessionId));
 
-  const player = await ctx.db.get(playerId);
-  return player?.matchId === matchId ? player._id : null;
+    if (!playerId) {
+      return null;
+    }
+
+    const player = yield* Effect.promise(() => ctx.db.get(playerId));
+    return player?.matchId === matchId ? player._id : null;
+  });
 }
 
 export async function requireViewerPlayerId(
@@ -28,11 +39,17 @@ export async function requireViewerPlayerId(
   matchId: Id<"matches">,
   sessionId: SessionId,
 ) {
-  const playerId = await getViewerPlayerId(ctx, matchId, sessionId);
+  return await Effect.runPromise(requireViewerPlayerIdEffect(ctx, matchId, sessionId));
+}
 
-  if (!playerId) {
-    throw new PlayerNotJoined();
-  }
+export function requireViewerPlayerIdEffect(ctx: Ctx, matchId: Id<"matches">, sessionId: SessionId) {
+  return Effect.gen(function* () {
+    const playerId = yield* getViewerPlayerIdEffect(ctx, matchId, sessionId);
 
-  return playerId;
+    if (!playerId) {
+      return yield* new PlayerNotJoined();
+    }
+
+    return playerId;
+  });
 }

@@ -9,7 +9,7 @@ import { enforceRateLimitEffect } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession } from "./lib/session_functions";
 import { setPlayerSession } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
-import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
+import { getPlayersByMatchEffect, getViewerPlayerIdEffect } from "./lib/store";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
 import {
   firstAvailablePlayerColorId,
@@ -94,7 +94,7 @@ export function getMatchByCodeEffect(ctx: QueryCtx, lobbyCode: string) {
       return null;
     }
 
-    const players = yield* Effect.promise(() => getPlayersByMatch(ctx, match._id));
+    const players = yield* getPlayersByMatchEffect(ctx, match._id);
 
     return {
       matchId: String(match._id),
@@ -288,10 +288,8 @@ export function joinMatchForSessionEffect(
       return yield* new InvalidPlayerName();
     }
 
-    const players = yield* Effect.promise(() => getPlayersByMatch(ctx, args.matchId));
-    const existingViewerPlayerId = yield* Effect.promise(() =>
-      getViewerPlayerId(ctx, args.matchId, sessionId),
-    );
+    const players = yield* getPlayersByMatchEffect(ctx, args.matchId);
+    const existingViewerPlayerId = yield* getViewerPlayerIdEffect(ctx, args.matchId, sessionId);
     const takenColorIds = players
       .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
       .map((player) => player.colorId)
