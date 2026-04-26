@@ -242,6 +242,8 @@ export function getMatchSnapshotForSessionEffect(
   ctx: QueryCtx,
   args: { matchId: Id<"matches">; sessionId: string },
 ) {
+  const sessionId = args.sessionId as SessionId;
+
   return Effect.gen(function* () {
     const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
@@ -250,7 +252,7 @@ export function getMatchSnapshotForSessionEffect(
     }
 
     const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
-    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, args.sessionId));
+    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));
   });
 }
 
