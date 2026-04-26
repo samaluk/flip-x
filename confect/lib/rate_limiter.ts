@@ -1,4 +1,5 @@
 import { HOUR, MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
+import { Effect } from "effect";
 
 import { components } from "../../convex/_generated/api";
 import { RateLimited } from "../../shared/lib/errors/domain";
@@ -17,8 +18,18 @@ export async function enforceRateLimit(
   name: AppRateLimitName,
   key: string,
 ) {
-  const status = await rateLimiter.limit(ctx, name, { key });
-  if (!status.ok) {
-    throw new RateLimited();
-  }
+  return await Effect.runPromise(enforceRateLimitEffect(ctx, name, key));
+}
+
+export function enforceRateLimitEffect(
+  ctx: Parameters<typeof rateLimiter.limit>[0],
+  name: AppRateLimitName,
+  key: string,
+) {
+  return Effect.gen(function* () {
+    const status = yield* Effect.promise(() => rateLimiter.limit(ctx, name, { key }));
+    if (!status.ok) {
+      return yield* new RateLimited();
+    }
+  });
 }

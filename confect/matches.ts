@@ -5,7 +5,7 @@ import { getOneFrom } from "convex-helpers/server/relationships";
 
 import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
-import { enforceRateLimit } from "./lib/rate_limiter";
+import { enforceRateLimitEffect } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession } from "./lib/session_functions";
 import { setPlayerSession } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
@@ -121,7 +121,7 @@ export function createMatchForSessionEffect(
   const sessionId = args.sessionId as SessionId;
 
   return Effect.gen(function* () {
-    yield* Effect.promise(() => enforceRateLimit(ctx, "createMatch", String(args.sessionId)));
+    yield* enforceRateLimitEffect(ctx, "createMatch", String(args.sessionId));
 
     const hostName = args.hostName.trim();
 
@@ -181,7 +181,7 @@ export function joinByCodeForSessionEffect(
   args: { lobbyCode: string; sessionId: string },
 ) {
   return Effect.gen(function* () {
-    yield* Effect.promise(() => enforceRateLimit(ctx, "joinByCode", String(args.sessionId)));
+    yield* enforceRateLimitEffect(ctx, "joinByCode", String(args.sessionId));
 
     const normalized = args.lobbyCode.trim().toUpperCase();
     if (normalized.length !== 4) {
@@ -275,7 +275,7 @@ export function joinMatchForSessionEffect(
   const sessionId = args.sessionId as SessionId;
 
   return Effect.gen(function* () {
-    yield* Effect.promise(() => enforceRateLimit(ctx, "joinMatch", String(args.sessionId)));
+    yield* enforceRateLimitEffect(ctx, "joinMatch", String(args.sessionId));
 
     const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
@@ -400,7 +400,7 @@ export function startMatchForSessionEffect(
   const sessionId = args.sessionId as SessionId;
 
   return Effect.gen(function* () {
-    yield* Effect.promise(() => enforceRateLimit(ctx, "startMatch", String(args.sessionId)));
+    yield* enforceRateLimitEffect(ctx, "startMatch", String(args.sessionId));
 
     return yield* runGameCommandEffect(ctx, {
       matchId: args.matchId,
