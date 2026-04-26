@@ -1,7 +1,6 @@
 import { Effect } from "effect";
 
 import type { MutationCtx } from "../../convex/_generated/server";
-import type { Id } from "../../convex/_generated/dataModel";
 import {
   type AppError,
   InvalidAction,
@@ -23,9 +22,17 @@ import {
 import { finalizeRound } from "../logic/round-finalization";
 import type { GameCommand } from "./game-command";
 import type { MatchSnapshot } from "../logic/view-models";
-import { loadMatchAggregate } from "../infrastructure/load-match-aggregate";
-import { saveCommandResult, type GameTransition } from "../infrastructure/save-command-result";
-import { buildLatestMatchSnapshot } from "../infrastructure/snapshot-store";
+import type { GameTransition } from "../infrastructure/save-command-result";
+import type { Id } from "../../convex/_generated/dataModel";
+import {
+  AppClock,
+  CommandResultStore,
+  IdempotencyStore,
+  makeProductionCommandLayer,
+  MatchAggregateStore,
+  MatchSnapshotStore,
+  type RunGameCommandServices,
+} from "./services";
 
 function finalizeIfNeeded(transition: Omit<GameTransition, "finalized">): GameTransition {
   const finalizedRound = transition.roundWrite.round.phase === "scoring";
@@ -46,6 +53,7 @@ function buildStartRoundTransition(
     command: Extract<GameCommand, { type: "START_MATCH" | "START_NEXT_ROUND" }>;
     roundNumber: number;
     dealerSeat: number;
+    nowMillis: number;
     matchUpdateContext: GameTransition["matchUpdateContext"];
   },
   players: Parameters<typeof createPlayerRoundStates>[0],
@@ -61,56 +69,12 @@ function buildStartRoundTransition(
     roundWrite: {
       kind: "create",
       roundNumber: input.roundNumber,
-      startedAt: Date.now(),
+      startedAt: input.nowMillis,
       round: resolved.round,
     },
     playerStates: resolved.playerStates,
     events: resolved.events,
     matchUpdateContext: input.matchUpdateContext,
-  });
-}
-
-const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
-
-async function getIdempotentResult(
-  ctx: MutationCtx,
-  matchId: Id<"matches">,
-  idempotencyKey: string,
-) {
-  const existing = await ctx.db
-    .query("idempotencyKeys")
-    .withIndex("by_idempotency_key", (query) => query.eq("idempotencyKey", idempotencyKey))
-    .first();
-
-  if (!existing) {
-    return null;
-  }
-
-  if (existing.matchId !== matchId) {
-    return null;
-  }
-
-  if (existing.expiresAt <= Date.now()) {
-    await ctx.db.delete(existing._id);
-    return null;
-  }
-
-  return existing.commandResult as MatchSnapshot;
-}
-
-async function storeIdempotentResult(
-  ctx: MutationCtx,
-  matchId: Id<"matches">,
-  command: GameCommand,
-  snapshot: MatchSnapshot,
-) {
-  await ctx.db.insert("idempotencyKeys", {
-    matchId,
-    idempotencyKey: command.idempotencyKey,
-    commandType: command.type,
-    commandResult: snapshot,
-    expiresAt: Date.now() + IDEMPOTENCY_TTL_MS,
-    createdAt: Date.now(),
   });
 }
 
@@ -128,17 +92,30 @@ export function runGameCommandEffect(
   ctx: MutationCtx,
   input: RunGameCommandInput,
 ): Effect.Effect<MatchSnapshot, AppError> {
+  return runGameCommandProgram(input).pipe(Effect.provide(makeProductionCommandLayer(ctx)));
+}
+
+export function runGameCommandProgram(
+  input: RunGameCommandInput,
+): Effect.Effect<MatchSnapshot, AppError, RunGameCommandServices> {
   return Effect.gen(function* () {
-    const idempotentResult = yield* Effect.promise(() =>
-      getIdempotentResult(ctx, input.matchId, input.command.idempotencyKey),
+    const aggregateStore = yield* MatchAggregateStore;
+    const commandResultStore = yield* CommandResultStore;
+    const snapshotStore = yield* MatchSnapshotStore;
+    const idempotencyStore = yield* IdempotencyStore;
+    const clock = yield* AppClock;
+    const nowMillis = yield* clock.nowMillis;
+
+    const idempotentResult = yield* idempotencyStore.get(
+      input.matchId,
+      input.command.idempotencyKey,
+      nowMillis,
     );
     if (idempotentResult) {
       return idempotentResult;
     }
 
-    const aggregate = yield* Effect.promise(() =>
-      loadMatchAggregate(ctx, input.matchId, input.sessionId as never),
-    );
+    const aggregate = yield* aggregateStore.load(input.matchId, input.sessionId);
     const {
       latestRound,
       match,
@@ -183,6 +160,7 @@ export function runGameCommandEffect(
             command: input.command,
             roundNumber: 1,
             dealerSeat: match.dealerSeat,
+            nowMillis,
             matchUpdateContext: {
               nextMatchStatus: "in_progress",
               nextCurrentRoundNumber: 1,
@@ -207,6 +185,7 @@ export function runGameCommandEffect(
             command: input.command,
             roundNumber: match.currentRoundNumber + 1,
             dealerSeat: nextDealerSeat,
+            nowMillis,
             matchUpdateContext: {
               nextCurrentRoundNumber: match.currentRoundNumber + 1,
               nextDealerSeat,
@@ -284,23 +263,27 @@ export function runGameCommandEffect(
       }
     }
 
-    yield* Effect.promise(() =>
-      saveCommandResult(ctx, {
-        match,
-        players,
-        playerIdMap,
-        transition,
-      }),
-    );
+    yield* commandResultStore.save({
+      match,
+      players,
+      playerIdMap,
+      transition,
+      nowMillis,
+    });
 
-    const snapshot = yield* Effect.promise(() =>
-      buildLatestMatchSnapshot(ctx, input.matchId, input.sessionId as never),
-    );
+    const snapshot = yield* snapshotStore.buildLatest(input.matchId, input.sessionId);
     if (!snapshot) {
       return yield* new MatchNotFound({ matchId: String(input.matchId) });
     }
 
-    yield* Effect.promise(() => storeIdempotentResult(ctx, input.matchId, input.command, snapshot));
+    yield* idempotencyStore.put(
+      {
+        matchId: input.matchId,
+        command: input.command,
+        snapshot,
+      },
+      nowMillis,
+    );
 
     return snapshot;
   });

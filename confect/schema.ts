@@ -42,14 +42,37 @@ const RoundEventType = Schema.Literal(
   "round_scored",
 );
 
-const CardValue = Schema.Struct({
+const NumberCard = Schema.Struct({
   id: Schema.String,
-  type: Schema.Literal("number", "modifier", "action"),
+  type: Schema.Literal("number"),
   label: Schema.String,
-  numberValue: Schema.optional(Schema.Number),
-  modifierValue: Schema.optional(Schema.Union(Schema.Number, Schema.Literal("x2"))),
-  actionKind: Schema.optional(ActionKind),
+  numberValue: Schema.Number,
 });
+
+const ModifierCard = Schema.Struct({
+  id: Schema.String,
+  type: Schema.Literal("modifier"),
+  label: Schema.String,
+  modifierValue: Schema.Union(
+    Schema.Literal(2),
+    Schema.Literal(4),
+    Schema.Literal(6),
+    Schema.Literal(8),
+    Schema.Literal(10),
+    Schema.Literal("x2"),
+  ),
+});
+
+const ActionCard = Schema.Struct({
+  id: Schema.String,
+  type: Schema.Literal("action"),
+  label: Schema.String,
+  actionKind: ActionKind,
+});
+
+export const CardValue = Schema.Union(NumberCard, ModifierCard, ActionCard);
+
+const CommandType = Schema.Literal("START_MATCH", "START_NEXT_ROUND", "TAKE_TURN", "RESOLVE_ACTION");
 
 export const Matches = Table.make(
   "matches",
@@ -178,7 +201,7 @@ export const IdempotencyKeys = Table.make(
   Schema.Struct({
     matchId: GenericId.GenericId("matches"),
     idempotencyKey: Schema.String,
-    commandType: Schema.String,
+    commandType: CommandType,
     commandResult: Schema.Any,
     expiresAt: Schema.Number,
     createdAt: Schema.Number,

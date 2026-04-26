@@ -74,6 +74,23 @@ The remaining intentional exceptions are:
 2. Generated wrapper files in `convex/*.ts`.
 3. Presence's component subscription hook on the client, which still uses the Convex component API while routing sync mutations through Confect refs.
 
+## Remaining Effect Work
+
+Effect is now used at backend and Confect boundaries. Remaining work should improve those boundaries without moving pure gameplay rules into Effect:
+
+1. Make Confect impl files more service-native and keep unavoidable Convex/Confect casts in narrow adapter modules.
+2. Normalize domain error classes around `_tag` and map `AppError` values to stable messages in one place.
+3. Introduce focused repository/service boundaries around command execution instead of passing raw infrastructure functions through the core program.
+4. Use Effect Schema discriminated unions where they reduce real storage or decode risk, especially for card-shaped data.
+5. Add deterministic clock dependencies for backend command behavior that writes timestamps or checks idempotency expiry.
+
+## Effect Conventions
+
+1. Use `Effect.promise` only when the Promise cannot reasonably fail in a typed way or the failure should remain a defect.
+2. Use `Effect.tryPromise` at external or infrastructure boundaries where failures should become typed errors.
+3. Keep pure game rules as pure functions in `game/logic/**`.
+4. Prefer `Data.TaggedError` classes with `_tag` as the canonical discriminant for expected domain failures.
+
 ## Execution Rules
 
 Use these rules for every remaining migration PR:

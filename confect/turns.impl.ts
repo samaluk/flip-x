@@ -2,31 +2,35 @@ import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
 import api from "./_generated/api";
-import { MutationCtx } from "./_generated/services";
+import { asConfectCtx, asMatchId, asPlayerId, getMutationCtx } from "./lib/ctx";
 import * as turnFns from "./turns";
 
 const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof turnFns.takeTurnForSessionEffect
-    >[0];
+    const ctx = asConfectCtx<Parameters<typeof turnFns.takeTurnForSessionEffect>[0]>(
+      yield* getMutationCtx(),
+    );
     return yield* turnFns.takeTurnForSessionEffect(ctx, {
       ...args,
-      matchId: args.matchId as Parameters<typeof turnFns.takeTurnForSessionEffect>[1]["matchId"],
+      matchId: asMatchId<Parameters<typeof turnFns.takeTurnForSessionEffect>[1]["matchId"]>(
+        args.matchId,
+      ),
     });
   }).pipe(Effect.orDie),
 );
 const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof turnFns.resolveActionForSessionEffect
-    >[0];
+    const ctx = asConfectCtx<Parameters<typeof turnFns.resolveActionForSessionEffect>[0]>(
+      yield* getMutationCtx(),
+    );
     return yield* turnFns.resolveActionForSessionEffect(ctx, {
       ...args,
-      matchId: args.matchId as Parameters<typeof turnFns.resolveActionForSessionEffect>[1]["matchId"],
-      targetPlayerId: args.targetPlayerId as Parameters<
+      matchId: asMatchId<Parameters<typeof turnFns.resolveActionForSessionEffect>[1]["matchId"]>(
+        args.matchId,
+      ),
+      targetPlayerId: asPlayerId<Parameters<
         typeof turnFns.resolveActionForSessionEffect
-      >[1]["targetPlayerId"],
+      >[1]["targetPlayerId"]>(args.targetPlayerId),
     });
   }).pipe(Effect.orDie),
 );

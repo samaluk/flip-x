@@ -1,34 +1,20 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
-import type { Card } from "../game/logic/card-types";
-
 import api from "./_generated/api";
-import { MutationCtx } from "./_generated/services";
+import { asConfectCtx, asMatchId, getMutationCtx, normalizeDeterministicStart } from "./lib/ctx";
 import * as roundFns from "./rounds";
-
-function normalizeDeterministicStart(
-  deterministicStart: { readonly roundSeed: { readonly drawPile: readonly Card[] } } | undefined,
-) {
-  if (!deterministicStart) {
-    return undefined;
-  }
-
-  return {
-    roundSeed: {
-      drawPile: [...deterministicStart.roundSeed.drawPile],
-    },
-  };
-}
 
 const startNextRound = FunctionImpl.make(api, "rounds", "startNextRound", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof roundFns.startNextRoundForSessionEffect
-    >[0];
+    const ctx = asConfectCtx<Parameters<typeof roundFns.startNextRoundForSessionEffect>[0]>(
+      yield* getMutationCtx(),
+    );
     return yield* roundFns.startNextRoundForSessionEffect(ctx, {
       ...args,
-      matchId: args.matchId as Parameters<typeof roundFns.startNextRoundForSessionEffect>[1]["matchId"],
+      matchId: asMatchId<
+        Parameters<typeof roundFns.startNextRoundForSessionEffect>[1]["matchId"]
+      >(args.matchId),
       deterministicStart: normalizeDeterministicStart(args.deterministicStart),
     });
   }).pipe(Effect.orDie),

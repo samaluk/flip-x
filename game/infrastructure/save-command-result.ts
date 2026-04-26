@@ -44,6 +44,7 @@ export type SaveCommandResultInput = {
   players: Doc<"players">[];
   playerIdMap: Map<string, Id<"players">>;
   transition: GameTransition;
+  nowMillis?: number;
 };
 
 async function createRound(
@@ -51,13 +52,14 @@ async function createRound(
   matchId: Id<"matches">,
   roundWrite: Extract<GameTransition["roundWrite"], { kind: "create" }>,
   playerIdMap: Map<string, Id<"players">>,
+  nowMillis: number,
 ) {
   return await ctx.db.insert("rounds", {
     matchId,
     roundNumber: roundWrite.roundNumber,
     ...serializeRoundRuntime(roundWrite.round, playerIdMap),
     startedAt: roundWrite.startedAt,
-    endedAt: roundWrite.round.phase === "completed" ? Date.now() : undefined,
+    endedAt: roundWrite.round.phase === "completed" ? nowMillis : undefined,
   });
 }
 
@@ -66,10 +68,11 @@ async function persistRoundRuntime(
   roundId: Id<"rounds">,
   round: RoundRuntime,
   playerIdMap: Map<string, Id<"players">>,
+  nowMillis: number,
 ) {
   await ctx.db.patch(roundId, {
     ...serializeRoundRuntime(round, playerIdMap),
-    endedAt: round.phase === "completed" ? Date.now() : undefined,
+    endedAt: round.phase === "completed" ? nowMillis : undefined,
   });
 }
 
@@ -105,6 +108,7 @@ async function persistEvents(
   roundId: Id<"rounds">,
   events: RoundEvent[],
   playerIdMap: Map<string, Id<"players">>,
+  nowMillis: number,
 ) {
   if (events.length === 0) {
     return;
@@ -126,7 +130,7 @@ async function persistEvents(
       actorPlayerId: persistedEvent.actorPlayerId,
       targetPlayerId: persistedEvent.targetPlayerId,
       payload: persistedEvent.payload,
-      createdAt: Date.now(),
+      createdAt: nowMillis,
     });
   }
 }
@@ -159,6 +163,7 @@ async function carryForwardScoresAndMaybeCompleteMatch(
   ctx: MutationCtx,
   input: SaveCommandResultInput,
   finalizedPlayerStates: Record<string, PlayerRoundState>,
+  nowMillis: number,
 ) {
   const { match, players } = input;
 
@@ -189,7 +194,7 @@ async function carryForwardScoresAndMaybeCompleteMatch(
     status: "completed",
     winnerPlayerId: winner._id,
     version: match.version + 1,
-    updatedAt: Date.now(),
+    updatedAt: nowMillis,
   });
 
   for (const player of updatedPlayers) {
@@ -201,9 +206,10 @@ async function carryForwardScoresAndMaybeCompleteMatch(
 
 export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResultInput) {
   const { match, playerIdMap, transition } = input;
+  const nowMillis = input.nowMillis ?? Date.now();
   const roundId =
     transition.roundWrite.kind === "create"
-      ? await createRound(ctx, match._id, transition.roundWrite, playerIdMap)
+      ? await createRound(ctx, match._id, transition.roundWrite, playerIdMap, nowMillis)
       : transition.roundWrite.roundId;
 
   const latestRound = transition.finalized?.round ?? transition.roundWrite.round;
@@ -211,8 +217,8 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
   const latestEvents = [...transition.events, ...(transition.finalized?.events ?? [])];
 
   await persistPlayerStates(ctx, roundId, latestPlayerStates, playerIdMap);
-  await persistRoundRuntime(ctx, roundId, latestRound, playerIdMap);
-  await persistEvents(ctx, roundId, latestEvents, playerIdMap);
+  await persistRoundRuntime(ctx, roundId, latestRound, playerIdMap, nowMillis);
+  await persistEvents(ctx, roundId, latestEvents, playerIdMap, nowMillis);
 
   let matchCompleted = false;
 
@@ -222,13 +228,14 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
       ctx,
       input,
       transition.finalized.playerStates,
+      nowMillis,
     );
   }
 
   if (!matchCompleted) {
     const patch: Partial<Doc<"matches">> = {
       version: match.version + 1,
-      updatedAt: Date.now(),
+      updatedAt: nowMillis,
     };
 
     if (transition.matchUpdateContext.nextMatchStatus) {

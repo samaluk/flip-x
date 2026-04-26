@@ -6,6 +6,7 @@ import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { mutation, query } from "../convex/_generated/server";
 import { mutationWithSession } from "./lib/session_functions";
+import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 
 const presence = new Presence(components.presence);
 
@@ -18,9 +19,10 @@ export const heartbeat = mutation({
   },
   handler: async (ctx, args) => {
     return await Effect.runPromise(
-      Effect.promise(() =>
-        presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval),
-      ),
+      Effect.tryPromise({
+        try: () => presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval),
+        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+      }),
     );
   },
 });
@@ -30,7 +32,12 @@ export const list = query({
     roomToken: v.string(),
   },
   handler: async (ctx, args) => {
-    return await Effect.runPromise(Effect.promise(() => presence.list(ctx, args.roomToken)));
+    return await Effect.runPromise(
+      Effect.tryPromise({
+        try: () => presence.list(ctx, args.roomToken),
+        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+      }),
+    );
   },
 });
 
@@ -39,7 +46,12 @@ export const disconnect = mutation({
     sessionToken: v.string(),
   },
   handler: async (ctx, args) => {
-    return await Effect.runPromise(Effect.promise(() => presence.disconnect(ctx, args.sessionToken)));
+    return await Effect.runPromise(
+      Effect.tryPromise({
+        try: () => presence.disconnect(ctx, args.sessionToken),
+        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+      }),
+    );
   },
 });
 
@@ -50,9 +62,10 @@ export const syncPlayer = mutationWithSession({
   },
   handler: async (ctx, args) => {
     return await Effect.runPromise(
-      Effect.promise(() =>
-        presence.updateRoomUser(ctx, String(args.matchId), args.sessionId, args.playerId),
-      ),
+      Effect.tryPromise({
+        try: () => presence.updateRoomUser(ctx, String(args.matchId), args.sessionId, args.playerId),
+        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+      }),
     );
   },
 });
@@ -64,7 +77,10 @@ export const listMatchPresence = query({
   handler: async (ctx, args): Promise<Array<{ playerId: Id<"players">; online: boolean }>> => {
     return await Effect.runPromise(
       Effect.gen(function* () {
-        const states = yield* Effect.promise(() => presence.list(ctx, args.roomToken));
+        const states = yield* Effect.tryPromise({
+          try: () => presence.list(ctx, args.roomToken),
+          catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+        });
 
         return states.flatMap((state) => {
           if (!state.online || typeof state.data !== "string") {

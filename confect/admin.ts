@@ -11,6 +11,7 @@ import {
   UnsupportedTable,
   InvalidConfirmation,
 } from "../shared/lib/errors/domain";
+import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 import { cascadingDeletes } from "./lib/cascading_deletes";
 import { rateLimiter } from "./lib/rate_limiter";
 
@@ -203,13 +204,17 @@ function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
   };
 
   for (const matchId of matchIds) {
-    yield* Effect.promise(() => presence.removeRoom(ctx, matchId));
+    yield* Effect.tryPromise({
+      try: () => presence.removeRoom(ctx, matchId),
+      catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+    });
     deleted.presenceRooms += 1;
   }
 
   for (const matchId of matchIds) {
-    const counts = yield* Effect.promise(() =>
-      cascadingDeletes.deleteWithCascade(ctx, {
+    const counts = yield* Effect.tryPromise({
+      try: () =>
+        cascadingDeletes.deleteWithCascade(ctx, {
       table: "matches",
       id: matchId,
       resolver: async (sourceTable, parentTable, parentId) =>
@@ -225,7 +230,8 @@ function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
         });
       },
       }),
-    );
+      catch: (cause) => new ExternalComponentFailed({ component: "cascadingDeletes", cause }),
+    });
 
     deleted.scoreBreakdowns += counts.scoreBreakdowns ?? 0;
     deleted.roundEvents += counts.roundEvents ?? 0;
@@ -237,10 +243,22 @@ function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
   }
 
   for (const sessionId of sessionIds) {
-    yield* Effect.promise(() => rateLimiter.reset(ctx, "createMatch", { key: sessionId }));
-    yield* Effect.promise(() => rateLimiter.reset(ctx, "joinByCode", { key: sessionId }));
-    yield* Effect.promise(() => rateLimiter.reset(ctx, "joinMatch", { key: sessionId }));
-    yield* Effect.promise(() => rateLimiter.reset(ctx, "startMatch", { key: sessionId }));
+    yield* Effect.tryPromise({
+      try: () => rateLimiter.reset(ctx, "createMatch", { key: sessionId }),
+      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
+    });
+    yield* Effect.tryPromise({
+      try: () => rateLimiter.reset(ctx, "joinByCode", { key: sessionId }),
+      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
+    });
+    yield* Effect.tryPromise({
+      try: () => rateLimiter.reset(ctx, "joinMatch", { key: sessionId }),
+      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
+    });
+    yield* Effect.tryPromise({
+      try: () => rateLimiter.reset(ctx, "startMatch", { key: sessionId }),
+      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
+    });
     deleted.rateLimitKeysReset += 4;
   }
 
