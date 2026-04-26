@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import type { SessionId } from "convex-helpers/server/sessions";
+import { Effect } from "effect";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
 import type { Card } from "../game/logic/card-types";
@@ -9,7 +10,7 @@ import { mutationWithSession, queryWithSession } from "./lib/session_functions";
 import { setPlayerSession } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
 import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
-import type { MutationCtx } from "../convex/_generated/server";
+import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
 import {
   firstAvailablePlayerColorId,
   isPlayerColorId,
@@ -25,106 +26,175 @@ import {
   NameAlreadyTaken,
   PlayerColorAlreadyTaken,
 } from "../shared/lib/errors/domain";
-import { runGameCommand } from "../game/application/run-command";
+import { runGameCommandEffect } from "../game/application/run-command";
 import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
 
-async function generateUniqueLobbyCode(ctx: MutationCtx) {
+function generateUniqueLobbyCodeEffect(ctx: MutationCtx) {
   let lobbyCode = generateLobbyCode();
-  let existing = await ctx.db
-    .query("matches")
-    .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
-    .first();
-  let attempts = 0;
+  return Effect.gen(function* () {
+    let existing = yield* Effect.promise(() =>
+      ctx.db
+        .query("matches")
+        .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
+        .first(),
+    );
+    let attempts = 0;
 
-  while (existing && attempts < 10) {
-    lobbyCode = generateLobbyCode();
-    existing = await ctx.db
+    while (existing && attempts < 10) {
+      lobbyCode = generateLobbyCode();
+      existing = yield* Effect.promise(() =>
+        ctx.db
+          .query("matches")
+          .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
+          .first(),
+      );
+      attempts += 1;
+    }
+
+    if (existing) {
+      return yield* new LobbyCodeUnavailable();
+    }
+
+    return lobbyCode;
+  });
+}
+
+function getSetupMatchByLobbyCodeEffect(ctx: MutationCtx, lobbyCode: string) {
+  return Effect.gen(function* () {
+    const match = yield* Effect.promise(() =>
+      ctx.db
+        .query("matches")
+        .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", lobbyCode))
+        .first(),
+    );
+
+    if (!match || match.status !== "setup") {
+      return yield* new LobbyNotFound();
+    }
+
+    return match;
+  });
+}
+
+export function getMatchByCodeEffect(ctx: QueryCtx, lobbyCode: string) {
+  const normalized = lobbyCode.trim().toUpperCase();
+  return Effect.gen(function* () {
+    if (normalized.length !== 4) {
+      return null;
+    }
+
+    const match = yield* Effect.promise(() =>
+      ctx.db
       .query("matches")
-      .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
-      .first();
-    attempts += 1;
-  }
+        .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
+        .first(),
+    );
 
-  if (existing) {
-    throw new LobbyCodeUnavailable();
-  }
+    if (!match || match.status !== "setup") {
+      return null;
+    }
 
-  return lobbyCode;
+    const players = yield* Effect.promise(() => getPlayersByMatch(ctx, match._id));
+
+    return {
+      matchId: String(match._id),
+      lobbyCode: match.lobbyCode,
+      status: match.status,
+      usedColorIds: players
+        .map((player) => player.colorId)
+        .filter((colorId): colorId is string => typeof colorId === "string"),
+    };
+  });
 }
 
 export async function createMatchForSession(
   ctx: MutationCtx,
   args: { hostName: string; hostColorId?: string; sessionId: string },
 ) {
+  return await Effect.runPromise(createMatchForSessionEffect(ctx, args));
+}
+
+export function createMatchForSessionEffect(
+  ctx: MutationCtx,
+  args: { hostName: string; hostColorId?: string; sessionId: string },
+) {
   const sessionId = args.sessionId as SessionId;
 
-  await enforceRateLimit(ctx, "createMatch", String(args.sessionId));
+  return Effect.gen(function* () {
+    yield* Effect.promise(() => enforceRateLimit(ctx, "createMatch", String(args.sessionId)));
 
-  const hostName = args.hostName.trim();
+    const hostName = args.hostName.trim();
 
-  if (!hostName || hostName.length > 20) {
-    throw new InvalidHostName();
-  }
+    if (!hostName || hostName.length > 20) {
+      return yield* new InvalidHostName();
+    }
 
-  const hostColorId = normalizePlayerColorId(args.hostColorId, []);
+    const hostColorId = normalizePlayerColorId(args.hostColorId, []);
 
-  const timestamp = Date.now();
-  const lobbyCode = await generateUniqueLobbyCode(ctx);
-  const matchId = await ctx.db.insert("matches", {
-    status: "setup",
-    lobbyCode,
-    targetScore: 200,
-    currentRoundNumber: 0,
-    dealerSeat: 0,
-    version: 0,
-    createdAt: timestamp,
-    updatedAt: timestamp,
+    const timestamp = Date.now();
+    const lobbyCode = yield* generateUniqueLobbyCodeEffect(ctx);
+    const matchId = yield* Effect.promise(() =>
+      ctx.db.insert("matches", {
+        status: "setup",
+        lobbyCode,
+        targetScore: 200,
+        currentRoundNumber: 0,
+        dealerSeat: 0,
+        version: 0,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      }),
+    );
+
+    const hostPlayerId = yield* Effect.promise(() =>
+      ctx.db.insert("players", {
+        matchId,
+        displayName: hostName,
+        colorId: hostColorId,
+        seatIndex: 0,
+        totalScore: 0,
+        hasWon: false,
+      }),
+    );
+
+    yield* Effect.promise(() => setPlayerSession(ctx, sessionId, hostPlayerId));
+    yield* Effect.promise(() => ctx.db.patch(matchId, { hostPlayerId }));
+
+    const match = yield* Effect.promise(() => ctx.db.get(matchId));
+    if (!match) {
+      return yield* new MatchNotFound({ matchId: String(matchId) });
+    }
+
+    return yield* Effect.promise(() => buildSnapshot(ctx, match, null, sessionId));
   });
-
-  const hostPlayerId = await ctx.db.insert("players", {
-    matchId,
-    displayName: hostName,
-    colorId: hostColorId,
-    seatIndex: 0,
-    totalScore: 0,
-    hasWon: false,
-  });
-
-  await setPlayerSession(ctx, sessionId, hostPlayerId);
-  await ctx.db.patch(matchId, { hostPlayerId });
-
-  const match = await ctx.db.get(matchId);
-  if (!match) {
-    throw new MatchNotFound({ matchId: String(matchId) });
-  }
-
-  return await buildSnapshot(ctx, match, null, sessionId);
 }
 
 export async function joinByCodeForSession(
   ctx: MutationCtx,
   args: { lobbyCode: string; sessionId: string },
 ) {
-  await enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
+  return await Effect.runPromise(joinByCodeForSessionEffect(ctx, args));
+}
 
-  const normalized = args.lobbyCode.trim().toUpperCase();
-  if (normalized.length !== 4) {
-    throw new LobbyNotFound();
-  }
+export function joinByCodeForSessionEffect(
+  ctx: MutationCtx,
+  args: { lobbyCode: string; sessionId: string },
+) {
+  return Effect.gen(function* () {
+    yield* Effect.promise(() => enforceRateLimit(ctx, "joinByCode", String(args.sessionId)));
 
-  const match = await ctx.db
-    .query("matches")
-    .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", normalized))
-    .first();
+    const normalized = args.lobbyCode.trim().toUpperCase();
+    if (normalized.length !== 4) {
+      return yield* new LobbyNotFound();
+    }
 
-  if (!match || match.status !== "setup") {
-    throw new LobbyNotFound();
-  }
+    const match = yield* getSetupMatchByLobbyCodeEffect(ctx, normalized);
 
-  return {
-    matchId: String(match._id),
-    lobbyCode: match.lobbyCode,
-  };
+    return {
+      matchId: String(match._id),
+      lobbyCode: match.lobbyCode,
+    };
+  });
 }
 
 export const createMatch = mutationWithSession({
@@ -188,73 +258,88 @@ export async function joinMatchForSession(
   ctx: MutationCtx,
   args: { matchId: Id<"matches">; playerName: string; playerColorId?: string; sessionId: string },
 ) {
+  return await Effect.runPromise(joinMatchForSessionEffect(ctx, args));
+}
+
+export function joinMatchForSessionEffect(
+  ctx: MutationCtx,
+  args: { matchId: Id<"matches">; playerName: string; playerColorId?: string; sessionId: string },
+) {
   const sessionId = args.sessionId as SessionId;
 
-  await enforceRateLimit(ctx, "joinMatch", String(args.sessionId));
+  return Effect.gen(function* () {
+    yield* Effect.promise(() => enforceRateLimit(ctx, "joinMatch", String(args.sessionId)));
 
-  const match = await ctx.db.get(args.matchId);
+    const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
-  if (!match || match.status !== "setup") {
-    throw new MatchNotFound({ matchId: String(args.matchId) });
-  }
-
-  const playerName = args.playerName.trim();
-  if (!playerName || playerName.length > 20) {
-    throw new InvalidPlayerName();
-  }
-
-  const players = await getPlayersByMatch(ctx, args.matchId);
-  const existingViewerPlayerId = await getViewerPlayerId(ctx, args.matchId, sessionId);
-  const takenColorIds = players
-    .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
-    .map((player) => player.colorId)
-    .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
-  const playerColorId = normalizePlayerColorId(args.playerColorId, takenColorIds);
-
-  if (existingViewerPlayerId) {
-    const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
-    if (!existingViewerPlayer) {
-      throw new MatchNotFound({ matchId: String(args.matchId) });
+    if (!match || match.status !== "setup") {
+      return yield* new MatchNotFound({ matchId: String(args.matchId) });
     }
 
-    if (
-      existingViewerPlayer.displayName.toLowerCase() !== playerName.toLowerCase() &&
-      players.some((player) => player.displayName.toLowerCase() === playerName.toLowerCase())
-    ) {
-      throw new NameAlreadyTaken({ name: playerName });
+    const playerName = args.playerName.trim();
+    if (!playerName || playerName.length > 20) {
+      return yield* new InvalidPlayerName();
     }
 
-    await ctx.db.patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId });
-    const round = await getLatestRound(ctx, args.matchId);
-    const nextMatch = await ctx.db.get(args.matchId);
+    const players = yield* Effect.promise(() => getPlayersByMatch(ctx, args.matchId));
+    const existingViewerPlayerId = yield* Effect.promise(() =>
+      getViewerPlayerId(ctx, args.matchId, sessionId),
+    );
+    const takenColorIds = players
+      .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
+      .map((player) => player.colorId)
+      .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
+    const playerColorId = normalizePlayerColorId(args.playerColorId, takenColorIds);
 
-    if (!nextMatch) {
-      throw new MatchNotFound({ matchId: String(args.matchId) });
+    if (existingViewerPlayerId) {
+      const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
+      if (!existingViewerPlayer) {
+        return yield* new MatchNotFound({ matchId: String(args.matchId) });
+      }
+
+      if (
+        existingViewerPlayer.displayName.toLowerCase() !== playerName.toLowerCase() &&
+        players.some((player) => player.displayName.toLowerCase() === playerName.toLowerCase())
+      ) {
+        return yield* new NameAlreadyTaken({ name: playerName });
+      }
+
+      yield* Effect.promise(() =>
+        ctx.db.patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId }),
+      );
+      const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
+      const nextMatch = yield* Effect.promise(() => ctx.db.get(args.matchId));
+
+      if (!nextMatch) {
+        return yield* new MatchNotFound({ matchId: String(args.matchId) });
+      }
+
+      return yield* Effect.promise(() => buildSnapshot(ctx, nextMatch, round, sessionId));
     }
 
-    return await buildSnapshot(ctx, nextMatch, round, sessionId);
-  }
+    const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
+    if (existingNames.has(playerName.toLowerCase())) {
+      return yield* new NameAlreadyTaken({ name: playerName });
+    }
 
-  const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
-  if (existingNames.has(playerName.toLowerCase())) {
-    throw new NameAlreadyTaken({ name: playerName });
-  }
+    const nextSeat =
+      players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
+    const playerId = yield* Effect.promise(() =>
+      ctx.db.insert("players", {
+        matchId: args.matchId,
+        displayName: playerName,
+        colorId: playerColorId,
+        seatIndex: nextSeat,
+        totalScore: 0,
+        hasWon: false,
+      }),
+    );
 
-  const nextSeat =
-    players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
-  const playerId = await ctx.db.insert("players", {
-    matchId: args.matchId,
-    displayName: playerName,
-    colorId: playerColorId,
-    seatIndex: nextSeat,
-    totalScore: 0,
-    hasWon: false,
+    yield* Effect.promise(() => setPlayerSession(ctx, sessionId, playerId));
+
+    const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
+    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));
   });
-
-  await setPlayerSession(ctx, sessionId, playerId);
-
-  const round = await getLatestRound(ctx, args.matchId);
-  return await buildSnapshot(ctx, match, round, sessionId);
 }
 
 export const joinMatch = mutationWithSession({
@@ -292,18 +377,33 @@ export async function startMatchForSession(
     deterministicStart?: { roundSeed: { drawPile: Card[] } };
   },
 ) {
+  return await Effect.runPromise(startMatchForSessionEffect(ctx, args));
+}
+
+export function startMatchForSessionEffect(
+  ctx: MutationCtx,
+  args: {
+    matchId: Id<"matches">;
+    sessionId: string;
+    expectedVersion: number;
+    idempotencyKey: string;
+    deterministicStart?: { roundSeed: { drawPile: Card[] } };
+  },
+) {
   const sessionId = args.sessionId as SessionId;
 
-  await enforceRateLimit(ctx, "startMatch", String(args.sessionId));
+  return Effect.gen(function* () {
+    yield* Effect.promise(() => enforceRateLimit(ctx, "startMatch", String(args.sessionId)));
 
-  return await runGameCommand(ctx, {
-    matchId: args.matchId,
-    sessionId,
-    command: {
-      type: "START_MATCH",
-      expectedVersion: args.expectedVersion,
-      idempotencyKey: args.idempotencyKey,
-      deterministicStart: args.deterministicStart,
-    },
+    return yield* runGameCommandEffect(ctx, {
+      matchId: args.matchId,
+      sessionId,
+      command: {
+        type: "START_MATCH",
+        expectedVersion: args.expectedVersion,
+        idempotencyKey: args.idempotencyKey,
+        deterministicStart: args.deterministicStart,
+      },
+    });
   });
 }

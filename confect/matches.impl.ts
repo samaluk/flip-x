@@ -24,9 +24,9 @@ function normalizeDeterministicStart(
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   Effect.gen(function* () {
     const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof matchFns.createMatchForSession
+      typeof matchFns.createMatchForSessionEffect
     >[0];
-    return yield* Effect.promise(() => matchFns.createMatchForSession(ctx, args));
+    return yield* matchFns.createMatchForSessionEffect(ctx, args);
   }).pipe(Effect.orDie),
 );
 const getMatchSnapshot = FunctionImpl.make(
@@ -38,73 +38,38 @@ const getMatchSnapshot = FunctionImpl.make(
 const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", ({ lobbyCode }) =>
   Effect.gen(function* () {
     const ctx = yield* QueryCtx;
-    const normalized = lobbyCode.trim().toUpperCase();
-
-    if (normalized.length !== 4) {
-      return null;
-    }
-
-    const match = yield* Effect.promise(() =>
-      ctx.db
-        .query("matches")
-        .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
-        .first(),
-    );
-
-    if (!match || match.status !== "setup") {
-      return null;
-    }
-
-    const players = yield* Effect.promise(() =>
-      ctx.db
-        .query("players")
-        .withIndex("by_match", (query) => query.eq("matchId", match._id))
-        .collect(),
-    );
-
-    return {
-      matchId: String(match._id),
-      lobbyCode: match.lobbyCode,
-      status: match.status,
-      usedColorIds: players
-        .map((player) => player.colorId)
-        .filter((colorId): colorId is string => typeof colorId === "string"),
-    };
+    return yield* matchFns.getMatchByCodeEffect(ctx, lobbyCode);
   }).pipe(Effect.orDie),
 );
 const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
   Effect.gen(function* () {
     const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof matchFns.joinByCodeForSession
+      typeof matchFns.joinByCodeForSessionEffect
     >[0];
-    return yield* Effect.promise(() => matchFns.joinByCodeForSession(ctx, args));
+    return yield* matchFns.joinByCodeForSessionEffect(ctx, args);
   }).pipe(Effect.orDie),
 );
 const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
   Effect.gen(function* () {
     const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof matchFns.joinMatchForSession
+      typeof matchFns.joinMatchForSessionEffect
     >[0];
-    return yield* Effect.promise(() =>
-      matchFns.joinMatchForSession(ctx, {
-        ...args,
-        matchId: args.matchId as Parameters<typeof matchFns.joinMatchForSession>[1]["matchId"],
-      }),
-    );
+    return yield* matchFns.joinMatchForSessionEffect(ctx, {
+      ...args,
+      matchId: args.matchId as Parameters<typeof matchFns.joinMatchForSessionEffect>[1]["matchId"],
+    });
   }).pipe(Effect.orDie),
 );
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
   Effect.gen(function* () {
     const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof matchFns.startMatchForSession
+      typeof matchFns.startMatchForSessionEffect
     >[0];
-    return yield* Effect.promise(() =>
-      matchFns.startMatchForSession(ctx, {
-        ...args,
-        matchId: args.matchId as Parameters<typeof matchFns.startMatchForSession>[1]["matchId"],
-        deterministicStart: normalizeDeterministicStart(args.deterministicStart),
-      }),
-    );
+    return yield* matchFns.startMatchForSessionEffect(ctx, {
+      ...args,
+      matchId: args.matchId as Parameters<typeof matchFns.startMatchForSessionEffect>[1]["matchId"],
+      deterministicStart: normalizeDeterministicStart(args.deterministicStart),
+    });
   }).pipe(Effect.orDie),
 );
 
