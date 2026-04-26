@@ -7,29 +7,27 @@ import * as turnFns from "./turns";
 
 const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
   Effect.gen(function* () {
-    const ctx = (yield* MutationCtx) as unknown as Parameters<typeof turnFns.takeTurnForSession>[0];
-    return yield* Effect.promise(() =>
-      turnFns.takeTurnForSession(ctx, {
-        ...args,
-        matchId: args.matchId as Parameters<typeof turnFns.takeTurnForSession>[1]["matchId"],
-      }),
-    );
+    const ctx = (yield* MutationCtx) as unknown as Parameters<
+      typeof turnFns.takeTurnForSessionEffect
+    >[0];
+    return yield* turnFns.takeTurnForSessionEffect(ctx, {
+      ...args,
+      matchId: args.matchId as Parameters<typeof turnFns.takeTurnForSessionEffect>[1]["matchId"],
+    });
   }).pipe(Effect.orDie),
 );
 const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
   Effect.gen(function* () {
     const ctx = (yield* MutationCtx) as unknown as Parameters<
-      typeof turnFns.resolveActionForSession
+      typeof turnFns.resolveActionForSessionEffect
     >[0];
-    return yield* Effect.promise(() =>
-      turnFns.resolveActionForSession(ctx, {
-        ...args,
-        matchId: args.matchId as Parameters<typeof turnFns.resolveActionForSession>[1]["matchId"],
-        targetPlayerId: args.targetPlayerId as Parameters<
-          typeof turnFns.resolveActionForSession
-        >[1]["targetPlayerId"],
-      }),
-    );
+    return yield* turnFns.resolveActionForSessionEffect(ctx, {
+      ...args,
+      matchId: args.matchId as Parameters<typeof turnFns.resolveActionForSessionEffect>[1]["matchId"],
+      targetPlayerId: args.targetPlayerId as Parameters<
+        typeof turnFns.resolveActionForSessionEffect
+      >[1]["targetPlayerId"],
+    });
   }).pipe(Effect.orDie),
 );
 
