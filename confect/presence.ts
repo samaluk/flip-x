@@ -1,5 +1,6 @@
 import { Presence } from "@convex-dev/presence";
 import { v } from "convex/values";
+import { Effect } from "effect";
 
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -16,7 +17,11 @@ export const heartbeat = mutation({
     interval: v.number(),
   },
   handler: async (ctx, args) => {
-    return await presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval);
+    return await Effect.runPromise(
+      Effect.promise(() =>
+        presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval),
+      ),
+    );
   },
 });
 
@@ -25,7 +30,7 @@ export const list = query({
     roomToken: v.string(),
   },
   handler: async (ctx, args) => {
-    return await presence.list(ctx, args.roomToken);
+    return await Effect.runPromise(Effect.promise(() => presence.list(ctx, args.roomToken)));
   },
 });
 
@@ -34,7 +39,7 @@ export const disconnect = mutation({
     sessionToken: v.string(),
   },
   handler: async (ctx, args) => {
-    return await presence.disconnect(ctx, args.sessionToken);
+    return await Effect.runPromise(Effect.promise(() => presence.disconnect(ctx, args.sessionToken)));
   },
 });
 
@@ -44,7 +49,11 @@ export const syncPlayer = mutationWithSession({
     playerId: v.optional(v.id("players")),
   },
   handler: async (ctx, args) => {
-    return await presence.updateRoomUser(ctx, String(args.matchId), args.sessionId, args.playerId);
+    return await Effect.runPromise(
+      Effect.promise(() =>
+        presence.updateRoomUser(ctx, String(args.matchId), args.sessionId, args.playerId),
+      ),
+    );
   },
 });
 
@@ -53,14 +62,18 @@ export const listMatchPresence = query({
     roomToken: v.string(),
   },
   handler: async (ctx, args): Promise<Array<{ playerId: Id<"players">; online: boolean }>> => {
-    const states = await presence.list(ctx, args.roomToken);
+    return await Effect.runPromise(
+      Effect.gen(function* () {
+        const states = yield* Effect.promise(() => presence.list(ctx, args.roomToken));
 
-    return states.flatMap((state) => {
-      if (!state.online || typeof state.data !== "string") {
-        return [];
-      }
+        return states.flatMap((state) => {
+          if (!state.online || typeof state.data !== "string") {
+            return [];
+          }
 
-      return [{ playerId: state.data as Id<"players">, online: true }];
-    });
+          return [{ playerId: state.data as Id<"players">, online: true }];
+        });
+      }),
+    );
   },
 });
