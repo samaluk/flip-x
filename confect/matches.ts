@@ -7,7 +7,7 @@ import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimitEffect } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession } from "./lib/session_functions";
-import { setPlayerSession } from "./lib/session_store";
+import { setPlayerSessionEffect } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
 import { getPlayersByMatchEffect, getViewerPlayerIdEffect } from "./lib/store";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
@@ -157,7 +157,7 @@ export function createMatchForSessionEffect(
       }),
     );
 
-    yield* Effect.promise(() => setPlayerSession(ctx, sessionId, hostPlayerId));
+    yield* setPlayerSessionEffect(ctx, sessionId, hostPlayerId);
     yield* Effect.promise(() => ctx.db.patch(matchId, { hostPlayerId }));
 
     const match = yield* Effect.promise(() => ctx.db.get(matchId));
@@ -340,7 +340,7 @@ export function joinMatchForSessionEffect(
       }),
     );
 
-    yield* Effect.promise(() => setPlayerSession(ctx, sessionId, playerId));
+    yield* setPlayerSessionEffect(ctx, sessionId, playerId);
 
     const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
     return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));

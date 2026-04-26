@@ -1,5 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getOneFrom } from "convex-helpers/server/relationships";
+import { Effect } from "effect";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
@@ -10,19 +11,21 @@ export async function getPlayerIdForSession(
   ctx: Ctx,
   sessionId?: SessionId,
 ): Promise<Id<"players"> | null> {
-  if (!sessionId) {
-    return null;
-  }
+  return await Effect.runPromise(getPlayerIdForSessionEffect(ctx, sessionId));
+}
 
-  const playerSession = await getOneFrom(
-    ctx.db,
-    "playerSessions",
-    "by_session_id",
-    sessionId,
-    "sessionId",
-  );
+export function getPlayerIdForSessionEffect(ctx: Ctx, sessionId?: SessionId) {
+  return Effect.gen(function* () {
+    if (!sessionId) {
+      return null;
+    }
 
-  return playerSession?.playerId ?? null;
+    const playerSession = yield* Effect.promise(() =>
+      getOneFrom(ctx.db, "playerSessions", "by_session_id", sessionId, "sessionId"),
+    );
+
+    return playerSession?.playerId ?? null;
+  });
 }
 
 export async function setPlayerSession(
@@ -30,21 +33,29 @@ export async function setPlayerSession(
   sessionId: SessionId,
   playerId: Id<"players">,
 ) {
-  const existing = await getOneFrom(
-    ctx.db,
-    "playerSessions",
-    "by_session_id",
-    sessionId,
-    "sessionId",
-  );
+  return await Effect.runPromise(setPlayerSessionEffect(ctx, sessionId, playerId));
+}
 
-  if (existing) {
-    await ctx.db.patch(existing._id, { playerId });
-    return;
-  }
+export function setPlayerSessionEffect(
+  ctx: MutationCtx,
+  sessionId: SessionId,
+  playerId: Id<"players">,
+) {
+  return Effect.gen(function* () {
+    const existing = yield* Effect.promise(() =>
+      getOneFrom(ctx.db, "playerSessions", "by_session_id", sessionId, "sessionId"),
+    );
 
-  await ctx.db.insert("playerSessions", {
-    sessionId,
-    playerId,
+    if (existing) {
+      yield* Effect.promise(() => ctx.db.patch(existing._id, { playerId }));
+      return;
+    }
+
+    yield* Effect.promise(() =>
+      ctx.db.insert("playerSessions", {
+        sessionId,
+        playerId,
+      }),
+    );
   });
 }

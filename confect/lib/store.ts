@@ -4,7 +4,7 @@ import { Effect } from "effect";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
-import { getPlayerIdForSession } from "./session_store";
+import { getPlayerIdForSessionEffect } from "./session_store";
 import { PlayerNotJoined } from "../../shared/lib/errors/domain";
 
 type Ctx = QueryCtx | MutationCtx;
@@ -23,7 +23,7 @@ export async function getViewerPlayerId(ctx: Ctx, matchId: Id<"matches">, sessio
 
 export function getViewerPlayerIdEffect(ctx: Ctx, matchId: Id<"matches">, sessionId?: SessionId) {
   return Effect.gen(function* () {
-    const playerId = yield* Effect.promise(() => getPlayerIdForSession(ctx, sessionId));
+    const playerId = yield* getPlayerIdForSessionEffect(ctx, sessionId);
 
     if (!playerId) {
       return null;
