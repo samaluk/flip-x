@@ -39,7 +39,7 @@ Convex agent skills for common tasks can be installed by running `npx convex ai-
 
 | Service | Command | Port | Notes |
 |---------|---------|------|-------|
-| Convex preview-backed tests | `CONVEX_DEPLOY_KEY=... pnpm test:backend` | n/a | Provisions or refreshes a dedicated preview deployment named `local-<user>-<git-branch>` locally and `pr-<number>` in PR CI. Backend tests clear all app data in that preview. |
+| Convex preview-backed tests | `CONVEX_DEPLOY_KEY=... pnpm test:backend` | n/a | Creates or reuses a dedicated preview deployment named `local-<user>-<git-branch>` locally and `pr-<number>` in PR CI. The preview wrapper clears all app data before tests. |
 | Next.js dev server | `pnpm dev` | 3000 | Reads `NEXT_PUBLIC_CONVEX_URL` from `.env.local` for local development. |
 
 ### Running services
