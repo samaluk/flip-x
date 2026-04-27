@@ -74,7 +74,7 @@
     "convex-test": "0.0.50",
     "jsdom": "29.0.2",
     "knip": "^6.6.0",
-    "oxfmt": "0.45.0",
+    "oxfmt": "0.46.0",
     "oxlint": "1.61.0",
     "tailwindcss": "4.2.2",
     "typescript": "6.0.3",
