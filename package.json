@@ -32,7 +32,7 @@
     "@confect/core": "5.0.0",
     "@confect/react": "5.0.0",
     "@confect/server": "5.0.0",
-    "@convex-dev/migrations": "0.3.3",
+    "@convex-dev/migrations": "0.3.4",
     "@convex-dev/presence": "0.3.0",
     "@convex-dev/rate-limiter": "0.3.2",
     "@sholajegede/convex-cascading-deletes": "0.1.2",

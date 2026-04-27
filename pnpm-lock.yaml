@@ -21,8 +21,8 @@ importers:
         specifier: 5.0.0
         version: 5.0.0(dd1d213e2b019e09f40aa9e3db592618)
       '@convex-dev/migrations':
-        specifier: 0.3.3
-        version: 0.3.3(convex@1.36.1(react@19.2.5))
+        specifier: 0.3.4
+        version: 0.3.4(convex@1.36.1(react@19.2.5))
       '@convex-dev/presence':
         specifier: 0.3.0
         version: 0.3.0(convex@1.36.1(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -398,8 +398,8 @@ packages:
       convex-test: ^0.0.38
       effect: ^3.19.16
 
-  '@convex-dev/migrations@0.3.3':
-    resolution: {integrity: sha512-eUfqCBMjObr9sPCRL7V98CX58fViLVye7ZtYVCb0/6c6kOERZopbiQ/dWnF8NoxXg3bREr3Jb3VjZR9FjP96+A==}
+  '@convex-dev/migrations@0.3.4':
+    resolution: {integrity: sha512-fCUkc4hDzkZTgxicjV1WN4QfUdDDPPrMtvC7VgSLTGssg1B8pm+XlPC6NbZ2Aes38Xf5iiodX+y8VnU96narKQ==}
     peerDependencies:
       convex: ^1.24.8
 
@@ -4935,7 +4935,7 @@ snapshots:
       convex-test: 0.0.50(convex@1.36.1(react@19.2.5))
       effect: 3.21.2
 
-  '@convex-dev/migrations@0.3.3(convex@1.36.1(react@19.2.5))':
+  '@convex-dev/migrations@0.3.4(convex@1.36.1(react@19.2.5))':
     dependencies:
       convex: 1.36.1(react@19.2.5)
 
