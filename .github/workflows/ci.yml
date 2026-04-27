@@ -19,6 +19,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -50,7 +52,10 @@ jobs:
         run: pnpm lint
 
       - name: Fallow
-        run: pnpm fallow:ci
+        uses: fallow-rs/fallow@v2
+        with:
+          command: audit
+          args: --dead-code-baseline fallow-baselines/dead-code.json --health-baseline fallow-baselines/health.json --dupes-baseline fallow-baselines/dupes.json
 
       - name: Run fast Vitest suites
         run: pnpm test

@@ -25,10 +25,8 @@
     "test:vrt": "bash scripts/vrt-docker.sh",
     "test:vrt:update": "bash scripts/vrt-docker.sh --update",
     "fallow": "fallow",
-    "fallow:baseline:check": "pnpm fallow:baseline:update && git diff --exit-code -- fallow-baselines",
     "fallow:baseline:update": "fallow dead-code --save-baseline fallow-baselines/dead-code.json || test $? -eq 1; fallow dupes --save-baseline fallow-baselines/dupes.json || test $? -eq 1; fallow health --save-baseline fallow-baselines/health.json || test $? -eq 1",
-    "fallow:check": "fallow dead-code --baseline fallow-baselines/dead-code.json && fallow dupes --baseline fallow-baselines/dupes.json && fallow health --baseline fallow-baselines/health.json",
-    "fallow:ci": "pnpm fallow:check && pnpm fallow:baseline:check",
+    "fallow:audit": "fallow audit --dead-code-baseline fallow-baselines/dead-code.json --health-baseline fallow-baselines/health.json --dupes-baseline fallow-baselines/dupes.json",
     "fallow:fix": "fallow fix"
   },
   "dependencies": {
