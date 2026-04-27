@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["127.0.0.1"],
+  allowedDevOrigins: ["127.0.0.1", "flip7.localhost", "*.flip7.localhost"],
 };
 
 const withNextIntl = createNextIntlPlugin("./shared/i18n/request.ts");

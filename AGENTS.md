@@ -40,13 +40,15 @@ Convex agent skills for common tasks can be installed by running `npx convex ai-
 | Service | Command | Port | Notes |
 |---------|---------|------|-------|
 | Convex preview-backed tests | `CONVEX_DEPLOY_KEY=... pnpm test:backend` | n/a | Creates or reuses a dedicated preview deployment named `local-<user>-<git-branch>` locally and `pr-<number>` in PR CI. The preview wrapper clears all app data before tests. |
-| Next.js dev server | `pnpm dev` | 3000 | Reads `NEXT_PUBLIC_CONVEX_URL` from `.env.local` for local development. |
+| Next.js dev server | `pnpm dev` | n/a | Runs at `https://flip7.localhost` (worktree: `<branch>.flip7.localhost`) via portless proxy; reads `NEXT_PUBLIC_CONVEX_URL` from `.env.local` for local development. |
 
 ### Running services
 
 1. For local app development, start `npx convex dev` to refresh `.env.local` with your development deployment.
-2. Then start Next.js dev server with `pnpm dev`.
+2. Then start Next.js dev server with `pnpm dev` (runs through portless proxy at `https://flip7.localhost`). On first run, portless generates a local CA and may prompt for sudo to trust it (one-time setup).
 3. For backend or E2E tests, always use `CONVEX_DEPLOY_KEY=... pnpm test:backend` or `CONVEX_DEPLOY_KEY=... pnpm test:e2e` instead of a local Convex backend.
+4. **Worktree support**: portless automatically detects git worktrees and prepends the branch name as a subdomain (e.g., `https://<branch>.flip7.localhost`). No config changes needed.
+5. **Bypass portless**: Run `PORTLESS=0 pnpm dev` to start Next.js directly on `localhost:3000` without the proxy.
 
 ### Key commands
 

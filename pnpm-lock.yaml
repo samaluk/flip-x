@@ -147,6 +147,9 @@ importers:
       oxlint:
         specifier: 1.61.0
         version: 1.61.0
+      portless:
+        specifier: ^0.11.0
+        version: 0.11.0
       tailwindcss:
         specifier: 4.2.4
         version: 4.2.4
@@ -3674,6 +3677,12 @@ packages:
 
   po-parser@2.1.1:
     resolution: {integrity: sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==}
+
+  portless@0.11.0:
+    resolution: {integrity: sha512-ocq29owWwKPhUw0rcMiBa5KcEwajX7Za/Nz3N1kTT4Ue09FYwUKU9GGT4SBG94q+88P82G/bCefzi4CqLpru7Q==}
+    engines: {node: '>=20'}
+    os: [darwin, linux, win32]
+    hasBin: true
 
   postcss-selector-parser@7.1.1:
     resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
@@ -7614,6 +7623,8 @@ snapshots:
   pngjs@7.0.0: {}
 
   po-parser@2.1.1: {}
+
+  portless@0.11.0: {}
 
   postcss-selector-parser@7.1.1:
     dependencies:
