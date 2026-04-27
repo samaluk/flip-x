@@ -6,10 +6,10 @@ import { useId } from "react";
 import { CardFrame } from "@/game/cards/card-frame";
 import { cardTw } from "@/game/logic/card-responsive";
 import { CARD_NAVY, NUMBER_CARD_PALETTES } from "@/game/cards/card-palettes";
-const NUMBER_FRAME = {
+const NUMBER_FRAME: Readonly<{ border: string; background: string }> = {
   border: CARD_NAVY,
   background: "#f5eedc",
-} as const;
+};
 
 type NumberNameMessageId =
   | "numberName.0"
@@ -27,7 +27,36 @@ type NumberNameMessageId =
   | "numberName.12";
 
 function numberNameId(value: number): NumberNameMessageId {
-  return `numberName.${value}` as NumberNameMessageId;
+  switch (value) {
+    case 0:
+      return "numberName.0";
+    case 1:
+      return "numberName.1";
+    case 2:
+      return "numberName.2";
+    case 3:
+      return "numberName.3";
+    case 4:
+      return "numberName.4";
+    case 5:
+      return "numberName.5";
+    case 6:
+      return "numberName.6";
+    case 7:
+      return "numberName.7";
+    case 8:
+      return "numberName.8";
+    case 9:
+      return "numberName.9";
+    case 10:
+      return "numberName.10";
+    case 11:
+      return "numberName.11";
+    case 12:
+      return "numberName.12";
+    default:
+      return "numberName.0";
+  }
 }
 
 function OutlinedDigit({

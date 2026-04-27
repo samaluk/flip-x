@@ -1,6 +1,33 @@
-export type PlayerColorId = (typeof PLAYER_COLORS)[number]["id"];
+export type PlayerColorId =
+  | "cyan"
+  | "mint"
+  | "emerald"
+  | "lime"
+  | "yellow"
+  | "amber"
+  | "orange"
+  | "coral"
+  | "rose"
+  | "pink"
+  | "fuchsia"
+  | "purple"
+  | "violet"
+  | "indigo"
+  | "blue"
+  | "sky"
+  | "teal"
+  | "slate"
+  | "stone"
+  | "red";
 
-export const PLAYER_COLORS = [
+type PlayerColor = {
+  id: PlayerColorId;
+  label: string;
+  background: string;
+  foreground: string;
+};
+
+export const PLAYER_COLORS: readonly PlayerColor[] = [
   { id: "cyan", label: "Cyan", background: "#4dd0e1", foreground: "#001f2c" },
   { id: "mint", label: "Mint", background: "#6ee7b7", foreground: "#052e1a" },
   { id: "emerald", label: "Emerald", background: "#34d399", foreground: "#042f1d" },
@@ -21,7 +48,7 @@ export const PLAYER_COLORS = [
   { id: "slate", label: "Slate", background: "#94a3b8", foreground: "#111827" },
   { id: "stone", label: "Stone", background: "#a8a29e", foreground: "#1c1917" },
   { id: "red", label: "Red", background: "#f87171", foreground: "#3f0707" },
-] as const;
+];
 
 const PLAYER_COLOR_IDS = new Set<string>(PLAYER_COLORS.map((color) => color.id));
 

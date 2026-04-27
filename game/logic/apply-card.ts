@@ -13,6 +13,12 @@ import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import { activePlayerIds } from "./turn-order";
 
+function isTargetActionCard(
+  card: ActionCard,
+): card is ActionCard & { actionKind: PendingAction["actionKind"] } {
+  return card.actionKind === "flip_three" || card.actionKind === "freeze";
+}
+
 function applyHeldSecondChance(
   round: RoundRuntime,
   playerState: PlayerRoundState,
@@ -181,12 +187,16 @@ export function applyCardToPlayer(
 
   playerState.heldActionCards.push(card);
 
+  if (!isTargetActionCard(card)) {
+    return { pending: false };
+  }
+
   resolveHeldTargetAction(
     round,
     players,
     playerStates,
     playerId,
-    card as ActionCard & { actionKind: PendingAction["actionKind"] },
+    card,
     resume,
     events,
   );

@@ -1,9 +1,9 @@
-import type { SessionId } from "convex-helpers/server/sessions";
 import { Effect } from "effect";
 
 import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
 import { runGameCommandEffect } from "../game/application/run-command";
+import { toSessionId } from "./lib/session_functions";
 
 export async function takeTurnForSession(
   ctx: MutationCtx,
@@ -28,7 +28,7 @@ export function takeTurnForSessionEffect(
     idempotencyKey: string;
   },
 ) {
-  const sessionId = args.sessionId as SessionId;
+  const sessionId = toSessionId(args.sessionId);
   return runGameCommandEffect(ctx, {
     matchId: args.matchId,
     sessionId,
@@ -64,7 +64,7 @@ export function resolveActionForSessionEffect(
     idempotencyKey: string;
   },
 ) {
-  const sessionId = args.sessionId as SessionId;
+  const sessionId = toSessionId(args.sessionId);
   return runGameCommandEffect(ctx, {
     matchId: args.matchId,
     sessionId,

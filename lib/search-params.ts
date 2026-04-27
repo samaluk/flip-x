@@ -1,7 +1,7 @@
 import { createSearchParamsCache, parseAsString } from "nuqs/server";
 
-const searchParamsParsers = {
+const searchParamsParsers: Readonly<{ code: typeof parseAsString }> = {
   code: parseAsString,
-} as const;
+};
 
 export const searchParamsCache = createSearchParamsCache(searchParamsParsers);

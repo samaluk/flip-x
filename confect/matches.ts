@@ -1,12 +1,11 @@
 import { v } from "convex/values";
-import type { SessionId } from "convex-helpers/server/sessions";
 import { Effect } from "effect";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
 import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimitEffect } from "./lib/rate_limiter";
-import { mutationWithSession, queryWithSession } from "./lib/session_functions";
+import { mutationWithSession, queryWithSession, toSessionId } from "./lib/session_functions";
 import { setPlayerSessionEffect } from "./lib/session_store";
 import type { Id } from "../convex/_generated/dataModel";
 import { getPlayersByMatchEffect, getViewerPlayerIdEffect } from "./lib/store";
@@ -118,7 +117,7 @@ export function createMatchForSessionEffect(
   ctx: MutationCtx,
   args: { hostName: string; hostColorId?: string; sessionId: string },
 ) {
-  const sessionId = args.sessionId as SessionId;
+  const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
     yield* enforceRateLimitEffect(ctx, "createMatch", String(args.sessionId));
@@ -242,7 +241,7 @@ export function getMatchSnapshotForSessionEffect(
   ctx: QueryCtx,
   args: { matchId: Id<"matches">; sessionId: string },
 ) {
-  const sessionId = args.sessionId as SessionId;
+  const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
     const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
@@ -274,7 +273,7 @@ export function joinMatchForSessionEffect(
   ctx: MutationCtx,
   args: { matchId: Id<"matches">; playerName: string; playerColorId?: string; sessionId: string },
 ) {
-  const sessionId = args.sessionId as SessionId;
+  const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
     yield* enforceRateLimitEffect(ctx, "joinMatch", String(args.sessionId));
@@ -399,7 +398,7 @@ export function startMatchForSessionEffect(
     deterministicStart?: { roundSeed: { drawPile: Card[] } };
   },
 ) {
-  const sessionId = args.sessionId as SessionId;
+  const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
     yield* enforceRateLimitEffect(ctx, "startMatch", String(args.sessionId));

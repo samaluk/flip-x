@@ -1,4 +1,5 @@
 import { Context, Effect, Layer } from "effect";
+import type { SessionId } from "convex-helpers/server/sessions";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
@@ -18,7 +19,7 @@ export type IdempotencyInput = {
 export class MatchAggregateStore extends Context.Tag("MatchAggregateStore")<
   MatchAggregateStore,
   {
-    load: (matchId: Id<"matches">, sessionId: string) => Effect.Effect<MatchAggregate, AppError>;
+    load: (matchId: Id<"matches">, sessionId: SessionId) => Effect.Effect<MatchAggregate, AppError>;
   }
 >() {}
 
@@ -34,7 +35,7 @@ export class MatchSnapshotStore extends Context.Tag("MatchSnapshotStore")<
   {
     buildLatest: (
       matchId: Id<"matches">,
-      sessionId: string,
+      sessionId: SessionId,
     ) => Effect.Effect<MatchSnapshot | null, AppError>;
   }
 >() {}
@@ -69,8 +70,7 @@ export const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
 
 export function makeProductionCommandLayer(ctx: MutationCtx): Layer.Layer<RunGameCommandServices> {
   const aggregate = Layer.succeed(MatchAggregateStore, {
-    load: (matchId, sessionId) =>
-      Effect.promise(() => loadMatchAggregate(ctx, matchId, sessionId as never)),
+    load: (matchId, sessionId) => Effect.promise(() => loadMatchAggregate(ctx, matchId, sessionId)),
   });
 
   const commandResults = Layer.succeed(CommandResultStore, {
@@ -79,7 +79,7 @@ export function makeProductionCommandLayer(ctx: MutationCtx): Layer.Layer<RunGam
 
   const snapshots = Layer.succeed(MatchSnapshotStore, {
     buildLatest: (matchId, sessionId) =>
-      Effect.promise(() => buildLatestMatchSnapshot(ctx, matchId, sessionId as never)),
+      Effect.promise(() => buildLatestMatchSnapshot(ctx, matchId, sessionId)),
   });
 
   const idempotency = Layer.succeed(IdempotencyStore, {
@@ -99,7 +99,7 @@ export function makeProductionCommandLayer(ctx: MutationCtx): Layer.Layer<RunGam
           return null;
         }
 
-        return existing.commandResult as MatchSnapshot;
+        return existing.commandResult;
       }),
     put: ({ matchId, command, snapshot }, nowMillis) =>
       Effect.promise(() =>

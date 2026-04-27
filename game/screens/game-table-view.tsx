@@ -9,6 +9,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { motion } from "motion/react";
+import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
@@ -29,20 +30,20 @@ import {
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 
-const listStagger = {
+const listStagger: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
     transition: { staggerChildren: 0.06 },
   },
-} as const;
+};
 
-const listItem = {
+const listItem: Variants = {
   hidden: { opacity: 0, y: 10 },
   show: {
     opacity: 1,
     y: 0,
-    transition: { type: "spring" as const, stiffness: 120, damping: 20 },
+    transition: { type: "spring", stiffness: 120, damping: 20 },
   },
 };
 
@@ -107,7 +108,9 @@ export function GameTableView({
     ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
     : tEvents("noneYet");
 
-  const laneProps = { disableCardFlip3d } as const;
+  const laneProps: Pick<Parameters<typeof PlayerLane>[0], "disableCardFlip3d"> = {
+    disableCardFlip3d,
+  };
 
   const pendingAction = snapshot.pendingAction;
   const viewerIsSource = Boolean(

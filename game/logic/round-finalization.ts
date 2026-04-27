@@ -38,13 +38,13 @@ export function finalizeRound(
   roundInput: RoundRuntime,
   playerStatesInput: Record<string, PlayerRoundState>,
 ) {
-  const round = {
+  const round: RoundRuntime = {
     ...roundInput,
     drawPile: [...roundInput.drawPile],
     discardPile: [...roundInput.discardPile],
     pendingAction: null,
     pendingFlip3: null,
-    phase: "completed" as const,
+    phase: "completed",
   };
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];

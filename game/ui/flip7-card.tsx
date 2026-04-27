@@ -54,14 +54,17 @@ function ScreenReaderSummary(props: Flip7CardProps) {
         ? t("kindModifier")
         : t("kindAction");
 
-  const valueLabel =
-    props.kind === "number"
-      ? String(props.numberValue)
-      : props.kind === "modifier"
-        ? props.modifierValue === "x2"
-          ? t("modifier.x2")
-          : t("modifier.plus", { value: props.modifierValue as number })
-        : t(`action.${props.actionKind}`);
+  let valueLabel: string;
+  if (props.kind === "number") {
+    valueLabel = String(props.numberValue);
+  } else if (props.kind === "modifier") {
+    valueLabel =
+      props.modifierValue === "x2"
+        ? t("modifier.x2")
+        : t("modifier.plus", { value: props.modifierValue });
+  } else {
+    valueLabel = t(`action.${props.actionKind}`);
+  }
 
   return (
     <div className="sr-only">

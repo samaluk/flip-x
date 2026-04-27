@@ -40,7 +40,7 @@ export function buildOrderedDeck() {
     cards.push({
       ...card,
       id: `${card.type}-${sequence}`,
-    } as Card);
+    });
     sequence += 1;
   };
 

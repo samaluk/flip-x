@@ -4,6 +4,12 @@ import { discardCard } from "./draw";
 import type { RoundEvent } from "./events";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 
+function isTargetActionCard(
+  card: ActionCard,
+): card is ActionCard & { actionKind: PendingAction["actionKind"] } {
+  return card.actionKind === "flip_three" || card.actionKind === "freeze";
+}
+
 export function isFlip3ActiveForPlayer(round: RoundRuntime, playerId: string) {
   return round.pendingFlip3?.targetPlayerId === playerId && round.pendingFlip3.cardsRemaining > 0;
 }
@@ -43,9 +49,7 @@ export function resolveDeferredFlip3Actions(
     return;
   }
 
-  const deferredCards = [...flip3.deferredActionCards] as Array<
-    ActionCard & { actionKind: PendingAction["actionKind"] }
-  >;
+  const deferredCards = flip3.deferredActionCards.filter(isTargetActionCard);
   flip3.deferredActionCards = [];
 
   for (const card of deferredCards) {

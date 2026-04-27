@@ -8,17 +8,15 @@ import type {
 } from "./round-state";
 import type { RoundEvent } from "./events";
 
-type LatestRoundEvent = RoundEvent extends infer TEvent
-  ? TEvent extends RoundEvent
-    ? {
-        type: TEvent["eventType"];
-        payload: TEvent["payload"];
-        actorPlayerId?: TEvent["actorPlayerId"];
-        targetPlayerId?: TEvent["targetPlayerId"];
-        playerNames?: string;
-      }
-    : never
-  : never;
+type LatestRoundEvent = {
+  [TEvent in RoundEvent as TEvent["eventType"]]: {
+    type: TEvent["eventType"];
+    payload: TEvent["payload"];
+    actorPlayerId?: TEvent["actorPlayerId"];
+    targetPlayerId?: TEvent["targetPlayerId"];
+    playerNames?: string;
+  };
+}[RoundEvent["eventType"]];
 
 export type RoundHistoryEntry = {
   roundNumber: number;
@@ -88,6 +86,38 @@ export type CanonicalReplayStepState = Pick<
   players: MatchSnapshot["players"];
 };
 
+function toLatestRoundEvent<TEvent extends RoundEvent>(
+  event: TEvent,
+  playerNames: string | undefined,
+): LatestRoundEvent {
+  const base = {
+    actorPlayerId: event.actorPlayerId,
+    targetPlayerId: event.targetPlayerId,
+    playerNames,
+  };
+
+  switch (event.eventType) {
+    case "initial_deal": return { ...base, type: event.eventType, payload: event.payload };
+    case "hit": return { ...base, type: event.eventType, payload: event.payload };
+    case "flip3_hit": return { ...base, type: event.eventType, payload: event.payload };
+    case "number_drawn": return { ...base, type: event.eventType, payload: event.payload };
+    case "modifier_drawn": return { ...base, type: event.eventType, payload: event.payload };
+    case "second_chance_held": return { ...base, type: event.eventType, payload: event.payload };
+    case "second_chance_passed": return { ...base, type: event.eventType, payload: event.payload };
+    case "second_chance_discarded": return { ...base, type: event.eventType, payload: event.payload };
+    case "second_chance_used": return { ...base, type: event.eventType, payload: event.payload };
+    case "duplicate_bust": return { ...base, type: event.eventType, payload: event.payload };
+    case "flip7": return { ...base, type: event.eventType, payload: event.payload };
+    case "freeze_applied": return { ...base, type: event.eventType, payload: event.payload };
+    case "stay": return { ...base, type: event.eventType, payload: event.payload };
+    case "flip_three_targeted": return { ...base, type: event.eventType, payload: event.payload };
+    case "flip3_completed": return { ...base, type: event.eventType, payload: event.payload };
+    case "deferred_action": return { ...base, type: event.eventType, payload: event.payload };
+    case "pending_action": return { ...base, type: event.eventType, payload: event.payload };
+    case "round_scored": return { ...base, type: event.eventType, payload: event.payload };
+  }
+}
+
 export function buildMatchSnapshot(args: {
   matchId: string;
   status: MatchSnapshot["status"];
@@ -110,39 +140,8 @@ export function buildMatchSnapshot(args: {
   playerStates: Record<string, PlayerRoundState>;
   latestEvent: RoundEvent | null;
   roundHistory: RoundHistoryEntry[];
-}) {
-  const result: Record<string, unknown> = {
-    matchId: args.matchId,
-    status: args.status,
-    version: args.version,
-    targetScore: args.targetScore,
-    currentRoundNumber: args.currentRoundNumber,
-    dealerSeat: args.dealerSeat,
-    viewerPlayerId: args.viewerPlayerId,
-    activePlayerId: args.round?.activePlayerId ?? null,
-    pendingAction: args.round?.pendingAction ?? null,
-    pendingFlip3: args.round?.pendingFlip3
-      ? {
-          sourcePlayerId: args.round.pendingFlip3.sourcePlayerId,
-          targetPlayerId: args.round.pendingFlip3.targetPlayerId,
-          cardsRemaining: args.round.pendingFlip3.cardsRemaining,
-          deferredActionCards: args.round.pendingFlip3.deferredActionCards.map((card) => ({
-            label: card.label,
-            actionKind: card.actionKind,
-          })),
-        }
-      : null,
-    roundStatus: args.round?.phase ?? null,
-    endedBy: args.round?.endedBy ?? null,
-    roundHistory: args.roundHistory,
-  };
-
-  if (args.lobbyCode) result.lobbyCode = args.lobbyCode;
-  if (args.hostPlayerId && args.viewerPlayerId) {
-    result.isHost = args.hostPlayerId === args.viewerPlayerId;
-  }
-
-  result.players = [...args.players]
+}): MatchSnapshot {
+  const players = [...args.players]
     .toSorted((left, right) => left.seatIndex - right.seatIndex)
     .map((player) => {
       const playerState = args.playerStates[player.playerId] ?? {
@@ -169,18 +168,14 @@ export function buildMatchSnapshot(args: {
         pointsAtRisk: playerState.pointsAtRisk,
         numberCards: playerState.numberCards,
         modifierCards: playerState.modifierCards,
-        heldActionCards: playerState.heldActionCards.map(
-          (card: { label: string; actionKind: ActionKind }) => ({
-            label: card.label,
-            actionKind: card.actionKind,
-          }),
-        ),
-        receivedActionCards: playerState.receivedActionCards.map(
-          (card: { label: string; actionKind: ActionKind }) => ({
-            label: card.label,
-            actionKind: card.actionKind,
-          }),
-        ),
+        heldActionCards: playerState.heldActionCards.map((card) => ({
+          label: card.label,
+          actionKind: card.actionKind,
+        })),
+        receivedActionCards: playerState.receivedActionCards.map((card) => ({
+          label: card.label,
+          actionKind: card.actionKind,
+        })),
         scoreBreakdown: scoreRound(
           playerState.numberCards,
           playerState.modifierCards,
@@ -190,34 +185,58 @@ export function buildMatchSnapshot(args: {
       };
     });
 
-  if (args.latestEvent) {
-    const playerMap = new Map(args.players.map((p) => [p.playerId, p.displayName]));
-    const actorName = args.latestEvent.actorPlayerId
-      ? playerMap.get(args.latestEvent.actorPlayerId)
-      : null;
-    const targetName =
-      args.latestEvent.targetPlayerId &&
-      args.latestEvent.targetPlayerId !== args.latestEvent.actorPlayerId
-        ? playerMap.get(args.latestEvent.targetPlayerId)
-        : null;
-    let playerNames: string | undefined;
-    if (actorName && targetName && actorName !== targetName) {
-      playerNames = `${actorName} → ${targetName}`;
-    } else if (actorName) {
-      playerNames = actorName;
-    }
-    result.latestEvent = {
-      type: args.latestEvent.eventType,
-      payload: args.latestEvent.payload,
-      actorPlayerId: args.latestEvent.actorPlayerId,
-      targetPlayerId: args.latestEvent.targetPlayerId,
-      playerNames,
-    };
-  } else {
-    result.latestEvent = null;
-  }
+  const latestEvent = args.latestEvent
+    ? (() => {
+        const playerMap = new Map(args.players.map((p) => [p.playerId, p.displayName]));
+        const actorName = args.latestEvent.actorPlayerId
+          ? playerMap.get(args.latestEvent.actorPlayerId)
+          : null;
+        const targetName =
+          args.latestEvent.targetPlayerId &&
+          args.latestEvent.targetPlayerId !== args.latestEvent.actorPlayerId
+            ? playerMap.get(args.latestEvent.targetPlayerId)
+            : null;
+        let playerNames: string | undefined;
+        if (actorName && targetName && actorName !== targetName) {
+          playerNames = `${actorName} → ${targetName}`;
+        } else if (actorName) {
+          playerNames = actorName;
+        }
+        return toLatestRoundEvent(args.latestEvent, playerNames);
+      })()
+    : null;
 
-  return result as MatchSnapshot;
+  return {
+    matchId: args.matchId,
+    status: args.status,
+    version: args.version,
+    targetScore: args.targetScore,
+    currentRoundNumber: args.currentRoundNumber,
+    dealerSeat: args.dealerSeat,
+    viewerPlayerId: args.viewerPlayerId,
+    activePlayerId: args.round?.activePlayerId ?? null,
+    pendingAction: args.round?.pendingAction ?? null,
+    pendingFlip3: args.round?.pendingFlip3
+      ? {
+          sourcePlayerId: args.round.pendingFlip3.sourcePlayerId,
+          targetPlayerId: args.round.pendingFlip3.targetPlayerId,
+          cardsRemaining: args.round.pendingFlip3.cardsRemaining,
+          deferredActionCards: args.round.pendingFlip3.deferredActionCards.map((card) => ({
+            label: card.label,
+            actionKind: card.actionKind,
+          })),
+        }
+      : null,
+    roundStatus: args.round?.phase ?? null,
+    endedBy: args.round?.endedBy ?? null,
+    players,
+    latestEvent,
+    roundHistory: args.roundHistory,
+    ...(args.lobbyCode ? { lobbyCode: args.lobbyCode } : {}),
+    ...(args.hostPlayerId && args.viewerPlayerId
+      ? { isHost: args.hostPlayerId === args.viewerPlayerId }
+      : {}),
+  };
 }
 
 export function toOrderedPlayers(players: Array<{ playerId: string; seatIndex: number }>) {

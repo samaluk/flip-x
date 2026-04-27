@@ -1,4 +1,5 @@
 import { Effect } from "effect";
+import type { SessionId } from "convex-helpers/server/sessions";
 
 import type { MutationCtx } from "../../convex/_generated/server";
 import {
@@ -80,7 +81,7 @@ function buildStartRoundTransition(
 
 export type RunGameCommandInput = {
   matchId: Id<"matches">;
-  sessionId: string;
+  sessionId: SessionId;
   command: GameCommand;
 };
 

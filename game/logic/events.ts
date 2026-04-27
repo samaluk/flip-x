@@ -66,7 +66,7 @@ export type EncodedRoundEvent = Omit<PersistedRoundEvent, "eventType"> & {
   eventType: RoundEventType;
 };
 
-const roundEventTypes = new Set<RoundEventType>([
+const roundEventTypes = new Set<string>([
   "initial_deal",
   "hit",
   "flip3_hit",
@@ -88,7 +88,7 @@ const roundEventTypes = new Set<RoundEventType>([
 ]);
 
 export function isRoundEventType(value: string): value is RoundEventType {
-  return roundEventTypes.has(value as RoundEventType);
+  return roundEventTypes.has(value);
 }
 
 function isActionKind(value: unknown): value is ActionKind {
