@@ -126,7 +126,14 @@ export async function clickStartGameWhenReady(hostPage: Page) {
 export function hitControl(page: Page) {
   return page
     .locator('[data-slot="button"]')
-    .filter({ hasText: /^Hit for /i })
+    .filter({ hasText: /^(Hit for |Draw \()/i })
+    .filter({ visible: true })
+    .first();
+}
+
+function pendingActionTargetControl(page: Page) {
+  return page
+    .getByRole("button", { name: /^Select .+ as target$/i })
     .filter({ visible: true })
     .first();
 }
@@ -136,6 +143,13 @@ export async function findPageWithEnabledHitButton(pages: Page[]): Promise<Page>
   await expect(async () => {
     found = undefined;
     for (const p of pages) {
+      const target = pendingActionTargetControl(p);
+      if ((await target.count()) > 0) {
+        await target.click();
+        await expect(target).not.toBeVisible({ timeout: SESSION_READY_TIMEOUT_MS });
+        throw new Error("Resolved pending action target; waiting for next turn state");
+      }
+
       const hit = hitControl(p);
       if ((await hit.count()) === 0) continue;
       if (await hit.isEnabled()) {

@@ -5,7 +5,6 @@ import {
   findPageWithEnabledHitButton,
   getLobbyCode,
   hitControl,
-  latestResolutionBodyLocator,
   waitForEnabled,
   waitForHydratedJoinByCodeForm,
   withThreePlayerMatch,
@@ -26,15 +25,13 @@ test.describe("gameplay", () => {
         const pages = [hostPage, guestAPage, guestBPage];
         const activePage = await findPageWithEnabledHitButton(pages);
 
-        const resolution = latestResolutionBodyLocator(activePage);
-        await expect(resolution).toBeVisible();
-        const beforeHit = (await resolution.textContent())?.trim() ?? "";
+        const cards = activePage.locator(".flip7-card-shell");
+        const beforeHitCardCount = await cards.count();
 
         await hitControl(activePage).click();
 
         await expect(async () => {
-          const after = (await resolution.textContent())?.trim() ?? "";
-          expect(after).not.toBe(beforeHit);
+          expect(await cards.count()).toBeGreaterThan(beforeHitCardCount);
         }).toPass({ intervals: [200, 500, 1000] });
       },
     );
