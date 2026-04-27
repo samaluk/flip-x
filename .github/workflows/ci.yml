@@ -52,10 +52,7 @@ jobs:
         run: pnpm lint
 
       - name: Fallow
-        uses: fallow-rs/fallow@v2
-        with:
-          command: audit
-          args: --dead-code-baseline fallow-baselines/dead-code.json --health-baseline fallow-baselines/health.json --dupes-baseline fallow-baselines/dupes.json
+        run: pnpm fallow:audit
 
       - name: Run fast Vitest suites
         run: pnpm test
