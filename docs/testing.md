@@ -66,7 +66,7 @@ These suites do not require a Convex preview deployment.
 - Owns: deployed Convex wrapper registration, preview deployment config, presence component integration, create/join/start smoke, one valid turn, and one invalid actor rejection.
 - Delete duplicate coverage when it replays deterministic scenarios or exhaustively checks game rules.
 
-This suite is destructive for its target deployment. It clears all app data between tests.
+This suite is destructive for its target deployment. The preview wrapper clears all app data before the suite starts, and backend tests clear data between tests.
 
 ### Visual Regression
 
@@ -87,7 +87,7 @@ This suite is destructive for its target deployment. It clears all app data betw
 
 ## Preview-Backed Suites
 
-`pnpm test:backend` and `pnpm test:e2e` always run against a Convex preview deployment.
+`pnpm test:backend` and `pnpm test:e2e` always run against a named Convex preview deployment, creating or reusing it as needed.
 
 Requirements:
 
@@ -102,6 +102,7 @@ Preview naming:
 Notes:
 
 - The preview wrapper sources `.env.local` for local runs before checking for `CONVEX_DEPLOY_KEY`
+- The preview wrapper clears all app data in the target preview before running the requested command
 - Local and CI preview-backed tests do not use `convex dev --local`
 - Do not point backend tests at a shared deployment
 
