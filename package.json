@@ -28,7 +28,7 @@
     "knip:fix": "knip --fix"
   },
   "dependencies": {
-    "@base-ui/react": "1.4.0",
+    "@base-ui/react": "1.4.1",
     "@confect/core": "5.0.0",
     "@confect/react": "5.0.0",
     "@confect/server": "5.0.0",
