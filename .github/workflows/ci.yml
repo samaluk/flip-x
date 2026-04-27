@@ -52,7 +52,7 @@ jobs:
         run: pnpm lint
 
       - name: Fallow
-        run: pnpm fallow:audit
+        run: pnpm fallow:ci
 
       - name: Run fast Vitest suites
         run: pnpm test
