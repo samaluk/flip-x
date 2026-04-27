@@ -24,8 +24,12 @@
     "test:e2e": "bash scripts/convex-preview-test.sh pnpm playwright test",
     "test:vrt": "bash scripts/vrt-docker.sh",
     "test:vrt:update": "bash scripts/vrt-docker.sh --update",
-    "knip": "knip",
-    "knip:fix": "knip --fix"
+    "fallow": "fallow",
+    "fallow:baseline:check": "pnpm fallow:baseline:update && git diff --exit-code -- fallow-baselines",
+    "fallow:baseline:update": "fallow dead-code --save-baseline fallow-baselines/dead-code.json || test $? -eq 1; fallow dupes --save-baseline fallow-baselines/dupes.json || test $? -eq 1; fallow health --save-baseline fallow-baselines/health.json || test $? -eq 1",
+    "fallow:check": "fallow dead-code --baseline fallow-baselines/dead-code.json && fallow dupes --baseline fallow-baselines/dupes.json && fallow health --baseline fallow-baselines/health.json",
+    "fallow:ci": "pnpm fallow:check && pnpm fallow:baseline:check",
+    "fallow:fix": "fallow fix"
   },
   "dependencies": {
     "@base-ui/react": "1.4.1",
@@ -72,8 +76,8 @@
     "@vitest/browser-playwright": "4.1.5",
     "@vitest/coverage-v8": "4.1.5",
     "convex-test": "0.0.50",
+    "fallow": "2.52.0",
     "jsdom": "29.0.2",
-    "knip": "^6.6.0",
     "oxfmt": "0.46.0",
     "oxlint": "1.61.0",
     "tailwindcss": "4.2.4",

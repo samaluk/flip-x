@@ -1,0 +1,123 @@
+{
+  "finding_counts": {
+    "app/[locale]/home-client.tsx": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "confect/admin.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "confect/matches.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "game/application/run-command.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "game/cards/action-content.tsx": {
+      "complexity_moderate": {
+        "count": 1
+      }
+    },
+    "game/cards/number-content.tsx": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "game/logic/apply-card.ts": {
+      "complexity_moderate": {
+        "count": 1
+      }
+    },
+    "game/logic/command-handler.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "complexity_high": {
+        "count": 1
+      },
+      "complexity_moderate": {
+        "count": 1
+      }
+    },
+    "game/logic/view-models.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "game/screens/game-page-client.tsx": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "game/screens/game-table-view.tsx": {
+      "complexity_moderate": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "game/ui/flip7-card.tsx": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "game/ui/player-lane.tsx": {
+      "complexity_high": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "game/ui/turn-controls.tsx": {
+      "complexity_moderate": {
+        "count": 1
+      }
+    },
+    "shared/lib/errors/messages.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    }
+  },
+  "runtime_coverage_findings": [],
+  "target_keys": [
+    "confect/matches.ts:dead code",
+    "game/application/run-command.ts:dead code",
+    "confect/lib/ctx.ts:dead code",
+    "confect/lib/store.ts:dead code",
+    "confect/turns.ts:dead code",
+    "game/logic/command-handler.ts:complexity",
+    "game/ui/player-lane.tsx:untested risk",
+    "game/logic/rng.ts:dead code",
+    "game/logic/card-types.ts:dead code",
+    "game/logic/round-state.ts:dead code",
+    "shared/ui/avatar.tsx:dead code"
+  ]
+}

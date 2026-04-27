@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "entry": ["app/**/{page,layout,loading,error,not-found}.{ts,tsx}", "convex/**/*.ts"],
+  "ignorePatterns": [
+    "convex/_generated/**",
+    ".next/**",
+    "tests/**",
+    "e2e/**",
+    "scripts/**",
+    "confect/_generated/**"
+  ],
+  "ignoreDependencies": ["shadcn", "tw-animate-css", "tailwindcss", "@confect/test"]
+}

@@ -1,0 +1,15 @@
+{
+  "clone_groups": [
+    "app/[locale]/home-client.tsx:86-101|game/screens/game-page-client.tsx:68-82",
+    "confect/admin.ts:109-114|confect/admin.ts:118-123|confect/admin.ts:127-132",
+    "confect/deterministic-schema.ts:3-33|confect/schema.ts:42-73",
+    "confect/deterministic-schema.ts:3-31|confect/match-snapshot-schema.ts:9-39|confect/schema.ts:42-71",
+    "confect/match-snapshot-schema.ts:120-128|confect/match-snapshot-schema.ts:84-92",
+    "confect/matches.ts:34-39|confect/matches.ts:44-49",
+    "confect/matches.ts:253-263|confect/matches.ts:346-358",
+    "game/cards/action-content.tsx:149-164|game/cards/action-content.tsx:305-322",
+    "game/logic/command-handler.ts:176-184|game/logic/command-handler.ts:86-94",
+    "game/logic/command-handler.ts:138-143|game/logic/command-handler.ts:155-160",
+    "game/ui/player-lane.tsx:434-442|game/ui/player-lane.tsx:455-463"
+  ]
+}
