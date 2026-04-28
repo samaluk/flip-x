@@ -21,7 +21,6 @@
     "confect/lib/ctx.ts:asMatchId",
     "confect/lib/ctx.ts:asPlayerId",
     "confect/lib/ctx.ts:normalizeDeterministicStart",
-    "confect/match-snapshot-schema.ts:CanonicalReplayStepState",
     "confect/matches.impl.ts:matches",
     "confect/matches.ts:createMatch",
     "confect/matches.ts:getCurrentPlayer",
