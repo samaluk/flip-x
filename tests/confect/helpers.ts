@@ -6,7 +6,9 @@ import refs from "@/confect/_generated/refs";
 import type { Id } from "@/convex/_generated/dataModel";
 import { MatchSnapshot } from "@/confect/match-snapshot-schema";
 import { MutationCtx } from "@/confect/_generated/services";
-import { runGameCommand, type RunGameCommandInput } from "@/game/application/run-command";
+import { runGameCommand } from "@/game/application/run-command";
+
+type RunGameCommandInput = Parameters<typeof runGameCommand>[1];
 import {
   describeReplayResult,
   type DeterministicStartOptions,

@@ -75,7 +75,6 @@
   ],
   "unused_types": [
     "confect/lib/rate_limiter.ts:AppRateLimitName",
-    "game/application/run-command.ts:RunGameCommandInput",
     "game/application/services.ts:IdempotencyInput",
     "game/cards/card-frame.tsx:CardFrameProps",
     "game/logic/command-handler.ts:CreateRoundRuntimeOptions",
