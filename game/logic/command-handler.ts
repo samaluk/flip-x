@@ -22,8 +22,6 @@ import {
 } from "./round-state";
 import { getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
 
-export { finalizeRound } from "./round-finalization";
-
 function transitionDealingToPlayerTurns(
   round: RoundRuntime,
   players: OrderedPlayer[],
