@@ -120,10 +120,7 @@
     "game/screens/game-table-view.tsx:GameTableViewProps"
   ],
   "unused_dependencies": [],
-  "unused_dev_dependencies": [
-    "@effect/vitest",
-    "convex-test"
-  ],
+  "unused_dev_dependencies": [],
   "circular_dependencies": [],
   "unused_optional_dependencies": [],
   "unused_enum_members": [],
