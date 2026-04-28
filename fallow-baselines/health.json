@@ -114,10 +114,9 @@
     "confect/lib/store.ts:dead code",
     "confect/turns.ts:dead code",
     "game/logic/command-handler.ts:complexity",
-    "game/ui/player-lane.tsx:untested risk",
     "game/logic/rng.ts:dead code",
+    "game/ui/player-lane.tsx:untested risk",
     "game/logic/card-types.ts:dead code",
-    "game/logic/round-state.ts:dead code",
-    "shared/ui/avatar.tsx:dead code"
+    "game/logic/round-state.ts:dead code"
   ]
 }
