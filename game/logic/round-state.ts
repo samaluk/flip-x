@@ -70,7 +70,7 @@ export type ResolveResult = {
   events: import("./events").RoundEvent[];
 };
 
-export function clonePlayerState(playerState: PlayerRoundState): PlayerRoundState {
+function clonePlayerState(playerState: PlayerRoundState): PlayerRoundState {
   return {
     ...playerState,
     numberCards: [...playerState.numberCards],

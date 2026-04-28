@@ -48,8 +48,7 @@
     "confect/turns.ts:resolveActionForSession",
     "game/infrastructure/snapshot-store.ts:getLatestRoundEvent",
     "game/infrastructure/snapshot-store.ts:buildCanonicalReplayStepState",
-    "game/logic/events.ts:isRoundEventType",
-    "game/logic/round-state.ts:clonePlayerState"
+    "game/logic/events.ts:isRoundEventType"
   ],
   "unused_types": [],
   "unused_dependencies": [],
