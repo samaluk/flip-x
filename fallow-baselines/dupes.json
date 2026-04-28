@@ -1,10 +1,6 @@
 {
   "clone_groups": [
     "app/[locale]/home-client.tsx:86-101|game/screens/game-page-client.tsx:68-82",
-    "confect/deterministic-schema.ts:3-33|confect/schema.ts:42-73",
-    "confect/deterministic-schema.ts:3-31|confect/match-snapshot-schema.ts:9-39|confect/schema.ts:42-71",
-    "confect/match-snapshot-schema.ts:120-128|confect/match-snapshot-schema.ts:84-92",
-    "game/cards/action-content.tsx:149-164|game/cards/action-content.tsx:305-322",
     "game/ui/player-lane.tsx:434-442|game/ui/player-lane.tsx:455-463",
     "tests/confect/command-idempotency.test.ts:11-19|tests/confect/command-idempotency.test.ts:51-60",
     "tests/confect/command-turns.test.ts:33-43|tests/confect/turns.test.ts:29-39",

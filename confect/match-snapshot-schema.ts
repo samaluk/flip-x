@@ -1,32 +1,12 @@
 import { Schema } from "effect";
 
-const ActionKind = Schema.Literal("flip_three", "freeze", "second_chance");
+import { ActionKind, ModifierCard, NumberCard } from "./card-value-schema";
+
 const PendingActionKind = Schema.Literal("flip_three", "freeze");
 
 const ActionCardSummary = Schema.Struct({
   label: Schema.String,
   actionKind: ActionKind,
-});
-
-const NumberCard = Schema.Struct({
-  id: Schema.String,
-  type: Schema.Literal("number"),
-  label: Schema.String,
-  numberValue: Schema.Number,
-});
-
-const ModifierCard = Schema.Struct({
-  id: Schema.String,
-  type: Schema.Literal("modifier"),
-  label: Schema.String,
-  modifierValue: Schema.Union(
-    Schema.Literal(2),
-    Schema.Literal(4),
-    Schema.Literal(6),
-    Schema.Literal(8),
-    Schema.Literal(10),
-    Schema.Literal("x2"),
-  ),
 });
 
 const ScoreBreakdown = Schema.Struct({
