@@ -4,7 +4,7 @@ import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import { activePlayerIds, orderedPlayerIds } from "./turn-order";
 
-export function createPendingTargetAction(
+function createPendingTargetAction(
   round: RoundRuntime,
   players: OrderedPlayer[],
   playerStates: Record<string, PlayerRoundState>,
