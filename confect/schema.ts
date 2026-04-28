@@ -47,7 +47,7 @@ const RoundEventType = Schema.Literal(
 
 const CommandType = Schema.Literal("START_MATCH", "START_NEXT_ROUND", "TAKE_TURN", "RESOLVE_ACTION");
 
-export const Matches = Table.make(
+const Matches = Table.make(
   "matches",
   Schema.Struct({
     status: MatchStatus,
@@ -63,7 +63,7 @@ export const Matches = Table.make(
   }),
 ).index("by_lobby_code", ["lobbyCode"]);
 
-export const Players = Table.make(
+const Players = Table.make(
   "players",
   Schema.Struct({
     matchId: GenericId.GenericId("matches"),
@@ -75,7 +75,7 @@ export const Players = Table.make(
   }),
 ).index("by_match", ["matchId"]);
 
-export const PlayerSessions = Table.make(
+const PlayerSessions = Table.make(
   "playerSessions",
   Schema.Struct({
     sessionId: Schema.String,
@@ -85,7 +85,7 @@ export const PlayerSessions = Table.make(
   .index("by_session_id", ["sessionId"])
   .index("by_player_id", ["playerId"]);
 
-export const Rounds = Table.make(
+const Rounds = Table.make(
   "rounds",
   Schema.Struct({
     matchId: GenericId.GenericId("matches"),
@@ -121,7 +121,7 @@ export const Rounds = Table.make(
   .index("by_match", ["matchId"])
   .index("by_match_round", ["matchId", "roundNumber"]);
 
-export const RoundPlayerStates = Table.make(
+const RoundPlayerStates = Table.make(
   "roundPlayerStates",
   Schema.Struct({
     roundId: GenericId.GenericId("rounds"),
@@ -140,7 +140,7 @@ export const RoundPlayerStates = Table.make(
   .index("by_round", ["roundId"])
   .index("by_round_player", ["roundId", "playerId"]);
 
-export const RoundEvents = Table.make(
+const RoundEvents = Table.make(
   "roundEvents",
   Schema.Struct({
     roundId: GenericId.GenericId("rounds"),
@@ -153,7 +153,7 @@ export const RoundEvents = Table.make(
   }),
 ).index("by_round", ["roundId"]);
 
-export const ScoreBreakdowns = Table.make(
+const ScoreBreakdowns = Table.make(
   "scoreBreakdowns",
   Schema.Struct({
     roundId: GenericId.GenericId("rounds"),
@@ -169,7 +169,7 @@ export const ScoreBreakdowns = Table.make(
   .index("by_round", ["roundId"])
   .index("by_round_player", ["roundId", "playerId"]);
 
-export const IdempotencyKeys = Table.make(
+const IdempotencyKeys = Table.make(
   "idempotencyKeys",
   Schema.Struct({
     matchId: GenericId.GenericId("matches"),
