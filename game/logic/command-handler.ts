@@ -21,18 +21,6 @@ import {
 } from "./round-state";
 import { getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
 
-export type {
-  CreateRoundRuntimeOptions,
-  OrderedPlayer,
-  PendingAction,
-  PendingFlip3,
-  PlayerRoundState,
-  PlayerRoundStatus,
-  ResolveResult,
-  RoundPhase,
-  RoundRuntime,
-} from "./round-state";
-export type { RoundEvent } from "./events";
 export { finalizeRound } from "./round-finalization";
 
 export function createPlayerRoundStates(players: OrderedPlayer[]) {

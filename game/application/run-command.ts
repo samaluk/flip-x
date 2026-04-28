@@ -79,7 +79,7 @@ function buildStartRoundTransition(
   });
 }
 
-export type RunGameCommandInput = {
+type RunGameCommandInput = {
   matchId: Id<"matches">;
   sessionId: SessionId;
   command: GameCommand;

@@ -10,7 +10,7 @@ import { saveCommandResult, type SaveCommandResultInput } from "../infrastructur
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameCommand } from "./game-command";
 
-export type IdempotencyInput = {
+type IdempotencyInput = {
   matchId: Id<"matches">;
   command: GameCommand;
   snapshot: MatchSnapshot;

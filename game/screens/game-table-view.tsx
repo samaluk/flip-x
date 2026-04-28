@@ -47,7 +47,7 @@ const listItem: Variants = {
   },
 };
 
-export type GameTableViewProps = {
+type GameTableViewProps = {
   snapshot: MatchSnapshot;
   isPending?: boolean;
   onHit: () => void;
