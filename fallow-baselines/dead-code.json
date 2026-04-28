@@ -51,7 +51,6 @@
     "game/logic/action-resolution.ts:createPendingTargetAction",
     "game/logic/command-handler.ts:finalizeRound",
     "game/logic/events.ts:isRoundEventType",
-    "game/logic/rng.ts:shuffleWithRandom",
     "game/logic/round-state.ts:clonePlayerState"
   ],
   "unused_types": [],

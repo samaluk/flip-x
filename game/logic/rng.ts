@@ -2,7 +2,7 @@ export type RngService = {
   shuffle<T>(items: readonly T[]): T[];
 };
 
-export function shuffleWithRandom<T>(items: readonly T[], random: () => number): T[] {
+function shuffleWithRandom<T>(items: readonly T[], random: () => number): T[] {
   const next = [...items];
 
   for (let index = next.length - 1; index > 0; index -= 1) {
