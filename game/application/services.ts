@@ -66,7 +66,7 @@ export type RunGameCommandServices =
   | IdempotencyStore
   | AppClock;
 
-export const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
+const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
 
 export function makeProductionCommandLayer(ctx: MutationCtx): Layer.Layer<RunGameCommandServices> {
   const aggregate = Layer.succeed(MatchAggregateStore, {
