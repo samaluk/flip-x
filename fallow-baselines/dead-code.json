@@ -11,9 +11,7 @@
     "confect/settings.impl.ts",
     "confect/spec.ts",
     "confect/turns.impl.ts",
-    "confect/turns.ts",
-    "game/application/commands.ts",
-    "game/logic/turn-resolution.ts"
+    "confect/turns.ts"
   ],
   "unused_exports": [
     "confect/admin.impl.ts:admin",
@@ -24,7 +22,6 @@
     "confect/lib/ctx.ts:asMatchId",
     "confect/lib/ctx.ts:asPlayerId",
     "confect/lib/ctx.ts:normalizeDeterministicStart",
-    "confect/lib/rate_limiter.ts:enforceRateLimit",
     "confect/lib/session_store.ts:setPlayerSession",
     "confect/lib/store.ts:getPlayersByMatch",
     "confect/lib/store.ts:getViewerPlayerId",
@@ -81,7 +78,6 @@
     "game/logic/rng.ts:fixedRng",
     "game/logic/round-state.ts:clonePlayerState",
     "game/logic/round-state.ts:cloneRoundRuntime",
-    "game/logic/view-models.ts:toOrderedPlayers",
     "shared/lib/errors/domain.ts:appErrorWireCode"
   ],
   "unused_types": [
@@ -89,9 +85,6 @@
     "game/application/run-command.ts:RunGameCommandInput",
     "game/application/services.ts:IdempotencyInput",
     "game/cards/card-frame.tsx:CardFrameProps",
-    "game/cards/card-palettes.ts:NumberCardPalette",
-    "game/cards/card-palettes.ts:ModifierCardPalette",
-    "game/cards/card-palettes.ts:ActionCardPalette",
     "game/logic/command-handler.ts:CreateRoundRuntimeOptions",
     "game/logic/command-handler.ts:OrderedPlayer",
     "game/logic/command-handler.ts:PendingAction",

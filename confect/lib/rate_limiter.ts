@@ -14,14 +14,6 @@ export const rateLimiter = new RateLimiter(components.rateLimiter, {
 
 export type AppRateLimitName = "createMatch" | "joinByCode" | "joinMatch" | "startMatch";
 
-export async function enforceRateLimit(
-  ctx: Parameters<typeof rateLimiter.limit>[0],
-  name: AppRateLimitName,
-  key: string,
-) {
-  return await Effect.runPromise(enforceRateLimitEffect(ctx, name, key));
-}
-
 export function enforceRateLimitEffect(
   ctx: Parameters<typeof rateLimiter.limit>[0],
   name: AppRateLimitName,

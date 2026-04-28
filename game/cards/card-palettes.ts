@@ -1,7 +1,7 @@
 /** Navy used across card line art */
 export const CARD_NAVY = "#2D368E";
 
-export type NumberCardPalette = {
+type NumberCardPalette = {
   fill: string;
 };
 
@@ -22,7 +22,7 @@ export const NUMBER_CARD_PALETTES: Record<number, NumberCardPalette> = {
   12: { fill: "#9a8b7a" },
 };
 
-export type ModifierCardPalette = {
+type ModifierCardPalette = {
   border: string;
   bg: string;
   bgGradient: string;
@@ -44,7 +44,7 @@ export const MODIFIER_CARD_PALETTE: ModifierCardPalette = {
   smallText: CARD_NAVY,
 };
 
-export type ActionCardPalette = {
+type ActionCardPalette = {
   border: string;
   bg: string;
   bgGradient?: string;
