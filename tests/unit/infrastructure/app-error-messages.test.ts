@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  APP_ERROR_WIRE_CODE,
+  translateConvexError,
+} from "@/shared/lib/errors/app-error-wire-code";
+import {
   InsufficientPlayers,
   InvalidAction,
   InvalidConfirmation,
@@ -21,11 +25,18 @@ import {
   StaleGameState,
   UnsupportedRelationship,
   UnsupportedTable,
+  appErrorWireCode,
   type AppError,
 } from "@/shared/lib/errors/domain";
-import { getAppErrorMessage } from "@/shared/lib/errors/messages";
 
-describe("AppError messages", () => {
+import en from "../../../messages/en.json";
+import es from "../../../messages/es.json";
+
+function mockErrorsT(key: string, values?: Record<string, string | number>): string {
+  return values !== undefined && key === "generic" ? `generic:${values.message}` : key;
+}
+
+describe("AppError wire codes and Errors.* messages", () => {
   const errors: AppError[] = [
     new MatchNotFound({ matchId: "match-1" }),
     new InvalidTurn(),
@@ -45,95 +56,24 @@ describe("AppError messages", () => {
     new InvalidMatchState(),
     new StaleGameState({ expectedVersion: 1, actualVersion: 2 }),
     new UnsupportedRelationship(),
-    new UnsupportedTable(),
+    new UnsupportedTable({ table: "x", id: "y" }),
     new InvalidConfirmation(),
   ];
 
-  it("maps every AppError to a stable message", () => {
-    expect(errors.map((error) => [error._tag, getAppErrorMessage(error)])).toMatchInlineSnapshot(`
-      [
-        [
-          "MatchNotFound",
-          "Match not found.",
-        ],
-        [
-          "InvalidTurn",
-          "It is not your turn.",
-        ],
-        [
-          "InvalidAction",
-          "That action is not valid right now.",
-        ],
-        [
-          "InvalidTarget",
-          "That target is not valid.",
-        ],
-        [
-          "InvalidHostName",
-          "Enter a valid host name.",
-        ],
-        [
-          "LobbyCodeUnavailable",
-          "A lobby code could not be created. Try again.",
-        ],
-        [
-          "LobbyNotFound",
-          "Lobby not found.",
-        ],
-        [
-          "InvalidPlayerName",
-          "Enter a valid player name.",
-        ],
-        [
-          "NameAlreadyTaken",
-          "That player name is already taken.",
-        ],
-        [
-          "InvalidPlayerColor",
-          "Choose a valid player color.",
-        ],
-        [
-          "PlayerColorAlreadyTaken",
-          "That player color is already taken.",
-        ],
-        [
-          "NotHost",
-          "Only the host can do that.",
-        ],
-        [
-          "InsufficientPlayers",
-          "At least 2 players are required.",
-        ],
-        [
-          "PlayerNotJoined",
-          "Join the match before doing that.",
-        ],
-        [
-          "RateLimited",
-          "Too many attempts. Try again later.",
-        ],
-        [
-          "InvalidMatchState",
-          "The match is not in the right state for that action.",
-        ],
-        [
-          "StaleGameState",
-          "The game changed. Refresh and try again.",
-        ],
-        [
-          "UnsupportedRelationship",
-          "Unsupported relationship.",
-        ],
-        [
-          "UnsupportedTable",
-          "Unsupported table.",
-        ],
-        [
-          "InvalidConfirmation",
-          "Invalid confirmation.",
-        ],
-      ]
-    `);
+  it("maps every AppError tag to a stable wire code on .message", () => {
+    for (const error of errors) {
+      expect(error.message).toBe(APP_ERROR_WIRE_CODE[error._tag]);
+      expect(appErrorWireCode(error)).toBe(APP_ERROR_WIRE_CODE[error._tag]);
+    }
+  });
+
+  it("defines every wire code under Errors in en.json and es.json", () => {
+    for (const code of Object.values(APP_ERROR_WIRE_CODE)) {
+      expect(en.Errors).toHaveProperty(code);
+      expect(es.Errors).toHaveProperty(code);
+      expect(typeof en.Errors[code as keyof typeof en.Errors]).toBe("string");
+      expect(typeof es.Errors[code as keyof typeof es.Errors]).toBe("string");
+    }
   });
 
   it("keeps tags and payload fields stable", () => {
@@ -162,5 +102,11 @@ describe("AppError messages", () => {
       expectedVersion: 7,
       actualVersion: 8,
     });
+  });
+
+  it("translateConvexError resolves canonical codes and legacy _tag names", () => {
+    expect(translateConvexError("MATCH_NOT_FOUND", mockErrorsT)).toBe("MATCH_NOT_FOUND");
+    expect(translateConvexError("MatchNotFound", mockErrorsT)).toBe("MATCH_NOT_FOUND");
+    expect(translateConvexError("unknown-code", mockErrorsT)).toBe("generic:unknown-code");
   });
 });

@@ -96,14 +96,6 @@
       "complexity_moderate": {
         "count": 1
       }
-    },
-    "shared/lib/errors/messages.ts": {
-      "complexity_critical": {
-        "count": 1
-      },
-      "crap_critical": {
-        "count": 1
-      }
     }
   },
   "runtime_coverage_findings": [],

@@ -28,7 +28,7 @@ describe("Confect command runner idempotency", () => {
         }),
       ).pipe(
         Effect.map((exit) => {
-          expect(String(exit)).toContain("StaleGameState");
+          expect(String(exit)).toContain("STALE_GAME_STATE");
         }),
       );
     }).pipe(Effect.provide(TestConfect.layer())),

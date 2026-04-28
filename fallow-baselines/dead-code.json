@@ -13,8 +13,7 @@
     "confect/turns.impl.ts",
     "confect/turns.ts",
     "game/application/commands.ts",
-    "game/logic/turn-resolution.ts",
-    "shared/lib/errors/messages.ts"
+    "game/logic/turn-resolution.ts"
   ],
   "unused_exports": [
     "confect/admin.impl.ts:admin",
@@ -83,6 +82,7 @@
     "game/logic/round-state.ts:clonePlayerState",
     "game/logic/round-state.ts:cloneRoundRuntime",
     "game/logic/view-models.ts:toOrderedPlayers",
+    "shared/lib/errors/domain.ts:appErrorWireCode",
     "shared/lib/errors/infrastructure.ts:DatabaseReadFailed",
     "shared/lib/errors/infrastructure.ts:DatabaseWriteFailed"
   ],
@@ -119,7 +119,28 @@
   "circular_dependencies": [],
   "unused_optional_dependencies": [],
   "unused_enum_members": [],
-  "unused_class_members": [],
+  "unused_class_members": [
+    "shared/lib/errors/domain.ts:MatchNotFound.message",
+    "shared/lib/errors/domain.ts:InvalidTurn.message",
+    "shared/lib/errors/domain.ts:InvalidAction.message",
+    "shared/lib/errors/domain.ts:InvalidTarget.message",
+    "shared/lib/errors/domain.ts:InvalidHostName.message",
+    "shared/lib/errors/domain.ts:LobbyCodeUnavailable.message",
+    "shared/lib/errors/domain.ts:LobbyNotFound.message",
+    "shared/lib/errors/domain.ts:InvalidPlayerName.message",
+    "shared/lib/errors/domain.ts:NameAlreadyTaken.message",
+    "shared/lib/errors/domain.ts:InvalidPlayerColor.message",
+    "shared/lib/errors/domain.ts:PlayerColorAlreadyTaken.message",
+    "shared/lib/errors/domain.ts:NotHost.message",
+    "shared/lib/errors/domain.ts:InsufficientPlayers.message",
+    "shared/lib/errors/domain.ts:PlayerNotJoined.message",
+    "shared/lib/errors/domain.ts:RateLimited.message",
+    "shared/lib/errors/domain.ts:InvalidMatchState.message",
+    "shared/lib/errors/domain.ts:StaleGameState.message",
+    "shared/lib/errors/domain.ts:UnsupportedRelationship.message",
+    "shared/lib/errors/domain.ts:UnsupportedTable.message",
+    "shared/lib/errors/domain.ts:InvalidConfirmation.message"
+  ],
   "unresolved_imports": [],
   "unlisted_dependencies": [],
   "duplicate_exports": [],

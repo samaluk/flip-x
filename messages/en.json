@@ -89,6 +89,10 @@
   "Errors": {
     "generic": "{message}",
     "INVALID_MATCH_STATE": "This action is not allowed in the current match state.",
+    "STALE_GAME_STATE": "The game changed. Refresh and try again.",
+    "UNSUPPORTED_RELATIONSHIP": "Unsupported relationship.",
+    "UNSUPPORTED_TABLE": "Unsupported table.",
+    "INVALID_CONFIRMATION": "Invalid confirmation.",
     "MATCH_NOT_FOUND": "Match not found.",
     "INVALID_TURN": "It is not your turn or the turn is invalid.",
     "INVALID_ACTION": "That action is not valid right now.",

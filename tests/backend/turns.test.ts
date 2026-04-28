@@ -77,6 +77,6 @@ describe("Convex preview smoke: turns", () => {
         sessionId: inactiveSession!.sessionId,
         ...commandMetadata(started.version),
       }),
-    ).rejects.toThrow("InvalidTurn");
+    ).rejects.toThrow("INVALID_TURN");
   });
 });

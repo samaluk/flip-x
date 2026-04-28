@@ -89,6 +89,10 @@
   "Errors": {
     "generic": "{message}",
     "INVALID_MATCH_STATE": "Esta acción no está permitida en el estado actual de la partida.",
+    "STALE_GAME_STATE": "La partida cambió. Actualiza e inténtalo de nuevo.",
+    "UNSUPPORTED_RELATIONSHIP": "Relación no admitida.",
+    "UNSUPPORTED_TABLE": "Tabla no admitida.",
+    "INVALID_CONFIRMATION": "Confirmación no válida.",
     "MATCH_NOT_FOUND": "Partida no encontrada.",
     "INVALID_TURN": "No es tu turno o el turno no es válido.",
     "INVALID_ACTION": "Esa acción no es válida ahora.",

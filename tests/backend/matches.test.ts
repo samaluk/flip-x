@@ -67,6 +67,6 @@ describe("Convex preview smoke: matches", () => {
         playerName: "guest",
         sessionId: asSessionId("session-guest-b"),
       }),
-    ).rejects.toThrow("NameAlreadyTaken");
+    ).rejects.toThrow("NAME_ALREADY_TAKEN");
   });
 });
