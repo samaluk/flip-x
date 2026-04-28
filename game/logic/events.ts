@@ -87,7 +87,7 @@ const roundEventTypes = new Set<string>([
   "round_scored",
 ]);
 
-export function isRoundEventType(value: string): value is RoundEventType {
+function isRoundEventType(value: string): value is RoundEventType {
   return roundEventTypes.has(value);
 }
 
@@ -214,6 +214,9 @@ export function decodeRoundEvent(event: PersistedRoundEvent): RoundEvent {
         payload: { finalRoundScore: decodeNumberPayload(event.payload, "finalRoundScore") },
       };
     default:
+      if (isRoundEventType(event.eventType)) {
+        throw new Error(`Unhandled persisted round event type: ${event.eventType}`);
+      }
       throw new Error(`Unknown round event type: ${event.eventType}`);
   }
 }

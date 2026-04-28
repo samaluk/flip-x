@@ -9,7 +9,7 @@ import {
   isFlip3ActiveForPlayer,
   resolveDeferredFlip3Actions,
 } from "./flip-three";
-import { finalizeRound, maybeFinishRound } from "./round-finalization";
+import { maybeFinishRound } from "./round-finalization";
 import {
   clonePendingFlip3,
   clonePlayerStates,
