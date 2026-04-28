@@ -20,9 +20,7 @@ export class InvalidPlayerName extends Data.TaggedError("InvalidPlayerName")<{}>
 
 export class NameAlreadyTaken extends Data.TaggedError("NameAlreadyTaken")<{
   name: string;
-}> {
-  override readonly message = "NameAlreadyTaken";
-}
+}> {}
 
 export class InvalidPlayerColor extends Data.TaggedError("InvalidPlayerColor")<{
   colorId: string;
