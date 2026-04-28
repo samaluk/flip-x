@@ -119,9 +119,7 @@
     "game/logic/view-models.ts:CanonicalReplayStepState",
     "game/screens/game-table-view.tsx:GameTableViewProps"
   ],
-  "unused_dependencies": [
-    "zod"
-  ],
+  "unused_dependencies": [],
   "unused_dev_dependencies": [
     "@effect/vitest",
     "convex-test"
