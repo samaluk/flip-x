@@ -150,15 +150,11 @@ export function ActionCardContent({
           )}
         </div>
 
-        {actionKind === "flip_three" || actionKind === "freeze" ? (
-          <SkewedHelperText color={p.smallText} compact={compact}>
-            {t("actionHelper.playOnActive")}
-          </SkewedHelperText>
-        ) : (
-          <SkewedHelperText color={p.smallText} compact={compact}>
-            {t("actionHelper.saveUntilNeeded")}
-          </SkewedHelperText>
-        )}
+        <SkewedHelperText color={p.smallText} compact={compact}>
+          {actionKind === "flip_three" || actionKind === "freeze"
+            ? t("actionHelper.playOnActive")
+            : t("actionHelper.saveUntilNeeded")}
+        </SkewedHelperText>
 
         {/* Center banners */}
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 py-1">
@@ -307,15 +303,11 @@ export function ActionCardContent({
           )}
         </div>
 
-        {actionKind === "flip_three" || actionKind === "freeze" ? (
-          <SkewedHelperText color={p.smallText} compact={compact}>
-            {t("actionHelper.playOnActive")}
-          </SkewedHelperText>
-        ) : (
-          <SkewedHelperText color={p.smallText} compact={compact}>
-            {t("actionHelper.saveUntilNeeded")}
-          </SkewedHelperText>
-        )}
+        <SkewedHelperText color={p.smallText} compact={compact}>
+          {actionKind === "flip_three" || actionKind === "freeze"
+            ? t("actionHelper.playOnActive")
+            : t("actionHelper.saveUntilNeeded")}
+        </SkewedHelperText>
 
         {/* Bottom row (180° layout) */}
         <div
