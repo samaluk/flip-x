@@ -45,9 +45,7 @@
     "confect/settings.impl.ts:settings",
     "confect/turns.impl.ts:turns",
     "confect/turns.ts:takeTurnForSession",
-    "confect/turns.ts:resolveActionForSession",
-    "game/infrastructure/snapshot-store.ts:getLatestRoundEvent",
-    "game/infrastructure/snapshot-store.ts:buildCanonicalReplayStepState"
+    "confect/turns.ts:resolveActionForSession"
   ],
   "unused_types": [],
   "unused_dependencies": [],

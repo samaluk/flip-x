@@ -5,7 +5,7 @@ import { Effect } from "effect";
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
-import { buildMatchSnapshot, toCanonicalReplayStepState } from "../logic/view-models";
+import { buildMatchSnapshot } from "../logic/view-models";
 import { buildRoundHistory } from "./round-history-builder";
 import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
@@ -39,7 +39,7 @@ export async function getRoundPlayerStateDocs(ctx: Ctx, roundId: Id<"rounds">) {
   return await getManyFrom(ctx.db, "roundPlayerStates", "by_round", roundId, "roundId");
 }
 
-export async function getLatestRoundEvent(ctx: Ctx, roundId: Id<"rounds">) {
+async function getLatestRoundEvent(ctx: Ctx, roundId: Id<"rounds">) {
   const events = await getManyFrom(ctx.db, "roundEvents", "by_round", roundId, "roundId");
   return events.toSorted((left, right) => right.sequence - left.sequence)[0] ?? null;
 }
@@ -121,14 +121,4 @@ export async function buildLatestMatchSnapshot(
 
   const round = await getLatestRound(ctx, matchId);
   return await buildSnapshot(ctx, match, round, sessionId);
-}
-
-export async function buildCanonicalReplayStepState(
-  ctx: Ctx,
-  match: Doc<"matches">,
-  round: Doc<"rounds"> | null,
-  sessionId?: SessionId,
-) {
-  const snapshot = await buildSnapshot(ctx, match, round, sessionId);
-  return toCanonicalReplayStepState(snapshot);
 }

@@ -71,21 +71,6 @@ export type MatchSnapshot = {
   roundHistory: RoundHistoryEntry[];
 };
 
-type CanonicalReplayStepState = Pick<
-  MatchSnapshot,
-  | "status"
-  | "currentRoundNumber"
-  | "dealerSeat"
-  | "activePlayerId"
-  | "pendingAction"
-  | "pendingFlip3"
-  | "roundStatus"
-  | "endedBy"
-  | "latestEvent"
-> & {
-  players: MatchSnapshot["players"];
-};
-
 function toLatestRoundEvent<TEvent extends RoundEvent>(
   event: TEvent,
   playerNames: string | undefined,
@@ -246,19 +231,4 @@ export function toOrderedPlayers(players: Array<{ playerId: string; seatIndex: n
       playerId: player.playerId,
       seatIndex: player.seatIndex,
     })) satisfies OrderedPlayer[];
-}
-
-export function toCanonicalReplayStepState(snapshot: MatchSnapshot): CanonicalReplayStepState {
-  return {
-    status: snapshot.status,
-    currentRoundNumber: snapshot.currentRoundNumber,
-    dealerSeat: snapshot.dealerSeat,
-    activePlayerId: snapshot.activePlayerId,
-    pendingAction: snapshot.pendingAction,
-    pendingFlip3: snapshot.pendingFlip3,
-    roundStatus: snapshot.roundStatus,
-    endedBy: snapshot.endedBy,
-    players: [...snapshot.players].toSorted((left, right) => left.seatIndex - right.seatIndex),
-    latestEvent: snapshot.latestEvent ? { ...snapshot.latestEvent } : null,
-  };
 }
