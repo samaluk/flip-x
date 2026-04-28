@@ -1,7 +1,6 @@
 {
   "clone_groups": [
     "app/[locale]/home-client.tsx:86-101|game/screens/game-page-client.tsx:68-82",
-    "confect/admin.ts:109-114|confect/admin.ts:118-123|confect/admin.ts:127-132",
     "confect/deterministic-schema.ts:3-33|confect/schema.ts:42-73",
     "confect/deterministic-schema.ts:3-31|confect/match-snapshot-schema.ts:9-39|confect/schema.ts:42-71",
     "confect/match-snapshot-schema.ts:120-128|confect/match-snapshot-schema.ts:84-92",
