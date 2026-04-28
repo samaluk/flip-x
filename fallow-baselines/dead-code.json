@@ -82,9 +82,7 @@
     "game/logic/round-state.ts:clonePlayerState",
     "game/logic/round-state.ts:cloneRoundRuntime",
     "game/logic/view-models.ts:toOrderedPlayers",
-    "shared/lib/errors/domain.ts:appErrorWireCode",
-    "shared/lib/errors/infrastructure.ts:DatabaseReadFailed",
-    "shared/lib/errors/infrastructure.ts:DatabaseWriteFailed"
+    "shared/lib/errors/domain.ts:appErrorWireCode"
   ],
   "unused_types": [
     "confect/lib/rate_limiter.ts:AppRateLimitName",
