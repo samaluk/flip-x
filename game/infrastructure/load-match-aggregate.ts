@@ -1,5 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getManyFrom } from "convex-helpers/server/relationships";
+import { Effect } from "effect";
 
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
@@ -46,7 +47,7 @@ export async function loadMatchAggregate(
   );
   const playerIdMap = buildPlayerIdMap(players);
 
-  const sessionPlayerId = await getPlayerIdForSession(ctx, sessionId);
+  const sessionPlayerId = await Effect.runPromise(getPlayerIdForSession(ctx, sessionId));
   const viewerPlayerId =
     sessionPlayerId && players.some((player) => player._id === sessionPlayerId)
       ? sessionPlayerId

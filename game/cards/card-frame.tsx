@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { cardTw } from "@/game/logic/card-responsive";
 import { cn } from "@/shared/lib/utils";
 
-export type CardFrameProps = {
+type CardFrameProps = {
   borderColor: string;
   backgroundColor: string;
   /** Optional CSS background layered under children (e.g. gradients) */

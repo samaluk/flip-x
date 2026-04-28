@@ -71,7 +71,7 @@ export type MatchSnapshot = {
   roundHistory: RoundHistoryEntry[];
 };
 
-export type CanonicalReplayStepState = Pick<
+type CanonicalReplayStepState = Pick<
   MatchSnapshot,
   | "status"
   | "currentRoundNumber"

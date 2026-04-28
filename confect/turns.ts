@@ -1,24 +1,9 @@
-import { Effect } from "effect";
-
 import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
-import { runGameCommandEffect } from "../game/application/run-command";
+import { runGameCommand } from "../game/application/run-command";
 import { toSessionId } from "./lib/session_functions";
 
-export async function takeTurnForSession(
-  ctx: MutationCtx,
-  args: {
-    matchId: Id<"matches">;
-    action: "hit" | "stay";
-    sessionId: string;
-    expectedVersion: number;
-    idempotencyKey: string;
-  },
-) {
-  return await Effect.runPromise(takeTurnForSessionEffect(ctx, args));
-}
-
-export function takeTurnForSessionEffect(
+export function takeTurnForSession(
   ctx: MutationCtx,
   args: {
     matchId: Id<"matches">;
@@ -29,7 +14,7 @@ export function takeTurnForSessionEffect(
   },
 ) {
   const sessionId = toSessionId(args.sessionId);
-  return runGameCommandEffect(ctx, {
+  return runGameCommand(ctx, {
     matchId: args.matchId,
     sessionId,
     command: {
@@ -41,20 +26,7 @@ export function takeTurnForSessionEffect(
   });
 }
 
-export async function resolveActionForSession(
-  ctx: MutationCtx,
-  args: {
-    matchId: Id<"matches">;
-    targetPlayerId: Id<"players">;
-    sessionId: string;
-    expectedVersion: number;
-    idempotencyKey: string;
-  },
-) {
-  return await Effect.runPromise(resolveActionForSessionEffect(ctx, args));
-}
-
-export function resolveActionForSessionEffect(
+export function resolveActionForSession(
   ctx: MutationCtx,
   args: {
     matchId: Id<"matches">;
@@ -65,7 +37,7 @@ export function resolveActionForSessionEffect(
   },
 ) {
   const sessionId = toSessionId(args.sessionId);
-  return runGameCommandEffect(ctx, {
+  return runGameCommand(ctx, {
     matchId: args.matchId,
     sessionId,
     command: {

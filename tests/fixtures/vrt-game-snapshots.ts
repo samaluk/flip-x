@@ -1,7 +1,6 @@
 import type { ActionKind, ModifierCard, NumberCard } from "@/game/logic/card-types";
 import { scoreRound } from "@/game/logic/scoring";
 import type { MatchSnapshot } from "@/game/logic/view-models";
-import type { PlayerRoundStatus } from "@/game/logic/round-state";
 
 const MATCH_ID = "jz7abcd1234567890";
 
@@ -28,6 +27,8 @@ function modifiers(
 function held(actions: Array<{ label: string; kind: ActionKind }>) {
   return actions.map(({ label, kind }) => ({ label, actionKind: kind }));
 }
+
+type PlayerRoundStatus = MatchSnapshot["players"][number]["roundStatus"];
 
 type PlayerArgs = {
   playerId: string;

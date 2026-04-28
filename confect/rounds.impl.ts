@@ -7,13 +7,13 @@ import * as roundFns from "./rounds";
 
 const startNextRound = FunctionImpl.make(api, "rounds", "startNextRound", (args) =>
   Effect.gen(function* () {
-    const ctx = asConfectCtx<Parameters<typeof roundFns.startNextRoundForSessionEffect>[0]>(
+    const ctx = asConfectCtx<Parameters<typeof roundFns.startNextRoundForSession>[0]>(
       yield* getMutationCtx(),
     );
-    return yield* roundFns.startNextRoundForSessionEffect(ctx, {
+    return yield* roundFns.startNextRoundForSession(ctx, {
       ...args,
       matchId: asMatchId<
-        Parameters<typeof roundFns.startNextRoundForSessionEffect>[1]["matchId"]
+        Parameters<typeof roundFns.startNextRoundForSession>[1]["matchId"]
       >(args.matchId),
       deterministicStart: normalizeDeterministicStart(args.deterministicStart),
     });

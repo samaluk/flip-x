@@ -1,14 +1,15 @@
+import type { SessionId } from "convex-helpers/server/sessions";
 import { v } from "convex/values";
 import { Effect } from "effect";
 import { getOneFrom } from "convex-helpers/server/relationships";
 
 import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
-import { enforceRateLimitEffect } from "./lib/rate_limiter";
+import { enforceRateLimit } from "./lib/rate_limiter";
 import { mutationWithSession, queryWithSession, toSessionId } from "./lib/session_functions";
-import { setPlayerSessionEffect } from "./lib/session_store";
-import type { Id } from "../convex/_generated/dataModel";
-import { getPlayersByMatchEffect, getViewerPlayerIdEffect } from "./lib/store";
+import { setPlayerSession } from "./lib/session_store";
+import type { Doc, Id } from "../convex/_generated/dataModel";
+import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
 import {
   firstAvailablePlayerColorId,
@@ -25,30 +26,52 @@ import {
   NameAlreadyTaken,
   PlayerColorAlreadyTaken,
 } from "../shared/lib/errors/domain";
-import { runGameCommandEffect } from "../game/application/run-command";
+import { runGameCommand } from "../game/application/run-command";
 import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
 
-function generateUniqueLobbyCodeEffect(ctx: MutationCtx) {
-  let lobbyCode = generateLobbyCode();
+type MatchReadCtx = QueryCtx | MutationCtx;
+
+function snapshotForMatchSession(
+  ctx: MatchReadCtx,
+  matchId: Id<"matches">,
+  match: Doc<"matches">,
+  sessionId: SessionId,
+) {
   return Effect.gen(function* () {
-    let existing = yield* Effect.promise(() =>
-      ctx.db
-        .query("matches")
-        .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
-        .first(),
-    );
+    const round = yield* Effect.promise(() => getLatestRound(ctx, matchId));
+    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));
+  });
+}
+
+function findMatchByLobbyCode(ctx: MutationCtx | QueryCtx, lobbyCode: string) {
+  return ctx.db
+    .query("matches")
+    .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
+    .first();
+}
+
+function resolveUniqueLobbyCodeAttempt(ctx: MutationCtx, initialLobbyCode: string) {
+  return Effect.gen(function* () {
+    let lobbyCode = initialLobbyCode;
+    let existing = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
     let attempts = 0;
 
     while (existing && attempts < 10) {
       lobbyCode = generateLobbyCode();
-      existing = yield* Effect.promise(() =>
-        ctx.db
-          .query("matches")
-          .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
-          .first(),
-      );
+      existing = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
       attempts += 1;
     }
+
+    return { lobbyCode, existing } as const;
+  });
+}
+
+function generateUniqueLobbyCode(ctx: MutationCtx) {
+  return Effect.gen(function* () {
+    const { lobbyCode, existing } = yield* resolveUniqueLobbyCodeAttempt(
+      ctx,
+      generateLobbyCode(),
+    );
 
     if (existing) {
       return yield* new LobbyCodeUnavailable();
@@ -58,14 +81,9 @@ function generateUniqueLobbyCodeEffect(ctx: MutationCtx) {
   });
 }
 
-function getSetupMatchByLobbyCodeEffect(ctx: MutationCtx, lobbyCode: string) {
+function getSetupMatchByLobbyCode(ctx: MutationCtx, lobbyCode: string) {
   return Effect.gen(function* () {
-    const match = yield* Effect.promise(() =>
-      ctx.db
-        .query("matches")
-        .withIndex("by_lobby_code", (q) => q.eq("lobbyCode", lobbyCode))
-        .first(),
-    );
+    const match = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
 
     if (!match || match.status !== "setup") {
       return yield* new LobbyNotFound();
@@ -75,25 +93,20 @@ function getSetupMatchByLobbyCodeEffect(ctx: MutationCtx, lobbyCode: string) {
   });
 }
 
-export function getMatchByCodeEffect(ctx: QueryCtx, lobbyCode: string) {
+export function getMatchByCode(ctx: QueryCtx, lobbyCode: string) {
   const normalized = lobbyCode.trim().toUpperCase();
   return Effect.gen(function* () {
     if (normalized.length !== 4) {
       return null;
     }
 
-    const match = yield* Effect.promise(() =>
-      ctx.db
-      .query("matches")
-        .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", normalized))
-        .first(),
-    );
+    const match = yield* Effect.promise(() => findMatchByLobbyCode(ctx, normalized));
 
     if (!match || match.status !== "setup") {
       return null;
     }
 
-    const players = yield* getPlayersByMatchEffect(ctx, match._id);
+    const players = yield* getPlayersByMatch(ctx, match._id);
 
     return {
       matchId: String(match._id),
@@ -106,21 +119,14 @@ export function getMatchByCodeEffect(ctx: QueryCtx, lobbyCode: string) {
   });
 }
 
-export async function createMatchForSession(
-  ctx: MutationCtx,
-  args: { hostName: string; hostColorId?: string; sessionId: string },
-) {
-  return await Effect.runPromise(createMatchForSessionEffect(ctx, args));
-}
-
-export function createMatchForSessionEffect(
+export function createMatchForSession(
   ctx: MutationCtx,
   args: { hostName: string; hostColorId?: string; sessionId: string },
 ) {
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
-    yield* enforceRateLimitEffect(ctx, "createMatch", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "createMatch", String(args.sessionId));
 
     const hostName = args.hostName.trim();
 
@@ -128,10 +134,10 @@ export function createMatchForSessionEffect(
       return yield* new InvalidHostName();
     }
 
-    const hostColorId = yield* normalizePlayerColorIdEffect(args.hostColorId, []);
+    const hostColorId = yield* normalizePlayerColorId(args.hostColorId, []);
 
     const timestamp = Date.now();
-    const lobbyCode = yield* generateUniqueLobbyCodeEffect(ctx);
+    const lobbyCode = yield* generateUniqueLobbyCode(ctx);
     const matchId = yield* Effect.promise(() =>
       ctx.db.insert("matches", {
         status: "setup",
@@ -156,7 +162,7 @@ export function createMatchForSessionEffect(
       }),
     );
 
-    yield* setPlayerSessionEffect(ctx, sessionId, hostPlayerId);
+    yield* setPlayerSession(ctx, sessionId, hostPlayerId);
     yield* Effect.promise(() => ctx.db.patch(matchId, { hostPlayerId }));
 
     const match = yield* Effect.promise(() => ctx.db.get(matchId));
@@ -168,26 +174,19 @@ export function createMatchForSessionEffect(
   });
 }
 
-export async function joinByCodeForSession(
-  ctx: MutationCtx,
-  args: { lobbyCode: string; sessionId: string },
-) {
-  return await Effect.runPromise(joinByCodeForSessionEffect(ctx, args));
-}
-
-export function joinByCodeForSessionEffect(
+export function joinByCodeForSession(
   ctx: MutationCtx,
   args: { lobbyCode: string; sessionId: string },
 ) {
   return Effect.gen(function* () {
-    yield* enforceRateLimitEffect(ctx, "joinByCode", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
 
     const normalized = args.lobbyCode.trim().toUpperCase();
     if (normalized.length !== 4) {
       return yield* new LobbyNotFound();
     }
 
-    const match = yield* getSetupMatchByLobbyCodeEffect(ctx, normalized);
+    const match = yield* getSetupMatchByLobbyCode(ctx, normalized);
 
     return {
       matchId: String(match._id),
@@ -201,15 +200,15 @@ export const createMatch = mutationWithSession({
     hostName: v.string(),
     hostColorId: v.optional(v.string()),
   },
-  handler: async (ctx, args) => await createMatchForSession(ctx, args),
+  handler: async (ctx, args) => await Effect.runPromise(createMatchForSession(ctx, args)),
 });
 
 export const getCurrentPlayer = queryWithSession({
   args: {},
-  handler: async (ctx, args) => await Effect.runPromise(getCurrentPlayerEffect(ctx, args)),
+  handler: async (ctx, args) => await Effect.runPromise(loadCurrentPlayer(ctx, args)),
 });
 
-export function getCurrentPlayerEffect(ctx: QueryCtx, args: { sessionId: string }) {
+function loadCurrentPlayer(ctx: QueryCtx, args: { sessionId: string }) {
   return Effect.gen(function* () {
     const playerSession = yield* Effect.promise(() =>
       getOneFrom(ctx.db, "playerSessions", "by_session_id", args.sessionId, "sessionId"),
@@ -234,10 +233,10 @@ export const getMatchSnapshot = queryWithSession({
   args: {
     matchId: v.id("matches"),
   },
-  handler: async (ctx, args) => await Effect.runPromise(getMatchSnapshotForSessionEffect(ctx, args)),
+  handler: async (ctx, args) => await Effect.runPromise(loadMatchSnapshotForSession(ctx, args)),
 });
 
-export function getMatchSnapshotForSessionEffect(
+function loadMatchSnapshotForSession(
   ctx: QueryCtx,
   args: { matchId: Id<"matches">; sessionId: string },
 ) {
@@ -250,8 +249,7 @@ export function getMatchSnapshotForSessionEffect(
       return null;
     }
 
-    const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
-    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));
+    return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
   });
 }
 
@@ -259,24 +257,17 @@ export const joinByCode = mutationWithSession({
   args: {
     lobbyCode: v.string(),
   },
-  handler: async (ctx, args) => await joinByCodeForSession(ctx, args),
+  handler: async (ctx, args) => await Effect.runPromise(joinByCodeForSession(ctx, args)),
 });
 
-export async function joinMatchForSession(
-  ctx: MutationCtx,
-  args: { matchId: Id<"matches">; playerName: string; playerColorId?: string; sessionId: string },
-) {
-  return await Effect.runPromise(joinMatchForSessionEffect(ctx, args));
-}
-
-export function joinMatchForSessionEffect(
+export function joinMatchForSession(
   ctx: MutationCtx,
   args: { matchId: Id<"matches">; playerName: string; playerColorId?: string; sessionId: string },
 ) {
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
-    yield* enforceRateLimitEffect(ctx, "joinMatch", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "joinMatch", String(args.sessionId));
 
     const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
@@ -289,13 +280,13 @@ export function joinMatchForSessionEffect(
       return yield* new InvalidPlayerName();
     }
 
-    const players = yield* getPlayersByMatchEffect(ctx, args.matchId);
-    const existingViewerPlayerId = yield* getViewerPlayerIdEffect(ctx, args.matchId, sessionId);
+    const players = yield* getPlayersByMatch(ctx, args.matchId);
+    const existingViewerPlayerId = yield* getViewerPlayerId(ctx, args.matchId, sessionId);
     const takenColorIds = players
       .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
       .map((player) => player.colorId)
       .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
-    const playerColorId = yield* normalizePlayerColorIdEffect(args.playerColorId, takenColorIds);
+    const playerColorId = yield* normalizePlayerColorId(args.playerColorId, takenColorIds);
 
     if (existingViewerPlayerId) {
       const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
@@ -313,14 +304,13 @@ export function joinMatchForSessionEffect(
       yield* Effect.promise(() =>
         ctx.db.patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId }),
       );
-      const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
       const nextMatch = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
       if (!nextMatch) {
         return yield* new MatchNotFound({ matchId: String(args.matchId) });
       }
 
-      return yield* Effect.promise(() => buildSnapshot(ctx, nextMatch, round, sessionId));
+      return yield* snapshotForMatchSession(ctx, args.matchId, nextMatch, sessionId);
     }
 
     const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
@@ -341,10 +331,9 @@ export function joinMatchForSessionEffect(
       }),
     );
 
-    yield* setPlayerSessionEffect(ctx, sessionId, playerId);
+    yield* setPlayerSession(ctx, sessionId, playerId);
 
-    const round = yield* Effect.promise(() => getLatestRound(ctx, args.matchId));
-    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));
+    return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
   });
 }
 
@@ -354,10 +343,10 @@ export const joinMatch = mutationWithSession({
     playerName: v.string(),
     playerColorId: v.optional(v.string()),
   },
-  handler: async (ctx, args) => await joinMatchForSession(ctx, args),
+  handler: async (ctx, args) => await Effect.runPromise(joinMatchForSession(ctx, args)),
 });
 
-function normalizePlayerColorIdEffect(colorId: string | undefined, takenColorIds: string[]) {
+function normalizePlayerColorId(colorId: string | undefined, takenColorIds: string[]) {
   return Effect.gen(function* () {
     if (!colorId) {
       return firstAvailablePlayerColorId(takenColorIds);
@@ -375,20 +364,7 @@ function normalizePlayerColorIdEffect(colorId: string | undefined, takenColorIds
   });
 }
 
-export async function startMatchForSession(
-  ctx: MutationCtx,
-  args: {
-    matchId: Id<"matches">;
-    sessionId: string;
-    expectedVersion: number;
-    idempotencyKey: string;
-    deterministicStart?: { roundSeed: { drawPile: Card[] } };
-  },
-) {
-  return await Effect.runPromise(startMatchForSessionEffect(ctx, args));
-}
-
-export function startMatchForSessionEffect(
+export function startMatchForSession(
   ctx: MutationCtx,
   args: {
     matchId: Id<"matches">;
@@ -401,9 +377,9 @@ export function startMatchForSessionEffect(
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
-    yield* enforceRateLimitEffect(ctx, "startMatch", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "startMatch", String(args.sessionId));
 
-    return yield* runGameCommandEffect(ctx, {
+    return yield* runGameCommand(ctx, {
       matchId: args.matchId,
       sessionId,
       command: {

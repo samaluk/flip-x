@@ -1,7 +1,7 @@
 import { Cause, Effect, Exit, Layer } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { runGameCommandProgram, type RunGameCommandInput } from "@/game/application/run-command";
+import { runGameCommandProgram } from "@/game/application/run-command";
 import {
   AppClock,
   CommandResultStore,
@@ -11,6 +11,8 @@ import {
   type RunGameCommandServices,
 } from "@/game/application/services";
 import { MatchNotFound, StaleGameState } from "@/shared/lib/errors/domain";
+
+type RunGameCommandInput = Parameters<typeof runGameCommandProgram>[0];
 
 const matchId = "match-1" as never;
 

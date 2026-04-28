@@ -1,25 +1,10 @@
-import { Effect } from "effect";
-
 import type { Card } from "../game/logic/card-types";
 import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
-import { runGameCommandEffect } from "../game/application/run-command";
+import { runGameCommand } from "../game/application/run-command";
 import { toSessionId } from "./lib/session_functions";
 
-export async function startNextRoundForSession(
-  ctx: MutationCtx,
-  args: {
-    matchId: Id<"matches">;
-    sessionId: string;
-    expectedVersion: number;
-    idempotencyKey: string;
-    deterministicStart?: { roundSeed: { drawPile: Card[] } };
-  },
-) {
-  return await Effect.runPromise(startNextRoundForSessionEffect(ctx, args));
-}
-
-export function startNextRoundForSessionEffect(
+export function startNextRoundForSession(
   ctx: MutationCtx,
   args: {
     matchId: Id<"matches">;
@@ -30,7 +15,7 @@ export function startNextRoundForSessionEffect(
   },
 ) {
   const sessionId = toSessionId(args.sessionId);
-  return runGameCommandEffect(ctx, {
+  return runGameCommand(ctx, {
     matchId: args.matchId,
     sessionId,
     command: {

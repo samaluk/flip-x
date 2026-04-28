@@ -53,16 +53,16 @@ export type RoundEvent =
       payload: { finalRoundScore: number };
     });
 
-export type RoundEventType = RoundEvent["eventType"];
+type RoundEventType = RoundEvent["eventType"];
 
-export type PersistedRoundEvent = {
+type PersistedRoundEvent = {
   eventType: string;
   actorPlayerId: string | null;
   targetPlayerId: string | null;
   payload: unknown;
 };
 
-export type EncodedRoundEvent = Omit<PersistedRoundEvent, "eventType"> & {
+type EncodedRoundEvent = Omit<PersistedRoundEvent, "eventType"> & {
   eventType: RoundEventType;
 };
 

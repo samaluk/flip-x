@@ -1,9 +1,9 @@
 import type { ActionCard, ActionKind, Card, ModifierCard, NumberCard } from "./card-types";
 import type { RngService } from "./rng";
 
-export type PlayerRoundStatus = "waiting" | "active" | "stayed" | "busted" | "frozen" | "completed";
+type PlayerRoundStatus = "waiting" | "active" | "stayed" | "busted" | "frozen" | "completed";
 
-export type RoundPhase = "dealing" | "player_turns" | "resolving_action" | "scoring" | "completed";
+type RoundPhase = "dealing" | "player_turns" | "resolving_action" | "scoring" | "completed";
 
 export type OrderedPlayer = {
   playerId: string;
@@ -17,7 +17,7 @@ export type PendingAction = {
   resume: "dealing" | "turns";
 };
 
-export type PendingFlip3 = {
+type PendingFlip3 = {
   sourcePlayerId: string;
   targetPlayerId: string;
   cardsRemaining: number;

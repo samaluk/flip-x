@@ -13,6 +13,7 @@ import { finalizeRound, maybeFinishRound } from "./round-finalization";
 import {
   clonePendingFlip3,
   clonePlayerStates,
+  cloneRoundRuntime,
   type CreateRoundRuntimeOptions,
   type OrderedPlayer,
   type PlayerRoundState,
@@ -21,19 +22,19 @@ import {
 } from "./round-state";
 import { getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
 
-export type {
-  CreateRoundRuntimeOptions,
-  OrderedPlayer,
-  PendingAction,
-  PendingFlip3,
-  PlayerRoundState,
-  PlayerRoundStatus,
-  ResolveResult,
-  RoundPhase,
-  RoundRuntime,
-} from "./round-state";
-export type { RoundEvent } from "./events";
 export { finalizeRound } from "./round-finalization";
+
+function transitionDealingToPlayerTurns(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+) {
+  round.phase = "player_turns";
+  const firstActiveSeat = nextActiveSeatIndex(players, playerStates, round.dealerSeat - 1);
+  round.turnSeatIndex = firstActiveSeat ?? round.dealerSeat;
+  round.activePlayerId =
+    firstActiveSeat === null ? null : getPlayerBySeat(players, firstActiveSeat).playerId;
+}
 
 export function createPlayerRoundStates(players: OrderedPlayer[]) {
   return Object.fromEntries(
@@ -83,13 +84,7 @@ export function continueRound(
   roundInput: RoundRuntime,
   playerStatesInput: Record<string, PlayerRoundState>,
 ) {
-  const round: RoundRuntime = {
-    ...roundInput,
-    drawPile: [...roundInput.drawPile],
-    discardPile: [...roundInput.discardPile],
-    pendingAction: roundInput.pendingAction ? { ...roundInput.pendingAction } : null,
-    pendingFlip3: clonePendingFlip3(roundInput.pendingFlip3),
-  };
+  const round = cloneRoundRuntime(roundInput);
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
 
@@ -136,11 +131,7 @@ export function continueRound(
       }
 
     if (wrappedToDealer) {
-      round.phase = "player_turns";
-      const firstActiveSeat = nextActiveSeatIndex(players, playerStates, round.dealerSeat - 1);
-      round.turnSeatIndex = firstActiveSeat ?? round.dealerSeat;
-      round.activePlayerId =
-        firstActiveSeat === null ? null : getPlayerBySeat(players, firstActiveSeat).playerId;
+      transitionDealingToPlayerTurns(round, players, playerStates);
       break;
     }
   }
@@ -153,11 +144,7 @@ export function continueRound(
       round.endedBy = "all_inactive";
       round.activePlayerId = null;
     } else {
-      round.phase = "player_turns";
-      const firstActiveSeat = nextActiveSeatIndex(players, playerStates, round.dealerSeat - 1);
-      round.turnSeatIndex = firstActiveSeat ?? round.dealerSeat;
-      round.activePlayerId =
-        firstActiveSeat === null ? null : getPlayerBySeat(players, firstActiveSeat).playerId;
+      transitionDealingToPlayerTurns(round, players, playerStates);
     }
   }
 
@@ -173,13 +160,7 @@ export function takeTurnAction(
   playerId: string,
   action: "hit" | "stay",
 ) {
-  const round: RoundRuntime = {
-    ...roundInput,
-    drawPile: [...roundInput.drawPile],
-    discardPile: [...roundInput.discardPile],
-    pendingAction: roundInput.pendingAction ? { ...roundInput.pendingAction } : null,
-    pendingFlip3: clonePendingFlip3(roundInput.pendingFlip3),
-  };
+  const round = cloneRoundRuntime(roundInput);
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
   const currentState = playerStates[playerId];
@@ -281,13 +262,7 @@ export function resolvePendingAction(
     throw new InvalidAction();
   }
 
-  const round: RoundRuntime = {
-    ...roundInput,
-    drawPile: [...roundInput.drawPile],
-    discardPile: [...roundInput.discardPile],
-    pendingAction: { ...roundInput.pendingAction },
-    pendingFlip3: clonePendingFlip3(roundInput.pendingFlip3),
-  };
+  const round = cloneRoundRuntime(roundInput);
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
   const pendingAction = round.pendingAction;
