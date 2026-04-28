@@ -63,11 +63,17 @@ describe("Confect command runner finalization", () => {
           break;
         }
 
+        const flip3 = finalSnapshot.pendingFlip3;
+        const mustHitFlip3 =
+          flip3 !== null &&
+          flip3.cardsRemaining > 0 &&
+          flip3.targetPlayerId === finalSnapshot.activePlayerId;
+
         finalSnapshot = yield* runCommand(matchId, activeSession.sessionId, {
           type: "TAKE_TURN",
           expectedVersion: finalSnapshot.version,
           idempotencyKey: `runner-finalize-turn-${guard}`,
-          action: "stay",
+          action: mustHitFlip3 ? "hit" : "stay",
         });
       }
 
