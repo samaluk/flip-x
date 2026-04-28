@@ -5,6 +5,7 @@ import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import type { OrderedPlayer, PlayerRoundState, RoundRuntime } from "../logic/round-state";
+import { toOrderedPlayers } from "../logic/view-models";
 import {
   getLatestRound,
   getRoundPlayerStateDocs,
@@ -26,15 +27,6 @@ export type MatchAggregate = {
   playerStates: Record<string, PlayerRoundState>;
 };
 
-function toOrderedPlayers(players: Doc<"players">[]): OrderedPlayer[] {
-  return players
-    .map((player) => ({
-      playerId: String(player._id),
-      seatIndex: player.seatIndex,
-    }))
-    .toSorted((left, right) => left.seatIndex - right.seatIndex);
-}
-
 function buildPlayerIdMap(players: Doc<"players">[]) {
   return new Map(players.map((player) => [String(player._id), player._id]));
 }
@@ -46,7 +38,12 @@ export async function loadMatchAggregate(
 ): Promise<MatchAggregate> {
   const match = await ctx.db.get(matchId);
   const players = match ? await getManyFrom(ctx.db, "players", "by_match", matchId, "matchId") : [];
-  const orderedPlayers = toOrderedPlayers(players);
+  const orderedPlayers = toOrderedPlayers(
+    players.map((player) => ({
+      playerId: String(player._id),
+      seatIndex: player.seatIndex,
+    })),
+  );
   const playerIdMap = buildPlayerIdMap(players);
 
   const sessionPlayerId = await getPlayerIdForSession(ctx, sessionId);
