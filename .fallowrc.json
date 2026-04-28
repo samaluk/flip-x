@@ -1,6 +1,10 @@
 {
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
-  "entry": ["app/**/{page,layout,loading,error,not-found}.{ts,tsx}", "convex/**/*.ts"],
+  "entry": [
+    "app/**/{page,layout,loading,error,not-found}.{ts,tsx}",
+    "convex/**/*.ts",
+    "shared/i18n/request.ts"
+  ],
   "ignorePatterns": [
     "shared/ui/**",
     "convex/_generated/**",
