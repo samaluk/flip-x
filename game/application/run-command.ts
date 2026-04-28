@@ -4,14 +4,14 @@ import type { SessionId } from "convex-helpers/server/sessions";
 import type { MutationCtx } from "../../convex/_generated/server";
 import {
   type AppError,
-  InvalidAction,
-  InvalidMatchState,
-  InvalidTurn,
-  InsufficientPlayers,
-  MatchNotFound,
-  NotHost,
-  PlayerNotJoined,
-  StaleGameState,
+  insufficientPlayers,
+  invalidAction,
+  invalidMatchState,
+  invalidTurn,
+  matchNotFound,
+  notHost,
+  playerNotJoined,
+  staleGameState,
 } from "../../shared/lib/errors/domain";
 import {
   continueRound,
@@ -125,11 +125,11 @@ export function runGameCommandProgram(
     } = aggregate;
 
     if (!match) {
-      return yield* new MatchNotFound({ matchId: String(input.matchId) });
+      return yield* matchNotFound({ matchId: String(input.matchId) });
     }
 
     if (match.version !== input.command.expectedVersion) {
-      return yield* new StaleGameState({
+      return yield* staleGameState({
         expectedVersion: input.command.expectedVersion,
         actualVersion: match.version,
       });
@@ -140,16 +140,16 @@ export function runGameCommandProgram(
     switch (input.command.type) {
       case "START_MATCH": {
         if (match.status !== "setup") {
-          return yield* new InvalidMatchState();
+          return yield* invalidMatchState();
         }
         if (!viewerPlayerId) {
-          return yield* new PlayerNotJoined();
+          return yield* playerNotJoined();
         }
         if (match.hostPlayerId !== viewerPlayerId) {
-          return yield* new NotHost();
+          return yield* notHost();
         }
         if (players.length < 2) {
-          return yield* new InsufficientPlayers({ minPlayers: 2 });
+          return yield* insufficientPlayers({ minPlayers: 2 });
         }
 
         transition = buildStartRoundTransition(
@@ -170,10 +170,10 @@ export function runGameCommandProgram(
 
       case "START_NEXT_ROUND": {
         if (match.status !== "in_progress") {
-          return yield* new InvalidMatchState();
+          return yield* invalidMatchState();
         }
         if (!viewerPlayerId) {
-          return yield* new PlayerNotJoined();
+          return yield* playerNotJoined();
         }
 
         const nextDealerSeat = (match.dealerSeat + 1) % players.length;
@@ -195,13 +195,13 @@ export function runGameCommandProgram(
 
       case "TAKE_TURN": {
         if (!latestRound || !roundRuntime) {
-          return yield* new MatchNotFound({ matchId: String(input.matchId) });
+          return yield* matchNotFound({ matchId: String(input.matchId) });
         }
         if (!viewerPlayerId) {
-          return yield* new PlayerNotJoined();
+          return yield* playerNotJoined();
         }
         if (roundRuntime.activePlayerId !== String(viewerPlayerId)) {
-          return yield* new InvalidTurn();
+          return yield* invalidTurn();
         }
 
         const resolved = takeTurnAction(
@@ -227,16 +227,16 @@ export function runGameCommandProgram(
 
       case "RESOLVE_ACTION": {
         if (!latestRound || !roundRuntime) {
-          return yield* new MatchNotFound({ matchId: String(input.matchId) });
+          return yield* matchNotFound({ matchId: String(input.matchId) });
         }
         if (!viewerPlayerId) {
-          return yield* new PlayerNotJoined();
+          return yield* playerNotJoined();
         }
         if (
           !roundRuntime.pendingAction ||
           roundRuntime.pendingAction.sourcePlayerId !== String(viewerPlayerId)
         ) {
-          return yield* new InvalidAction();
+          return yield* invalidAction();
         }
 
         const resolved = resolvePendingAction(
@@ -270,7 +270,7 @@ export function runGameCommandProgram(
 
     const snapshot = yield* snapshotStore.buildLatest(input.matchId, input.sessionId);
     if (!snapshot) {
-      return yield* new MatchNotFound({ matchId: String(input.matchId) });
+      return yield* matchNotFound({ matchId: String(input.matchId) });
     }
 
     yield* idempotencyStore.put(

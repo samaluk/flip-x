@@ -7,8 +7,8 @@ import type { Id } from "../convex/_generated/dataModel";
 import type { ActionCtx, QueryCtx } from "../convex/_generated/server";
 import { action, internalMutation, internalQuery } from "../convex/_generated/server";
 import {
-  UnsupportedRelationship,
-  UnsupportedTable,
+  unsupportedRelationship,
+  unsupportedTable,
 } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 import { rateLimiter } from "./lib/rate_limiter";
@@ -127,7 +127,7 @@ export const resolveDependents = internalQuery({
           collectDependentIdsByRound(ctx, "scoreBreakdowns", args.parentId as Id<"rounds">),
         );
       default:
-        return yield* new UnsupportedRelationship();
+        return yield* unsupportedRelationship();
     }
       }),
     ),
@@ -169,7 +169,7 @@ export const deleteDocument = internalMutation({
             );
             return 1;
           default:
-            return yield* new UnsupportedTable({ table: args.table, id: unsupportedId });
+            return yield* unsupportedTable({ table: args.table, id: unsupportedId });
         }
       }),
     ),
