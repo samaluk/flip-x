@@ -1,4 +1,7 @@
 import registeredFunctions from "../confect/_generated/registeredFunctions";
+import { InvalidConfirmation } from "../shared/lib/errors/domain";
+
+void InvalidConfirmation;
 
 export const clearAllAppDataViaCli = registeredFunctions.admin.clearAllAppDataViaCli;
 export const deleteDocument = registeredFunctions.admin.deleteDocument;

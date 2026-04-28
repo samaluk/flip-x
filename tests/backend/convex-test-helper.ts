@@ -9,7 +9,6 @@ import {
 } from "@/tests/fixtures/deterministic";
 import type { SessionId } from "convex-helpers/server/sessions";
 
-const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
 const DEFAULT_GAMEPLAY_GUARD_LIMIT = 150;
 let idempotencySequence = 0;
 
@@ -34,9 +33,7 @@ export function createTestClient() {
 }
 
 export async function resetTestClient(client: ConvexTestingHelper) {
-  await client.action(api.admin.clearAllAppDataViaCli, {
-    confirm: DELETE_ALL_APP_DATA_CONFIRMATION,
-  });
+  await client.action(api.admin.clearAllAppDataViaCli, {});
   await client.close();
 }
 

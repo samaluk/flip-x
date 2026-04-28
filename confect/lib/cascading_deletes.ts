@@ -2,7 +2,7 @@ import { CascadingDeletes } from "@sholajegede/convex-cascading-deletes";
 
 import { components } from "../../convex/_generated/api";
 
-export const cascadingDeletes = new CascadingDeletes(components.convexCascadingDeletes, {
+void new CascadingDeletes(components.convexCascadingDeletes, {
   relationships: [
     {
       sourceTable: "players",
@@ -39,6 +39,12 @@ export const cascadingDeletes = new CascadingDeletes(components.convexCascadingD
       targetTable: "rounds",
       indexName: "by_round",
       fieldName: "roundId",
+    },
+    {
+      sourceTable: "idempotencyKeys",
+      targetTable: "matches",
+      indexName: "by_match",
+      fieldName: "matchId",
     },
   ],
 });

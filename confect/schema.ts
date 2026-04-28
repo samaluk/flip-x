@@ -206,7 +206,9 @@ export const IdempotencyKeys = Table.make(
     expiresAt: Schema.Number,
     createdAt: Schema.Number,
   }),
-).index("by_idempotency_key", ["idempotencyKey"]);
+)
+  .index("by_idempotency_key", ["idempotencyKey"])
+  .index("by_match", ["matchId"]);
 
 export default DatabaseSchema.make()
   .addTable(Matches)

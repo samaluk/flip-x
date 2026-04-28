@@ -4,18 +4,16 @@ import { Effect } from "effect";
 
 import { internal, components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
-import type { ActionCtx } from "../convex/_generated/server";
+import type { ActionCtx, QueryCtx } from "../convex/_generated/server";
 import { action, internalMutation, internalQuery } from "../convex/_generated/server";
 import {
   UnsupportedRelationship,
   UnsupportedTable,
-  InvalidConfirmation,
 } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
-import { cascadingDeletes } from "./lib/cascading_deletes";
 import { rateLimiter } from "./lib/rate_limiter";
+import schema from "./schema";
 
-const DELETE_ALL_APP_DATA_CONFIRMATION = "DELETE_ALL_APP_DATA";
 const presence = new Presence(components.presence);
 
 type AppTableName =
@@ -25,10 +23,12 @@ type AppTableName =
   | "rounds"
   | "roundPlayerStates"
   | "roundEvents"
-  | "scoreBreakdowns";
+  | "scoreBreakdowns"
+  | "idempotencyKeys";
 
 type ClearAllAppDataResult = {
   deleted: {
+    idempotencyKeys: number;
     scoreBreakdowns: number;
     roundEvents: number;
     roundPlayerStates: number;
@@ -39,8 +39,19 @@ type ClearAllAppDataResult = {
     presenceRooms: number;
     rateLimitKeysReset: number;
   };
-  confirmation: string;
 };
+
+async function collectDependentIdsByRound(
+  ctx: QueryCtx,
+  table: "roundPlayerStates" | "roundEvents" | "scoreBreakdowns",
+  roundId: Id<"rounds">,
+): Promise<string[]> {
+  const rows = await ctx.db
+    .query(table)
+    .withIndex("by_round", (query) => query.eq("roundId", roundId))
+    .collect();
+  return rows.map((row) => String(row._id));
+}
 
 export const listMatchIds = internalQuery({
   args: {},
@@ -103,33 +114,18 @@ export const resolveDependents = internalQuery({
         );
         return rows.map((row) => String(row._id));
       }
-      case "roundPlayerStates:rounds": {
-        const rows = yield* Effect.promise(() =>
-          ctx.db
-            .query("roundPlayerStates")
-            .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
-            .collect(),
+      case "roundPlayerStates:rounds":
+        return yield* Effect.promise(() =>
+          collectDependentIdsByRound(ctx, "roundPlayerStates", args.parentId as Id<"rounds">),
         );
-        return rows.map((row) => String(row._id));
-      }
-      case "roundEvents:rounds": {
-        const rows = yield* Effect.promise(() =>
-          ctx.db
-            .query("roundEvents")
-            .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
-            .collect(),
+      case "roundEvents:rounds":
+        return yield* Effect.promise(() =>
+          collectDependentIdsByRound(ctx, "roundEvents", args.parentId as Id<"rounds">),
         );
-        return rows.map((row) => String(row._id));
-      }
-      case "scoreBreakdowns:rounds": {
-        const rows = yield* Effect.promise(() =>
-          ctx.db
-            .query("scoreBreakdowns")
-            .withIndex("by_round", (query) => query.eq("roundId", args.parentId as Id<"rounds">))
-            .collect(),
+      case "scoreBreakdowns:rounds":
+        return yield* Effect.promise(() =>
+          collectDependentIdsByRound(ctx, "scoreBreakdowns", args.parentId as Id<"rounds">),
         );
-        return rows.map((row) => String(row._id));
-      }
       default:
         return yield* new UnsupportedRelationship();
     }
@@ -140,58 +136,59 @@ export const resolveDependents = internalQuery({
 export const deleteDocument = internalMutation({
   args: {
     table: v.string(),
-    id: v.string(),
+    id: v.optional(v.string()),
   },
   handler: async (ctx, args) =>
     await Effect.runPromise(
       Effect.gen(function* () {
-    switch (args.table as AppTableName) {
-      case "matches":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"matches">));
-        return;
-      case "players":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"players">));
-        return;
-      case "playerSessions":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"playerSessions">));
-        return;
-      case "rounds":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"rounds">));
-        return;
-      case "roundPlayerStates":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"roundPlayerStates">));
-        return;
-      case "roundEvents":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"roundEvents">));
-        return;
-      case "scoreBreakdowns":
-        yield* Effect.promise(() => ctx.db.delete(args.id as Id<"scoreBreakdowns">));
-        return;
-      default:
-        return yield* new UnsupportedTable();
-    }
+        const table = args.table as AppTableName;
+        const unsupportedId = args.id ?? "";
+
+        switch (table) {
+          case "matches":
+          case "players":
+          case "playerSessions":
+          case "rounds":
+          case "roundPlayerStates":
+          case "roundEvents":
+          case "scoreBreakdowns":
+          case "idempotencyKeys":
+            if (args.id === undefined) {
+              console.log(`Removing all documents from table ${args.table}`);
+              const docs = yield* Effect.promise(() =>
+                ctx.db.query(table as any).collect(),
+              );
+              for (const doc of docs as any[]) {
+                yield* Effect.promise(() => ctx.db.delete(doc._id));
+              }
+              return docs.length;
+            }
+            console.log(`Removing document from table ${args.table} with id ${args.id}`);
+            yield* Effect.promise(() =>
+              ctx.db.delete(args.id as Id<typeof table>),
+            );
+            return 1;
+          default:
+            return yield* new UnsupportedTable({ table: args.table, id: unsupportedId });
+        }
       }),
     ),
 });
 
 export const clearAllAppDataViaCli = action({
-  args: {
-    confirm: v.string(),
-  },
-  handler: async (ctx, args): Promise<ClearAllAppDataResult> => {
-    return await Effect.runPromise(runClearAllAppDataEffect(ctx, args.confirm));
+  handler: async (ctx): Promise<ClearAllAppDataResult> => {
+    const deleted = await Effect.runPromise(runClearAllAppDataEffect(ctx));
+    return {
+      deleted: deleted.deleted,
+    };
   },
 });
 
-function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
+function runClearAllAppDataEffect(ctx: ActionCtx) {
   return Effect.gen(function* () {
-    if (confirm !== DELETE_ALL_APP_DATA_CONFIRMATION) {
-      return yield* new InvalidConfirmation();
-    }
-
-  const matchIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listMatchIds, {}));
   const sessionIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listSessionIds, {}));
   const deleted = {
+    idempotencyKeys: 0,
     scoreBreakdowns: 0,
     roundEvents: 0,
     roundPlayerStates: 0,
@@ -203,6 +200,8 @@ function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
     rateLimitKeysReset: 0,
   };
 
+  // Clean up presence rooms
+  const matchIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listMatchIds, {}));
   for (const matchId of matchIds) {
     yield* Effect.tryPromise({
       try: () => presence.removeRoom(ctx, matchId),
@@ -211,37 +210,46 @@ function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
     deleted.presenceRooms += 1;
   }
 
-  for (const matchId of matchIds) {
-    const counts = yield* Effect.tryPromise({
-      try: () =>
-        cascadingDeletes.deleteWithCascade(ctx, {
-      table: "matches",
-      id: matchId,
-      resolver: async (sourceTable, parentTable, parentId) =>
-        await ctx.runQuery(internal.admin.resolveDependents, {
-          sourceTable,
-          parentTable,
-          parentId,
-        }),
-      deleter: async (table, id) => {
-        await ctx.runMutation(internal.admin.deleteDocument, {
-          table,
-          id,
-        });
-      },
-      }),
-      catch: (cause) => new ExternalComponentFailed({ component: "cascadingDeletes", cause }),
-    });
+  // Clear all table data via mutation (which has ctx.db access)
 
-    deleted.scoreBreakdowns += counts.scoreBreakdowns ?? 0;
-    deleted.roundEvents += counts.roundEvents ?? 0;
-    deleted.roundPlayerStates += counts.roundPlayerStates ?? 0;
-    deleted.rounds += counts.rounds ?? 0;
-    deleted.playerSessions += counts.playerSessions ?? 0;
-    deleted.players += counts.players ?? 0;
-    deleted.matches += counts.matches ?? 0;
+  const tables = Object.keys(schema.tables);
+  for (const table of tables) {
+    console.log(`Removing document from table ${table}`);
+    const count = yield* Effect.tryPromise({
+      try: () => ctx.runMutation(internal.admin.deleteDocument, { table: table }),
+      catch: (cause) => new ExternalComponentFailed({ component: "deleteDocument", cause }),
+    });
+    switch (table) {
+      case "idempotencyKeys":
+        deleted.idempotencyKeys += count;
+        break;
+      case "scoreBreakdowns":
+        deleted.scoreBreakdowns += count;
+        break;
+      case "roundEvents":
+        deleted.roundEvents += count;
+        break;
+      case "roundPlayerStates":
+        deleted.roundPlayerStates += count;
+        break;
+      case "rounds":
+        deleted.rounds += count;
+        break;
+      case "playerSessions":
+        deleted.playerSessions += count;
+        break;
+      case "players":
+        deleted.players += count;
+        break;
+      case "matches":
+        deleted.matches += count;
+        break;
+      default:
+        break;
+    }
   }
 
+  // Reset rate limiters
   for (const sessionId of sessionIds) {
     yield* Effect.tryPromise({
       try: () => rateLimiter.reset(ctx, "createMatch", { key: sessionId }),
@@ -263,8 +271,7 @@ function runClearAllAppDataEffect(ctx: ActionCtx, confirm: string) {
   }
 
   return {
-    deleted,
-    confirmation: DELETE_ALL_APP_DATA_CONFIRMATION,
+    deleted
   };
   });
 }

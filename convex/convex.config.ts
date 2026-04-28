@@ -4,6 +4,8 @@ import presence from "@convex-dev/presence/convex.config.js";
 import rateLimiter from "@convex-dev/rate-limiter/convex.config.js";
 import convexCascadingDeletes from "@sholajegede/convex-cascading-deletes/convex.config.js";
 
+import "../confect/lib/cascading_deletes";
+
 const app = defineApp();
 
 app.use(migrations);

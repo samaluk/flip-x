@@ -51,7 +51,10 @@ export class StaleGameState extends Data.TaggedError("StaleGameState")<{
 
 export class UnsupportedRelationship extends Data.TaggedError("UnsupportedRelationship")<{}> {}
 
-export class UnsupportedTable extends Data.TaggedError("UnsupportedTable")<{}> {}
+export class UnsupportedTable extends Data.TaggedError("UnsupportedTable")<{
+  table: string;
+  id: string;
+}> {}
 
 export class InvalidConfirmation extends Data.TaggedError("InvalidConfirmation")<{}> {}
 
