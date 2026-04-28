@@ -25,7 +25,7 @@ import {
 export { translateConvexError };
 
 /** AppError class constructors (used from tests via `instanceof`; kept reachable from app entry for static analysis). */
-void (
+void [
   MatchNotFound,
   InvalidTurn,
   InvalidAction,
@@ -45,5 +45,5 @@ void (
   StaleGameState,
   UnsupportedRelationship,
   UnsupportedTable,
-  InvalidConfirmation
-);
+  InvalidConfirmation,
+];
