@@ -2,7 +2,7 @@ import { HOUR, MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
 import { Effect } from "effect";
 
 import { components } from "../../convex/_generated/api";
-import { RateLimited } from "../../shared/lib/errors/domain";
+import { rateLimited } from "../../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../../shared/lib/errors/infrastructure";
 
 export const rateLimiter = new RateLimiter(components.rateLimiter, {
@@ -25,7 +25,7 @@ export function enforceRateLimit(
       catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
     });
     if (!status.ok) {
-      return yield* new RateLimited();
+      return yield* rateLimited();
     }
   });
 }

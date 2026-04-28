@@ -9,7 +9,6 @@
     "shared/ui/**",
     "convex/_generated/**",
     ".next/**",
-    "tests/**",
     "e2e/**",
     "scripts/**",
     "confect/_generated/**"

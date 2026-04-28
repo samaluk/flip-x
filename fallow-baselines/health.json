@@ -48,11 +48,8 @@
       "complexity_critical": {
         "count": 1
       },
-      "complexity_high": {
-        "count": 1
-      },
       "complexity_moderate": {
-        "count": 1
+        "count": 2
       }
     },
     "game/logic/view-models.ts": {
@@ -96,19 +93,26 @@
       "complexity_moderate": {
         "count": 1
       }
+    },
+    "tests/confect/deterministic-replay.test.ts": {
+      "complexity_moderate": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "tests/fixtures/deterministic/scenario-runner.ts": {
+      "complexity_high": {
+        "count": 1
+      }
     }
   },
   "runtime_coverage_findings": [],
   "target_keys": [
-    "confect/matches.ts:dead code",
-    "game/application/run-command.ts:dead code",
-    "confect/lib/ctx.ts:dead code",
-    "confect/lib/store.ts:dead code",
-    "confect/turns.ts:dead code",
     "game/logic/command-handler.ts:complexity",
-    "game/logic/rng.ts:dead code",
-    "game/ui/player-lane.tsx:untested risk",
-    "game/logic/card-types.ts:dead code",
-    "game/logic/round-state.ts:dead code"
+    "confect/lib/ctx.ts:dead code",
+    "game/application/run-command.ts:complexity",
+    "game/ui/player-lane.tsx:untested risk"
   ]
 }

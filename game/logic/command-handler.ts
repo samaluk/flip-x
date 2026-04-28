@@ -1,5 +1,5 @@
 import { createDeck } from "./card-types";
-import { InvalidAction, InvalidTarget, InvalidTurn } from "../../shared/lib/errors/domain";
+import { invalidAction, invalidTarget, invalidTurn } from "../../shared/lib/errors/domain";
 import { applyResolvedTargetAction } from "./action-resolution";
 import { applyCardToPlayer } from "./apply-card";
 import { addEvent, cardEventPayload, type RoundEvent } from "./events";
@@ -166,12 +166,12 @@ export function takeTurnAction(
   const currentState = playerStates[playerId];
 
   if (!currentState || round.phase !== "player_turns" || round.activePlayerId !== playerId) {
-    throw new InvalidTurn();
+    throw invalidTurn();
   }
 
   if (action === "stay") {
     if (isFlip3ActiveForPlayer(round, playerId)) {
-      throw new InvalidTurn();
+      throw invalidTurn();
     }
     currentState.status = "stayed";
     currentState.roundScore = currentState.pointsAtRisk;
@@ -259,7 +259,7 @@ export function resolvePendingAction(
   targetPlayerId: string,
 ) {
   if (!roundInput.pendingAction) {
-    throw new InvalidAction();
+    throw invalidAction();
   }
 
   const round = cloneRoundRuntime(roundInput);
@@ -268,11 +268,11 @@ export function resolvePendingAction(
   const pendingAction = round.pendingAction;
 
   if (!pendingAction) {
-    throw new InvalidAction();
+    throw invalidAction();
   }
 
   if (!pendingAction.eligibleTargetIds.includes(targetPlayerId)) {
-    throw new InvalidTarget();
+    throw invalidTarget();
   }
 
   round.pendingAction = null;

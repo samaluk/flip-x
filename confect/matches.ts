@@ -17,14 +17,14 @@ import {
   type PlayerColorId,
 } from "../shared/lib/player-colors";
 import {
-  InvalidHostName,
-  InvalidPlayerColor,
-  InvalidPlayerName,
-  LobbyCodeUnavailable,
-  LobbyNotFound,
-  MatchNotFound,
-  NameAlreadyTaken,
-  PlayerColorAlreadyTaken,
+  invalidHostName,
+  invalidPlayerColor,
+  invalidPlayerName,
+  lobbyCodeUnavailable,
+  lobbyNotFound,
+  matchNotFound,
+  nameAlreadyTaken,
+  playerColorAlreadyTaken,
 } from "../shared/lib/errors/domain";
 import { runGameCommand } from "../game/application/run-command";
 import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
@@ -74,7 +74,7 @@ function generateUniqueLobbyCode(ctx: MutationCtx) {
     );
 
     if (existing) {
-      return yield* new LobbyCodeUnavailable();
+      return yield* lobbyCodeUnavailable();
     }
 
     return lobbyCode;
@@ -86,7 +86,7 @@ function getSetupMatchByLobbyCode(ctx: MutationCtx, lobbyCode: string) {
     const match = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
 
     if (!match || match.status !== "setup") {
-      return yield* new LobbyNotFound();
+      return yield* lobbyNotFound();
     }
 
     return match;
@@ -131,7 +131,7 @@ export function createMatchForSession(
     const hostName = args.hostName.trim();
 
     if (!hostName || hostName.length > 20) {
-      return yield* new InvalidHostName();
+      return yield* invalidHostName();
     }
 
     const hostColorId = yield* normalizePlayerColorId(args.hostColorId, []);
@@ -167,7 +167,7 @@ export function createMatchForSession(
 
     const match = yield* Effect.promise(() => ctx.db.get(matchId));
     if (!match) {
-      return yield* new MatchNotFound({ matchId: String(matchId) });
+      return yield* matchNotFound({ matchId: String(matchId) });
     }
 
     return yield* Effect.promise(() => buildSnapshot(ctx, match, null, sessionId));
@@ -183,7 +183,7 @@ export function joinByCodeForSession(
 
     const normalized = args.lobbyCode.trim().toUpperCase();
     if (normalized.length !== 4) {
-      return yield* new LobbyNotFound();
+      return yield* lobbyNotFound();
     }
 
     const match = yield* getSetupMatchByLobbyCode(ctx, normalized);
@@ -272,12 +272,12 @@ export function joinMatchForSession(
     const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
     if (!match || match.status !== "setup") {
-      return yield* new MatchNotFound({ matchId: String(args.matchId) });
+      return yield* matchNotFound({ matchId: String(args.matchId) });
     }
 
     const playerName = args.playerName.trim();
     if (!playerName || playerName.length > 20) {
-      return yield* new InvalidPlayerName();
+      return yield* invalidPlayerName();
     }
 
     const players = yield* getPlayersByMatch(ctx, args.matchId);
@@ -291,14 +291,14 @@ export function joinMatchForSession(
     if (existingViewerPlayerId) {
       const existingViewerPlayer = players.find((player) => player._id === existingViewerPlayerId);
       if (!existingViewerPlayer) {
-        return yield* new MatchNotFound({ matchId: String(args.matchId) });
+        return yield* matchNotFound({ matchId: String(args.matchId) });
       }
 
       if (
         existingViewerPlayer.displayName.toLowerCase() !== playerName.toLowerCase() &&
         players.some((player) => player.displayName.toLowerCase() === playerName.toLowerCase())
       ) {
-        return yield* new NameAlreadyTaken({ name: playerName });
+        return yield* nameAlreadyTaken({ name: playerName });
       }
 
       yield* Effect.promise(() =>
@@ -307,7 +307,7 @@ export function joinMatchForSession(
       const nextMatch = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
       if (!nextMatch) {
-        return yield* new MatchNotFound({ matchId: String(args.matchId) });
+        return yield* matchNotFound({ matchId: String(args.matchId) });
       }
 
       return yield* snapshotForMatchSession(ctx, args.matchId, nextMatch, sessionId);
@@ -315,7 +315,7 @@ export function joinMatchForSession(
 
     const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
     if (existingNames.has(playerName.toLowerCase())) {
-      return yield* new NameAlreadyTaken({ name: playerName });
+      return yield* nameAlreadyTaken({ name: playerName });
     }
 
     const nextSeat =
@@ -353,11 +353,11 @@ function normalizePlayerColorId(colorId: string | undefined, takenColorIds: stri
     }
 
     if (!isPlayerColorId(colorId)) {
-      return yield* new InvalidPlayerColor({ colorId });
+      return yield* invalidPlayerColor({ colorId });
     }
 
     if (takenColorIds.includes(colorId)) {
-      return yield* new PlayerColorAlreadyTaken({ colorId });
+      return yield* playerColorAlreadyTaken({ colorId });
     }
 
     return colorId;
