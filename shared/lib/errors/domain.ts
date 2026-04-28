@@ -20,7 +20,11 @@ export class InvalidPlayerName extends Data.TaggedError("InvalidPlayerName")<{}>
 
 export class NameAlreadyTaken extends Data.TaggedError("NameAlreadyTaken")<{
   name: string;
-}> {}
+}> {
+  // Ensures Convex/client error strings include the tag; fallow cannot see runtime reads.
+  // fallow-ignore-next-line unused-class-member
+  override readonly message = "NameAlreadyTaken";
+}
 
 export class InvalidPlayerColor extends Data.TaggedError("InvalidPlayerColor")<{
   colorId: string;
