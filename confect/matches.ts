@@ -1,8 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { v } from "convex/values";
 import { Effect } from "effect";
-import { getOneFrom } from "convex-helpers/server/relationships";
-
 import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimit } from "./lib/rate_limiter";
@@ -202,32 +200,6 @@ export const createMatch = mutationWithSession({
   },
   handler: async (ctx, args) => await Effect.runPromise(createMatchForSession(ctx, args)),
 });
-
-export const getCurrentPlayer = queryWithSession({
-  args: {},
-  handler: async (ctx, args) => await Effect.runPromise(loadCurrentPlayer(ctx, args)),
-});
-
-function loadCurrentPlayer(ctx: QueryCtx, args: { sessionId: string }) {
-  return Effect.gen(function* () {
-    const playerSession = yield* Effect.promise(() =>
-      getOneFrom(ctx.db, "playerSessions", "by_session_id", args.sessionId, "sessionId"),
-    );
-
-    if (!playerSession) {
-      return null;
-    }
-
-    const player = yield* Effect.promise(() => ctx.db.get(playerSession.playerId));
-    if (!player) {
-      return null;
-    }
-
-    return {
-      displayName: player.displayName,
-    };
-  });
-}
 
 export const getMatchSnapshot = queryWithSession({
   args: {

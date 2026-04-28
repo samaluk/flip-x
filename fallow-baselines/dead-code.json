@@ -23,7 +23,6 @@
     "confect/lib/ctx.ts:normalizeDeterministicStart",
     "confect/matches.impl.ts:matches",
     "confect/matches.ts:createMatch",
-    "confect/matches.ts:getCurrentPlayer",
     "confect/matches.ts:joinByCode",
     "confect/matches.ts:joinMatch",
     "confect/migrations.impl.ts:migrations",
