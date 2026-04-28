@@ -94,6 +94,11 @@
         "count": 1
       }
     },
+    "tests/confect/command-finalization.test.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
     "tests/confect/deterministic-replay.test.ts": {
       "complexity_moderate": {
         "count": 2
