@@ -11,6 +11,8 @@
     "confect/_generated/**"
   ],
   "ignoreDependencies": [
+    "@base-ui/react",
+    "class-variance-authority",
     "shadcn",
     "tw-animate-css",
     "tailwindcss",
