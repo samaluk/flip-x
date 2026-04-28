@@ -46,6 +46,12 @@
       "sourceType": "github",
       "computedHash": "37ea37e42a81c926ebd81924691a15fb657df7c8a52b863c34967e5ab99cdc22"
     },
+    "fallow": {
+      "source": "fallow-rs/fallow-skills",
+      "sourceType": "github",
+      "skillPath": "fallow/skills/fallow/SKILL.md",
+      "computedHash": "32214d04646d9f22370054ffa9adb92183f42e90273dc5310cdfbcdbc9cef2f8"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
