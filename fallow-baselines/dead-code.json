@@ -15,7 +15,6 @@
   ],
   "unused_exports": [
     "confect/admin.impl.ts:admin",
-    "confect/deterministic-schema.ts:CardValue",
     "confect/lib/ctx.ts:getMutationCtx",
     "confect/lib/ctx.ts:getQueryCtx",
     "confect/lib/ctx.ts:asConfectCtx",

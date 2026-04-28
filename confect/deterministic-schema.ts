@@ -30,7 +30,7 @@ const ActionCard = Schema.Struct({
   actionKind: ActionKind,
 });
 
-export const CardValue = Schema.Union(NumberCard, ModifierCard, ActionCard);
+const CardValue = Schema.Union(NumberCard, ModifierCard, ActionCard);
 
 export const DeterministicStartOptions = Schema.Struct({
   roundSeed: Schema.Struct({
