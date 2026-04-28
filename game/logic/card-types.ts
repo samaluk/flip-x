@@ -27,7 +27,7 @@ export type ActionCard = {
 
 export type Card = NumberCard | ModifierCard | ActionCard;
 
-export const MODIFIER_LABELS: ModifierValue[] = [2, 4, 6, 8, 10, "x2"];
+const MODIFIER_LABELS: ModifierValue[] = [2, 4, 6, 8, 10, "x2"];
 
 export function buildOrderedDeck() {
   const cards: Card[] = [];

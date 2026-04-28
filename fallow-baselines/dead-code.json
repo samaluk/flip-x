@@ -49,7 +49,6 @@
     "game/infrastructure/snapshot-store.ts:getLatestRoundEvent",
     "game/infrastructure/snapshot-store.ts:buildCanonicalReplayStepState",
     "game/logic/action-resolution.ts:createPendingTargetAction",
-    "game/logic/card-types.ts:MODIFIER_LABELS",
     "game/logic/command-handler.ts:finalizeRound",
     "game/logic/events.ts:isRoundEventType",
     "game/logic/rng.ts:shuffleWithRandom",
