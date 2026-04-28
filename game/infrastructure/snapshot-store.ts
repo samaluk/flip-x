@@ -1,5 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getManyFrom } from "convex-helpers/server/relationships";
+import { Effect } from "effect";
 
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
@@ -50,7 +51,7 @@ export async function buildSnapshot(
   sessionId?: SessionId,
 ): Promise<MatchSnapshot> {
   const players = await getManyFrom(ctx.db, "players", "by_match", match._id, "matchId");
-  const playerId = await getPlayerIdForSession(ctx, sessionId);
+  const playerId = await Effect.runPromise(getPlayerIdForSession(ctx, sessionId));
   const viewerPlayerId =
     playerId && players.some((player) => player._id === playerId) ? String(playerId) : null;
 

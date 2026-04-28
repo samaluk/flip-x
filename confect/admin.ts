@@ -177,14 +177,14 @@ export const deleteDocument = internalMutation({
 
 export const clearAllAppDataViaCli = action({
   handler: async (ctx): Promise<ClearAllAppDataResult> => {
-    const deleted = await Effect.runPromise(runClearAllAppDataEffect(ctx));
+    const deleted = await Effect.runPromise(runClearAllAppData(ctx));
     return {
       deleted: deleted.deleted,
     };
   },
 });
 
-function runClearAllAppDataEffect(ctx: ActionCtx) {
+function runClearAllAppData(ctx: ActionCtx) {
   return Effect.gen(function* () {
   const sessionIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listSessionIds, {}));
   const deleted = {

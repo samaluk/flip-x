@@ -85,11 +85,7 @@ type RunGameCommandInput = {
   command: GameCommand;
 };
 
-export async function runGameCommand(ctx: MutationCtx, input: RunGameCommandInput) {
-  return await Effect.runPromise(runGameCommandEffect(ctx, input));
-}
-
-export function runGameCommandEffect(
+export function runGameCommand(
   ctx: MutationCtx,
   input: RunGameCommandInput,
 ): Effect.Effect<MatchSnapshot, AppError> {

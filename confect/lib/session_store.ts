@@ -7,14 +7,7 @@ import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 
 type Ctx = QueryCtx | MutationCtx;
 
-export async function getPlayerIdForSession(
-  ctx: Ctx,
-  sessionId?: SessionId,
-): Promise<Id<"players"> | null> {
-  return await Effect.runPromise(getPlayerIdForSessionEffect(ctx, sessionId));
-}
-
-export function getPlayerIdForSessionEffect(ctx: Ctx, sessionId?: SessionId) {
+export function getPlayerIdForSession(ctx: Ctx, sessionId?: SessionId) {
   return Effect.gen(function* () {
     if (!sessionId) {
       return null;
@@ -28,15 +21,7 @@ export function getPlayerIdForSessionEffect(ctx: Ctx, sessionId?: SessionId) {
   });
 }
 
-export async function setPlayerSession(
-  ctx: MutationCtx,
-  sessionId: SessionId,
-  playerId: Id<"players">,
-) {
-  return await Effect.runPromise(setPlayerSessionEffect(ctx, sessionId, playerId));
-}
-
-export function setPlayerSessionEffect(
+export function setPlayerSession(
   ctx: MutationCtx,
   sessionId: SessionId,
   playerId: Id<"players">,
