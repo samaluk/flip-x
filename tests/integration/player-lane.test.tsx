@@ -33,6 +33,28 @@ function player(
   };
 }
 
+const BUSTED_LANE_NUMBER = { id: "n1", type: "number" as const, label: "7", numberValue: 7 };
+const BUSTED_LANE_CARD = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
+
+function renderBustedLane(
+  roundStatus: "busted" | "completed",
+  options: { compact?: boolean } = {},
+) {
+  return render(
+    withIntlEn(
+      <PlayerLane
+        player={player({
+          roundStatus,
+          numberCards: [BUSTED_LANE_NUMBER],
+          bustCard: BUSTED_LANE_CARD,
+        })}
+        isActive={false}
+        compact={options.compact}
+      />,
+    ),
+  );
+}
+
 describe("player lane", () => {
   it("rerenders when targeting state changes", () => {
     const onSelectTarget = vi.fn();
@@ -83,58 +105,21 @@ describe("player lane", () => {
   });
 
   it("renders bust card in a busted lane", () => {
-    const bustCard = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
-    render(
-      withIntlEn(
-        <PlayerLane
-          player={player({
-            roundStatus: "busted",
-            numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
-            bustCard,
-          })}
-          isActive={false}
-        />,
-      ),
-    );
+    renderBustedLane("busted");
 
     expect(screen.getByText(/Busted/i)).toBeInTheDocument();
     expect(screen.getAllByText("7").length).toBeGreaterThanOrEqual(1);
   });
 
   it("preserves busted label after round is completed with bustCard present", () => {
-    const bustCard = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
-    render(
-      withIntlEn(
-        <PlayerLane
-          player={player({
-            roundStatus: "completed",
-            numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
-            bustCard,
-          })}
-          isActive={false}
-        />,
-      ),
-    );
+    renderBustedLane("completed");
 
     expect(screen.getByText(/Busted/i)).toBeInTheDocument();
     expect(screen.queryByText(/Scored/i)).not.toBeInTheDocument();
   });
 
   it("shows busted badge in compact mode when bustCard is present", () => {
-    const bustCard = { id: "dup", type: "number" as const, label: "7", numberValue: 7 };
-    render(
-      withIntlEn(
-        <PlayerLane
-          player={player({
-            roundStatus: "completed",
-            numberCards: [{ id: "n1", type: "number", label: "7", numberValue: 7 }],
-            bustCard,
-          })}
-          isActive={false}
-          compact
-        />,
-      ),
-    );
+    renderBustedLane("completed", { compact: true });
 
     expect(screen.getByText(/Busted/i)).toBeInTheDocument();
   });

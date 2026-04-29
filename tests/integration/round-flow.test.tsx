@@ -47,36 +47,30 @@ function snapshot(): MatchSnapshot {
   };
 }
 
+function renderTurnControls(match: MatchSnapshot) {
+  return render(
+    withIntlEn(
+      <TurnControls
+        snapshot={match}
+        onHit={vi.fn()}
+        onStay={vi.fn()}
+        onResolveAction={vi.fn()}
+        onStartNextRound={vi.fn()}
+      />,
+    ),
+  );
+}
+
 describe("round flow UI", () => {
   it("shows hit and stay controls for the active player", () => {
-    render(
-      withIntlEn(
-        <TurnControls
-          snapshot={snapshot()}
-          onHit={vi.fn()}
-          onStay={vi.fn()}
-          onResolveAction={vi.fn()}
-          onStartNextRound={vi.fn()}
-        />,
-      ),
-    );
+    renderTurnControls(snapshot());
 
     expect(screen.getByRole("button", { name: /hit for alex/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /stay for alex/i })).toBeInTheDocument();
   });
 
   it("disables turn controls when this device does not own the active seat", () => {
-    render(
-      withIntlEn(
-        <TurnControls
-          snapshot={{ ...snapshot(), viewerPlayerId: "p2" }}
-          onHit={vi.fn()}
-          onStay={vi.fn()}
-          onResolveAction={vi.fn()}
-          onStartNextRound={vi.fn()}
-        />,
-      ),
-    );
+    renderTurnControls({ ...snapshot(), viewerPlayerId: "p2" });
 
     expect(screen.getByRole("button", { name: /hit for alex/i })).toBeDisabled();
     expect(screen.getByRole("button", { name: /stay for alex/i })).toBeDisabled();
@@ -84,25 +78,15 @@ describe("round flow UI", () => {
   });
 
   it("keeps stay disabled while the active player is resolving Flip Three", () => {
-    render(
-      withIntlEn(
-        <TurnControls
-          snapshot={{
-            ...snapshot(),
-            pendingFlip3: {
-              sourcePlayerId: "p2",
-              targetPlayerId: "p1",
-              cardsRemaining: 2,
-              deferredActionCards: [],
-            },
-          }}
-          onHit={vi.fn()}
-          onStay={vi.fn()}
-          onResolveAction={vi.fn()}
-          onStartNextRound={vi.fn()}
-        />,
-      ),
-    );
+    renderTurnControls({
+      ...snapshot(),
+      pendingFlip3: {
+        sourcePlayerId: "p2",
+        targetPlayerId: "p1",
+        cardsRemaining: 2,
+        deferredActionCards: [],
+      },
+    });
 
     expect(screen.getByRole("button", { name: /draw \(2\)/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /stay for alex/i })).toBeDisabled();
