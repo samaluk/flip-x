@@ -75,32 +75,13 @@ function toLatestRoundEvent<TEvent extends RoundEvent>(
   event: TEvent,
   playerNames: string | undefined,
 ): LatestRoundEvent {
-  const base = {
+  return {
     actorPlayerId: event.actorPlayerId,
     targetPlayerId: event.targetPlayerId,
     playerNames,
-  };
-
-  switch (event.eventType) {
-    case "initial_deal": return { ...base, type: event.eventType, payload: event.payload };
-    case "hit": return { ...base, type: event.eventType, payload: event.payload };
-    case "flip3_hit": return { ...base, type: event.eventType, payload: event.payload };
-    case "number_drawn": return { ...base, type: event.eventType, payload: event.payload };
-    case "modifier_drawn": return { ...base, type: event.eventType, payload: event.payload };
-    case "second_chance_held": return { ...base, type: event.eventType, payload: event.payload };
-    case "second_chance_passed": return { ...base, type: event.eventType, payload: event.payload };
-    case "second_chance_discarded": return { ...base, type: event.eventType, payload: event.payload };
-    case "second_chance_used": return { ...base, type: event.eventType, payload: event.payload };
-    case "duplicate_bust": return { ...base, type: event.eventType, payload: event.payload };
-    case "flip7": return { ...base, type: event.eventType, payload: event.payload };
-    case "freeze_applied": return { ...base, type: event.eventType, payload: event.payload };
-    case "stay": return { ...base, type: event.eventType, payload: event.payload };
-    case "flip_three_targeted": return { ...base, type: event.eventType, payload: event.payload };
-    case "flip3_completed": return { ...base, type: event.eventType, payload: event.payload };
-    case "deferred_action": return { ...base, type: event.eventType, payload: event.payload };
-    case "pending_action": return { ...base, type: event.eventType, payload: event.payload };
-    case "round_scored": return { ...base, type: event.eventType, payload: event.payload };
-  }
+    type: event.eventType,
+    payload: event.payload,
+  } as LatestRoundEvent;
 }
 
 export function buildMatchSnapshot(args: {

@@ -26,19 +26,9 @@
         "count": 1
       }
     },
-    "game/cards/number-content.tsx": {
-      "crap_high": {
-        "count": 1
-      }
-    },
     "game/logic/command-handler.ts": {
       "complexity_moderate": {
         "count": 2
-      }
-    },
-    "game/logic/view-models.ts": {
-      "crap_high": {
-        "count": 1
       }
     },
     "game/screens/game-page-client.tsx": {

@@ -26,37 +26,24 @@ type NumberNameMessageId =
   | "numberName.11"
   | "numberName.12";
 
+const NUMBER_NAME_IDS = [
+  "numberName.0",
+  "numberName.1",
+  "numberName.2",
+  "numberName.3",
+  "numberName.4",
+  "numberName.5",
+  "numberName.6",
+  "numberName.7",
+  "numberName.8",
+  "numberName.9",
+  "numberName.10",
+  "numberName.11",
+  "numberName.12",
+] as const satisfies readonly NumberNameMessageId[];
+
 function numberNameId(value: number): NumberNameMessageId {
-  switch (value) {
-    case 0:
-      return "numberName.0";
-    case 1:
-      return "numberName.1";
-    case 2:
-      return "numberName.2";
-    case 3:
-      return "numberName.3";
-    case 4:
-      return "numberName.4";
-    case 5:
-      return "numberName.5";
-    case 6:
-      return "numberName.6";
-    case 7:
-      return "numberName.7";
-    case 8:
-      return "numberName.8";
-    case 9:
-      return "numberName.9";
-    case 10:
-      return "numberName.10";
-    case 11:
-      return "numberName.11";
-    case 12:
-      return "numberName.12";
-    default:
-      return "numberName.0";
-  }
+  return NUMBER_NAME_IDS[value] ?? "numberName.0";
 }
 
 function OutlinedDigit({
