@@ -24,6 +24,10 @@ import { Skeleton } from "@/shared/ui/skeleton";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
+import {
+  getTrimmedPlayerNameIssue,
+  PLAYER_NAME_ISSUE_TOAST_KEY,
+} from "@/shared/lib/player-name-validation";
 
 const COLOR_STORAGE_KEY = "flip7_player_color";
 
@@ -66,18 +70,9 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
       event.preventDefault();
 
       const trimmedName = playerName.trim();
-      if (!trimmedName) {
-        toast.error(t("toastNameRequired"));
-        return;
-      }
-
-      if (trimmedName.length > 20) {
-        toast.error(t("toastNameLength"));
-        return;
-      }
-
-      if (!sessionId) {
-        toast.error(t("toastSession"));
+      const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
+      if (nameIssue) {
+        toast.error(t(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
         return;
       }
 

@@ -13,6 +13,10 @@ import {
   isPlayerColorId,
   type PlayerColorId,
 } from "@/shared/lib/player-colors";
+import {
+  getTrimmedPlayerNameIssue,
+  PLAYER_NAME_ISSUE_TOAST_KEY,
+} from "@/shared/lib/player-name-validation";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateConvexError } from "@/shared/lib/convex-error";
 import { Button } from "@/shared/ui/button";
@@ -85,18 +89,9 @@ export function HomeClient() {
     localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
     localStorage.setItem(COLOR_STORAGE_KEY, colorId);
 
-    if (!trimmedName) {
-      toast.error(t("toastNameRequired"));
-      return;
-    }
-
-    if (trimmedName.length > 20) {
-      toast.error(t("toastNameLength"));
-      return;
-    }
-
-    if (!sessionId) {
-      toast.error(t("toastSession"));
+    const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
+    if (nameIssue) {
+      toast.error(t(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
       return;
     }
 
