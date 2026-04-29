@@ -45,9 +45,6 @@
       }
     },
     "game/logic/command-handler.ts": {
-      "complexity_critical": {
-        "count": 1
-      },
       "complexity_moderate": {
         "count": 2
       }
@@ -107,7 +104,6 @@
   },
   "runtime_coverage_findings": [],
   "target_keys": [
-    "game/logic/command-handler.ts:complexity",
     "game/application/run-command.ts:complexity"
   ]
 }
