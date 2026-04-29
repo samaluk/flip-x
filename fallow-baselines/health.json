@@ -63,14 +63,8 @@
       }
     },
     "game/ui/player-lane.tsx": {
-      "complexity_high": {
-        "count": 1
-      },
-      "crap_high": {
-        "count": 1
-      },
       "crap_moderate": {
-        "count": 1
+        "count": 2
       }
     },
     "game/ui/turn-controls.tsx": {

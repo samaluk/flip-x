@@ -95,6 +95,220 @@ type PlayerLaneProps = {
   onSelectTarget?: (playerId: string) => void;
 };
 
+type PlayerLaneSidebarProps = {
+  player: MatchSnapshot["players"][number];
+  compact: boolean;
+  displayStatus: LaneRoundStatus;
+  isDealer: boolean;
+  isViewer: boolean;
+  isSelfTargeting: boolean;
+  incomingActionKind: "flip_three" | "freeze" | null;
+  flip3Remaining: number | null;
+};
+
+function PlayerLaneSidebar({
+  player,
+  compact,
+  displayStatus,
+  isDealer,
+  isViewer,
+  isSelfTargeting,
+  incomingActionKind,
+  flip3Remaining,
+}: PlayerLaneSidebarProps) {
+  const t = useTranslations("PlayerLane");
+  const roundStatusLabelKey = statusLabelKey(displayStatus);
+  const playerColor = getPlayerColor(player.colorId, player.seatIndex);
+  const initials = playerInitials(player.displayName);
+
+  return (
+    <div className={cn("flex shrink-0 flex-col items-center gap-2", compact ? "w-24" : "w-32")}>
+      <Avatar size="lg" className={cn("ring-2 ring-border", compact ? "size-11" : "size-14")}>
+        <AvatarFallback
+          className="text-base font-semibold tracking-tight"
+          style={
+            {
+              backgroundColor: playerColor.background,
+              color: playerColor.foreground,
+            } satisfies CSSProperties
+          }
+        >
+          {initials}
+        </AvatarFallback>
+      </Avatar>
+
+      <div className="flex w-full min-w-0 flex-col items-center gap-0.5 text-center">
+        <h3 className="font-heading text-foreground w-full truncate text-sm font-medium tracking-tight">
+          {player.displayName}
+        </h3>
+        <div className="text-muted-foreground text-xs tabular-nums">
+          {t("totalScore", { score: player.totalScore })}
+        </div>
+        <div className="text-foreground text-lg font-semibold tabular-nums">{player.pointsAtRisk}</div>
+        <div className="text-muted-foreground text-[0.65rem] leading-none">{t("pointsAtRisk")}</div>
+      </div>
+
+      <div className="flex w-full flex-col items-center gap-1">
+        {roundStatusLabelKey ? (
+          <Badge variant={statusVariant(displayStatus)} className="max-w-full text-[0.65rem]">
+            {t(roundStatusLabelKey)}
+          </Badge>
+        ) : null}
+        {isDealer ? (
+          <Badge variant="default" className="text-[0.65rem]">
+            {t("dealer")}
+          </Badge>
+        ) : null}
+        {isViewer ? (
+          <Badge
+            variant="default"
+            className="bg-primary/15 text-primary border-primary/30 text-[0.65rem]"
+          >
+            {t("you")}
+          </Badge>
+        ) : null}
+        {player.isOnline && !isViewer ? (
+          <Badge variant="secondary" className="text-[0.65rem]">
+            {t("online")}
+          </Badge>
+        ) : null}
+        {isSelfTargeting ? (
+          <Badge variant="outline" className="text-[0.65rem]">
+            <UserIcon className="size-3" />
+            {t("selfTarget")}
+          </Badge>
+        ) : null}
+        {incomingActionKind ? (
+          <Badge variant="destructive" className="text-[0.65rem]">
+            <CrosshairIcon className="size-3" />
+            {t("incomingAction")}
+          </Badge>
+        ) : null}
+        {flip3Remaining !== null && flip3Remaining > 0 ? (
+          <Badge variant="outline" className="text-[0.65rem]">
+            <RefreshCwIcon className="size-3 animate-spin" />
+            {t("flip3Remaining", { count: flip3Remaining })}
+          </Badge>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
+type PlayerLaneCardStackProps = {
+  player: MatchSnapshot["players"][number];
+  dealingIdSet: ReadonlySet<string>;
+  cardStateAnimation: "bust" | "stay" | null;
+  compact: boolean;
+  disableCardFlip3d: boolean;
+  actionSourcePending: boolean;
+};
+
+function PlayerLaneCardStack({
+  player,
+  dealingIdSet,
+  cardStateAnimation,
+  compact,
+  disableCardFlip3d,
+  actionSourcePending,
+}: PlayerLaneCardStackProps) {
+  const cardElements = useMemo(
+    () =>
+      [
+        ...player.modifierCards.map((card) => (
+          <Flip7Card
+            key={card.id}
+            kind="modifier"
+            modifierValue={card.modifierValue}
+            label={card.label}
+            dealing={dealingIdSet.has(card.id)}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
+          />
+        )),
+        ...player.numberCards.map((card) => (
+          <Flip7Card
+            key={card.id}
+            kind="number"
+            numberValue={card.numberValue}
+            label={card.label}
+            dealing={dealingIdSet.has(card.id)}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
+          />
+        )),
+        ...(player.bustCard
+          ? [
+              <Flip7Card
+                key={player.bustCard.id}
+                kind="number"
+                numberValue={player.bustCard.numberValue}
+                label={player.bustCard.label}
+                dealing={dealingIdSet.has(player.bustCard.id)}
+                stateAnimation={cardStateAnimation}
+                compact={compact}
+                disableFlip3d={disableCardFlip3d}
+              />,
+            ]
+          : []),
+        ...player.heldActionCards.map((card) => {
+          const key = `${player.playerId}-${card.actionKind}-${card.label}`;
+          return (
+            <Flip7Card
+              key={key}
+              kind="action"
+              actionKind={card.actionKind}
+              label={card.label}
+              dealing={dealingIdSet.has(key)}
+              stateAnimation={cardStateAnimation}
+              compact={compact}
+              disableFlip3d={disableCardFlip3d}
+              active={actionSourcePending}
+            />
+          );
+        }),
+        ...player.receivedActionCards.map((card) => {
+          const key = `${player.playerId}-received-${card.actionKind}-${card.label}`;
+          return (
+            <Flip7Card
+              key={key}
+              kind="action"
+              actionKind={card.actionKind}
+              label={card.label}
+              stateAnimation={cardStateAnimation}
+              compact={compact}
+              disableFlip3d={disableCardFlip3d}
+              variant="received"
+            />
+          );
+        }),
+      ] as ReactElement[],
+    [
+      actionSourcePending,
+      cardStateAnimation,
+      compact,
+      dealingIdSet,
+      disableCardFlip3d,
+      player.bustCard,
+      player.heldActionCards,
+      player.modifierCards,
+      player.numberCards,
+      player.playerId,
+      player.receivedActionCards,
+    ],
+  );
+
+  return (
+    <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain pb-1">
+      <div className={cn("flex flex-nowrap items-start", compact ? "gap-1.5" : "gap-3")}>
+        {cardElements.length > 0 ? cardElements : null}
+      </div>
+    </div>
+  );
+}
+
 export const PlayerLane = memo(function PlayerLane({
   player,
   isActive,
@@ -111,7 +325,6 @@ export const PlayerLane = memo(function PlayerLane({
   flip3Remaining = null,
   onSelectTarget,
 }: PlayerLaneProps) {
-  const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
   const initialCardSyncDone = useRef(false);
   const displayStatus = getDisplayStatus(player);
@@ -188,81 +401,6 @@ export const PlayerLane = memo(function PlayerLane({
   }, [displayStatus]);
 
   const cardStateAnimation = stateAnimation ?? poseFromStatus(displayStatus);
-  const roundStatusLabelKey = statusLabelKey(displayStatus);
-  const playerColor = getPlayerColor(player.colorId, player.seatIndex);
-  const initials = playerInitials(player.displayName);
-
-  const cardElements: ReactElement[] = [
-    ...player.modifierCards.map((card) => (
-      <Flip7Card
-        key={card.id}
-        kind="modifier"
-        modifierValue={card.modifierValue}
-        label={card.label}
-        dealing={dealingIdSet.has(card.id)}
-        stateAnimation={cardStateAnimation}
-        compact={compact}
-        disableFlip3d={disableCardFlip3d}
-      />
-    )),
-    ...player.numberCards.map((card) => (
-      <Flip7Card
-        key={card.id}
-        kind="number"
-        numberValue={card.numberValue}
-        label={card.label}
-        dealing={dealingIdSet.has(card.id)}
-        stateAnimation={cardStateAnimation}
-        compact={compact}
-        disableFlip3d={disableCardFlip3d}
-      />
-    )),
-    ...(player.bustCard
-      ? [
-          <Flip7Card
-            key={player.bustCard.id}
-            kind="number"
-            numberValue={player.bustCard.numberValue}
-            label={player.bustCard.label}
-            dealing={dealingIdSet.has(player.bustCard.id)}
-            stateAnimation={cardStateAnimation}
-            compact={compact}
-            disableFlip3d={disableCardFlip3d}
-          />,
-        ]
-      : []),
-    ...player.heldActionCards.map((card) => {
-      const key = `${player.playerId}-${card.actionKind}-${card.label}`;
-      return (
-        <Flip7Card
-          key={key}
-          kind="action"
-          actionKind={card.actionKind}
-          label={card.label}
-          dealing={dealingIdSet.has(key)}
-          stateAnimation={cardStateAnimation}
-          compact={compact}
-          disableFlip3d={disableCardFlip3d}
-          active={actionSourcePending}
-        />
-      );
-    }),
-    ...player.receivedActionCards.map((card) => {
-      const key = `${player.playerId}-received-${card.actionKind}-${card.label}`;
-      return (
-        <Flip7Card
-          key={key}
-          kind="action"
-          actionKind={card.actionKind}
-          label={card.label}
-          stateAnimation={cardStateAnimation}
-          compact={compact}
-          disableFlip3d={disableCardFlip3d}
-          variant="received"
-        />
-      );
-    }),
-  ];
 
   return (
     <section
@@ -291,108 +429,54 @@ export const PlayerLane = memo(function PlayerLane({
       aria-label={targetingActive ? `Select ${player.displayName} as target` : undefined}
     >
       <div className="flex items-stretch gap-4">
-        <div className={cn("flex shrink-0 flex-col items-center gap-2", compact ? "w-24" : "w-32")}>
-          <Avatar size="lg" className={cn("ring-2 ring-border", compact ? "size-11" : "size-14")}>
-            <AvatarFallback
-              className="text-base font-semibold tracking-tight"
-              style={
-                {
-                  backgroundColor: playerColor.background,
-                  color: playerColor.foreground,
-                } satisfies CSSProperties
-              }
-            >
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-
-          <div className="flex w-full min-w-0 flex-col items-center gap-0.5 text-center">
-            <h3 className="font-heading text-foreground w-full truncate text-sm font-medium tracking-tight">
-              {player.displayName}
-            </h3>
-            <div className="text-muted-foreground text-xs tabular-nums">
-              {t("totalScore", { score: player.totalScore })}
-            </div>
-            <div className="text-foreground text-lg font-semibold tabular-nums">
-              {player.pointsAtRisk}
-            </div>
-            <div className="text-muted-foreground text-[0.65rem] leading-none">
-              {t("pointsAtRisk")}
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center gap-1">
-            {roundStatusLabelKey ? (
-              <Badge variant={statusVariant(displayStatus)} className="max-w-full text-[0.65rem]">
-                {t(roundStatusLabelKey)}
-              </Badge>
-            ) : null}
-            {isDealer ? (
-              <Badge variant="default" className="text-[0.65rem]">
-                {t("dealer")}
-              </Badge>
-            ) : null}
-            {isViewer ? (
-              <Badge
-                variant="default"
-                className="bg-primary/15 text-primary border-primary/30 text-[0.65rem]"
-              >
-                {t("you")}
-              </Badge>
-            ) : null}
-            {player.isOnline && !isViewer ? (
-              <Badge variant="secondary" className="text-[0.65rem]">
-                {t("online")}
-              </Badge>
-            ) : null}
-            {isSelfTargeting ? (
-              <Badge variant="outline" className="text-[0.65rem]">
-                <UserIcon className="size-3" />
-                {t("selfTarget")}
-              </Badge>
-            ) : null}
-            {incomingActionKind ? (
-              <Badge variant="destructive" className="text-[0.65rem]">
-                <CrosshairIcon className="size-3" />
-                {t("incomingAction")}
-              </Badge>
-            ) : null}
-            {flip3Remaining !== null && flip3Remaining > 0 ? (
-              <Badge variant="outline" className="text-[0.65rem]">
-                <RefreshCwIcon className="size-3 animate-spin" />
-                {t("flip3Remaining", { count: flip3Remaining })}
-              </Badge>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain pb-1">
-          <div className={cn("flex flex-nowrap items-start", compact ? "gap-1.5" : "gap-3")}>
-            {cardElements.length > 0 ? cardElements : null}
-          </div>
-        </div>
+        <PlayerLaneSidebar
+          player={player}
+          compact={compact}
+          displayStatus={displayStatus}
+          isDealer={isDealer}
+          isViewer={isViewer}
+          isSelfTargeting={isSelfTargeting}
+          incomingActionKind={incomingActionKind}
+          flip3Remaining={flip3Remaining}
+        />
+        <PlayerLaneCardStack
+          player={player}
+          dealingIdSet={dealingIdSet}
+          cardStateAnimation={cardStateAnimation}
+          compact={compact}
+          disableCardFlip3d={disableCardFlip3d}
+          actionSourcePending={actionSourcePending}
+        />
       </div>
     </section>
   );
 }, arePlayerLanePropsEqual);
 
+const PLAYER_LANE_MEMO_SCALAR_KEYS = [
+  "isActive",
+  "isDealer",
+  "isViewer",
+  "isPinned",
+  "compact",
+  "disableCardFlip3d",
+  "overlapCards",
+  "isActionSource",
+  "isTargetable",
+  "isSelfTargeting",
+  "incomingActionKind",
+  "flip3Remaining",
+] as const satisfies readonly (keyof PlayerLaneProps)[];
+
 function arePlayerLanePropsEqual(left: PlayerLaneProps, right: PlayerLaneProps) {
-  return (
-    left.isActive === right.isActive &&
-    left.isDealer === right.isDealer &&
-    left.isViewer === right.isViewer &&
-    left.isPinned === right.isPinned &&
-    left.compact === right.compact &&
-    left.disableCardFlip3d === right.disableCardFlip3d &&
-    left.overlapCards === right.overlapCards &&
-    left.isActionSource === right.isActionSource &&
-    left.isTargetable === right.isTargetable &&
-    left.isSelfTargeting === right.isSelfTargeting &&
-    left.incomingActionKind === right.incomingActionKind &&
-    left.flip3Remaining === right.flip3Remaining &&
-    Boolean(left.onSelectTarget) === Boolean(right.onSelectTarget) &&
-    arePlayersEqual(left.player, right.player)
-  );
+  for (const key of PLAYER_LANE_MEMO_SCALAR_KEYS) {
+    if (left[key] !== right[key]) {
+      return false;
+    }
+  }
+  if (Boolean(left.onSelectTarget) !== Boolean(right.onSelectTarget)) {
+    return false;
+  }
+  return arePlayersEqual(left.player, right.player);
 }
 
 function arePlayersEqual(
