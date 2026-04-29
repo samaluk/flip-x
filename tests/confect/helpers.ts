@@ -11,6 +11,7 @@ import { runGameCommand } from "@/game/application/run-command";
 type RunGameCommandInput = Parameters<typeof runGameCommand>[1];
 import {
   describeReplayResult,
+  requireSourceSessionForPendingAction,
   type DeterministicStartOptions,
   type ReplayResult,
 } from "@/tests/fixtures/deterministic";
@@ -286,15 +287,11 @@ export function advanceUntilRoundBoundary(matchId: string, sessions: SessionReco
       }
 
       if (snapshot.pendingAction) {
-        const sourceSession = sessions.find(
-          (session) =>
-            snapshot?.pendingAction?.sourcePlayerId ===
-            snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
+        const sourceSession = requireSourceSessionForPendingAction(
+          snapshot,
+          sessions,
+          "Expected a source session for pending action",
         );
-
-        if (!sourceSession) {
-          throw new Error("Expected a source session for pending action");
-        }
 
         snapshot = (yield* client.mutation(refs.public.turns.resolveAction, {
           matchId: matchId as never,

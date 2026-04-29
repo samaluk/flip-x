@@ -2,6 +2,7 @@ import type { Ref } from "@confect/core";
 import refs from "@/confect/_generated/refs";
 import { Effect, type ParseResult } from "effect";
 
+import { requireSourceSessionForPendingAction } from "./match-session-for-snapshot";
 import type { ReplayHarness } from "./scenario-runner";
 import type { DeterministicStartOptions } from "./scenario-types";
 
@@ -95,14 +96,11 @@ export function createDeterministicReplayHarness(
           return snapshot;
         }
         if (snapshot.pendingAction) {
-          const sourceSession = sessions.find(
-            (session) =>
-              snapshot.pendingAction?.sourcePlayerId ===
-              snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+          const sourceSession = requireSourceSessionForPendingAction(
+            snapshot,
+            sessions,
+            "Expected a source session for pending action",
           );
-          if (!sourceSession) {
-            throw new Error("Expected a source session for pending action");
-          }
           await Effect.runPromise(
             client.mutation(refs.public.turns.resolveAction, {
               matchId: matchId as never,

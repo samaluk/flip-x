@@ -2,7 +2,10 @@ import { describe, it } from "@effect/vitest";
 import { assertEquals, assertTrue } from "@effect/vitest/utils";
 import { Effect } from "effect";
 
-import type { DeterministicStartOptions } from "@/tests/fixtures/deterministic";
+import {
+  requireSourceSessionForPendingAction,
+  type DeterministicStartOptions,
+} from "@/tests/fixtures/deterministic";
 
 import * as TestConfect from "./TestConfect";
 import {
@@ -92,14 +95,11 @@ describe("Confect command runner turns", () => {
         throw new Error("Expected a pending action before RESOLVE_ACTION");
       }
 
-      const sourceSession = sessions.find(
-        (session) =>
-          snapshot.pendingAction?.sourcePlayerId ===
-          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      const sourceSession = requireSourceSessionForPendingAction(
+        snapshot,
+        sessions,
+        "Expected a source session for RESOLVE_ACTION",
       );
-      if (!sourceSession) {
-        throw new Error("Expected a source session for RESOLVE_ACTION");
-      }
 
       const updated = yield* runCommand(matchId, sourceSession.sessionId, {
         type: "RESOLVE_ACTION",

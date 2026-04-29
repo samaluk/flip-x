@@ -1,8 +1,7 @@
 {
   "clone_groups": [
-    "tests/confect/command-turns.test.ts:95-101|tests/confect/helpers.ts:289-296|tests/fixtures/deterministic/replay-harness-factory.ts:98-104",
-    "tests/confect/helpers.ts:308-315|tests/confect/helpers.ts:47-53|tests/fixtures/deterministic/replay-harness-factory.ts:116-122",
-    "tests/confect/helpers.ts:280-297|tests/fixtures/deterministic/replay-harness-factory.ts:91-105",
-    "tests/confect/helpers.ts:299-316|tests/fixtures/deterministic/replay-harness-factory.ts:106-123"
+    "tests/confect/helpers.ts:305-312|tests/confect/helpers.ts:48-54|tests/fixtures/deterministic/replay-harness-factory.ts:114-120",
+    "tests/confect/helpers.ts:281-294|tests/fixtures/deterministic/replay-harness-factory.ts:92-103",
+    "tests/confect/helpers.ts:296-313|tests/fixtures/deterministic/replay-harness-factory.ts:104-121"
   ]
 }
