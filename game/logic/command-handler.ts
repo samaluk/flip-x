@@ -16,6 +16,7 @@ import {
   cloneRoundRuntime,
   type CreateRoundRuntimeOptions,
   type OrderedPlayer,
+  type PendingAction,
   type PlayerRoundState,
   type ResolveResult,
   type RoundRuntime,
@@ -316,6 +317,42 @@ export function takeTurnAction(
   return { round, playerStates, events } satisfies ResolveResult;
 }
 
+function requirePendingActionFromRound(round: RoundRuntime): PendingAction {
+  const pending = round.pendingAction;
+  if (!pending) {
+    throw invalidAction();
+  }
+  return pending;
+}
+
+function commitResolvedPendingPhase(round: RoundRuntime, pendingAction: PendingAction) {
+  round.pendingAction = null;
+  round.phase = pendingAction.resume === "dealing" ? "dealing" : "player_turns";
+}
+
+function ensurePlayerTurnsWhenFlip3Pending(round: RoundRuntime) {
+  if (round.pendingFlip3) {
+    round.phase = "player_turns";
+  }
+}
+
+function maybeAdvanceTurnIfActivePlayerInactive(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+) {
+  if (round.phase !== "player_turns" || round.pendingAction || round.pendingFlip3) {
+    return;
+  }
+  const currentPlayerState = round.activePlayerId ? playerStates[round.activePlayerId] : null;
+  if (currentPlayerState?.status === "active") {
+    return;
+  }
+  const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
+  round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
+  round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
+}
+
 export function resolvePendingAction(
   players: OrderedPlayer[],
   roundInput: RoundRuntime,
@@ -329,18 +366,13 @@ export function resolvePendingAction(
   const round = cloneRoundRuntime(roundInput);
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
-  const pendingAction = round.pendingAction;
-
-  if (!pendingAction) {
-    throw invalidAction();
-  }
+  const pendingAction = requirePendingActionFromRound(round);
 
   if (!pendingAction.eligibleTargetIds.includes(targetPlayerId)) {
     throw invalidTarget();
   }
 
-  round.pendingAction = null;
-  round.phase = pendingAction.resume === "dealing" ? "dealing" : "player_turns";
+  commitResolvedPendingPhase(round, pendingAction);
 
   applyResolvedTargetAction(
     round,
@@ -352,21 +384,8 @@ export function resolvePendingAction(
     events,
   );
 
-  // If Flip Three was resolved, ensure phase is player_turns for target to hit
-  if (round.pendingFlip3) {
-    round.phase = "player_turns";
-  }
-
-  // Advance turn if current active player is no longer active (e.g., frozen by self-targeting)
-  if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
-    const currentPlayerState = round.activePlayerId ? playerStates[round.activePlayerId] : null;
-    if (currentPlayerState?.status !== "active") {
-      const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
-      round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
-      round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
-    }
-  }
-
+  ensurePlayerTurnsWhenFlip3Pending(round);
+  maybeAdvanceTurnIfActivePlayerInactive(round, players, playerStates);
   maybeFinishRound(round, players, playerStates);
 
   if (round.phase === "dealing" && !round.pendingAction) {
