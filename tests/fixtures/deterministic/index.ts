@@ -1,3 +1,4 @@
+export * from "./confect-match-snapshot";
 export * from "./scenario-types";
 export * from "./replay-assertions";
 export * from "./scenario-runner";

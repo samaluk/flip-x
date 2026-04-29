@@ -1,10 +1,9 @@
 import { expect } from "vitest";
 
-import type { MatchSnapshot } from "@/game/logic/view-models";
-
 import type { CanonicalReplaySnapshot, ReplayResult } from "./scenario-types";
+import type { ConfectMatchSnapshot } from "./confect-match-snapshot";
 
-export function canonicalizeSnapshot(snapshot: MatchSnapshot): CanonicalReplaySnapshot {
+export function canonicalizeSnapshot(snapshot: ConfectMatchSnapshot): CanonicalReplaySnapshot {
   const playerNames = new Map(
     snapshot.players.map((player) => [player.playerId, player.displayName]),
   );
@@ -64,7 +63,7 @@ export function canonicalizeSnapshot(snapshot: MatchSnapshot): CanonicalReplaySn
 }
 
 export function expectSnapshotToMatchExpected(
-  snapshot: MatchSnapshot,
+  snapshot: ConfectMatchSnapshot,
   expected: CanonicalReplaySnapshot,
   message?: string,
 ) {
@@ -87,8 +86,8 @@ export function expectReplayToMatch(result: ReplayResult) {
 }
 
 export function expectSnapshotsToMatch(
-  left: MatchSnapshot,
-  right: MatchSnapshot,
+  left: ConfectMatchSnapshot,
+  right: ConfectMatchSnapshot,
   message?: string,
 ) {
   expect(canonicalizeSnapshot(left), message).toEqual(canonicalizeSnapshot(right));

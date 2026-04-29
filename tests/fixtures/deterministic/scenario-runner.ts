@@ -1,7 +1,6 @@
 import type { Card } from "@/game/logic/card-types";
-import type { MatchSnapshot } from "@/game/logic/view-models";
-
 import { canonicalizeSnapshot } from "./replay-assertions";
+import type { ConfectMatchSnapshot } from "./confect-match-snapshot";
 import type { DeterministicStartOptions } from "./scenario-types";
 import type {
   DeterministicReplayScenario,
@@ -39,37 +38,37 @@ export type ReplayHarness = {
   ) => Promise<{
     matchId: string;
     sessions: ReplaySessionRecord[];
-    started: MatchSnapshot;
+    started: ConfectMatchSnapshot;
   }>;
   advanceUntilRoundBoundary: (
     matchId: string,
     sessions: ReplaySessionRecord[],
-  ) => Promise<MatchSnapshot>;
+  ) => Promise<ConfectMatchSnapshot>;
   startDeterministicNextRound: (
     matchId: string,
     sessionId: string,
     expectedVersion: number,
     deterministicStart?: DeterministicStartOptions,
-  ) => Promise<MatchSnapshot>;
+  ) => Promise<ConfectMatchSnapshot>;
   takeTurn: (
     matchId: string,
     sessionId: string,
     action: "hit" | "stay",
     expectedVersion: number,
-  ) => Promise<MatchSnapshot>;
+  ) => Promise<ConfectMatchSnapshot>;
   resolveAction: (
     matchId: string,
     sessionId: string,
     targetPlayerId: string,
     expectedVersion: number,
-  ) => Promise<MatchSnapshot>;
+  ) => Promise<ConfectMatchSnapshot>;
 };
 
 function findSession(sessions: ReplaySessionRecord[], actor: string) {
   return sessions.find((session) => session.name === actor) ?? null;
 }
 
-function findPlayerId(snapshot: MatchSnapshot, playerName: string) {
+function findPlayerId(snapshot: ConfectMatchSnapshot, playerName: string) {
   return snapshot.players.find((player) => player.displayName === playerName)?.playerId ?? null;
 }
 

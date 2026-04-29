@@ -13,7 +13,7 @@ export type OrderedPlayer = {
 export type PendingAction = {
   sourcePlayerId: string;
   actionKind: Exclude<ActionKind, "second_chance">;
-  eligibleTargetIds: string[];
+  eligibleTargetIds: readonly string[];
   resume: "dealing" | "turns";
 };
 

@@ -1,5 +1,6 @@
 import type { Card } from "@/game/logic/card-types";
-import type { MatchSnapshot } from "@/game/logic/view-models";
+
+import type { ConfectMatchSnapshot } from "./confect-match-snapshot";
 
 export type DeterministicRoundSeed = {
   drawPile: Card[];
@@ -32,12 +33,12 @@ export type ReplayDecisionStep =
     };
 
 export type CanonicalReplaySnapshot = {
-  status: MatchSnapshot["status"];
+  status: ConfectMatchSnapshot["status"];
   currentRoundNumber: number;
   dealerSeat: number;
   activePlayer: string | null;
-  roundStatus: MatchSnapshot["roundStatus"];
-  endedBy: MatchSnapshot["endedBy"];
+  roundStatus: ConfectMatchSnapshot["roundStatus"];
+  endedBy: ConfectMatchSnapshot["endedBy"];
   pendingAction: {
     actionKind: "freeze" | "flip_three";
     sourcePlayer: string;
@@ -48,17 +49,17 @@ export type CanonicalReplaySnapshot = {
     sourcePlayer: string;
     targetPlayer: string;
     cardsRemaining: number;
-    deferredActionCards: Array<{ label: string; actionKind: string }>;
+    deferredActionCards: ReadonlyArray<{ label: string; actionKind: string }>;
   } | null;
   players: Array<{
     displayName: string;
     seatIndex: number;
     totalScore: number;
-    roundStatus: MatchSnapshot["players"][number]["roundStatus"];
+    roundStatus: ConfectMatchSnapshot["players"][number]["roundStatus"];
     pointsAtRisk: number;
     numberCards: number[];
     modifierCards: Array<
-      MatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
+      ConfectMatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
     >;
     heldActionCards: string[];
     receivedActionCards: string[];
@@ -110,23 +111,23 @@ export type ReplayResult =
     };
 
 export type CanonicalSetupSnapshot = Pick<
-  MatchSnapshot,
+  ConfectMatchSnapshot,
   "status" | "currentRoundNumber" | "dealerSeat" | "activePlayerId" | "roundStatus" | "endedBy"
 > & {
   players: Array<{
     displayName: string;
     seatIndex: number;
-    roundStatus: MatchSnapshot["players"][number]["roundStatus"];
+    roundStatus: ConfectMatchSnapshot["players"][number]["roundStatus"];
     totalScore: number;
     pointsAtRisk: number;
     numberCards: number[];
     modifierCards: Array<
-      MatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
+      ConfectMatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
     >;
     heldActionKinds: string[];
     receivedActionKinds: string[];
   }>;
-  latestEvent: MatchSnapshot["latestEvent"] extends infer T
+  latestEvent: ConfectMatchSnapshot["latestEvent"] extends infer T
     ? T extends null
       ? null
       : {
