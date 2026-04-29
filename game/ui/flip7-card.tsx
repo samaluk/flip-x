@@ -168,11 +168,11 @@ function flip7CardKindPayloadEqual(left: Flip7CardProps, right: Flip7CardProps):
   }
   switch (left.kind) {
     case "number":
-      return left.numberValue === right.numberValue;
+      return right.kind === "number" && left.numberValue === right.numberValue;
     case "modifier":
-      return left.modifierValue === right.modifierValue;
+      return right.kind === "modifier" && left.modifierValue === right.modifierValue;
     case "action":
-      return left.actionKind === right.actionKind;
+      return right.kind === "action" && left.actionKind === right.actionKind;
     default:
       return false;
   }
