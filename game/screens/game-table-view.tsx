@@ -485,7 +485,7 @@ function RoundHistorySection({
 
 function incomingActionKindForPlayer(
   pendingAction: MatchSnapshot["pendingAction"],
-  playerId: Id<"players">,
+  playerId: string,
 ): "flip_three" | "freeze" | null {
   if (!pendingAction || playerId === pendingAction.sourcePlayerId) {
     return null;
