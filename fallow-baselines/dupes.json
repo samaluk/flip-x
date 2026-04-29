@@ -3,7 +3,6 @@
     "tests/confect/command-turns.test.ts:95-101|tests/confect/helpers.ts:289-296|tests/fixtures/deterministic/replay-harness-factory.ts:98-104",
     "tests/confect/helpers.ts:308-315|tests/confect/helpers.ts:47-53|tests/fixtures/deterministic/replay-harness-factory.ts:116-122",
     "tests/confect/helpers.ts:280-297|tests/fixtures/deterministic/replay-harness-factory.ts:91-105",
-    "tests/confect/helpers.ts:299-316|tests/fixtures/deterministic/replay-harness-factory.ts:106-123",
-    "tests/unit/engine/opening-deal.test.ts:118-128|tests/unit/engine/opening-deal.test.ts:96-106"
+    "tests/confect/helpers.ts:299-316|tests/fixtures/deterministic/replay-harness-factory.ts:106-123"
   ]
 }

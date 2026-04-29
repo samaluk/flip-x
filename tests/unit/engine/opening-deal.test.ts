@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import type { ActionCard } from "@/game/logic/card-types";
 import { continueRound } from "@/game/logic/command-handler";
 import { resolvePendingAction } from "@/game/logic/command-handler";
 import { actionCard, numberCard } from "@/tests/builders/cards";
@@ -16,6 +17,23 @@ const THREE_PLAYER_OPENING_DRAW_PILE = [
   numberCard("c2", 2),
   numberCard("c3", 3),
 ];
+
+function assertThreePlayerOpeningPendingOnFirstCard(
+  firstOpeningCard: ActionCard,
+  expectedActionKind: ActionCard["actionKind"],
+) {
+  const playerStates = createPlayerRoundStates();
+  const round = createRoundRuntime();
+  round.drawPile = [firstOpeningCard, numberCard("c2", 2), numberCard("c3", 3)];
+  const resolved = continueRound(testPlayers3P, round, playerStates);
+  expect(resolved.round.phase).toBe("resolving_action");
+  expect(resolved.round.pendingAction).toMatchObject({
+    sourcePlayerId: "p1",
+    actionKind: expectedActionKind,
+    resume: "dealing",
+  });
+  return resolved;
+}
 
 describe("opening deal", () => {
   it("deals the opening round and advances to player turns", () => {
@@ -89,45 +107,19 @@ describe("opening deal", () => {
   });
 
   it("creates pending action when first player gets freeze as their first card", () => {
-    const playerStates = createPlayerRoundStates();
-    const round = createRoundRuntime();
-
-    round.drawPile = [
+    const resolved = assertThreePlayerOpeningPendingOnFirstCard(
       actionCard("freeze-first", "freeze"),
-      numberCard("c2", 2),
-      numberCard("c3", 3),
-    ];
-
-    const resolved = continueRound(testPlayers3P, round, playerStates);
-
-    expect(resolved.round.phase).toBe("resolving_action");
-    expect(resolved.round.pendingAction).toMatchObject({
-      sourcePlayerId: "p1",
-      actionKind: "freeze",
-      resume: "dealing",
-    });
+      "freeze",
+    );
     expect(resolved.playerStates.p1.status).toBe("active");
     expect(resolved.playerStates.p1.receivedActionCards).toHaveLength(0);
   });
 
   it("creates pending action when first player gets Flip Three as their first card", () => {
-    const playerStates = createPlayerRoundStates();
-    const round = createRoundRuntime();
-
-    round.drawPile = [
+    const resolved = assertThreePlayerOpeningPendingOnFirstCard(
       actionCard("flip3-first", "flip_three"),
-      numberCard("c2", 2),
-      numberCard("c3", 3),
-    ];
-
-    const resolved = continueRound(testPlayers3P, round, playerStates);
-
-    expect(resolved.round.phase).toBe("resolving_action");
-    expect(resolved.round.pendingAction).toMatchObject({
-      sourcePlayerId: "p1",
-      actionKind: "flip_three",
-      resume: "dealing",
-    });
+      "flip_three",
+    );
     expect(resolved.round.pendingAction?.eligibleTargetIds).toEqual(["p1", "p2", "p3"]);
     expect(resolved.round.pendingFlip3).toBeNull();
     expect(resolved.playerStates.p1.heldActionCards).toEqual([
