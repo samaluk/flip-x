@@ -4,7 +4,7 @@ import { Effect } from "effect";
 import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimit } from "./lib/rate_limiter";
-import { mutationWithSession, queryWithSession, toSessionId } from "./lib/session_functions";
+import { queryWithSession, toSessionId } from "./lib/session_functions";
 import { setPlayerSession } from "./lib/session_store";
 import type { Doc, Id } from "../convex/_generated/dataModel";
 import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
@@ -193,14 +193,6 @@ export function joinByCodeForSession(
   });
 }
 
-const createMatch = mutationWithSession({
-  args: {
-    hostName: v.string(),
-    hostColorId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => await Effect.runPromise(createMatchForSession(ctx, args)),
-});
-
 export const getMatchSnapshot = queryWithSession({
   args: {
     matchId: v.id("matches"),
@@ -224,13 +216,6 @@ function loadMatchSnapshotForSession(
     return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
   });
 }
-
-const joinByCode = mutationWithSession({
-  args: {
-    lobbyCode: v.string(),
-  },
-  handler: async (ctx, args) => await Effect.runPromise(joinByCodeForSession(ctx, args)),
-});
 
 export function joinMatchForSession(
   ctx: MutationCtx,
@@ -308,15 +293,6 @@ export function joinMatchForSession(
     return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
   });
 }
-
-const joinMatch = mutationWithSession({
-  args: {
-    matchId: v.id("matches"),
-    playerName: v.string(),
-    playerColorId: v.optional(v.string()),
-  },
-  handler: async (ctx, args) => await Effect.runPromise(joinMatchForSession(ctx, args)),
-});
 
 function normalizePlayerColorId(colorId: string | undefined, takenColorIds: string[]) {
   return Effect.gen(function* () {
