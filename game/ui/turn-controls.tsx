@@ -9,6 +9,72 @@ import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type PendingAction = NonNullable<MatchSnapshot["pendingAction"]>;
 
+type TurnControlsPhase =
+  | { kind: "none" }
+  | { kind: "completed_round"; hasViewer: boolean }
+  | {
+      kind: "pending_resolve";
+      actionKind: PendingAction["actionKind"];
+    }
+  | {
+      kind: "pending_wait";
+      actionKind: PendingAction["actionKind"];
+    }
+  | {
+      kind: "active_turn";
+      viewerControlsTurn: boolean;
+      hasViewer: boolean;
+      isInFlip3: boolean;
+      flip3CardsRemaining: number;
+      activeDisplayName: string;
+    };
+
+function pendingActionPhase(snapshot: MatchSnapshot): TurnControlsPhase | null {
+  const pending = snapshot.pendingAction;
+  if (!pending) {
+    return null;
+  }
+  const viewerCanResolve = pending.sourcePlayerId === snapshot.viewerPlayerId;
+  return viewerCanResolve
+    ? { kind: "pending_resolve", actionKind: pending.actionKind }
+    : { kind: "pending_wait", actionKind: pending.actionKind };
+}
+
+function activeTurnPhase(snapshot: MatchSnapshot): TurnControlsPhase {
+  const activePlayer = snapshot.players.find(
+    (player) => player.playerId === snapshot.activePlayerId,
+  );
+  if (!activePlayer || snapshot.roundStatus !== "player_turns") {
+    return { kind: "none" };
+  }
+  const viewerControlsTurn =
+    snapshot.viewerPlayerId === snapshot.activePlayerId;
+  const flip3State = snapshot.pendingFlip3;
+  const isInFlip3 =
+    !!flip3State &&
+    flip3State.targetPlayerId === snapshot.viewerPlayerId &&
+    flip3State.cardsRemaining > 0;
+
+  return {
+    kind: "active_turn",
+    viewerControlsTurn,
+    hasViewer: !!snapshot.viewerPlayerId,
+    isInFlip3,
+    flip3CardsRemaining: flip3State?.cardsRemaining ?? 0,
+    activeDisplayName: activePlayer.displayName,
+  };
+}
+
+function resolveTurnControlsPhase(snapshot: MatchSnapshot): TurnControlsPhase {
+  if (snapshot.status === "completed") {
+    return { kind: "none" };
+  }
+  if (snapshot.roundStatus === "completed") {
+    return { kind: "completed_round", hasViewer: !!snapshot.viewerPlayerId };
+  }
+  return pendingActionPhase(snapshot) ?? activeTurnPhase(snapshot);
+}
+
 export function TurnControls({
   snapshot,
   onHit,
@@ -23,94 +89,81 @@ export function TurnControls({
   onStartNextRound: () => void;
 }) {
   const t = useTranslations("TurnControls");
-  const activePlayer = snapshot.players.find(
-    (player) => player.playerId === snapshot.activePlayerId,
-  );
-  const viewerControlsTurn = snapshot.viewerPlayerId === snapshot.activePlayerId;
-  const viewerCanResolveAction = snapshot.pendingAction?.sourcePlayerId === snapshot.viewerPlayerId;
-  const flip3State = snapshot.pendingFlip3;
-  const isInFlip3 =
-    flip3State &&
-    flip3State.targetPlayerId === snapshot.viewerPlayerId &&
-    flip3State.cardsRemaining > 0;
+  const phase = resolveTurnControlsPhase(snapshot);
 
-  if (snapshot.status === "completed") {
-    return null;
-  }
-
-  if (snapshot.roundStatus === "completed") {
-    return (
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          onClick={onStartNextRound}
-          disabled={!snapshot.viewerPlayerId}
-          size="lg"
-          className="rounded-full px-6"
-        >
-          <SparklesIcon />
-          {t("startNextRound")}
-        </Button>
-      </div>
-    );
-  }
-
-  if (snapshot.pendingAction) {
-    const pendingAction: PendingAction = snapshot.pendingAction;
-
-    if (viewerCanResolveAction) {
+  switch (phase.kind) {
+    case "none":
+      return null;
+    case "completed_round":
+      return (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            onClick={onStartNextRound}
+            disabled={!phase.hasViewer}
+            size="lg"
+            className="rounded-full px-6"
+          >
+            <SparklesIcon />
+            {t("startNextRound")}
+          </Button>
+        </div>
+      );
+    case "pending_resolve":
       return (
         <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
           <div className="text-muted-foreground text-sm">
-            {pendingAction.actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt")}
+            {phase.actionKind === "freeze"
+              ? t("freezePrompt")
+              : t("flipThreePrompt")}
           </div>
           <div className="text-muted-foreground text-xs">{t("selectTargetHint")}</div>
         </div>
       );
-    }
-
-    return (
-      <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
-        <div className="text-muted-foreground text-sm">
-          {pendingAction.actionKind === "freeze" ? t("waitingFreeze") : t("waitingFlipThree")}
+    case "pending_wait":
+      return (
+        <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
+          <div className="text-muted-foreground text-sm">
+            {phase.actionKind === "freeze"
+              ? t("waitingFreeze")
+              : t("waitingFlipThree")}
+          </div>
         </div>
-      </div>
-    );
-  }
-
-  if (!activePlayer || snapshot.roundStatus !== "player_turns") {
-    return null;
-  }
-
-  return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button
-        onClick={onHit}
-        disabled={!viewerControlsTurn}
-        size="lg"
-        className="rounded-full px-6"
-      >
-        <HandIcon />
-        {isInFlip3
-          ? t("hitFlip3", { count: flip3State.cardsRemaining })
-          : t("hitFor", { name: activePlayer.displayName })}
-      </Button>
-      <Button
-        variant="outline"
-        onClick={onStay}
-        disabled={!viewerControlsTurn || !!isInFlip3}
-        size="lg"
-        className="rounded-full px-6"
-      >
-        <BanIcon />
-        {t("stayFor", { name: activePlayer.displayName })}
-      </Button>
-      {!snapshot.viewerPlayerId ? (
+      );
+    case "active_turn": {
+      const statusHint = !phase.hasViewer ? (
         <div className="text-muted-foreground text-xs">{t("claimToPlay")}</div>
-      ) : !viewerControlsTurn ? (
+      ) : !phase.viewerControlsTurn ? (
         <div className="text-muted-foreground text-xs">
-          {t("waitingFor", { name: activePlayer.displayName })}
+          {t("waitingFor", { name: phase.activeDisplayName })}
         </div>
-      ) : null}
-    </div>
-  );
+      ) : null;
+
+      return (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            onClick={onHit}
+            disabled={!phase.viewerControlsTurn}
+            size="lg"
+            className="rounded-full px-6"
+          >
+            <HandIcon />
+            {phase.isInFlip3
+              ? t("hitFlip3", { count: phase.flip3CardsRemaining })
+              : t("hitFor", { name: phase.activeDisplayName })}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={onStay}
+            disabled={!phase.viewerControlsTurn || phase.isInFlip3}
+            size="lg"
+            className="rounded-full px-6"
+          >
+            <BanIcon />
+            {t("stayFor", { name: phase.activeDisplayName })}
+          </Button>
+          {statusHint}
+        </div>
+      );
+    }
+  }
 }
