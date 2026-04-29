@@ -193,7 +193,7 @@ export function joinByCodeForSession(
   });
 }
 
-export const createMatch = mutationWithSession({
+const createMatch = mutationWithSession({
   args: {
     hostName: v.string(),
     hostColorId: v.optional(v.string()),
@@ -225,7 +225,7 @@ function loadMatchSnapshotForSession(
   });
 }
 
-export const joinByCode = mutationWithSession({
+const joinByCode = mutationWithSession({
   args: {
     lobbyCode: v.string(),
   },
@@ -309,7 +309,7 @@ export function joinMatchForSession(
   });
 }
 
-export const joinMatch = mutationWithSession({
+const joinMatch = mutationWithSession({
   args: {
     matchId: v.id("matches"),
     playerName: v.string(),
