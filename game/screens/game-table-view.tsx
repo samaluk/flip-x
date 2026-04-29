@@ -108,10 +108,6 @@ export function GameTableView({
     ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
     : tEvents("noneYet");
 
-  const laneProps: Pick<Parameters<typeof PlayerLane>[0], "disableCardFlip3d"> = {
-    disableCardFlip3d,
-  };
-
   const pendingAction = snapshot.pendingAction;
   const viewerIsSource = Boolean(
     pendingAction &&
@@ -124,57 +120,7 @@ export function GameTableView({
     pendingAction.eligibleTargetIds.includes(snapshot.viewerPlayerId ?? ""),
   );
 
-  const renderPlayerLane = (
-    player: MatchSnapshot["players"][number],
-    options: {
-      compact?: boolean;
-      overlapCards?: boolean;
-    } = {},
-  ) => {
-    const isTargetable =
-      viewerIsSource &&
-      !!pendingAction &&
-      pendingAction.eligibleTargetIds.includes(player.playerId);
-    const isSelfTargeting = !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
-    const incomingActionKindVal: "flip_three" | "freeze" | null =
-      !pendingAction || player.playerId === pendingAction.sourcePlayerId
-        ? null
-        : pendingAction.eligibleTargetIds.includes(player.playerId)
-          ? pendingAction.actionKind
-          : null;
-    const flip3RemainingVal =
-      snapshot.pendingFlip3 && snapshot.pendingFlip3.targetPlayerId === player.playerId
-        ? snapshot.pendingFlip3.cardsRemaining
-        : null;
-
-    return (
-      <PlayerLane
-        player={player}
-        isActive={snapshot.activePlayerId === player.playerId}
-        isViewer={snapshot.viewerPlayerId === player.playerId}
-        isDealer={player.seatIndex === snapshot.dealerSeat}
-        isActionSource={!!viewerIsSource}
-        isTargetable={isTargetable}
-        isSelfTargeting={isSelfTargeting}
-        incomingActionKind={incomingActionKindVal}
-        flip3Remaining={flip3RemainingVal}
-        onSelectTarget={
-          viewerIsSource
-            ? (playerId: string) => onResolveAction(playerId as Id<"players">)
-            : undefined
-        }
-        {...laneProps}
-        {...options}
-      />
-    );
-  };
-
-  const callText =
-    snapshot.roundStatus === "completed"
-      ? t("roundScoredReady")
-      : activePlayer
-        ? t("playerDeciding", { name: activePlayer.displayName })
-        : t("waitingResolution");
+  const callText = callTextForSnapshot(snapshot, activePlayer, t);
 
   const opponentsGridClass = opponentsGridCols(opponents.length);
 
@@ -198,130 +144,44 @@ export function GameTableView({
 
   return (
     <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
-      {/* ─────────── HUD ─────────── */}
-      <section
-        aria-label={t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
-        className="surface-elevated text-foreground overflow-hidden rounded-2xl"
-      >
-        <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
-          <div className="flex min-w-0 items-center gap-2.5">
-            {snapshot.status === "completed" ? (
-              <TrophyIcon className="text-primary size-5 shrink-0" aria-hidden />
-            ) : (
-              <CircleDotIcon className="text-primary size-5 shrink-0" aria-hidden />
-            )}
-            <div className="flex min-w-0 flex-col leading-tight">
-              <h1 className="font-heading text-foreground truncate text-sm font-medium tracking-tight sm:text-base">
-                {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
-              </h1>
-              <span className="text-muted-foreground text-xs">
-                {t("roundRace", {
-                  round: snapshot.currentRoundNumber,
-                  target: snapshot.targetScore,
-                })}
-              </span>
-            </div>
-          </div>
+      <GameTableHud
+        snapshot={snapshot}
+        t={t}
+        isPending={isPending}
+        callText={callText}
+        latestBody={latestBody}
+        activePlayer={activePlayer}
+        viewerPlayer={viewerPlayer}
+      />
 
-          <div className="ml-auto flex flex-wrap items-center gap-1.5">
-            <Badge variant="outline" className="game-match-status" data-status={snapshot.status}>
-              {t(`matchStatus.${snapshot.status}`)}
-            </Badge>
-            <Badge variant="outline" className="hidden sm:inline-flex">
-              {t("dealerSeat", { n: snapshot.dealerSeat + 1 })}
-            </Badge>
-            {activePlayer ? (
-              <Badge variant="default" className="max-w-[12rem]">
-                <UserRoundIcon className="size-3" aria-hidden />
-                <span className="truncate">{t("turnFor", { name: activePlayer.displayName })}</span>
-              </Badge>
-            ) : null}
-            {isPending ? (
-              <Badge variant="secondary" aria-live="polite">
-                <RefreshCwIcon className="size-3 animate-spin" aria-hidden />
-                <span className="hidden sm:inline">{t("updating")}</span>
-              </Badge>
-            ) : null}
-          </div>
-        </div>
+      <GameTableOpponentsSection
+        opponents={opponents}
+        opponentsGridClass={opponentsGridClass}
+        freezeLaneLayout={freezeLaneLayout}
+        t={t}
+        snapshot={snapshot}
+        viewerIsSource={viewerIsSource}
+        viewerCanTargetSelf={viewerCanTargetSelf}
+        onResolveAction={onResolveAction}
+        disableCardFlip3d={disableCardFlip3d}
+      />
 
-        {/* Status + Latest resolution — merged into one compact strip */}
-        <div className="border-border grid gap-3 border-t px-4 py-2.5 sm:grid-cols-2 sm:px-5">
-          <div className="space-y-0.5">
-            <div className="text-muted-foreground text-[0.65rem] font-medium tracking-wide uppercase">
-              {t("tableCall")}
-            </div>
-            <div className="text-foreground text-sm leading-snug">{callText}</div>
-            {viewerPlayer ? (
-              <div className="text-muted-foreground text-xs">
-                {t("playingAs", { name: viewerPlayer.displayName })}
-              </div>
-            ) : (
-              <div className="text-muted-foreground text-xs">{t("joinHint")}</div>
-            )}
-          </div>
-          <div className="border-border space-y-0.5 border-t pt-2.5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
-            <div className="text-muted-foreground flex items-center gap-1.5 text-[0.65rem] font-medium tracking-wide uppercase">
-              <AlertTriangleIcon className="size-3" aria-hidden />
-              {t("latestResolution")}
-            </div>
-            <div className="game-latest-resolution text-foreground text-sm leading-snug">
-              {latestBody}
-            </div>
-            {snapshot.latestEvent?.playerNames ? (
-              <div className="text-muted-foreground text-xs">
-                {snapshot.latestEvent.playerNames}
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </section>
-
-      {/* ─────────── Opponents ─────────── */}
-      {opponents.length > 0 ? (
-        <section aria-label={t("opponents")} className="space-y-2">
-          <div className="flex items-center justify-between px-1">
-            <div className="text-muted-foreground flex items-center gap-1.5 text-[0.7rem] font-medium tracking-wide uppercase">
-              <UsersIcon className="size-3.5" aria-hidden />
-              <span>{t("opponents")}</span>
-              <span className="text-muted-foreground/60">·</span>
-              <span className="tabular-nums">{opponents.length}</span>
-            </div>
-          </div>
-          {freezeLaneLayout ? (
-            <div className={cn("grid gap-3", opponentsGridClass)}>
-              {opponents.map((player) => (
-                <div key={player.playerId}>{renderPlayerLane(player, { compact: true })}</div>
-              ))}
-            </div>
-          ) : (
-            <motion.div
-              variants={listStagger}
-              initial="hidden"
-              animate="show"
-              className={cn("grid gap-3", opponentsGridClass)}
-            >
-              {opponents.map((player) => (
-                <motion.div key={player.playerId} variants={listItem}>
-                  {renderPlayerLane(player, { compact: true })}
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
-        </section>
-      ) : null}
-
-      {/* ─────────── Viewer lane ─────────── */}
       {viewer ? (
         <section aria-label={t("yourHand")} className="space-y-2">
           <div className="text-muted-foreground px-1 text-[0.7rem] font-medium tracking-wide uppercase">
             {t("yourHand")}
           </div>
-          {renderPlayerLane(viewer)}
+          <MatchPlayerLane
+            snapshot={snapshot}
+            player={viewer}
+            viewerIsSource={viewerIsSource}
+            viewerCanTargetSelf={viewerCanTargetSelf}
+            onResolveAction={onResolveAction}
+            disableCardFlip3d={disableCardFlip3d}
+          />
         </section>
       ) : null}
 
-      {/* ─────────── Desktop action dock (inline) ─────────── */}
       {hasTurnControls ? (
         <section
           aria-label={t("turnActions")}
@@ -331,34 +191,13 @@ export function GameTableView({
         </section>
       ) : null}
 
-      {/* ─────────── Round history and breakdown ─────────── */}
-      <Card className="w-full">
-        <CardContent>
-          <Accordion value={expandedSections} onValueChange={setExpandedSections}>
-            <AccordionItem value="history">
-              <AccordionTrigger className="text-xl">{tHistory("title")}</AccordionTrigger>
-              <AccordionContent>
-                <RoundHistoryTable history={snapshot.roundHistory} players={snapshot.players} />
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="breakdown">
-              <AccordionTrigger className="text-xl">
-                {tHistory("currentRoundBreakdownTitle")}
-              </AccordionTrigger>
-              <AccordionContent>
-                <div className="px-5 pt-2">
-                  <p className="text-muted-foreground text-sm">
-                    {tHistory("currentRoundBreakdownSubtitle")}
-                  </p>
-                </div>
-                <ScoreSummary players={snapshot.players} />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </CardContent>
-      </Card>
+      <RoundHistorySection
+        expandedSections={expandedSections}
+        onExpandedChange={setExpandedSections}
+        snapshot={snapshot}
+        tHistory={tHistory}
+      />
 
-      {/* ─────────── Sticky mobile/tablet action bar ─────────── */}
       {hasTurnControls ? (
         <div
           role="region"
@@ -370,6 +209,302 @@ export function GameTableView({
       ) : null}
     </div>
   );
+}
+
+type GameTableHudProps = {
+  snapshot: MatchSnapshot;
+  t: ReturnType<typeof useTranslations<"GameTable">>;
+  isPending: boolean;
+  callText: string;
+  latestBody: string;
+  activePlayer: MatchSnapshot["players"][number] | undefined;
+  viewerPlayer: MatchSnapshot["players"][number] | undefined;
+};
+
+function GameTableHud({
+  snapshot,
+  t,
+  isPending,
+  callText,
+  latestBody,
+  activePlayer,
+  viewerPlayer,
+}: GameTableHudProps) {
+  const matchComplete = snapshot.status === "completed";
+
+  return (
+    <section
+      aria-label={t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
+      className="surface-elevated text-foreground overflow-hidden rounded-2xl"
+    >
+      <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
+        <div className="flex min-w-0 items-center gap-2.5">
+          {matchComplete ? (
+            <TrophyIcon className="text-primary size-5 shrink-0" aria-hidden />
+          ) : (
+            <CircleDotIcon className="text-primary size-5 shrink-0" aria-hidden />
+          )}
+          <div className="flex min-w-0 flex-col leading-tight">
+            <h1 className="font-heading text-foreground truncate text-sm font-medium tracking-tight sm:text-base">
+              {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
+            </h1>
+            <span className="text-muted-foreground text-xs">
+              {t("roundRace", {
+                round: snapshot.currentRoundNumber,
+                target: snapshot.targetScore,
+              })}
+            </span>
+          </div>
+        </div>
+
+        <div className="ml-auto flex flex-wrap items-center gap-1.5">
+          <Badge variant="outline" className="game-match-status" data-status={snapshot.status}>
+            {t(`matchStatus.${snapshot.status}`)}
+          </Badge>
+          <Badge variant="outline" className="hidden sm:inline-flex">
+            {t("dealerSeat", { n: snapshot.dealerSeat + 1 })}
+          </Badge>
+          {activePlayer ? (
+            <Badge variant="default" className="max-w-[12rem]">
+              <UserRoundIcon className="size-3" aria-hidden />
+              <span className="truncate">{t("turnFor", { name: activePlayer.displayName })}</span>
+            </Badge>
+          ) : null}
+          {isPending ? (
+            <Badge variant="secondary" aria-live="polite">
+              <RefreshCwIcon className="size-3 animate-spin" aria-hidden />
+              <span className="hidden sm:inline">{t("updating")}</span>
+            </Badge>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="border-border grid gap-3 border-t px-4 py-2.5 sm:grid-cols-2 sm:px-5">
+        <div className="space-y-0.5">
+          <div className="text-muted-foreground text-[0.65rem] font-medium tracking-wide uppercase">
+            {t("tableCall")}
+          </div>
+          <div className="text-foreground text-sm leading-snug">{callText}</div>
+          {viewerPlayer ? (
+            <div className="text-muted-foreground text-xs">
+              {t("playingAs", { name: viewerPlayer.displayName })}
+            </div>
+          ) : (
+            <div className="text-muted-foreground text-xs">{t("joinHint")}</div>
+          )}
+        </div>
+        <div className="border-border space-y-0.5 border-t pt-2.5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
+          <div className="text-muted-foreground flex items-center gap-1.5 text-[0.65rem] font-medium tracking-wide uppercase">
+            <AlertTriangleIcon className="size-3" aria-hidden />
+            {t("latestResolution")}
+          </div>
+          <div className="game-latest-resolution text-foreground text-sm leading-snug">
+            {latestBody}
+          </div>
+          {snapshot.latestEvent?.playerNames ? (
+            <div className="text-muted-foreground text-xs">{snapshot.latestEvent.playerNames}</div>
+          ) : null}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+type GameTableOpponentsSectionProps = {
+  opponents: MatchSnapshot["players"];
+  opponentsGridClass: string;
+  freezeLaneLayout: boolean;
+  t: ReturnType<typeof useTranslations<"GameTable">>;
+  snapshot: MatchSnapshot;
+  viewerIsSource: boolean;
+  viewerCanTargetSelf: boolean;
+  onResolveAction: (targetPlayerId: Id<"players">) => void;
+  disableCardFlip3d: boolean;
+};
+
+function GameTableOpponentsSection({
+  opponents,
+  opponentsGridClass,
+  freezeLaneLayout,
+  t,
+  snapshot,
+  viewerIsSource,
+  viewerCanTargetSelf,
+  onResolveAction,
+  disableCardFlip3d,
+}: GameTableOpponentsSectionProps) {
+  if (opponents.length === 0) {
+    return null;
+  }
+
+  const gridClass = cn("grid gap-3", opponentsGridClass);
+
+  const laneFor = (player: MatchSnapshot["players"][number]) => (
+    <MatchPlayerLane
+      snapshot={snapshot}
+      player={player}
+      viewerIsSource={viewerIsSource}
+      viewerCanTargetSelf={viewerCanTargetSelf}
+      onResolveAction={onResolveAction}
+      disableCardFlip3d={disableCardFlip3d}
+      compact
+    />
+  );
+
+  return (
+    <section aria-label={t("opponents")} className="space-y-2">
+      <div className="flex items-center justify-between px-1">
+        <div className="text-muted-foreground flex items-center gap-1.5 text-[0.7rem] font-medium tracking-wide uppercase">
+          <UsersIcon className="size-3.5" aria-hidden />
+          <span>{t("opponents")}</span>
+          <span className="text-muted-foreground/60">·</span>
+          <span className="tabular-nums">{opponents.length}</span>
+        </div>
+      </div>
+      {freezeLaneLayout ? (
+        <div className={gridClass}>
+          {opponents.map((player) => (
+            <div key={player.playerId}>{laneFor(player)}</div>
+          ))}
+        </div>
+      ) : (
+        <motion.div
+          variants={listStagger}
+          initial="hidden"
+          animate="show"
+          className={gridClass}
+        >
+          {opponents.map((player) => (
+            <motion.div key={player.playerId} variants={listItem}>
+              {laneFor(player)}
+            </motion.div>
+          ))}
+        </motion.div>
+      )}
+    </section>
+  );
+}
+
+type MatchPlayerLaneProps = {
+  snapshot: MatchSnapshot;
+  player: MatchSnapshot["players"][number];
+  viewerIsSource: boolean;
+  viewerCanTargetSelf: boolean;
+  onResolveAction: (targetPlayerId: Id<"players">) => void;
+  disableCardFlip3d: boolean;
+  compact?: boolean;
+  overlapCards?: boolean;
+};
+
+function MatchPlayerLane({
+  snapshot,
+  player,
+  viewerIsSource,
+  viewerCanTargetSelf,
+  onResolveAction,
+  disableCardFlip3d,
+  compact,
+  overlapCards,
+}: MatchPlayerLaneProps) {
+  const pendingAction = snapshot.pendingAction;
+  const isTargetable =
+    viewerIsSource &&
+    !!pendingAction &&
+    pendingAction.eligibleTargetIds.includes(player.playerId);
+  const isSelfTargeting = !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
+  const incomingActionKindVal = incomingActionKindForPlayer(pendingAction, player.playerId);
+  const flip3RemainingVal =
+    snapshot.pendingFlip3 && snapshot.pendingFlip3.targetPlayerId === player.playerId
+      ? snapshot.pendingFlip3.cardsRemaining
+      : null;
+
+  return (
+    <PlayerLane
+      player={player}
+      isActive={snapshot.activePlayerId === player.playerId}
+      isViewer={snapshot.viewerPlayerId === player.playerId}
+      isDealer={player.seatIndex === snapshot.dealerSeat}
+      isActionSource={!!viewerIsSource}
+      isTargetable={isTargetable}
+      isSelfTargeting={isSelfTargeting}
+      incomingActionKind={incomingActionKindVal}
+      flip3Remaining={flip3RemainingVal}
+      onSelectTarget={
+        viewerIsSource
+          ? (playerId: string) => onResolveAction(playerId as Id<"players">)
+          : undefined
+      }
+      disableCardFlip3d={disableCardFlip3d}
+      compact={compact}
+      overlapCards={overlapCards}
+    />
+  );
+}
+
+type RoundHistorySectionProps = {
+  expandedSections: string[];
+  onExpandedChange: (value: string[]) => void;
+  snapshot: MatchSnapshot;
+  tHistory: ReturnType<typeof useTranslations<"RoundHistory">>;
+};
+
+function RoundHistorySection({
+  expandedSections,
+  onExpandedChange,
+  snapshot,
+  tHistory,
+}: RoundHistorySectionProps) {
+  return (
+    <Card className="w-full">
+      <CardContent>
+        <Accordion value={expandedSections} onValueChange={onExpandedChange}>
+          <AccordionItem value="history">
+            <AccordionTrigger className="text-xl">{tHistory("title")}</AccordionTrigger>
+            <AccordionContent>
+              <RoundHistoryTable history={snapshot.roundHistory} players={snapshot.players} />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="breakdown">
+            <AccordionTrigger className="text-xl">
+              {tHistory("currentRoundBreakdownTitle")}
+            </AccordionTrigger>
+            <AccordionContent>
+              <div className="px-5 pt-2">
+                <p className="text-muted-foreground text-sm">
+                  {tHistory("currentRoundBreakdownSubtitle")}
+                </p>
+              </div>
+              <ScoreSummary players={snapshot.players} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </CardContent>
+    </Card>
+  );
+}
+
+function incomingActionKindForPlayer(
+  pendingAction: MatchSnapshot["pendingAction"],
+  playerId: Id<"players">,
+): "flip_three" | "freeze" | null {
+  if (!pendingAction || playerId === pendingAction.sourcePlayerId) {
+    return null;
+  }
+  return pendingAction.eligibleTargetIds.includes(playerId) ? pendingAction.actionKind : null;
+}
+
+function callTextForSnapshot(
+  snapshot: MatchSnapshot,
+  activePlayer: MatchSnapshot["players"][number] | undefined,
+  t: ReturnType<typeof useTranslations<"GameTable">>,
+) {
+  if (snapshot.roundStatus === "completed") {
+    return t("roundScoredReady");
+  }
+  if (activePlayer) {
+    return t("playerDeciding", { name: activePlayer.displayName });
+  }
+  return t("waitingResolution");
 }
 
 /** Viewer first/pinned, opponents in seat order. */

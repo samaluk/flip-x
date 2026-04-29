@@ -34,14 +34,6 @@
         "count": 1
       }
     },
-    "game/screens/game-table-view.tsx": {
-      "complexity_moderate": {
-        "count": 1
-      },
-      "crap_moderate": {
-        "count": 1
-      }
-    },
     "game/ui/player-lane.tsx": {
       "crap_moderate": {
         "count": 2
