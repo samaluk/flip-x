@@ -9,6 +9,7 @@ import {
   createStartedMatchWithOptions,
   getSnapshotForAnySession,
   readRoundState,
+  requireActiveSessionForSnapshot,
   runCommand,
 } from "./helpers";
 
@@ -33,15 +34,11 @@ describe("Confect command runner turns", () => {
         throw new Error("Expected snapshot before TAKE_TURN");
       }
 
-      const activeSession = sessions.find(
-        (session) =>
-          snapshot.activePlayerId ===
-          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        snapshot,
+        sessions,
+        "Expected an active session before TAKE_TURN",
       );
-
-      if (!activeSession) {
-        throw new Error("Expected an active session before TAKE_TURN");
-      }
 
       const updated = yield* runCommand(matchId, activeSession.sessionId, {
         type: "TAKE_TURN",
@@ -79,14 +76,11 @@ describe("Confect command runner turns", () => {
         throw new Error("Expected a snapshot before TAKE_TURN");
       }
 
-      const activeSession = sessions.find(
-        (session) =>
-          startingSnapshot.activePlayerId ===
-          startingSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        startingSnapshot,
+        sessions,
+        "Expected an active session before TAKE_TURN",
       );
-      if (!activeSession) {
-        throw new Error("Expected an active session before TAKE_TURN");
-      }
 
       const snapshot = yield* runCommand(matchId, activeSession.sessionId, {
         type: "TAKE_TURN",

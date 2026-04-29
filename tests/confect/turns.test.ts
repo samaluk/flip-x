@@ -6,7 +6,7 @@ import type { Card } from "@/game/logic/card-types";
 import refs from "@/confect/_generated/refs";
 
 import * as TestConfect from "./TestConfect";
-import { createStartedMatchWithOptions, getSnapshotForAnySession } from "./helpers";
+import { createStartedMatchWithOptions, getSnapshotForAnySession, requireActiveSessionForSnapshot } from "./helpers";
 
 const nonActionDrawPile: Card[] = Array.from({ length: 50 }, (_, i) => ({
   id: `num-${i}`,
@@ -29,15 +29,11 @@ describe("Confect turns", () => {
         throw new Error("Expected snapshot before taking a turn");
       }
 
-      const activeSession = sessions.find(
-        (session) =>
-          snapshot.activePlayerId ===
-          snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        snapshot,
+        sessions,
+        "Expected an active session for takeTurn",
       );
-
-      if (!activeSession) {
-        throw new Error("Expected an active session for takeTurn");
-      }
 
       const updated = yield* client.mutation(refs.public.turns.takeTurn, {
         matchId: matchId as never,

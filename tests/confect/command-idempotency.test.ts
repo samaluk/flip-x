@@ -3,21 +3,22 @@ import { Effect } from "effect";
 import { expect } from "vitest";
 
 import * as TestConfect from "./TestConfect";
-import { createStartedMatch, createStartedMatchWithOptions, runCommand } from "./helpers";
+import {
+  createStartedMatch,
+  createStartedMatchWithOptions,
+  requireActiveSessionForSnapshot,
+  runCommand,
+} from "./helpers";
 
 describe("Confect command runner idempotency", () => {
   it.effect("rejects stale command versions", () =>
     Effect.gen(function* () {
       const { matchId, sessions, started } = yield* createStartedMatch(["Host", "Guest"]);
-      const activeSession = sessions.find(
-        (session) =>
-          started.activePlayerId ===
-          started.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        started,
+        sessions,
+        "Expected active session for stale command test",
       );
-
-      if (!activeSession) {
-        throw new Error("Expected active session for stale command test");
-      }
 
       yield* Effect.exit(
         runCommand(matchId, activeSession.sessionId, {
@@ -50,15 +51,11 @@ describe("Confect command runner idempotency", () => {
           },
         },
       );
-      const activeSession = sessions.find(
-        (session) =>
-          started.activePlayerId ===
-          started.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        started,
+        sessions,
+        "Expected active session for idempotency test",
       );
-
-      if (!activeSession) {
-        throw new Error("Expected active session for idempotency test");
-      }
 
       const command = {
         type: "TAKE_TURN" as const,
