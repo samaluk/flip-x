@@ -1,34 +1,6 @@
-import type { ActionCard, Card, NumberCard } from "@/game/logic/card-types";
-
+import { actionCard, numberCard, withReplayFillerCards } from "./card-builders";
 import type { CanonicalReplaySnapshot, DeterministicReplayScenario } from "./scenario-types";
 import { cloneDeterministicStartOptions } from "./scenario-runner";
-
-function numberCard(id: string, numberValue: number): NumberCard {
-  return {
-    id,
-    type: "number",
-    label: String(numberValue),
-    numberValue,
-  };
-}
-
-function actionCard(id: string, actionKind: ActionCard["actionKind"]): ActionCard {
-  return {
-    id,
-    type: "action",
-    label: actionKind,
-    actionKind,
-  };
-}
-
-function withFillerCards(...cards: Card[]) {
-  return [
-    ...cards,
-    numberCard("fill-1", 11),
-    numberCard("fill-2", 12),
-    actionCard("fill-3", "second_chance"),
-  ];
-}
 
 function state(snapshot: CanonicalReplaySnapshot): CanonicalReplaySnapshot {
   return snapshot;
@@ -40,7 +12,7 @@ export const MATCH_REPLAY_SCENARIO: DeterministicReplayScenario = {
   playerNames: ["Host", "Guest"],
   setupMatch: {
     roundSeed: {
-      drawPile: withFillerCards(numberCard("m-open-1", 1), numberCard("m-open-2", 7)),
+      drawPile: withReplayFillerCards(numberCard("m-open-1", 1), numberCard("m-open-2", 7)),
     },
   },
   decisionScript: [
@@ -135,7 +107,7 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
   playerNames: ["Host", "Guest", "Third"],
   setupMatch: {
     roundSeed: {
-      drawPile: withFillerCards(
+      drawPile: withReplayFillerCards(
         numberCard("s-open-1", 1),
         numberCard("s-open-2", 2),
         numberCard("s-open-3", 3),
@@ -144,7 +116,7 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
   },
   setupRound: {
     roundSeed: {
-      drawPile: withFillerCards(
+      drawPile: withReplayFillerCards(
         numberCard("r-open-1", 4),
         numberCard("r-open-2", 5),
         numberCard("r-open-3", 6),
