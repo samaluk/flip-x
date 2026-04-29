@@ -21,14 +21,6 @@
         "count": 1
       }
     },
-    "game/application/run-command.ts": {
-      "complexity_critical": {
-        "count": 1
-      },
-      "crap_critical": {
-        "count": 1
-      }
-    },
     "game/cards/action-content.tsx": {
       "complexity_moderate": {
         "count": 1
@@ -103,7 +95,5 @@
     }
   },
   "runtime_coverage_findings": [],
-  "target_keys": [
-    "game/application/run-command.ts:complexity"
-  ]
+  "target_keys": []
 }

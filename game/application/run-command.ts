@@ -23,6 +23,7 @@ import {
 } from "../logic/command-handler";
 import { finalizeRound } from "../logic/round-finalization";
 import type { MatchAggregate } from "../infrastructure/load-match-aggregate";
+import type { RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "./game-command";
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameTransition } from "../infrastructure/save-command-result";
@@ -164,11 +165,16 @@ function handleStartNextRoundCommand(
   });
 }
 
-function handleTakeTurnCommand(
+type ActiveRoundViewer = {
+  latestRound: Doc<"rounds">;
+  roundRuntime: RoundRuntime;
+  viewerPlayerId: Id<"players">;
+};
+
+function requireActiveRoundAndViewer(
   ctx: CommandHandlerContext,
   matchId: Id<"matches">,
-  command: Extract<GameCommand, { type: "TAKE_TURN" }>,
-): Effect.Effect<GameTransition, AppError> {
+): Effect.Effect<ActiveRoundViewer, AppError> {
   return Effect.gen(function* () {
     if (!ctx.latestRound || !ctx.roundRuntime) {
       return yield* matchNotFound({ matchId: String(matchId) });
@@ -176,22 +182,40 @@ function handleTakeTurnCommand(
     if (!ctx.viewerPlayerId) {
       return yield* playerNotJoined();
     }
-    if (ctx.roundRuntime.activePlayerId !== String(ctx.viewerPlayerId)) {
+    return {
+      latestRound: ctx.latestRound,
+      roundRuntime: ctx.roundRuntime,
+      viewerPlayerId: ctx.viewerPlayerId,
+    };
+  });
+}
+
+function handleTakeTurnCommand(
+  ctx: CommandHandlerContext,
+  matchId: Id<"matches">,
+  command: Extract<GameCommand, { type: "TAKE_TURN" }>,
+): Effect.Effect<GameTransition, AppError> {
+  return Effect.gen(function* () {
+    const { latestRound, roundRuntime, viewerPlayerId } = yield* requireActiveRoundAndViewer(
+      ctx,
+      matchId,
+    );
+    if (roundRuntime.activePlayerId !== String(viewerPlayerId)) {
       return yield* invalidTurn();
     }
 
     const resolved = takeTurnAction(
       ctx.orderedPlayers,
-      ctx.roundRuntime,
+      roundRuntime,
       ctx.playerStates,
-      String(ctx.viewerPlayerId),
+      String(viewerPlayerId),
       command.action,
     );
     return finalizeIfNeeded({
       command: command.type,
       roundWrite: {
         kind: "update",
-        roundId: ctx.latestRound._id,
+        roundId: latestRound._id,
         round: resolved.round,
       },
       playerStates: resolved.playerStates,
@@ -207,22 +231,20 @@ function handleResolveActionCommand(
   command: Extract<GameCommand, { type: "RESOLVE_ACTION" }>,
 ): Effect.Effect<GameTransition, AppError> {
   return Effect.gen(function* () {
-    if (!ctx.latestRound || !ctx.roundRuntime) {
-      return yield* matchNotFound({ matchId: String(matchId) });
-    }
-    if (!ctx.viewerPlayerId) {
-      return yield* playerNotJoined();
-    }
+    const { latestRound, roundRuntime, viewerPlayerId } = yield* requireActiveRoundAndViewer(
+      ctx,
+      matchId,
+    );
     if (
-      !ctx.roundRuntime.pendingAction ||
-      ctx.roundRuntime.pendingAction.sourcePlayerId !== String(ctx.viewerPlayerId)
+      !roundRuntime.pendingAction ||
+      roundRuntime.pendingAction.sourcePlayerId !== String(viewerPlayerId)
     ) {
       return yield* invalidAction();
     }
 
     const resolved = resolvePendingAction(
       ctx.orderedPlayers,
-      ctx.roundRuntime,
+      roundRuntime,
       ctx.playerStates,
       command.targetPlayerId,
     );
@@ -230,7 +252,7 @@ function handleResolveActionCommand(
       command: command.type,
       roundWrite: {
         kind: "update",
-        roundId: ctx.latestRound._id,
+        roundId: latestRound._id,
         round: resolved.round,
       },
       playerStates: resolved.playerStates,
