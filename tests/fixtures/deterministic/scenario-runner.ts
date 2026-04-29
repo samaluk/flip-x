@@ -108,10 +108,16 @@ function divergedResult(
   };
 }
 
-export async function runDeterministicReplayScenario(
+type StartedMatch = Awaited<ReturnType<ReplayHarness["createStartedMatch"]>>;
+
+function isReplayResult(value: ConfectMatchSnapshot | ReplayResult): value is ReplayResult {
+  return value.status === "invalid" || value.status === "diverged" || value.status === "matched";
+}
+
+async function loadReplayInitialSnapshot(
   scenario: DeterministicReplayScenario,
   harness: ReplayHarness,
-): Promise<ReplayResult> {
+): Promise<{ started: StartedMatch; snapshot: ConfectMatchSnapshot } | ReplayResult> {
   const started = await harness.createStartedMatch([...scenario.playerNames], {
     deterministicStart: cloneDeterministicStartOptions(scenario.setupMatch),
   });
@@ -132,70 +138,161 @@ export async function runDeterministicReplayScenario(
     );
   }
 
+  return { started, snapshot };
+}
+
+function requireActorSessionForStep(
+  snapshot: ConfectMatchSnapshot,
+  started: StartedMatch,
+  scenario: DeterministicReplayScenario,
+  index: number,
+  decision: ReplayDecisionStep,
+): ReplaySessionRecord | ReplayResult {
+  if (snapshot.roundStatus === "completed" || snapshot.roundStatus === "scoring") {
+    return invalidResult(
+      scenario,
+      index,
+      `Replay received extra step ${decision.stepNumber} after gameplay already ended`,
+    );
+  }
+
+  const actorSession = findSession(started.sessions, decision.actor);
+  if (!actorSession) {
+    return invalidResult(scenario, index, `No session found for actor ${decision.actor}`);
+  }
+
+  return actorSession;
+}
+
+async function advanceSnapshotForDecision(
+  harness: ReplayHarness,
+  started: StartedMatch,
+  scenario: DeterministicReplayScenario,
+  index: number,
+  snapshot: ConfectMatchSnapshot,
+  decision: ReplayDecisionStep,
+  actorSession: ReplaySessionRecord,
+): Promise<ConfectMatchSnapshot | ReplayResult> {
+  if (decision.decisionType === "turn_action") {
+    return harness.takeTurn(
+      started.matchId,
+      actorSession.sessionId,
+      decision.choice,
+      snapshot.version,
+    );
+  }
+
+  if (!snapshot.pendingAction) {
+    return invalidResult(
+      scenario,
+      index,
+      `Expected pending action for step ${decision.stepNumber}`,
+    );
+  }
+  if (snapshot.pendingAction.actionKind !== decision.promptKind) {
+    return invalidResult(
+      scenario,
+      index,
+      `Expected ${decision.promptKind} prompt for step ${decision.stepNumber}`,
+    );
+  }
+
+  const targetPlayerId = findPlayerId(snapshot, decision.choice);
+  if (!targetPlayerId) {
+    return invalidResult(scenario, index, `No target found for player ${decision.choice}`);
+  }
+
+  return harness.resolveAction(
+    started.matchId,
+    actorSession.sessionId,
+    targetPlayerId,
+    snapshot.version,
+  );
+}
+
+function checkStepMatchesExpectedCanonical(
+  scenario: DeterministicReplayScenario,
+  index: number,
+  decision: ReplayDecisionStep,
+  nextSnapshot: ConfectMatchSnapshot,
+): { snapshot: ConfectMatchSnapshot } | ReplayResult {
+  const actualState = canonicalizeSnapshot(nextSnapshot);
+  const expectedState = scenario.expectedStates[index];
+
+  if (!expectedState) {
+    return invalidResult(
+      scenario,
+      index + 1,
+      `Missing expected state for step ${decision.stepNumber}`,
+    );
+  }
+
+  if (JSON.stringify(actualState) !== JSON.stringify(expectedState)) {
+    return divergedResult(scenario, index + 1, decision, expectedState, actualState);
+  }
+
+  return { snapshot: nextSnapshot };
+}
+
+function isReplaySessionRecord(
+  value: ReplaySessionRecord | ReplayResult,
+): value is ReplaySessionRecord {
+  return !("scenarioName" in value);
+}
+
+async function applyReplayDecisionStep(
+  harness: ReplayHarness,
+  started: StartedMatch,
+  scenario: DeterministicReplayScenario,
+  index: number,
+  decision: ReplayDecisionStep,
+  snapshot: ConfectMatchSnapshot,
+): Promise<{ snapshot: ConfectMatchSnapshot } | ReplayResult> {
+  const sessionOrError = requireActorSessionForStep(snapshot, started, scenario, index, decision);
+  if (!isReplaySessionRecord(sessionOrError)) {
+    return sessionOrError;
+  }
+
+  const advanced = await advanceSnapshotForDecision(
+    harness,
+    started,
+    scenario,
+    index,
+    snapshot,
+    decision,
+    sessionOrError,
+  );
+  if (isReplayResult(advanced)) {
+    return advanced;
+  }
+
+  return checkStepMatchesExpectedCanonical(scenario, index, decision, advanced);
+}
+
+export async function runDeterministicReplayScenario(
+  scenario: DeterministicReplayScenario,
+  harness: ReplayHarness,
+): Promise<ReplayResult> {
+  const loaded = await loadReplayInitialSnapshot(scenario, harness);
+  if ("status" in loaded) {
+    return loaded;
+  }
+
+  let { started, snapshot } = loaded;
+
   for (const [index, decision] of scenario.decisionScript.entries()) {
-    if (snapshot.roundStatus === "completed" || snapshot.roundStatus === "scoring") {
-      return invalidResult(
-        scenario,
-        index,
-        `Replay received extra step ${decision.stepNumber} after gameplay already ended`,
-      );
+    const step = await applyReplayDecisionStep(
+      harness,
+      started,
+      scenario,
+      index,
+      decision,
+      snapshot,
+    );
+    if ("status" in step) {
+      return step;
     }
-
-    const actorSession = findSession(started.sessions, decision.actor);
-    if (!actorSession) {
-      return invalidResult(scenario, index, `No session found for actor ${decision.actor}`);
-    }
-
-    if (decision.decisionType === "turn_action") {
-      snapshot = await harness.takeTurn(
-        started.matchId,
-        actorSession.sessionId,
-        decision.choice,
-        snapshot.version,
-      );
-    } else {
-      if (!snapshot.pendingAction) {
-        return invalidResult(
-          scenario,
-          index,
-          `Expected pending action for step ${decision.stepNumber}`,
-        );
-      }
-      if (snapshot.pendingAction.actionKind !== decision.promptKind) {
-        return invalidResult(
-          scenario,
-          index,
-          `Expected ${decision.promptKind} prompt for step ${decision.stepNumber}`,
-        );
-      }
-
-      const targetPlayerId = findPlayerId(snapshot, decision.choice);
-      if (!targetPlayerId) {
-        return invalidResult(scenario, index, `No target found for player ${decision.choice}`);
-      }
-
-      snapshot = await harness.resolveAction(
-        started.matchId,
-        actorSession.sessionId,
-        targetPlayerId,
-        snapshot.version,
-      );
-    }
-
-    const actualState = canonicalizeSnapshot(snapshot);
-    const expectedState = scenario.expectedStates[index];
-
-    if (!expectedState) {
-      return invalidResult(
-        scenario,
-        index + 1,
-        `Missing expected state for step ${decision.stepNumber}`,
-      );
-    }
-
-    if (JSON.stringify(actualState) !== JSON.stringify(expectedState)) {
-      return divergedResult(scenario, index + 1, decision, expectedState, actualState);
-    }
+    snapshot = step.snapshot;
   }
 
   if (scenario.expectedStates.length !== scenario.decisionScript.length) {

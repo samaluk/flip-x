@@ -82,11 +82,6 @@
       "crap_moderate": {
         "count": 1
       }
-    },
-    "tests/fixtures/deterministic/scenario-runner.ts": {
-      "complexity_high": {
-        "count": 1
-      }
     }
   },
   "runtime_coverage_findings": [],
