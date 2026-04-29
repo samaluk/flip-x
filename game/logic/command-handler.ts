@@ -34,6 +34,77 @@ function transitionDealingToPlayerTurns(
     firstActiveSeat === null ? null : getPlayerBySeat(players, firstActiveSeat).playerId;
 }
 
+function runOneDealingStep(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+  events: RoundEvent[],
+): boolean {
+  const player = getPlayerBySeat(players, round.openingSeatIndex);
+  const playerState = playerStates[player.playerId];
+
+  if (!playerState) {
+    return false;
+  }
+
+  if (playerState.status === "waiting") {
+    playerState.status = "active";
+  }
+
+  const card = drawCard(round);
+  if (!card) {
+    return false;
+  }
+
+  const nextOpeningSeatIndex = round.openingSeatIndex + 1;
+  const wrappedToDealer =
+    getPlayerBySeat(players, nextOpeningSeatIndex).seatIndex === round.dealerSeat;
+  round.openingSeatIndex = nextOpeningSeatIndex;
+
+  addEvent(events, {
+    eventType: "initial_deal",
+    actorPlayerId: player.playerId,
+    targetPlayerId: player.playerId,
+    payload: cardEventPayload(card),
+  });
+
+  applyCardToPlayer(round, players, playerStates, player.playerId, card, "dealing", events);
+
+  if (round.pendingFlip3) {
+    round.phase = "player_turns";
+    return false;
+  }
+
+  if (round.phase !== "dealing") {
+    return false;
+  }
+
+  if (wrappedToDealer) {
+    transitionDealingToPlayerTurns(round, players, playerStates);
+    return false;
+  }
+
+  return true;
+}
+
+function finalizeDealingIfStuck(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+) {
+  if (round.phase !== "dealing" || round.pendingAction || round.pendingFlip3) {
+    return;
+  }
+  const anyActive = Object.values(playerStates).some((s) => s.status === "active");
+  if (!anyActive) {
+    round.phase = "scoring";
+    round.endedBy = "all_inactive";
+    round.activePlayerId = null;
+  } else {
+    transitionDealingToPlayerTurns(round, players, playerStates);
+  }
+}
+
 export function createPlayerRoundStates(players: OrderedPlayer[]) {
   return Object.fromEntries(
     players.map((player) => [
@@ -87,64 +158,12 @@ export function continueRound(
   const events: RoundEvent[] = [];
 
   while (round.phase === "dealing" && !round.pendingAction && !round.pendingFlip3) {
-    const player = getPlayerBySeat(players, round.openingSeatIndex);
-    const playerState = playerStates[player.playerId];
-
-    if (!playerState) {
-      break;
-    }
-
-    if (playerState.status === "waiting") {
-      playerState.status = "active";
-    }
-
-    const card = drawCard(round);
-
-    if (!card) {
-      break;
-    }
-
-    const nextOpeningSeatIndex = round.openingSeatIndex + 1;
-    const wrappedToDealer =
-      getPlayerBySeat(players, nextOpeningSeatIndex).seatIndex === round.dealerSeat;
-    round.openingSeatIndex = nextOpeningSeatIndex;
-
-    addEvent(events, {
-      eventType: "initial_deal",
-      actorPlayerId: player.playerId,
-      targetPlayerId: player.playerId,
-      payload: cardEventPayload(card),
-    });
-
-      applyCardToPlayer(round, players, playerStates, player.playerId, card, "dealing", events);
-
-      // If Flip Three was dealt, transition to player_turns so the target can hit
-      if (round.pendingFlip3) {
-        round.phase = "player_turns";
-        break;
-      }
-
-      if (round.phase !== "dealing") {
-        break;
-      }
-
-    if (wrappedToDealer) {
-      transitionDealingToPlayerTurns(round, players, playerStates);
+    if (!runOneDealingStep(round, players, playerStates, events)) {
       break;
     }
   }
 
-  // Safety: if loop exited while still dealing, force valid phase
-  if (round.phase === "dealing" && !round.pendingAction && !round.pendingFlip3) {
-    const anyActive = Object.values(playerStates).some((s) => s.status === "active");
-    if (!anyActive) {
-      round.phase = "scoring";
-      round.endedBy = "all_inactive";
-      round.activePlayerId = null;
-    } else {
-      transitionDealingToPlayerTurns(round, players, playerStates);
-    }
-  }
+  finalizeDealingIfStuck(round, players, playerStates);
 
   maybeFinishRound(round, players, playerStates);
 

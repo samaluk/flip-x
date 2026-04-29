@@ -28,7 +28,7 @@
     },
     "game/logic/command-handler.ts": {
       "complexity_moderate": {
-        "count": 2
+        "count": 1
       }
     },
     "game/screens/game-page-client.tsx": {
