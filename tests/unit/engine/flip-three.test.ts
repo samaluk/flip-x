@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { takeTurnAction } from "@/game/logic/command-handler";
 import { actionCard, numberCard, modifierCard } from "@/tests/builders/cards";
+import { activePlayerHitsDuplicateSeven } from "@/tests/builders/duplicate-seven-hit";
 import {
   createTurnRound,
   createActivePlayerStates,
@@ -45,9 +46,7 @@ describe("flip three", () => {
   });
 
   it("clears Flip Three when the target busts", () => {
-    const playerStates = createActivePlayerStates();
-    playerStates.p1.numberCards = [numberCard("n1", 7)];
-    const round = createTurnRound();
+    const { playerStates, round } = activePlayerHitsDuplicateSeven();
     round.pendingFlip3 = {
       sourcePlayerId: "p2",
       targetPlayerId: "p1",
@@ -55,7 +54,6 @@ describe("flip three", () => {
       deferredActionCards: [actionCard("queued-freeze", "freeze")],
     };
     playerStates.p1.heldActionCards = [actionCard("queued-freeze", "freeze")];
-    round.drawPile = [numberCard("dup", 7)];
 
     const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
 
@@ -92,7 +90,28 @@ describe("flip three", () => {
     expect(resolved.playerStates.p1.heldActionCards).toHaveLength(0);
   });
 
-  it("defers freeze drawn during Flip Three until the sequence completes", () => {
+  it.each([
+    {
+      title: "freeze",
+      id: "freeze-1" as const,
+      actionKind: "freeze" as const,
+      assertExtra: (resolved: {
+        playerStates: { p1: { heldActionCards: unknown[] } };
+        events: Array<{ eventType: string }>;
+      }) => {
+        expect(resolved.playerStates.p1.heldActionCards).toEqual([actionCard("freeze-1", "freeze")]);
+        expect(resolved.events.some((event) => event.eventType === "deferred_action")).toBe(true);
+      },
+    },
+    {
+      title: "nested Flip Three",
+      id: "flip3-1" as const,
+      actionKind: "flip_three" as const,
+      assertExtra: (resolved: { events: Array<{ eventType: string }> }) => {
+        expect(resolved.events.some((event) => event.eventType === "flip3_completed")).toBe(true);
+      },
+    },
+  ])("defers %s drawn during Flip Three until the sequence completes", ({ id, actionKind, assertExtra }) => {
     const playerStates = createActivePlayerStates();
     const round = createTurnRound();
     round.pendingFlip3 = {
@@ -101,38 +120,16 @@ describe("flip three", () => {
       cardsRemaining: 1,
       deferredActionCards: [],
     };
-    round.drawPile = [actionCard("freeze-1", "freeze")];
+    round.drawPile = [actionCard(id, actionKind)];
 
     const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
 
     expect(resolved.round.pendingFlip3).toBeNull();
     expect(resolved.round.pendingAction).toMatchObject({
       sourcePlayerId: "p1",
-      actionKind: "freeze",
+      actionKind,
     });
-    expect(resolved.playerStates.p1.heldActionCards).toEqual([actionCard("freeze-1", "freeze")]);
-    expect(resolved.events.some((event) => event.eventType === "deferred_action")).toBe(true);
-  });
-
-  it("defers nested Flip Three draws until the current Flip Three completes", () => {
-    const playerStates = createActivePlayerStates();
-    const round = createTurnRound();
-    round.pendingFlip3 = {
-      sourcePlayerId: "p2",
-      targetPlayerId: "p1",
-      cardsRemaining: 1,
-      deferredActionCards: [],
-    };
-    round.drawPile = [actionCard("flip3-1", "flip_three")];
-
-    const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
-
-    expect(resolved.round.pendingFlip3).toBeNull();
-    expect(resolved.round.pendingAction).toMatchObject({
-      sourcePlayerId: "p1",
-      actionKind: "flip_three",
-    });
-    expect(resolved.events.some((event) => event.eventType === "flip3_completed")).toBe(true);
+    assertExtra(resolved);
   });
 
   it("preserves a nested Flip Three that auto-resolves to a single active target", () => {

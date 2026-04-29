@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { takeTurnAction, resolvePendingAction } from "@/game/logic/command-handler";
 import { InvalidTurn, InvalidAction, InvalidTarget } from "@/shared/lib/errors/domain";
 import { actionCard, numberCard } from "@/tests/builders/cards";
+import { activePlayerHitsDuplicateSeven } from "@/tests/builders/duplicate-seven-hit";
 import {
   createTurnRound,
   createActivePlayerStates,
@@ -11,10 +12,7 @@ import {
 
 describe("turn actions", () => {
   it("busts a player when they hit a duplicate number without Second Chance", () => {
-    const playerStates = createActivePlayerStates();
-    playerStates.p1.numberCards = [numberCard("n1", 7)];
-    const round = createTurnRound();
-    round.drawPile = [numberCard("dup", 7)];
+    const { playerStates, round } = activePlayerHitsDuplicateSeven();
 
     const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
 
