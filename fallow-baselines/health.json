@@ -5,10 +5,10 @@
         "count": 1
       },
       "crap_high": {
-        "count": 2
+        "count": 1
       },
       "crap_moderate": {
-        "count": 1
+        "count": 2
       }
     },
     "confect/admin.ts": {
@@ -61,7 +61,7 @@
       "crap_critical": {
         "count": 1
       },
-      "crap_high": {
+      "crap_moderate": {
         "count": 1
       }
     },
@@ -86,7 +86,7 @@
         "count": 1
       },
       "crap_moderate": {
-        "count": 3
+        "count": 1
       }
     },
     "game/ui/turn-controls.tsx": {
@@ -99,12 +99,12 @@
         "count": 1
       }
     },
-    "tests/confect/deterministic-replay.test.ts": {
+    "tests/fixtures/deterministic/replay-harness-factory.ts": {
       "complexity_moderate": {
-        "count": 2
+        "count": 1
       },
       "crap_moderate": {
-        "count": 2
+        "count": 1
       }
     },
     "tests/fixtures/deterministic/scenario-runner.ts": {
@@ -116,8 +116,6 @@
   "runtime_coverage_findings": [],
   "target_keys": [
     "game/logic/command-handler.ts:complexity",
-    "confect/lib/ctx.ts:dead code",
-    "game/application/run-command.ts:complexity",
-    "game/ui/player-lane.tsx:untested risk"
+    "game/application/run-command.ts:complexity"
   ]
 }
