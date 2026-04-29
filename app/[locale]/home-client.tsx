@@ -34,7 +34,7 @@ type LobbyJoinMutationArgs = {
     matchId: string;
     playerName: string;
     playerColorId: PlayerColorId;
-  }) => Promise<void>;
+  }) => Promise<unknown>;
   lobbyCode: string;
   playerName: string;
   colorId: PlayerColorId;
