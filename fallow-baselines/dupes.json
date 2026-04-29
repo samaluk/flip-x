@@ -1,7 +1,3 @@
 {
-  "clone_groups": [
-    "tests/confect/helpers.ts:305-312|tests/confect/helpers.ts:48-54|tests/fixtures/deterministic/replay-harness-factory.ts:114-120",
-    "tests/confect/helpers.ts:281-294|tests/fixtures/deterministic/replay-harness-factory.ts:92-103",
-    "tests/confect/helpers.ts:296-313|tests/fixtures/deterministic/replay-harness-factory.ts:104-121"
-  ]
+  "clone_groups": []
 }

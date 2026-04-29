@@ -3,8 +3,8 @@ import refs from "@/confect/_generated/refs";
 import { Effect, type ParseResult } from "effect";
 
 import {
+  classifyRoundBoundaryAdvanceStepOrThrow,
   requireActiveSessionForSnapshot,
-  requireSourceSessionForPendingAction,
 } from "./match-session-for-snapshot";
 import type { ReplayHarness } from "./scenario-runner";
 import type { DeterministicStartOptions } from "./scenario-types";
@@ -92,30 +92,23 @@ export function createDeterministicReplayHarness(
           );
           if (snapshot) break;
         }
-        if (!snapshot) {
-          throw new Error("Expected a match snapshot while resolving gameplay");
+        const step = classifyRoundBoundaryAdvanceStepOrThrow(snapshot, sessions);
+        if (step.kind === "terminal") {
+          return step.snapshot;
         }
-        if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
-          return snapshot;
-        }
-        if (snapshot.pendingAction) {
-          const sourceSession = requireSourceSessionForPendingAction(
-            snapshot,
-            sessions,
-            "Expected a source session for pending action",
-          );
+        if (step.kind === "pending-action") {
           await Effect.runPromise(
             client.mutation(refs.public.turns.resolveAction, {
               matchId: matchId as never,
-              targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0]!,
-              sessionId: sourceSession.sessionId as never,
-              ...commandMetadata(snapshot.version),
+              targetPlayerId: step.snapshot.pendingAction!.eligibleTargetIds[0]!,
+              sessionId: step.sourceSession.sessionId as never,
+              ...commandMetadata(step.snapshot.version),
             }),
           );
           continue;
         }
         const activeSession = requireActiveSessionForSnapshot(
-          snapshot,
+          step.snapshot,
           sessions,
           "Expected an active session while round is in progress",
         );
@@ -124,7 +117,7 @@ export function createDeterministicReplayHarness(
             matchId: matchId as never,
             action: "stay",
             sessionId: activeSession.sessionId as never,
-            ...commandMetadata(snapshot.version),
+            ...commandMetadata(step.snapshot.version),
           }),
         );
       }

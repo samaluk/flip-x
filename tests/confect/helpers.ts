@@ -10,9 +10,9 @@ import { runGameCommand } from "@/game/application/run-command";
 
 type RunGameCommandInput = Parameters<typeof runGameCommand>[1];
 import {
+  classifyRoundBoundaryAdvanceStepOrThrow,
   describeReplayResult,
   requireActiveSessionForSnapshot,
-  requireSourceSessionForPendingAction,
   type DeterministicStartOptions,
   type ReplayResult,
 } from "@/tests/fixtures/deterministic";
@@ -259,41 +259,31 @@ export function advanceUntilRoundBoundary(matchId: string, sessions: SessionReco
     for (let guard = 0; guard < 50; guard += 1) {
       snapshot = (yield* getSnapshotForAnySession(matchId, sessions)) as Snapshot;
 
-      if (!snapshot) {
-        throw new Error("Expected a match snapshot while resolving gameplay");
+      const step = classifyRoundBoundaryAdvanceStepOrThrow(snapshot, sessions);
+      if (step.kind === "terminal") {
+        return step.snapshot;
       }
-
-      if (snapshot.roundStatus === "scoring" || snapshot.roundStatus === "completed") {
-        return snapshot;
-      }
-
-      if (snapshot.pendingAction) {
-        const sourceSession = requireSourceSessionForPendingAction(
-          snapshot,
-          sessions,
-          "Expected a source session for pending action",
-        );
-
+      if (step.kind === "pending-action") {
         snapshot = (yield* client.mutation(refs.public.turns.resolveAction, {
           matchId: matchId as never,
-          targetPlayerId: snapshot.pendingAction.eligibleTargetIds[0]!,
-          sessionId: sourceSession.sessionId,
-          ...commandMetadata(snapshot.version),
+          targetPlayerId: step.snapshot.pendingAction!.eligibleTargetIds[0]!,
+          sessionId: step.sourceSession.sessionId,
+          ...commandMetadata(step.snapshot.version),
         })) as Snapshot;
         continue;
       }
 
       const activeSession = requireActiveSessionForSnapshot(
-        snapshot,
+        step.snapshot,
         sessions,
         "Expected an active session while round is in progress",
       );
 
       snapshot = (yield* client.mutation(refs.public.turns.takeTurn, {
         matchId: matchId as never,
-        action: snapshot.pendingFlip3 ? "hit" : "stay",
+        action: step.snapshot.pendingFlip3 ? "hit" : "stay",
         sessionId: activeSession.sessionId,
-        ...commandMetadata(snapshot.version),
+        ...commandMetadata(step.snapshot.version),
       })) as Snapshot;
     }
 

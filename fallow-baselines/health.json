@@ -99,14 +99,6 @@
         "count": 1
       }
     },
-    "tests/fixtures/deterministic/replay-harness-factory.ts": {
-      "complexity_moderate": {
-        "count": 1
-      },
-      "crap_moderate": {
-        "count": 1
-      }
-    },
     "tests/fixtures/deterministic/scenario-runner.ts": {
       "complexity_high": {
         "count": 1
