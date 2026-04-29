@@ -71,6 +71,66 @@ const RILEY = "p_riley_viewer";
 const SAM = "p_sam_opponent";
 const JORDAN = "p_jordan_opponent";
 
+/** Completed rounds 1–2 shared by mid-round vs round-complete VRT snapshots. */
+const VRT_ROUND_HISTORY_COMPLETED_FIRST_TWO: MatchSnapshot["roundHistory"] = [
+  {
+    roundNumber: 1,
+    phase: "completed",
+    isCurrentRound: false,
+    scores: [
+      {
+        playerId: RILEY,
+        roundScore: 18,
+        totalScore: 18,
+        pointsToTarget: 182,
+        reachedTarget: false,
+      },
+      {
+        playerId: SAM,
+        roundScore: 22,
+        totalScore: 22,
+        pointsToTarget: 178,
+        reachedTarget: false,
+      },
+      {
+        playerId: JORDAN,
+        roundScore: 12,
+        totalScore: 12,
+        pointsToTarget: 188,
+        reachedTarget: false,
+      },
+    ],
+  },
+  {
+    roundNumber: 2,
+    phase: "completed",
+    isCurrentRound: false,
+    scores: [
+      {
+        playerId: RILEY,
+        roundScore: 24,
+        totalScore: 42,
+        pointsToTarget: 158,
+        reachedTarget: false,
+      },
+      {
+        playerId: SAM,
+        roundScore: 33,
+        totalScore: 55,
+        pointsToTarget: 145,
+        reachedTarget: false,
+      },
+      {
+        playerId: JORDAN,
+        roundScore: 18,
+        totalScore: 30,
+        pointsToTarget: 170,
+        reachedTarget: false,
+      },
+    ],
+  },
+];
+
 /** Three-player table: your turn, opponents waiting / busted; dealer is Sam. */
 export const vrtSnapshotMidRound: MatchSnapshot = {
   matchId: MATCH_ID,
@@ -140,62 +200,7 @@ export const vrtSnapshotMidRound: MatchSnapshot = {
     playerNames: "Riley",
   },
   roundHistory: roundHistory([
-    {
-      roundNumber: 1,
-      phase: "completed",
-      isCurrentRound: false,
-      scores: [
-        {
-          playerId: RILEY,
-          roundScore: 18,
-          totalScore: 18,
-          pointsToTarget: 182,
-          reachedTarget: false,
-        },
-        {
-          playerId: SAM,
-          roundScore: 22,
-          totalScore: 22,
-          pointsToTarget: 178,
-          reachedTarget: false,
-        },
-        {
-          playerId: JORDAN,
-          roundScore: 12,
-          totalScore: 12,
-          pointsToTarget: 188,
-          reachedTarget: false,
-        },
-      ],
-    },
-    {
-      roundNumber: 2,
-      phase: "completed",
-      isCurrentRound: false,
-      scores: [
-        {
-          playerId: RILEY,
-          roundScore: 24,
-          totalScore: 42,
-          pointsToTarget: 158,
-          reachedTarget: false,
-        },
-        {
-          playerId: SAM,
-          roundScore: 33,
-          totalScore: 55,
-          pointsToTarget: 145,
-          reachedTarget: false,
-        },
-        {
-          playerId: JORDAN,
-          roundScore: 18,
-          totalScore: 30,
-          pointsToTarget: 170,
-          reachedTarget: false,
-        },
-      ],
-    },
+    ...VRT_ROUND_HISTORY_COMPLETED_FIRST_TWO,
     {
       roundNumber: 3,
       phase: "projected",
@@ -283,62 +288,7 @@ export const vrtSnapshotRoundComplete: MatchSnapshot = {
     playerNames: "Riley",
   },
   roundHistory: roundHistory([
-    {
-      roundNumber: 1,
-      phase: "completed",
-      isCurrentRound: false,
-      scores: [
-        {
-          playerId: RILEY,
-          roundScore: 18,
-          totalScore: 18,
-          pointsToTarget: 182,
-          reachedTarget: false,
-        },
-        {
-          playerId: SAM,
-          roundScore: 22,
-          totalScore: 22,
-          pointsToTarget: 178,
-          reachedTarget: false,
-        },
-        {
-          playerId: JORDAN,
-          roundScore: 12,
-          totalScore: 12,
-          pointsToTarget: 188,
-          reachedTarget: false,
-        },
-      ],
-    },
-    {
-      roundNumber: 2,
-      phase: "completed",
-      isCurrentRound: false,
-      scores: [
-        {
-          playerId: RILEY,
-          roundScore: 24,
-          totalScore: 42,
-          pointsToTarget: 158,
-          reachedTarget: false,
-        },
-        {
-          playerId: SAM,
-          roundScore: 33,
-          totalScore: 55,
-          pointsToTarget: 145,
-          reachedTarget: false,
-        },
-        {
-          playerId: JORDAN,
-          roundScore: 18,
-          totalScore: 30,
-          pointsToTarget: 170,
-          reachedTarget: false,
-        },
-      ],
-    },
+    ...VRT_ROUND_HISTORY_COMPLETED_FIRST_TWO,
     {
       roundNumber: 3,
       phase: "completed",
