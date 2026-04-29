@@ -9,6 +9,8 @@ import {
   testPlayers3P,
 } from "@/tests/builders/round-runtime";
 
+type TakeTurnResolved = ReturnType<typeof takeTurnAction>;
+
 describe("flip three", () => {
   it("keeps the Flip Three target on turn until all required cards are drawn", () => {
     const playerStates = createActivePlayerStates();
@@ -95,10 +97,7 @@ describe("flip three", () => {
       title: "freeze",
       id: "freeze-1" as const,
       actionKind: "freeze" as const,
-      assertExtra: (resolved: {
-        playerStates: { p1: { heldActionCards: unknown[] } };
-        events: Array<{ eventType: string }>;
-      }) => {
+      assertExtra: (resolved: TakeTurnResolved) => {
         expect(resolved.playerStates.p1.heldActionCards).toEqual([actionCard("freeze-1", "freeze")]);
         expect(resolved.events.some((event) => event.eventType === "deferred_action")).toBe(true);
       },
@@ -107,7 +106,7 @@ describe("flip three", () => {
       title: "nested Flip Three",
       id: "flip3-1" as const,
       actionKind: "flip_three" as const,
-      assertExtra: (resolved: { events: Array<{ eventType: string }> }) => {
+      assertExtra: (resolved: TakeTurnResolved) => {
         expect(resolved.events.some((event) => event.eventType === "flip3_completed")).toBe(true);
       },
     },
