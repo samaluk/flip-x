@@ -427,46 +427,50 @@ function areNumberCardEqual(
   );
 }
 
+function areParallelSnapshotCardsEqual<A, B>(
+  left: readonly A[],
+  right: readonly B[],
+  sameAtIndex: (a: A | undefined, b: B | undefined) => boolean,
+): boolean {
+  if (left.length !== right.length) {
+    return false;
+  }
+  for (let i = 0; i < left.length; i++) {
+    if (!sameAtIndex(left[i], right[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function areNumberCardsEqual(
   left: MatchSnapshot["players"][number]["numberCards"],
   right: MatchSnapshot["players"][number]["numberCards"],
 ) {
-  if (left.length !== right.length) {
-    return false;
-  }
-
-  for (let i = 0; i < left.length; i++) {
-    if (
-      left[i]?.id !== right[i]?.id ||
-      left[i]?.label !== right[i]?.label ||
-      left[i]?.numberValue !== right[i]?.numberValue
-    ) {
-      return false;
-    }
-  }
-
-  return true;
+  return areParallelSnapshotCardsEqual(left, right, (a, b) =>
+    Boolean(
+      a &&
+        b &&
+        a.id === b.id &&
+        a.label === b.label &&
+        a.numberValue === b.numberValue,
+    ),
+  );
 }
 
 function areModifierCardsEqual(
   left: MatchSnapshot["players"][number]["modifierCards"],
   right: MatchSnapshot["players"][number]["modifierCards"],
 ) {
-  if (left.length !== right.length) {
-    return false;
-  }
-
-  for (let i = 0; i < left.length; i++) {
-    if (
-      left[i]?.id !== right[i]?.id ||
-      left[i]?.label !== right[i]?.label ||
-      left[i]?.modifierValue !== right[i]?.modifierValue
-    ) {
-      return false;
-    }
-  }
-
-  return true;
+  return areParallelSnapshotCardsEqual(left, right, (a, b) =>
+    Boolean(
+      a &&
+        b &&
+        a.id === b.id &&
+        a.label === b.label &&
+        a.modifierValue === b.modifierValue,
+    ),
+  );
 }
 
 function areActionCardsEqual(
