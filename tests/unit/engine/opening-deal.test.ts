@@ -11,12 +11,18 @@ import {
   testPlayers4P,
 } from "@/tests/builders/round-runtime";
 
+const THREE_PLAYER_OPENING_DRAW_PILE = [
+  numberCard("c1", 1),
+  numberCard("c2", 2),
+  numberCard("c3", 3),
+];
+
 describe("opening deal", () => {
   it("deals the opening round and advances to player turns", () => {
     const playerStates = createPlayerRoundStates();
     const round = createRoundRuntime();
 
-    round.drawPile = [numberCard("c1", 1), numberCard("c2", 2), numberCard("c3", 3)];
+    round.drawPile = THREE_PLAYER_OPENING_DRAW_PILE;
 
     const resolved = continueRound(testPlayers3P, round, playerStates);
 
@@ -30,7 +36,7 @@ describe("opening deal", () => {
     const playerStates = createPlayerRoundStates();
     const round = createRoundRuntime(testPlayers3P, 2, 1);
 
-    round.drawPile = [numberCard("c1", 1), numberCard("c2", 2), numberCard("c3", 3)];
+    round.drawPile = THREE_PLAYER_OPENING_DRAW_PILE;
 
     const resolved = continueRound(testPlayers3P, round, playerStates);
 
