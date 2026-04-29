@@ -150,28 +150,34 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
   );
 }, areFlip7CardPropsEqual);
 
-function areFlip7CardPropsEqual(left: Flip7CardProps, right: Flip7CardProps) {
-  if (
-    left.kind !== right.kind ||
-    left.label !== right.label ||
-    left.faceDown !== right.faceDown ||
-    left.dealing !== right.dealing ||
-    left.stateAnimation !== right.stateAnimation ||
-    left.className !== right.className ||
-    left.compact !== right.compact ||
-    left.disableFlip3d !== right.disableFlip3d
-  ) {
+function flip7CardShellPropsEqual(left: Flip7CardProps, right: Flip7CardProps): boolean {
+  return (
+    left.label === right.label &&
+    left.faceDown === right.faceDown &&
+    left.dealing === right.dealing &&
+    left.stateAnimation === right.stateAnimation &&
+    left.className === right.className &&
+    left.compact === right.compact &&
+    left.disableFlip3d === right.disableFlip3d
+  );
+}
+
+function flip7CardKindPayloadEqual(left: Flip7CardProps, right: Flip7CardProps): boolean {
+  if (left.kind !== right.kind) {
     return false;
   }
-
   switch (left.kind) {
     case "number":
-      return left.numberValue === (right.kind === "number" ? right.numberValue : undefined);
+      return left.numberValue === right.numberValue;
     case "modifier":
-      return left.modifierValue === (right.kind === "modifier" ? right.modifierValue : undefined);
+      return left.modifierValue === right.modifierValue;
     case "action":
-      return left.actionKind === (right.kind === "action" ? right.actionKind : undefined);
+      return left.actionKind === right.actionKind;
     default:
       return false;
   }
+}
+
+function areFlip7CardPropsEqual(left: Flip7CardProps, right: Flip7CardProps): boolean {
+  return flip7CardShellPropsEqual(left, right) && flip7CardKindPayloadEqual(left, right);
 }

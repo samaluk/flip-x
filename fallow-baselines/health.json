@@ -42,11 +42,6 @@
         "count": 1
       }
     },
-    "game/ui/flip7-card.tsx": {
-      "crap_high": {
-        "count": 1
-      }
-    },
     "game/ui/player-lane.tsx": {
       "crap_moderate": {
         "count": 2
