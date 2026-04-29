@@ -31,11 +31,6 @@
         "count": 1
       }
     },
-    "game/logic/apply-card.ts": {
-      "complexity_moderate": {
-        "count": 1
-      }
-    },
     "game/logic/command-handler.ts": {
       "complexity_moderate": {
         "count": 2
