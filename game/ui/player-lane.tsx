@@ -479,10 +479,9 @@ function arePlayerLanePropsEqual(left: PlayerLaneProps, right: PlayerLaneProps) 
   return arePlayersEqual(left.player, right.player);
 }
 
-function arePlayersEqual(
-  left: MatchSnapshot["players"][number],
-  right: MatchSnapshot["players"][number],
-) {
+type SnapshotPlayer = MatchSnapshot["players"][number];
+
+function arePlayerSnapshotScalarsEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
   return (
     left.playerId === right.playerId &&
     left.displayName === right.displayName &&
@@ -491,13 +490,22 @@ function arePlayersEqual(
     left.totalScore === right.totalScore &&
     left.isOnline === right.isOnline &&
     left.roundStatus === right.roundStatus &&
-    left.pointsAtRisk === right.pointsAtRisk &&
+    left.pointsAtRisk === right.pointsAtRisk
+  );
+}
+
+function arePlayerSnapshotCardsEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
+  return (
     areNumberCardsEqual(left.numberCards, right.numberCards) &&
     areNumberCardEqual(left.bustCard, right.bustCard) &&
     areModifierCardsEqual(left.modifierCards, right.modifierCards) &&
     areActionCardsEqual(left.heldActionCards, right.heldActionCards) &&
     areActionCardsEqual(left.receivedActionCards, right.receivedActionCards)
   );
+}
+
+function arePlayersEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
+  return arePlayerSnapshotScalarsEqual(left, right) && arePlayerSnapshotCardsEqual(left, right);
 }
 
 function areNumberCardEqual(

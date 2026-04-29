@@ -28,6 +28,29 @@ const NAME_STORAGE_KEY = "flip7_player_name";
 const COLOR_STORAGE_KEY = "flip7_player_color";
 const NO_USED_COLORS: readonly string[] = [];
 
+type LobbyJoinMutationArgs = {
+  joinByCode: (input: { lobbyCode: string }) => Promise<{ matchId: string }>;
+  joinMatch: (input: {
+    matchId: string;
+    playerName: string;
+    playerColorId: PlayerColorId;
+  }) => Promise<void>;
+  lobbyCode: string;
+  playerName: string;
+  colorId: PlayerColorId;
+};
+
+async function performLobbyJoin(args: LobbyJoinMutationArgs) {
+  const { joinByCode, joinMatch, lobbyCode, playerName, colorId } = args;
+  const result = await joinByCode({ lobbyCode: lobbyCode.toUpperCase() });
+  await joinMatch({
+    matchId: result.matchId,
+    playerName,
+    playerColorId: colorId,
+  });
+  return result;
+}
+
 export function HomeClient() {
   const router = useRouter();
   const [sessionId] = useSessionId();
@@ -123,13 +146,9 @@ export function HomeClient() {
     localStorage.setItem(NAME_STORAGE_KEY, playerName);
     localStorage.setItem(COLOR_STORAGE_KEY, colorId);
 
-    if (!playerName) {
-      toast.error(t("toastNameRequired"));
-      return;
-    }
-
-    if (playerName.length > 20) {
-      toast.error(t("toastNameLength"));
+    const nameIssue = getTrimmedPlayerNameIssue(playerName, sessionId);
+    if (nameIssue) {
+      toast.error(t(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
       return;
     }
 
@@ -138,19 +157,15 @@ export function HomeClient() {
       return;
     }
 
-    if (!sessionId) {
-      toast.error(t("toastSession"));
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
-      const result = await joinByCode({ lobbyCode: lobbyCode.toUpperCase() });
-      await joinMatch({
-        matchId: result.matchId,
-        playerName: playerName,
-        playerColorId: colorId,
+      const result = await performLobbyJoin({
+        joinByCode,
+        joinMatch,
+        lobbyCode,
+        playerName,
+        colorId,
       });
       startTransition(() => {
         router.push(`/game/${result.matchId}`);
