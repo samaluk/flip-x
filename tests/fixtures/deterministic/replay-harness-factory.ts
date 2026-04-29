@@ -2,7 +2,10 @@ import type { Ref } from "@confect/core";
 import refs from "@/confect/_generated/refs";
 import { Effect, type ParseResult } from "effect";
 
-import { requireSourceSessionForPendingAction } from "./match-session-for-snapshot";
+import {
+  requireActiveSessionForSnapshot,
+  requireSourceSessionForPendingAction,
+} from "./match-session-for-snapshot";
 import type { ReplayHarness } from "./scenario-runner";
 import type { DeterministicStartOptions } from "./scenario-types";
 
@@ -111,14 +114,11 @@ export function createDeterministicReplayHarness(
           );
           continue;
         }
-        const activeSession = sessions.find(
-          (session) =>
-            snapshot.activePlayerId ===
-            snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+        const activeSession = requireActiveSessionForSnapshot(
+          snapshot,
+          sessions,
+          "Expected an active session while round is in progress",
         );
-        if (!activeSession) {
-          throw new Error("Expected an active session while round is in progress");
-        }
         await Effect.runPromise(
           client.mutation(refs.public.turns.takeTurn, {
             matchId: matchId as never,

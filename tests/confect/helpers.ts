@@ -11,6 +11,7 @@ import { runGameCommand } from "@/game/application/run-command";
 type RunGameCommandInput = Parameters<typeof runGameCommand>[1];
 import {
   describeReplayResult,
+  requireActiveSessionForSnapshot,
   requireSourceSessionForPendingAction,
   type DeterministicStartOptions,
   type ReplayResult,
@@ -34,27 +35,7 @@ export type SessionRecord = {
   sessionId: SessionId;
 };
 
-type SnapshotWithActivePlayer = {
-  activePlayerId: string | null;
-  players: Array<{ displayName: string; playerId: string }>;
-};
-
-/** Resolves the session whose player is currently active; throws if none match. */
-export function requireActiveSessionForSnapshot(
-  snapshot: SnapshotWithActivePlayer,
-  sessions: SessionRecord[],
-  errorMessage: string,
-): SessionRecord {
-  const activeSession = sessions.find(
-    (session) =>
-      snapshot.activePlayerId ===
-      snapshot.players.find((player) => player.displayName === session.name)?.playerId,
-  );
-  if (!activeSession) {
-    throw new Error(errorMessage);
-  }
-  return activeSession;
-}
+export { requireActiveSessionForSnapshot };
 
 export function createStartedMatch(playerNames: string[]) {
   return createStartedMatchWithOptions(playerNames, {});
@@ -302,15 +283,11 @@ export function advanceUntilRoundBoundary(matchId: string, sessions: SessionReco
         continue;
       }
 
-      const activeSession = sessions.find(
-        (session) =>
-          snapshot?.activePlayerId ===
-          snapshot?.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        snapshot,
+        sessions,
+        "Expected an active session while round is in progress",
       );
-
-      if (!activeSession) {
-        throw new Error("Expected an active session while round is in progress");
-      }
 
       snapshot = (yield* client.mutation(refs.public.turns.takeTurn, {
         matchId: matchId as never,
