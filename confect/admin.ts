@@ -1,16 +1,15 @@
 import { Presence } from "@convex-dev/presence";
-import { v } from "convex/values";
 import { Effect } from "effect";
 
-import { internal, components } from "../convex/_generated/api";
+import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
-import type { ActionCtx, QueryCtx } from "../convex/_generated/server";
-import { action, internalMutation, internalQuery } from "../convex/_generated/server";
+import type { ActionCtx } from "../convex/_generated/server";
 import {
   unsupportedRelationship,
   unsupportedTable,
 } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
+import type { DatabaseReader, DatabaseWriter } from "./_generated/services";
 import { rateLimiter } from "./lib/rate_limiter";
 import schema from "./schema";
 
@@ -26,198 +25,196 @@ type AppTableName =
   | "scoreBreakdowns"
   | "idempotencyKeys";
 
-type ClearAllAppDataResult = {
-  deleted: {
-    idempotencyKeys: number;
-    scoreBreakdowns: number;
-    roundEvents: number;
-    roundPlayerStates: number;
-    rounds: number;
-    playerSessions: number;
-    players: number;
-    matches: number;
-    presenceRooms: number;
-    rateLimitKeysReset: number;
-  };
-};
+type RateLimitKey = "createMatch" | "joinByCode" | "joinMatch" | "startMatch";
 
-async function collectDependentIdsByRound(
-  ctx: QueryCtx,
+function collectDependentIdsByRound(
+  reader: DatabaseReader,
   table: "roundPlayerStates" | "roundEvents" | "scoreBreakdowns",
   roundId: Id<"rounds">,
-): Promise<string[]> {
-  const rows = await ctx.db
-    .query(table)
-    .withIndex("by_round", (query) => query.eq("roundId", roundId))
-    .collect();
-  return rows.map((row) => String(row._id));
+) {
+  return reader
+    .table(table)
+    .index("by_round", (query) => query.eq("roundId", roundId))
+    .collect()
+    .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
 }
 
-export const listMatchIds = internalQuery({
-  args: {},
-  handler: async (ctx) =>
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const matches = yield* Effect.promise(() => ctx.db.query("matches").collect());
-        return matches.map((match) => String(match._id));
-      }),
-    ),
-});
+export function listMatchIds(
+  reader: DatabaseReader,
+): Effect.Effect<readonly string[], unknown, never> {
+  return reader
+    .table("matches")
+    .index("by_creation_time")
+    .collect()
+    .pipe(Effect.map((matches) => matches.map((match) => String(match._id))));
+}
 
-export const listSessionIds = internalQuery({
-  args: {},
-  handler: async (ctx) =>
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const sessions = yield* Effect.promise(() => ctx.db.query("playerSessions").collect());
-        return sessions.map((session) => String(session.sessionId));
-      }),
-    ),
-});
+export function listSessionIds(
+  reader: DatabaseReader,
+): Effect.Effect<readonly string[], unknown, never> {
+  return reader
+    .table("playerSessions")
+    .index("by_creation_time")
+    .collect()
+    .pipe(Effect.map((sessions) => sessions.map((session) => String(session.sessionId))));
+}
 
-export const resolveDependents = internalQuery({
+export function resolveDependents(
+  reader: DatabaseReader,
   args: {
-    sourceTable: v.string(),
-    parentTable: v.string(),
-    parentId: v.string(),
+    sourceTable: string;
+    parentTable: string;
+    parentId: string;
   },
-  handler: async (ctx, args) =>
-    await Effect.runPromise(
-      Effect.gen(function* () {
+): Effect.Effect<readonly string[], unknown, never> {
+  return Effect.gen(function* () {
     switch (`${args.sourceTable}:${args.parentTable}`) {
       case "players:matches": {
-        const rows = yield* Effect.promise(() =>
-          ctx.db
-            .query("players")
-            .withIndex("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
-            .collect(),
-        );
+        const rows = yield* reader
+          .table("players")
+          .index("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
+          .collect();
         return rows.map((row) => String(row._id));
       }
       case "rounds:matches": {
-        const rows = yield* Effect.promise(() =>
-          ctx.db
-            .query("rounds")
-            .withIndex("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
-            .collect(),
-        );
+        const rows = yield* reader
+          .table("rounds")
+          .index("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
+          .collect();
         return rows.map((row) => String(row._id));
       }
       case "playerSessions:players": {
-        const rows = yield* Effect.promise(() =>
-          ctx.db
-            .query("playerSessions")
-            .withIndex("by_player_id", (query) =>
-              query.eq("playerId", args.parentId as Id<"players">),
-            )
-            .collect(),
-        );
+        const rows = yield* reader
+          .table("playerSessions")
+          .index("by_player_id", (query) =>
+            query.eq("playerId", args.parentId as Id<"players">),
+          )
+          .collect();
         return rows.map((row) => String(row._id));
       }
       case "roundPlayerStates:rounds":
-        return yield* Effect.promise(() =>
-          collectDependentIdsByRound(ctx, "roundPlayerStates", args.parentId as Id<"rounds">),
+        return yield* collectDependentIdsByRound(
+          reader,
+          "roundPlayerStates",
+          args.parentId as Id<"rounds">,
         );
       case "roundEvents:rounds":
-        return yield* Effect.promise(() =>
-          collectDependentIdsByRound(ctx, "roundEvents", args.parentId as Id<"rounds">),
+        return yield* collectDependentIdsByRound(
+          reader,
+          "roundEvents",
+          args.parentId as Id<"rounds">,
         );
       case "scoreBreakdowns:rounds":
-        return yield* Effect.promise(() =>
-          collectDependentIdsByRound(ctx, "scoreBreakdowns", args.parentId as Id<"rounds">),
+        return yield* collectDependentIdsByRound(
+          reader,
+          "scoreBreakdowns",
+          args.parentId as Id<"rounds">,
         );
       default:
         return yield* unsupportedRelationship();
     }
-      }),
-    ),
-});
+  });
+}
 
-export const deleteDocument = internalMutation({
+function deleteAllFromTable<TableName extends AppTableName>(
+  reader: DatabaseReader,
+  writer: DatabaseWriter,
+  table: TableName,
+) {
+  return Effect.gen(function* () {
+    console.log(`Removing all documents from table ${table}`);
+    const docs = yield* reader.table(table).index("by_creation_time").collect();
+    for (const doc of docs) {
+      yield* writer.table(table).delete(doc._id as Id<TableName>);
+    }
+    return docs.length;
+  });
+}
+
+export function deleteDocument(
+  reader: DatabaseReader,
+  writer: DatabaseWriter,
   args: {
-    table: v.string(),
-    id: v.optional(v.string()),
+    table: string;
+    id?: string;
   },
-  handler: async (ctx, args) =>
-    await Effect.runPromise(
-      Effect.gen(function* () {
-        const table = args.table as AppTableName;
-        const unsupportedId = args.id ?? "";
+): Effect.Effect<number, unknown, never> {
+  return Effect.gen(function* () {
+    const table = args.table as AppTableName;
+    const unsupportedId = args.id ?? "";
 
-        switch (table) {
-          case "matches":
-          case "players":
-          case "playerSessions":
-          case "rounds":
-          case "roundPlayerStates":
-          case "roundEvents":
-          case "scoreBreakdowns":
-          case "idempotencyKeys":
-            if (args.id === undefined) {
-              console.log(`Removing all documents from table ${args.table}`);
-              const docs = yield* Effect.promise(() =>
-                ctx.db.query(table as any).collect(),
-              );
-              for (const doc of docs as any[]) {
-                yield* Effect.promise(() => ctx.db.delete(doc._id));
-              }
-              return docs.length;
-            }
-            console.log(`Removing document from table ${args.table} with id ${args.id}`);
-            yield* Effect.promise(() =>
-              ctx.db.delete(args.id as Id<typeof table>),
-            );
-            return 1;
-          default:
-            return yield* unsupportedTable({ table: args.table, id: unsupportedId });
+    switch (table) {
+      case "matches":
+      case "players":
+      case "playerSessions":
+      case "rounds":
+      case "roundPlayerStates":
+      case "roundEvents":
+      case "scoreBreakdowns":
+      case "idempotencyKeys":
+        if (args.id === undefined) {
+          return yield* deleteAllFromTable(reader, writer, table);
         }
-      }),
-    ),
-});
+        console.log(`Removing document from table ${args.table} with id ${args.id}`);
+        yield* writer.table(table).delete(args.id as Id<typeof table>);
+        return 1;
+      default:
+        return yield* unsupportedTable({ table: args.table, id: unsupportedId });
+    }
+  });
+}
 
-export const clearAllAppDataViaCli = action({
-  handler: async (ctx): Promise<ClearAllAppDataResult> => {
-    const deleted = await Effect.runPromise(runClearAllAppData(makeAdminCleanupDeps(ctx)));
-    return {
-      deleted: deleted.deleted,
-    };
+export function removePresenceRoom(ctx: ActionCtx, args: { matchId: string }) {
+  return Effect.tryPromise({
+    try: () => presence.removeRoom(ctx, args.matchId),
+    catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+  });
+}
+
+export function resetRateLimit(
+  ctx: ActionCtx,
+  args: {
+    sessionId: string;
+    key: RateLimitKey;
   },
-});
+) {
+  return Effect.tryPromise({
+    try: () => rateLimiter.reset(ctx, args.key, { key: args.sessionId }),
+    catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
+  });
+}
 
-interface AdminCleanupDeps {
-  readonly listSessionIds: Effect.Effect<readonly string[]>;
-  readonly listMatchIds: Effect.Effect<readonly string[]>;
+export interface AdminCleanupDeps {
+  readonly listSessionIds: Effect.Effect<readonly string[], unknown>;
+  readonly listMatchIds: Effect.Effect<readonly string[], unknown>;
   readonly deleteAllFromTable: (table: string) => Effect.Effect<number, ExternalComponentFailed>;
   readonly removePresenceRoom: (matchId: string) => Effect.Effect<void, ExternalComponentFailed>;
   readonly resetRateLimit: (
     sessionId: string,
-    key: "createMatch" | "joinByCode" | "joinMatch" | "startMatch",
+    key: RateLimitKey,
   ) => Effect.Effect<void, ExternalComponentFailed>;
 }
 
-function makeAdminCleanupDeps(ctx: ActionCtx): AdminCleanupDeps {
-  return {
-    listSessionIds: Effect.promise(() => ctx.runQuery(internal.admin.listSessionIds, {})),
-    listMatchIds: Effect.promise(() => ctx.runQuery(internal.admin.listMatchIds, {})),
-    deleteAllFromTable: (table) =>
-      Effect.tryPromise({
-        try: () => ctx.runMutation(internal.admin.deleteDocument, { table }),
-        catch: (cause) => new ExternalComponentFailed({ component: "deleteDocument", cause }),
-      }),
-    removePresenceRoom: (matchId) =>
-      Effect.tryPromise({
-        try: () => presence.removeRoom(ctx, matchId),
-        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-      }),
-    resetRateLimit: (sessionId, key) =>
-      Effect.tryPromise({
-        try: () => rateLimiter.reset(ctx, key, { key: sessionId }),
-        catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
-      }),
-  };
-}
-
-function runClearAllAppData(deps: AdminCleanupDeps) {
+export function runClearAllAppData(
+  deps: AdminCleanupDeps,
+): Effect.Effect<
+  {
+    deleted: {
+      idempotencyKeys: number;
+      scoreBreakdowns: number;
+      roundEvents: number;
+      roundPlayerStates: number;
+      rounds: number;
+      playerSessions: number;
+      players: number;
+      matches: number;
+      presenceRooms: number;
+      rateLimitKeysReset: number;
+    };
+  },
+  unknown,
+  never
+> {
   return Effect.gen(function* () {
     const sessionIds = yield* deps.listSessionIds;
     const deleted = {
