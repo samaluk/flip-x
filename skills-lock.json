@@ -50,7 +50,7 @@
       "source": "fallow-rs/fallow-skills",
       "sourceType": "github",
       "skillPath": "fallow/skills/fallow/SKILL.md",
-      "computedHash": "32214d04646d9f22370054ffa9adb92183f42e90273dc5310cdfbcdbc9cef2f8"
+      "computedHash": "ffa35a9c71ae6a8929d49413e629e17fe897478c7b1e27465a5dd102cb384da1"
     },
     "find-skills": {
       "source": "vercel-labs/skills",

@@ -36,7 +36,7 @@ Analyzes the project for unused files, exports, dependencies, types, members, an
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
-| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate` | `human` | Output format |
+| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate\|gitlab-codequality` | `human` | Output format |
 | `--quiet` | bool | `false` | Suppress progress bars and timing on stderr |
 | `--changed-since` | string | — | Only analyze files changed since a git ref (e.g., `main`, `HEAD~3`) |
 | `--production` | bool | `false` | Exclude test/dev files, only start/build scripts (applies to every analysis) |
@@ -61,6 +61,7 @@ Analyzes the project for unused files, exports, dependencies, types, members, an
 | `--unused-files` | Unused files |
 | `--unused-exports` | Unused exports |
 | `--unused-types` | Unused types |
+| `--private-type-leaks` | Opt-in API hygiene check (default `off`) for exported signatures that reference same-file private types. Storybook `*.stories.*` story files and framework routing convention files (Next.js App + Pages Router, Gatsby, Remix v2, TanStack Router, Expo Router) are skipped to avoid noise. Enable via this flag or `private-type-leaks: "warn"` / `"error"` in [`rules`](#rules-configuration). |
 | `--unused-deps` | Unused dependencies, devDependencies, optionalDependencies, type-only production deps, and test-only production deps |
 | `--unused-enum-members` | Unused enum members |
 | `--unused-class-members` | Unused class members |
@@ -132,7 +133,7 @@ Finds code duplication and clones across the project.
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
-| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate` | `human` | Output format |
+| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate\|gitlab-codequality` | `human` | Output format |
 | `--quiet` | bool | `false` | Suppress progress bars |
 | `--top` | number | — | Show only the N largest clone groups (sorted by line count descending). Summary stats reflect the full project. |
 | `--mode` | `strict\|mild\|weak\|semantic` | `mild` | Detection mode |
@@ -299,19 +300,19 @@ Angular templates contribute synthetic `<template>` complexity findings whenever
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
-| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate\|badge` | `human` | Output format |
+| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate\|gitlab-codequality\|badge` | `human` | Output format |
 | `--quiet` | bool | `false` | Suppress progress bars |
 | `--max-cyclomatic` | number | `20` | Fail if any function exceeds this cyclomatic complexity |
 | `--max-cognitive` | number | `15` | Fail if any function exceeds this cognitive complexity |
 | `--max-crap` | number | `30.0` | Fail if any function has CRAP score >= threshold. CRAP combines complexity with coverage (`CC^2 * (1 - cov/100)^3 + CC`). Pair with `--coverage` for accurate per-function CRAP; without Istanbul data fallow estimates coverage from the module graph. |
 | `--top` | number | — | Only show the top N most complex functions (and file scores/hotspots/targets) |
-| `--sort` | `cyclomatic\|cognitive\|lines` | `cyclomatic` | Sort order for complexity findings |
+| `--sort` | `cyclomatic\|cognitive\|lines\|severity` | `cyclomatic` | Sort order for complexity findings |
 | `--complexity` | bool | `false` | Show only function complexity findings. When no section flags are set, all sections are shown by default. |
 | `--file-scores` | bool | `false` | Show only per-file maintainability index (LOC, fan-in, fan-out, dead code ratio, complexity density). Runs the full analysis pipeline. When no section flags are set, all sections are shown by default. |
 | `--hotspots` | bool | `false` | Show only hotspots: files that are both complex and frequently changing. Combines git churn history with complexity data. Requires a git repository. When no section flags are set, all sections are shown by default. |
 | `--targets` | bool | `false` | Show only refactoring targets: ranked recommendations based on complexity, coupling, churn, and dead code signals. Categories: churn+complexity, circular dep, high impact, dead code, complexity, coupling. When no section flags are set, all sections are shown by default. |
 | `--effort` | `low\|medium\|high` | — | Filter refactoring targets by effort level. Implies `--targets`. |
-| `--score` | bool | `false` | Show only the project health score (0-100) with letter grade (A/B/C/D/F). The score is included by default when no section flags are set. JSON includes `health_score` object with `score`, `grade`, and `penalties` breakdown. |
+| `--score` | bool | `false` | Show only the project health score (0-100) with letter grade (A/B/C/D/F). The score is included by default when no section flags are set. JSON includes `health_score` object with `score`, `grade`, and `penalties` breakdown. As of v2.55.0, plain `--score` skips the churn-backed hotspot penalty so it does not run a `git log` shell-out per invocation; pass `--hotspots` (or `--targets` with `--score`) to include the hotspot penalty. Snapshot (`--save-snapshot`) and trend (`--trend`) flows still trigger hotspot vital signs so saved data stays complete. |
 | `--min-score` | number | — | Fail if health score is below this threshold (exit code 1). Implies `--score`. CI quality gate. |
 | `--since` | string | `6m` | Git history window for hotspot analysis. Accepts durations (`6m`, `90d`, `1y`, `2w`) or ISO dates (`2025-06-01`). |
 | `--min-commits` | number | `3` | Minimum number of commits for a file to be included in hotspot ranking. |
@@ -415,7 +416,7 @@ fallow health --format json --quiet --trend
 ```json
 {
   "schema_version": 3,
-  "version": "2.52.2",
+  "version": "2.56.0",
   "elapsed_ms": 32,
   "summary": {
     "files_analyzed": 482,
@@ -607,7 +608,6 @@ With `--score`, the JSON output includes a `health_score` object:
       "complexity": 0.0,
       "p90_complexity": 0.0,
       "maintainability": 0.0,
-      "hotspots": 0.0,
       "unused_deps": 10.0,
       "circular_deps": 4.0,
       "unit_size": 0.0,
@@ -618,7 +618,7 @@ With `--score`, the JSON output includes a `health_score` object:
 }
 ```
 
-Score is reproducible: `100 - sum(penalties) == score`. Penalty fields are absent when the pipeline didn't run. `--score` automatically runs duplication analysis. Grades: A (>= 85), B (70-84), C (55-69), D (40-54), F (< 40).
+Score is reproducible: `100 - sum(penalties) == score`. Penalty fields are absent when the pipeline didn't run. `--score` automatically runs duplication analysis; add `--hotspots` (or combine `--score --targets`) when the score should include the churn-backed hotspot penalty. Grades: A (>= 85), B (70-84), C (55-69), D (40-54), F (< 40).
 
 ### Health Trend
 
@@ -770,7 +770,7 @@ fallow audit \
 ```json
 {
   "schema_version": 3,
-  "version": "2.52.2",
+  "version": "2.56.0",
   "command": "audit",
   "verdict": "fail",
   "changed_files_count": 12,
@@ -810,7 +810,7 @@ Detects feature flag patterns in the codebase. Identifies environment variable f
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
-| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate` | `human` | Output format |
+| `--format` | `human\|json\|sarif\|compact\|markdown\|codeclimate\|gitlab-codequality` | `human` | Output format |
 | `--quiet` | bool | `false` | Suppress progress bars |
 | `--top` | number | — | Show only the top N flags |
 
@@ -832,7 +832,7 @@ fallow flags --format json --quiet --workspace my-package
 ```json
 {
   "schema_version": 3,
-  "version": "2.52.2",
+  "version": "2.56.0",
   "elapsed_ms": 116,
   "feature_flags": [],
   "total_flags": 0
@@ -952,6 +952,7 @@ Helper subcommand for the paid runtime-coverage analyzer. Two subcommands today:
 fallow coverage setup                         # interactive
 fallow coverage setup --yes                   # accept all prompts
 fallow coverage setup --non-interactive       # print instructions, do not prompt
+fallow coverage setup --yes --json            # agent-readable JSON, no prompts/writes/installs/network
 
 fallow coverage upload-inventory              # infers project-id, git-sha, API key
 fallow coverage upload-inventory --dry-run    # print what would be uploaded, exit 0
@@ -1086,7 +1087,8 @@ Available on all commands:
 | `FALLOW_SCORE` | GitLab CI: set to `true` to compute health score in combined mode. Enables health delta header in MR comments. |
 | `FALLOW_TREND` | GitLab CI: set to `true` to compare current health metrics against saved snapshot. Implies `FALLOW_SCORE`. |
 | `FALLOW_EXTRA_ARGS` | GitLab CI: additional CLI flags passed through to fallow. |
-| `GITLAB_TOKEN` | GitLab CI: project access token with `api` scope (for MR comments/reviews). |
+| `FALLOW_VERSION` | GitLab CI: fallow version to install. Empty (default) reads the project's `package.json` `fallow` dependency, then falls back to `latest`; set explicitly to override the local pin. |
+| `GITLAB_TOKEN` | GitLab CI: project access token with `api` scope (for MR comments/reviews; `CI_JOB_TOKEN` is read-only for MR notes in the official GitLab API). |
 
 Set `FALLOW_FORMAT=json` and `FALLOW_QUIET=1` in your agent environment to avoid passing flags on every invocation.
 
@@ -1101,14 +1103,14 @@ Set `FALLOW_FORMAT=json` and `FALLOW_QUIET=1` in your agent environment to avoid
 | `sarif` | Static Analysis Results Interchange Format | GitHub Code Scanning, SARIF-compatible tools |
 | `compact` | Grep-friendly: `type:path:line:name` per line | Quick filtering |
 | `markdown` | Markdown tables | Documentation, PR comments |
-| `codeclimate` | CodeClimate JSON array | GitLab Code Quality, CodeClimate-compatible tools |
+| `codeclimate` / `gitlab-codequality` | CodeClimate JSON array | GitLab Code Quality, CodeClimate-compatible tools |
 
 ---
 
 ## CI Integration
 
 - **GitHub Actions**: `uses: fallow-rs/fallow@v2` — supports SARIF upload to Code Scanning, inline PR annotations (`annotations: true`), PR comments, all commands. Annotations use workflow commands (no Advanced Security required); limit with `max-annotations` (default 50). Set `score: true` to compute health score and enable the health delta header in PR comments
-- **GitLab CI**: include `ci/gitlab-ci.yml` template and extend `.fallow` — generates Code Quality reports via `--format codeclimate` (inline MR annotations), rich MR comments, code review comments, all commands. Variables use `FALLOW_` prefix (e.g., `FALLOW_COMMAND`, `FALLOW_FAIL_ON_ISSUES`). Set `FALLOW_SCORE: "true"` to compute health score; `FALLOW_TREND: "true"` to compare against saved snapshots
+- **GitLab CI**: include `ci/gitlab-ci.yml` template and extend `.fallow` — generates Code Quality reports via `--format codeclimate` / `--format gitlab-codequality` (inline MR annotations), rich MR comments, code review comments, all commands. Use `fallow ci-template gitlab --vendor` when runners cannot reach `raw.githubusercontent.com`; commit the generated `ci/` and `action/` files and use GitLab's local include syntax. Variables use `FALLOW_` prefix (e.g., `FALLOW_COMMAND`, `FALLOW_FAIL_ON_ISSUES`). Set `FALLOW_SCORE: "true"` to compute health score; `FALLOW_TREND: "true"` to compare against saved snapshots
 - **Any CI**: `npx fallow --ci` — equivalent to `--format sarif --fail-on-issues --quiet`
 
 ### GitLab CI Variables
@@ -1138,7 +1140,7 @@ Set `FALLOW_FORMAT=json` and `FALLOW_QUIET=1` in your agent environment to avoid
 ```json
 {
   "schema_version": 3,
-  "version": "2.52.2",
+  "version": "2.56.0",
   "elapsed_ms": 45,
   "total_issues": 12,
   "entry_points": {
@@ -1163,9 +1165,9 @@ Set `FALLOW_FORMAT=json` and `FALLOW_QUIET=1` in your agent environment to avoid
     "stale_suppressions": 0
   },
   "unused_files": [{ "path": "src/old.ts" }],
-  "unused_exports": [{ "path": "src/utils.ts", "name": "unusedFn", "line": 42, "actions": [{"type": "remove-export", "auto_fixable": true, "description": "Remove the `export` keyword from the declaration"}, {"type": "suppress-line", "auto_fixable": false, "description": "Suppress with an inline comment above the line", "comment": "// fallow-ignore-next-line unused-export"}] }],
+  "unused_exports": [{ "path": "src/utils.ts", "name": "unusedFn", "line": 42, "actions": [{"type": "remove-export", "auto_fixable": true, "description": "Remove the unused export from the public API"}, {"type": "suppress-line", "auto_fixable": false, "description": "Suppress with an inline comment above the line", "comment": "// fallow-ignore-next-line unused-export"}] }],
   "unused_types": [{ "path": "src/types.ts", "name": "OldType", "line": 10 }],
-  "unused_dependencies": [{ "name": "lodash", "line": 5 }],
+  "unused_dependencies": [{ "name": "lodash", "line": 5, "used_in_workspaces": ["packages/web"] }],
   "unused_dev_dependencies": [{ "name": "jest", "line": 8 }],
   "unused_enum_members": [{ "path": "src/enums.ts", "enum_name": "Status", "member": "Archived", "line": 5 }],
   "unused_class_members": [{ "path": "src/service.ts", "class_name": "Service", "member": "oldMethod", "line": 20 }],
@@ -1181,13 +1183,15 @@ Set `FALLOW_FORMAT=json` and `FALLOW_QUIET=1` in your agent environment to avoid
 }
 ```
 
+For dependency findings, `used_in_workspaces` means the package is imported by another workspace even though the declaring workspace does not import it. Move the dependency to the consuming workspace instead of auto-removing it.
+
 #### `actions` Array
 
 Every issue in `dead-code` JSON output includes an `actions` array with structured fix suggestions. Each action has:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `type` | string | yes | Action type in kebab-case (14 types, e.g., `remove-export`, `remove-file`, `remove-dependency`, `suppress-line`, `add-to-config`) |
+| `type` | string | yes | Action type in kebab-case (for example `remove-export`, `remove-file`, `remove-dependency`, `move-dependency`, `suppress-line`, `add-to-config`) |
 | `auto_fixable` | bool | yes | `true` if `fallow fix` handles this action automatically |
 | `description` | string | yes | Human-readable description of the action |
 | `comment` | string | no | Suppression comment text (on `suppress-line` actions) |
@@ -1206,7 +1210,7 @@ Example:
     {
       "type": "remove-export",
       "auto_fixable": true,
-      "description": "Remove the `export` keyword from the declaration"
+      "description": "Remove the unused export from the public API"
     },
     {
       "type": "suppress-line",
@@ -1240,6 +1244,8 @@ Dependency issues use `add-to-config` with `config_key` and `value`:
   ]
 }
 ```
+
+When a dependency action is `move-dependency`, `auto_fixable` is `false`; the package is imported from another workspace and needs a package.json ownership move rather than removal.
 
 #### Health `actions` array (CRAP findings)
 
@@ -1279,7 +1285,7 @@ When `--baseline` is used in combined output, the JSON includes a `baseline_delt
 ```json
 {
   "schema_version": 3,
-  "version": "2.52.2",
+  "version": "2.56.0",
   "elapsed_ms": 82,
   "total_clones": 15,
   "total_lines_duplicated": 230,
@@ -1323,7 +1329,7 @@ When running `fallow` with no subcommand (all analyses), the JSON output combine
 {
   "check": {
     "schema_version": 3,
-    "version": "2.52.2",
+    "version": "2.56.0",
     "elapsed_ms": 45,
     "total_issues": 12,
     "unused_files": [],
@@ -1345,7 +1351,7 @@ When running `fallow` with no subcommand (all analyses), the JSON output combine
   },
   "dupes": {
     "schema_version": 3,
-    "version": "2.52.2",
+    "version": "2.56.0",
     "elapsed_ms": 82,
     "total_clones": 15,
     "total_lines_duplicated": 230,
@@ -1354,7 +1360,7 @@ When running `fallow` with no subcommand (all analyses), the JSON output combine
   },
   "health": {
     "schema_version": 3,
-    "version": "2.52.2",
+    "version": "2.56.0",
     "elapsed_ms": 32,
     "summary": {},
     "findings": [],
@@ -1377,9 +1383,9 @@ With `--score`, the combined output's `health` section includes a `health_score`
 
 ## Configuration File Format
 
-Config files are searched in priority order: `.fallowrc.json` > `fallow.toml` > `.fallow.toml`
+Config files are searched in priority order: `.fallowrc.json` > `.fallowrc.jsonc` > `fallow.toml` > `.fallow.toml`. Both `.fallowrc.json` and `.fallowrc.jsonc` are parsed as JSON-with-comments; the `.jsonc` extension lets editors auto-detect JSONC syntax highlighting.
 
-### JSON Format (`.fallowrc.json`)
+### JSON Format (`.fallowrc.json` / `.fallowrc.jsonc`)
 
 ```jsonc
 {
@@ -1393,6 +1399,10 @@ Config files are searched in priority order: `.fallowrc.json` > `fallow.toml` > 
 
   // Dependencies to ignore
   "ignoreDependencies": ["autoprefixer"],
+
+  // Suppress unused-export findings when the symbol is referenced inside its
+  // declaring file (knip parity). Boolean or { type, interface } object form.
+  "ignoreExportsUsedInFile": true,
 
   // Per-issue-type severity
   "rules": {
@@ -1471,6 +1481,7 @@ Config files are searched in priority order: `.fallowrc.json` > `fallow.toml` > 
 entry = ["src/index.ts", "scripts/*.ts"]
 ignorePatterns = ["**/*.generated.ts"]
 ignoreDependencies = ["autoprefixer"]
+ignoreExportsUsedInFile = true
 production = false
 publicPackages = ["@myorg/shared-lib", "@myorg/utils"]
 dynamicallyLoaded = ["plugins/**/*.ts", "locales/**/*.json"]

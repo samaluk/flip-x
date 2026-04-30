@@ -82,11 +82,12 @@ cargo install fallow-cli        # build from source
 | Unused files | `--unused-files` | Files unreachable from entry points |
 | Unused exports | `--unused-exports` | Symbols never imported elsewhere |
 | Unused types | `--unused-types` | Type aliases and interfaces |
-| Unused dependencies | `--unused-deps` | Packages in `dependencies`, `devDependencies`, `optionalDependencies`, type-only production deps, and test-only production deps |
+| Private type leaks | `--private-type-leaks` | Opt-in API hygiene check (default `off`) for exported signatures whose type references a same-file private type |
+| Unused dependencies | `--unused-deps` | Packages in `dependencies`, `devDependencies`, `optionalDependencies`, type-only production deps, and test-only production deps. In monorepos, internal workspace package names (e.g., `@repo/ui`) declared in another workspace's `package.json` but never imported are reported here too. |
 | Unused enum members | `--unused-enum-members` | Enum values never referenced |
 | Unused class members | `--unused-class-members` | Methods and properties |
 | Unresolved imports | `--unresolved-imports` | Imports that can't be resolved |
-| Unlisted dependencies | `--unlisted-deps` | Used packages missing from package.json |
+| Unlisted dependencies | `--unlisted-deps` | Used packages missing from package.json. In monorepos, importing a workspace package from a workspace whose own `package.json` does not list it is reported here too; self-references stay allowed without requiring a package to depend on itself. |
 | Duplicate exports | `--duplicate-exports` | Same symbol exported from multiple modules |
 | Circular dependencies | `--circular-deps` | Import cycles in the module graph |
 | Boundary violations | `--boundary-violations` | Imports crossing architecture zone boundaries. Presets: `layered`, `hexagonal`, `feature-sliced`, `bulletproof` |
@@ -99,13 +100,17 @@ When using fallow via MCP (`fallow-mcp`), the following tools are available:
 
 | Tool | Description |
 |------|-------------|
-| `analyze` | Full dead code analysis. Set `boundary_violations: true` as a convenience alias for `issue_types: ["boundary-violations"]`. Set `group_by` to `"owner"`, `"directory"`, `"package"`, or `"section"` (GitLab CODEOWNERS `[Section]` headers, with `owners` metadata per group) to partition results |
+| `analyze` | Full dead code analysis (unused files/exports/types/dependencies/members + circular dependencies + boundary violations + stale suppressions). Private type leaks are an opt-in API hygiene check via `issue_types: ["private-type-leaks"]`. Set `boundary_violations: true` as a convenience alias for `issue_types: ["boundary-violations"]`. Set `group_by` to `"owner"`, `"directory"`, `"package"`, or `"section"` to partition results. The `section` mode reads GitLab CODEOWNERS `[Section]` headers and emits `owners` metadata per group |
 | `check_changed` | Incremental analysis of files changed since a git ref |
 | `find_dupes` | Code duplication detection. Set `changed_since` to scope to changed files since a git ref |
 | `fix_preview` | Dry-run auto-fix preview |
 | `fix_apply` | Apply auto-fixes (destructive) |
 | `check_health` | Complexity metrics, health scores, hotspots, and refactoring targets. Set `group_by` to `owner`, `directory`, `package`, or `section` for per-group `vital_signs` / `health_score`; SARIF results gain `properties.group`, CodeClimate issues gain a top-level `group` field |
-| `check_runtime_coverage` | Merge V8 or Istanbul runtime-coverage data into the health report (paid). Required `coverage` param (V8 dir, V8 JSON, or Istanbul `coverage-final.json`). Tuning knobs: `min_invocations_hot` (default 100), `min_observation_volume` (default 5000), `low_traffic_threshold` (default 0.001), `max_crap` (default 30.0), `group_by`. Long dumps may exceed the 120s MCP timeout; raise `FALLOW_TIMEOUT_SECS`. Pick this over `check_health` when you have a coverage dump. |
+| `check_runtime_coverage` | Merge V8 or Istanbul runtime-coverage data into the health report (paid). Required `coverage` param (V8 dir, V8 JSON, or Istanbul `coverage-final.json`). Tuning knobs: `min_invocations_hot` (default 100), `min_observation_volume` (default 5000), `low_traffic_threshold` (default 0.001), `max_crap` (default 30.0), `top`, `group_by`. Long dumps may exceed the 120s MCP timeout; raise `FALLOW_TIMEOUT_SECS`. Pick this over `check_health` when you have a coverage dump. |
+| `get_hot_paths` | Runtime-context slice over the same paid runtime coverage pipeline. Same params as `check_runtime_coverage`; read `runtime_coverage.hot_paths` for production hot paths. |
+| `get_blast_radius` | Runtime-context slice for blast-radius review. Same params as `check_runtime_coverage`; until `runtime_coverage.blast_radius` ships, combine `file_scores[].fan_in`, `runtime_coverage.hot_paths`, and `runtime_coverage.findings`. |
+| `get_importance` | Runtime-context slice for production-importance review. Same params as `check_runtime_coverage`; until `runtime_coverage.importance` ships, combine `runtime_coverage.hot_paths`, `file_scores`, `hotspots`, and `targets`. |
+| `get_cleanup_candidates` | Runtime-context slice for cleanup review. Same params as `check_runtime_coverage`; read `runtime_coverage.findings` for `safe_to_delete`, `review_required`, `low_traffic`, and `coverage_unavailable`. |
 | `audit` | Combined dead-code + complexity + duplication for changed files, returns verdict |
 | `project_info` | Project metadata. Set `entry_points`, `files`, `plugins`, or `boundaries` to `true` to request specific sections |
 | `list_boundaries` | Architecture boundary zones and access rules. Returns `{"configured": false}` if no boundaries configured |
@@ -155,7 +160,7 @@ See <https://docs.fallow.tools/integrations/node-bindings> for the full field re
 fallow dead-code --format json --quiet
 ```
 
-Parse the JSON output. It contains arrays for each issue type (`unused_files`, `unused_exports`, `unused_types`, `unused_dependencies`, etc.) plus `total_issues` and `elapsed_ms` metadata. Each issue object includes an `actions` array with structured fix suggestions (action type, `auto_fixable` flag, description, and optional suppression comment).
+Parse the JSON output. It contains arrays for each issue type (`unused_files`, `unused_exports`, `unused_types`, `unused_dependencies`, etc.) plus `total_issues` and `elapsed_ms` metadata. Each issue object includes an `actions` array with structured fix suggestions (action type, `auto_fixable` flag, description, and optional suppression comment). For dependency findings, a non-empty `used_in_workspaces` array means the package is imported elsewhere in the monorepo; treat it as a workspace placement issue and do not auto-remove it.
 
 ### Find only unused exports (smaller output)
 
@@ -304,7 +309,7 @@ When `--format json` is active and exit code is 2, errors are emitted as JSON on
 
 ## Configuration
 
-Fallow reads config from project root: `.fallowrc.json` > `fallow.toml` > `.fallow.toml`. Most projects work with zero configuration thanks to 90 auto-detecting framework plugins.
+Fallow reads config from project root: `.fallowrc.json` > `.fallowrc.jsonc` > `fallow.toml` > `.fallow.toml`. Both `.fallowrc.json` and `.fallowrc.jsonc` accept JSON-with-comments syntax (same parser); the `.jsonc` extension lets editors auto-detect JSONC syntax highlighting. Most projects work with zero configuration thanks to 90 auto-detecting framework plugins.
 
 ```jsonc
 {
@@ -312,12 +317,14 @@ Fallow reads config from project root: `.fallowrc.json` > `fallow.toml` > `.fall
   "entry": ["src/index.ts"],
   "ignorePatterns": ["**/*.generated.ts"],
   "ignoreDependencies": ["autoprefixer"],
+  "ignoreExportsUsedInFile": true,
   "publicPackages": ["@myorg/shared-lib"],
   "dynamicallyLoaded": ["plugins/**/*.ts"],
   "rules": {
     "unused-files": "error",
     "unused-exports": "warn",
-    "unused-types": "off"
+    "unused-types": "off",
+    "private-type-leaks": "warn"
   }
 }
 ```
@@ -325,6 +332,7 @@ Fallow reads config from project root: `.fallowrc.json` > `fallow.toml` > `.fall
 Rules: `"error"` (fail CI), `"warn"` (report only), `"off"` (skip detection).
 
 Config fields:
+- `ignoreExportsUsedInFile`: knip-compatible; suppress unused-export findings when the exported symbol is referenced inside the file that declares it. Boolean (`true` covers all kinds) or `{ "type": true, "interface": true }` object form for knip parity. Fallow groups type aliases and interfaces under the same `unused-types` issue, so both type-kind fields behave identically. References inside the export specifier itself (`export { foo }`, `export default foo`) do not count as same-file uses; those exports are still reported when no other in-file expression references the binding
 - `publicPackages`: workspace packages that are public libraries; exports from these packages are not flagged as unused
 - `dynamicallyLoaded`: glob patterns for files loaded at runtime (plugin dirs, locale files); treated as always-used
 - `usedClassMembers`: class method/property names that extend the built-in Angular/React lifecycle allowlist with framework-invoked names. Each entry is a plain string (global suppression) or a scoped object `{ extends?, implements?, members }` matching only classes with the given heritage. Use scoped rules for common names like `refresh` or `execute` to avoid false negatives on unrelated classes; global strings for unique names like `agInit`. Example: `["agInit", { "implements": "ICellRendererAngularComp", "members": ["refresh"] }, { "extends": "BaseCommand", "members": ["execute"] }]`. An unconstrained scoped rule (no `extends` or `implements`) is rejected at load time. Use plugin-level `usedClassMembers` in a `.fallow/plugins/*.jsonc` file for library-specific allowlists
