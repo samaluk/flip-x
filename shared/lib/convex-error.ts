@@ -22,7 +22,20 @@ import {
   UnsupportedTable,
 } from "./errors/domain";
 
-export { translateConvexError };
+export function translateConvexErrorToast(
+  message: string,
+  tErrors: unknown,
+): string {
+  const t = tErrors as (key: string, values?: { message: string }) => string;
+  return translateConvexError(
+    message,
+    (key) => t(key),
+    (detail) =>
+      t("generic", {
+        message: detail,
+      }),
+  );
+}
 
 /** AppError class constructors (used from tests via `instanceof`; kept reachable from app entry for static analysis). */
 void [

@@ -18,7 +18,7 @@ import {
   PLAYER_NAME_ISSUE_TOAST_KEY,
 } from "@/shared/lib/player-name-validation";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateConvexError } from "@/shared/lib/convex-error";
+import { translateConvexErrorToast } from "@/shared/lib/convex-error";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { useRouter } from "@/shared/i18n/navigation";
@@ -131,15 +131,7 @@ export function HomeClient() {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      toast.error(
-        message
-          ? translateConvexError(message, tErrors, (detail) =>
-              tErrors("generic", {
-                message: detail,
-              }),
-            )
-          : t("toastCreateFailed"),
-      );
+      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastCreateFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -180,15 +172,7 @@ export function HomeClient() {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      toast.error(
-        message
-          ? translateConvexError(message, tErrors, (detail) =>
-              tErrors("generic", {
-                message: detail,
-              }),
-            )
-          : t("toastJoinFailed"),
-      );
+      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastJoinFailed"));
     } finally {
       setIsSubmitting(false);
     }

@@ -23,7 +23,7 @@ import { Input } from "@/shared/ui/input";
 import { Skeleton } from "@/shared/ui/skeleton";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
-import { translateConvexError } from "@/shared/lib/convex-error";
+import { translateConvexErrorToast } from "@/shared/lib/convex-error";
 import {
   getTrimmedPlayerNameIssue,
   PLAYER_NAME_ISSUE_TOAST_KEY,
@@ -87,15 +87,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
         setPlayerName("");
       } catch (error) {
         const message = error instanceof Error ? error.message : "";
-        toast.error(
-          message
-            ? translateConvexError(message, tErrors, (detail) =>
-                tErrors("generic", {
-                  message: detail,
-                }),
-              )
-            : t("toastJoinFailed"),
-        );
+        toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastJoinFailed"));
       } finally {
         setIsJoining(false);
       }

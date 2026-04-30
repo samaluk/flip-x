@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import refs from "@/confect/_generated/refs";
 import { Button } from "@/shared/ui/button";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateConvexError } from "@/shared/lib/convex-error";
+import { translateConvexErrorToast } from "@/shared/lib/convex-error";
 
 interface StartGameButtonProps {
   matchId: string;
@@ -34,15 +34,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      toast.error(
-        message
-          ? translateConvexError(message, tErrors, (detail) =>
-              tErrors("generic", {
-                message: detail,
-              }),
-            )
-          : t("toastFailed"),
-      );
+      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastFailed"));
     } finally {
       setIsSubmitting(false);
     }

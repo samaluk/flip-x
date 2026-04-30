@@ -8,7 +8,7 @@ import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateConvexError } from "@/shared/lib/convex-error";
+import { translateConvexErrorToast } from "@/shared/lib/convex-error";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
@@ -25,13 +25,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
         action().catch((error) => {
           const message = error instanceof Error ? error.message : "";
           toast.error(
-            message
-              ? translateConvexError(message, tErrors, (detail) =>
-                  tErrors("generic", {
-                    message: detail,
-                  }),
-                )
-              : tErrors("gameActionFailed"),
+            message ? translateConvexErrorToast(message, tErrors) : tErrors("gameActionFailed"),
           );
         });
       });
