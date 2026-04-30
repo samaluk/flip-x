@@ -51,6 +51,9 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      - name: Check i18n
+        run: pnpm i18n:check
+
       - name: Fallow
         run: pnpm fallow:ci
 
