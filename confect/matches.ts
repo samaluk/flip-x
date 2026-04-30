@@ -1,6 +1,6 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { v } from "convex/values";
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimit } from "./lib/rate_limiter";
@@ -26,6 +26,10 @@ import {
 } from "../shared/lib/errors/domain";
 import { runGameCommand } from "../game/application/run-command";
 import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
+import {
+  DatabaseReader as DatabaseReaderService,
+  DatabaseWriter as DatabaseWriterService,
+} from "./_generated/services";
 
 type MatchReadCtx = QueryCtx | MutationCtx;
 
@@ -41,22 +45,18 @@ function snapshotForMatchSession(
   });
 }
 
-function findMatchByLobbyCode(ctx: MutationCtx | QueryCtx, lobbyCode: string) {
-  return ctx.db
-    .query("matches")
-    .withIndex("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
-    .first();
-}
-
-function resolveUniqueLobbyCodeAttempt(ctx: MutationCtx, initialLobbyCode: string) {
+function resolveUniqueLobbyCodeAttempt(
+  lookupMatchByLobbyCode: (lobbyCode: string) => Effect.Effect<Doc<"matches"> | null, unknown>,
+  initialLobbyCode: string,
+) {
   return Effect.gen(function* () {
     let lobbyCode = initialLobbyCode;
-    let existing = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
+    let existing = yield* lookupMatchByLobbyCode(lobbyCode);
     let attempts = 0;
 
     while (existing && attempts < 10) {
       lobbyCode = generateLobbyCode();
-      existing = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
+      existing = yield* lookupMatchByLobbyCode(lobbyCode);
       attempts += 1;
     }
 
@@ -64,10 +64,20 @@ function resolveUniqueLobbyCodeAttempt(ctx: MutationCtx, initialLobbyCode: strin
   });
 }
 
-function generateUniqueLobbyCode(ctx: MutationCtx) {
+function readMatchByLobbyCode(reader: Effect.Effect.Success<typeof DatabaseReaderService>, lobbyCode: string) {
+  return reader
+    .table("matches")
+    .index("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
+    .first()
+    .pipe(Effect.map(Option.getOrNull));
+}
+
+function generateUniqueLobbyCode(
+  lookupMatchByLobbyCode: (lobbyCode: string) => Effect.Effect<Doc<"matches"> | null, unknown>,
+) {
   return Effect.gen(function* () {
     const { lobbyCode, existing } = yield* resolveUniqueLobbyCodeAttempt(
-      ctx,
+      lookupMatchByLobbyCode,
       generateLobbyCode(),
     );
 
@@ -79,9 +89,12 @@ function generateUniqueLobbyCode(ctx: MutationCtx) {
   });
 }
 
-function getSetupMatchByLobbyCode(ctx: MutationCtx, lobbyCode: string) {
+function getSetupMatchByLobbyCode(
+  lookupMatchByLobbyCode: (lobbyCode: string) => Effect.Effect<Doc<"matches"> | null, unknown>,
+  lobbyCode: string,
+) {
   return Effect.gen(function* () {
-    const match = yield* Effect.promise(() => findMatchByLobbyCode(ctx, lobbyCode));
+    const match = yield* lookupMatchByLobbyCode(lobbyCode);
 
     if (!match || match.status !== "setup") {
       return yield* lobbyNotFound();
@@ -94,11 +107,13 @@ function getSetupMatchByLobbyCode(ctx: MutationCtx, lobbyCode: string) {
 export function getMatchByCode(ctx: QueryCtx, lobbyCode: string) {
   const normalized = lobbyCode.trim().toUpperCase();
   return Effect.gen(function* () {
+    const reader = yield* DatabaseReaderService;
+
     if (normalized.length !== 4) {
       return null;
     }
 
-    const match = yield* Effect.promise(() => findMatchByLobbyCode(ctx, normalized));
+    const match = yield* readMatchByLobbyCode(reader, normalized);
 
     if (!match || match.status !== "setup") {
       return null;
@@ -124,6 +139,9 @@ export function createMatchForSession(
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
+    const reader = yield* DatabaseReaderService;
+    const writer = yield* DatabaseWriterService;
+
     yield* enforceRateLimit(ctx, "createMatch", String(args.sessionId));
 
     const hostName = args.hostName.trim();
@@ -135,9 +153,8 @@ export function createMatchForSession(
     const hostColorId = yield* normalizePlayerColorId(args.hostColorId, []);
 
     const timestamp = Date.now();
-    const lobbyCode = yield* generateUniqueLobbyCode(ctx);
-    const matchId = yield* Effect.promise(() =>
-      ctx.db.insert("matches", {
+    const lobbyCode = yield* generateUniqueLobbyCode((code) => readMatchByLobbyCode(reader, code));
+    const matchId = yield* writer.table("matches").insert({
         status: "setup",
         lobbyCode,
         targetScore: 200,
@@ -146,24 +163,21 @@ export function createMatchForSession(
         version: 0,
         createdAt: timestamp,
         updatedAt: timestamp,
-      }),
-    );
+      });
 
-    const hostPlayerId = yield* Effect.promise(() =>
-      ctx.db.insert("players", {
+    const hostPlayerId = yield* writer.table("players").insert({
         matchId,
         displayName: hostName,
         colorId: hostColorId,
         seatIndex: 0,
         totalScore: 0,
         hasWon: false,
-      }),
-    );
+      });
 
     yield* setPlayerSession(ctx, sessionId, hostPlayerId);
-    yield* Effect.promise(() => ctx.db.patch(matchId, { hostPlayerId }));
+    yield* writer.table("matches").patch(matchId, { hostPlayerId });
 
-    const match = yield* Effect.promise(() => ctx.db.get(matchId));
+    const match = yield* reader.table("matches").get(matchId);
     if (!match) {
       return yield* matchNotFound({ matchId: String(matchId) });
     }
@@ -177,6 +191,8 @@ export function joinByCodeForSession(
   args: { lobbyCode: string; sessionId: string },
 ) {
   return Effect.gen(function* () {
+    const reader = yield* DatabaseReaderService;
+
     yield* enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
 
     const normalized = args.lobbyCode.trim().toUpperCase();
@@ -184,7 +200,10 @@ export function joinByCodeForSession(
       return yield* lobbyNotFound();
     }
 
-    const match = yield* getSetupMatchByLobbyCode(ctx, normalized);
+    const match = yield* getSetupMatchByLobbyCode(
+      (lobbyCode) => readMatchByLobbyCode(reader, lobbyCode),
+      normalized,
+    );
 
     return {
       matchId: String(match._id),
@@ -207,6 +226,8 @@ function loadMatchSnapshotForSession(
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
+    // queryWithSession executes as a plain Convex query, so Confect services are
+    // not layered here; use the raw query ctx directly at this boundary.
     const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
 
     if (!match) {
@@ -224,9 +245,12 @@ export function joinMatchForSession(
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
+    const reader = yield* DatabaseReaderService;
+    const writer = yield* DatabaseWriterService;
+
     yield* enforceRateLimit(ctx, "joinMatch", String(args.sessionId));
 
-    const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
+    const match = yield* reader.table("matches").get(args.matchId);
 
     if (!match || match.status !== "setup") {
       return yield* matchNotFound({ matchId: String(args.matchId) });
@@ -258,10 +282,10 @@ export function joinMatchForSession(
         return yield* nameAlreadyTaken({ name: playerName });
       }
 
-      yield* Effect.promise(() =>
-        ctx.db.patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId }),
-      );
-      const nextMatch = yield* Effect.promise(() => ctx.db.get(args.matchId));
+      yield* writer
+        .table("players")
+        .patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId });
+      const nextMatch = yield* reader.table("matches").get(args.matchId);
 
       if (!nextMatch) {
         return yield* matchNotFound({ matchId: String(args.matchId) });
@@ -277,16 +301,14 @@ export function joinMatchForSession(
 
     const nextSeat =
       players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
-    const playerId = yield* Effect.promise(() =>
-      ctx.db.insert("players", {
+    const playerId = yield* writer.table("players").insert({
         matchId: args.matchId,
         displayName: playerName,
         colorId: playerColorId,
         seatIndex: nextSeat,
         totalScore: 0,
         hasWon: false,
-      }),
-    );
+      });
 
     yield* setPlayerSession(ctx, sessionId, playerId);
 
