@@ -61,9 +61,10 @@ export function HomeClient() {
     parse: (value) => value.toUpperCase(),
     serialize: (value) => value.toUpperCase(),
   });
-  const [isJoinMode, setIsJoinMode] = useState(!!joinCode);
+  const [hasOpenedJoinFlow, setHasOpenedJoinFlow] = useState(!!joinCode);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hasLoadedName, setHasLoadedName] = useState(false);
+  const isJoinMode = Boolean(joinCode) || hasOpenedJoinFlow;
 
   const t = useTranslations("MatchSetup");
   const tErrors = useTranslations("Errors");
@@ -97,12 +98,6 @@ export function HomeClient() {
       setColorId(firstAvailablePlayerColorId(usedColorIds));
     }
   }, [colorId, usedColorIds]);
-
-  useEffect(() => {
-    if (joinCode) {
-      setIsJoinMode(true);
-    }
-  }, [joinCode]);
 
   async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -238,7 +233,7 @@ export function HomeClient() {
                 variant="outline"
                 size="lg"
                 className="h-12 w-full text-base"
-                onClick={() => setIsJoinMode(true)}
+                onClick={() => setHasOpenedJoinFlow(true)}
               >
                 Join Existing Game
               </Button>
@@ -266,7 +261,7 @@ export function HomeClient() {
                   size="lg"
                   className="h-12 flex-1"
                   onClick={() => {
-                    setIsJoinMode(false);
+                    setHasOpenedJoinFlow(false);
                     setJoinCode(null);
                   }}
                 >
