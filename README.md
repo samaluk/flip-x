@@ -93,9 +93,8 @@ pnpm build
 
 GitHub Actions runs the fast Vitest suites, build, visual regression, backend tests, and E2E on pushes and pull requests using Convex preview deployments.
 
-## Effect migration
+## Effect usage
 
-- Incremental adoption notes live in `docs/effect-migration.md`.
 - Confect is adopted for backend contracts and implementation wiring.
 - Remaining Effect work is focused on service-boundary cleanup, typed error normalization, schema precision, and deterministic dependencies.
 - Pure gameplay rules under `game/logic/` remain plain TypeScript.
