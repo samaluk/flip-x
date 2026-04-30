@@ -2,7 +2,10 @@
   "name": "flip7",
   "version": "0.1.0",
   "private": true,
-  "portless": { "name": "flip7", "script": "dev:app" },
+  "portless": {
+    "name": "flip7",
+    "script": "dev:app"
+  },
   "scripts": {
     "confect:codegen": "confect codegen",
     "confect:dev": "confect dev",
@@ -12,6 +15,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
     "design:lint": "pnpm exec design.md lint DESIGN.md",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
@@ -80,6 +84,7 @@
     "jsdom": "29.0.2",
     "oxfmt": "0.46.0",
     "oxlint": "1.61.0",
+    "oxlint-tailwindcss": "^0.6.3",
     "portless": "0.11.0",
     "tailwindcss": "4.2.4",
     "typescript": "6.0.3",

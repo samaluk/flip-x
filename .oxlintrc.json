@@ -15,7 +15,34 @@
     "suspicious": "error"
   },
   "plugins": ["typescript", "react", "jsx-a11y", "unicorn"],
+  "jsPlugins": ["oxlint-tailwindcss"],
   "rules": {
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    // Correctness
+    "tailwindcss/no-unknown-classes": "error",
+    "tailwindcss/no-duplicate-classes": "error",
+    "tailwindcss/no-conflicting-classes": "error",
+    "tailwindcss/no-deprecated-classes": "error",
+    "tailwindcss/no-unnecessary-whitespace": "error",
+    "tailwindcss/no-dark-without-light": "error",
+    "tailwindcss/no-contradicting-variants": "error",
+    // Style
+    "tailwindcss/enforce-canonical": "error",
+    "tailwindcss/enforce-sort-order": "error",
+    "tailwindcss/enforce-shorthand": "error",
+    "tailwindcss/enforce-logical": "error",
+    "tailwindcss/enforce-physical": "off",
+    "tailwindcss/enforce-consistent-important-position": "error",
+    "tailwindcss/enforce-negative-arbitrary-values": "error",
+    "tailwindcss/enforce-consistent-variable-syntax": "error",
+    "tailwindcss/consistent-variant-order": "error",
+    // Complexity
+    "tailwindcss/max-class-count": "error",
+    "tailwindcss/enforce-consistent-line-wrapping": "off",
+    // Restrictions
+    "tailwindcss/no-restricted-classes": "error",
+    "tailwindcss/no-arbitrary-value": "error",
+    "tailwindcss/no-hardcoded-colors": "error",
+    "tailwindcss/no-unnecessary-arbitrary-value": "error"
   }
 }
