@@ -78,6 +78,9 @@ export function HomeClient() {
     joinCode && joinCode.length === 4 ? { lobbyCode: joinCode } : "skip",
   );
   const usedColorIds = lobbyLookup?.usedColorIds ?? NO_USED_COLORS;
+  const selectedColorId = usedColorIds.includes(colorId)
+    ? firstAvailablePlayerColorId(usedColorIds)
+    : colorId;
 
   useEffect(() => {
     if (hasLoadedName) return;
@@ -93,19 +96,13 @@ export function HomeClient() {
     setHasLoadedName(true);
   }, [hasLoadedName]);
 
-  useEffect(() => {
-    if (usedColorIds.includes(colorId)) {
-      setColorId(firstAvailablePlayerColorId(usedColorIds));
-    }
-  }, [colorId, usedColorIds]);
-
   async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedName = name.trim();
 
     localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
-    localStorage.setItem(COLOR_STORAGE_KEY, colorId);
+    localStorage.setItem(COLOR_STORAGE_KEY, selectedColorId);
 
     const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
     if (nameIssue) {
@@ -118,7 +115,7 @@ export function HomeClient() {
     try {
       const match = await createMatch({
         hostName: trimmedName,
-        hostColorId: colorId,
+        hostColorId: selectedColorId,
       });
 
       startTransition(() => {
@@ -139,7 +136,7 @@ export function HomeClient() {
     const lobbyCode = (joinCode ?? "").trim();
 
     localStorage.setItem(NAME_STORAGE_KEY, playerName);
-    localStorage.setItem(COLOR_STORAGE_KEY, colorId);
+    localStorage.setItem(COLOR_STORAGE_KEY, selectedColorId);
 
     const nameIssue = getTrimmedPlayerNameIssue(playerName, sessionId);
     if (nameIssue) {
@@ -160,7 +157,7 @@ export function HomeClient() {
         joinMatch,
         lobbyCode,
         playerName,
-        colorId,
+        colorId: selectedColorId,
       });
       startTransition(() => {
         router.push(`/game/${result.matchId}`);
@@ -201,7 +198,7 @@ export function HomeClient() {
           </div>
 
           <PlayerColorPicker
-            value={colorId}
+            value={selectedColorId}
             onChange={setColorId}
             usedColorIds={isJoinMode ? usedColorIds : []}
             label={t("playerColor")}
