@@ -17,13 +17,14 @@ export function ModifierCardContent({
 }) {
   const t = useTranslations("Cards");
   const p = MODIFIER_CARD_PALETTE;
+  const modifierText = String(modifierValue);
 
   const centerLabel =
-    modifierValue === "x2" ? t("modifier.x2") : t("modifier.plus", { value: modifierValue });
+    modifierValue === "x2" ? t("modifier.x2") : t("modifier.plus", { value: modifierText });
   const effectLine =
     modifierValue === "x2"
       ? t("modifier.effectX2")
-      : t("modifier.effectPlus", { value: modifierValue });
+      : t("modifier.effectPlus", { value: modifierText });
 
   return (
     <CardFrame

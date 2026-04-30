@@ -56,8 +56,8 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                   <div className="flex items-center gap-2">
                     <span>
                       {entry.phase === "projected"
-                        ? t("roundHeaderLive", { round: entry.roundNumber })
-                        : t("roundHeader", { round: entry.roundNumber })}
+                        ? t("roundHeaderLive", { round: String(entry.roundNumber) })
+                        : t("roundHeader", { round: String(entry.roundNumber) })}
                     </span>
                     {entry.phase === "projected" ? (
                       <span className="rounded-full border border-dashed px-2 py-0.5 text-xs font-semibold text-primary normal-case">
@@ -75,7 +75,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                 <th className="sticky start-0 z-10 border-b bg-background px-4 py-4">
                   <div className="text-sm font-medium text-foreground">{player.displayName}</div>
                   <div className="text-xs text-muted-foreground">
-                    {t("seatLabel", { seat: player.seatIndex + 1 })}
+                    {t("seatLabel", { seat: String(player.seatIndex + 1) })}
                   </div>
                 </th>
                 {history.map((entry) => {
@@ -103,7 +103,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                           +{score.roundScore}
                           <span className="sr-only">
                             {" "}
-                            {t("gainLabel", { gain: score.roundScore })}
+                            {t("gainLabel", { gain: String(score.roundScore) })}
                           </span>
                         </div>
                         <div
@@ -116,7 +116,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                         >
                           {score.reachedTarget
                             ? t("winner")
-                            : t("pointsToTarget", { points: score.pointsToTarget })}
+                            : t("pointsToTarget", { points: String(score.pointsToTarget) })}
                         </div>
                       </div>
                     </td>

@@ -61,7 +61,7 @@ function ScreenReaderSummary(props: Flip7CardProps) {
     valueLabel =
       props.modifierValue === "x2"
         ? t("modifier.x2")
-        : t("modifier.plus", { value: props.modifierValue });
+        : t("modifier.plus", { value: String(props.modifierValue) });
   } else {
     valueLabel = t(`action.${props.actionKind}`);
   }

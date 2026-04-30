@@ -103,9 +103,13 @@ export function GameTableView({
     (player) => player.playerId === snapshot.activePlayerId,
   );
   const { viewer, opponents } = partitionPlayers(snapshot);
+  const tEventsLoose = (key: string, values?: Record<string, string | number>) =>
+    tEvents(key as never, values as never);
+  const tCardsLoose = (key: string, values?: Record<string, string | number>) =>
+    tCards(key as never, values as never);
 
   const latestBody = snapshot.latestEvent
-    ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
+    ? formatLatestRoundEventBody(snapshot.latestEvent, tEventsLoose, tCardsLoose)
     : tEvents("noneYet");
 
   const pendingAction = snapshot.pendingAction;
@@ -250,8 +254,8 @@ function GameTableHud({
             </h1>
             <span className="text-xs text-muted-foreground">
               {t("roundRace", {
-                round: snapshot.currentRoundNumber,
-                target: snapshot.targetScore,
+                round: String(snapshot.currentRoundNumber),
+                target: String(snapshot.targetScore),
               })}
             </span>
           </div>
@@ -262,7 +266,7 @@ function GameTableHud({
             {t(`matchStatus.${snapshot.status}`)}
           </Badge>
           <Badge variant="outline" className="hidden sm:inline-flex">
-            {t("dealerSeat", { n: snapshot.dealerSeat + 1 })}
+            {t("dealerSeat", { n: String(snapshot.dealerSeat + 1) })}
           </Badge>
           {activePlayer ? (
             <Badge variant="default" className="max-w-48">

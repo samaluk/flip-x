@@ -12,7 +12,7 @@ function modifierLabel(modifierValue: ModifierCard["modifierValue"], tCards: Tra
   if (modifierValue === "x2") {
     return tCards("modifier.x2");
   }
-  return tCards("modifier.plus", { value: modifierValue });
+  return tCards("modifier.plus", { value: String(modifierValue) });
 }
 
 /** Card face label for event copy (number value, modifier, or action name). */

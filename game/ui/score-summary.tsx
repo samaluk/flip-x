@@ -45,7 +45,7 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
                 <td className="px-3 py-3 text-base font-semibold text-primary tabular-nums">
                   {player.scoreBreakdown.finalRoundScore}
                   <span className="sr-only">
-                    {t("srFinalScore", { score: player.scoreBreakdown.finalRoundScore })}
+                    {t("srFinalScore", { score: String(player.scoreBreakdown.finalRoundScore) })}
                   </span>
                 </td>
               </tr>

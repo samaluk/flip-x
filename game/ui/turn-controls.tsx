@@ -148,7 +148,7 @@ export function TurnControls({
           >
             <HandIcon />
             {phase.isInFlip3
-              ? t("hitFlip3", { count: phase.flip3CardsRemaining })
+              ? t("hitFlip3", { count: String(phase.flip3CardsRemaining) })
               : t("hitFor", { name: phase.activeDisplayName })}
           </Button>
           <Button

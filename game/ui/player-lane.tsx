@@ -30,7 +30,14 @@ function getDisplayStatus(
   return player.roundStatus;
 }
 
-function statusLabelKey(status: LaneRoundStatus): string | null {
+type PlayerLaneStatusKey =
+  | "statusBusted"
+  | "statusStayed"
+  | "statusFrozen"
+  | "statusCompleted"
+  | "statusWaiting";
+
+function statusLabelKey(status: LaneRoundStatus): PlayerLaneStatusKey | null {
   switch (status) {
     case "active":
       return null;
@@ -142,7 +149,7 @@ function PlayerLaneSidebar({
           {player.displayName}
         </h3>
         <div className="text-xs text-muted-foreground tabular-nums">
-          {t("totalScore", { score: player.totalScore })}
+          {t("totalScore", { score: String(player.totalScore) })}
         </div>
         <div className="text-lg font-semibold text-foreground tabular-nums">{player.pointsAtRisk}</div>
         <div className="text-xs leading-none text-muted-foreground">{t("pointsAtRisk")}</div>
@@ -187,7 +194,7 @@ function PlayerLaneSidebar({
         {flip3Remaining !== null && flip3Remaining > 0 ? (
           <Badge variant="outline" className="text-xs">
             <RefreshCwIcon className="size-3 animate-spin" />
-            {t("flip3Remaining", { count: flip3Remaining })}
+            {t("flip3Remaining", { count: String(flip3Remaining) })}
           </Badge>
         ) : null}
       </div>
