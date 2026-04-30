@@ -5,9 +5,9 @@ import type { Card } from "../game/logic/card-types";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
 import { enforceRateLimit } from "./lib/rate_limiter";
 import { queryWithSession, toSessionId } from "./lib/session_functions";
-import { setPlayerSession } from "./lib/session_store";
+import { setPlayerSessionWithServices } from "./lib/session_store";
 import type { Doc, Id } from "../convex/_generated/dataModel";
-import { getPlayersByMatch, getViewerPlayerId } from "./lib/store";
+import { getPlayersByMatchWithReader, getViewerPlayerIdWithReader } from "./lib/store";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
 import {
   firstAvailablePlayerColorId,
@@ -119,7 +119,7 @@ export function getMatchByCode(ctx: QueryCtx, lobbyCode: string) {
       return null;
     }
 
-    const players = yield* getPlayersByMatch(ctx, match._id);
+    const players = yield* getPlayersByMatchWithReader(reader, match._id);
 
     return {
       matchId: String(match._id),
@@ -174,7 +174,7 @@ export function createMatchForSession(
         hasWon: false,
       });
 
-    yield* setPlayerSession(ctx, sessionId, hostPlayerId);
+    yield* setPlayerSessionWithServices(reader, writer, sessionId, hostPlayerId);
     yield* writer.table("matches").patch(matchId, { hostPlayerId });
 
     const match = yield* reader.table("matches").get(matchId);
@@ -261,8 +261,8 @@ export function joinMatchForSession(
       return yield* invalidPlayerName();
     }
 
-    const players = yield* getPlayersByMatch(ctx, args.matchId);
-    const existingViewerPlayerId = yield* getViewerPlayerId(ctx, args.matchId, sessionId);
+    const players = yield* getPlayersByMatchWithReader(reader, args.matchId);
+    const existingViewerPlayerId = yield* getViewerPlayerIdWithReader(reader, args.matchId, sessionId);
     const takenColorIds = players
       .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
       .map((player) => player.colorId)
@@ -310,7 +310,7 @@ export function joinMatchForSession(
         hasWon: false,
       });
 
-    yield* setPlayerSession(ctx, sessionId, playerId);
+    yield* setPlayerSessionWithServices(reader, writer, sessionId, playerId);
 
     return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
   });
