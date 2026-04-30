@@ -174,11 +174,9 @@ export function HomeClient() {
     <main className="relative flex min-h-dvh flex-1 items-center justify-center px-6 selection:bg-primary/20">
       <div className="w-full max-w-md space-y-10">
         <div className="text-center">
-          <h1 className="text-5xl font-medium tracking-tighter text-foreground">FLIP 7</h1>
+          <h1 className="text-5xl font-medium tracking-tighter text-foreground">{t("title")}</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {isJoinMode
-              ? "Enter your name and join the game"
-              : "Create a game or join an existing one"}
+            {isJoinMode ? t("subtitleJoin") : t("subtitleCreate")}
           </p>
         </div>
 
@@ -213,7 +211,7 @@ export function HomeClient() {
                   className="h-12 w-full text-base font-medium"
                   disabled={isSubmitting || !name.trim() || !sessionId}
                 >
-                  Create New Game
+                  {t("createNewGame")}
                 </Button>
               </form>
 
@@ -222,7 +220,7 @@ export function HomeClient() {
                   <div className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">or</span>
+                  <span className="bg-background px-2 text-muted-foreground">{t("or")}</span>
                 </div>
               </div>
 
@@ -232,7 +230,7 @@ export function HomeClient() {
                 className="h-12 w-full text-base"
                 onClick={() => setHasOpenedJoinFlow(true)}
               >
-                Join Existing Game
+                {t("joinExistingGame")}
               </Button>
             </div>
           ) : (
@@ -262,7 +260,7 @@ export function HomeClient() {
                     setJoinCode(null);
                   }}
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   type="submit"
@@ -272,7 +270,7 @@ export function HomeClient() {
                     isSubmitting || !name.trim() || (joinCode?.length ?? 0) !== 4 || !sessionId
                   }
                 >
-                  Join Game
+                  {t("joinGame")}
                 </Button>
               </div>
             </form>

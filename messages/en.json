@@ -36,9 +36,17 @@
     "lobbyCode": "Lobby code"
   },
   "MatchSetup": {
+    "title": "Flip 7",
+    "subtitleJoin": "Enter your name and join the game",
+    "subtitleCreate": "Create a game or join an existing one",
     "yourName": "Your name",
     "playerColor": "Player color",
     "namePlaceholder": "Enter your name",
+    "createNewGame": "Create New Game",
+    "or": "or",
+    "joinExistingGame": "Join Existing Game",
+    "cancel": "Cancel",
+    "joinGame": "Join Game",
     "rulesHelp": "Rules help",
     "rulesTitle": "How this table plays Flip 7",
     "rulesIntro": "Hit to reveal another card, stay to bank what you have, and avoid duplicate numbers unless a Second Chance saves you.",

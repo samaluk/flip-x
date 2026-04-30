@@ -36,9 +36,17 @@
     "lobbyCode": "Código del lobby"
   },
   "MatchSetup": {
+    "title": "Flip 7",
+    "subtitleJoin": "Escribe tu nombre y únete a la partida",
+    "subtitleCreate": "Crea una partida o únete a una existente",
     "yourName": "Tu nombre",
     "playerColor": "Color del jugador",
     "namePlaceholder": "Escribe tu nombre",
+    "createNewGame": "Crear nueva partida",
+    "or": "o",
+    "joinExistingGame": "Unirse a una partida existente",
+    "cancel": "Cancelar",
+    "joinGame": "Unirse a la partida",
     "rulesHelp": "Ayuda de reglas",
     "rulesTitle": "Cómo juega esta mesa a Flip 7",
     "rulesIntro": "Pide carta para revelar otra, planta para asegurar lo que llevas y evita números duplicados salvo que una Segunda oportunidad te salve.",
