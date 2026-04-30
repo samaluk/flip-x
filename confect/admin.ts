@@ -177,101 +177,115 @@ export const deleteDocument = internalMutation({
 
 export const clearAllAppDataViaCli = action({
   handler: async (ctx): Promise<ClearAllAppDataResult> => {
-    const deleted = await Effect.runPromise(runClearAllAppData(ctx));
+    const deleted = await Effect.runPromise(runClearAllAppData(makeAdminCleanupDeps(ctx)));
     return {
       deleted: deleted.deleted,
     };
   },
 });
 
-function runClearAllAppData(ctx: ActionCtx) {
-  return Effect.gen(function* () {
-  const sessionIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listSessionIds, {}));
-  const deleted = {
-    idempotencyKeys: 0,
-    scoreBreakdowns: 0,
-    roundEvents: 0,
-    roundPlayerStates: 0,
-    rounds: 0,
-    playerSessions: 0,
-    players: 0,
-    matches: 0,
-    presenceRooms: 0,
-    rateLimitKeysReset: 0,
-  };
+interface AdminCleanupDeps {
+  readonly listSessionIds: Effect.Effect<readonly string[]>;
+  readonly listMatchIds: Effect.Effect<readonly string[]>;
+  readonly deleteAllFromTable: (table: string) => Effect.Effect<number, ExternalComponentFailed>;
+  readonly removePresenceRoom: (matchId: string) => Effect.Effect<void, ExternalComponentFailed>;
+  readonly resetRateLimit: (
+    sessionId: string,
+    key: "createMatch" | "joinByCode" | "joinMatch" | "startMatch",
+  ) => Effect.Effect<void, ExternalComponentFailed>;
+}
 
-  // Clean up presence rooms
-  const matchIds = yield* Effect.promise(() => ctx.runQuery(internal.admin.listMatchIds, {}));
-  for (const matchId of matchIds) {
-    yield* Effect.tryPromise({
-      try: () => presence.removeRoom(ctx, matchId),
-      catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-    });
-    deleted.presenceRooms += 1;
-  }
-
-  // Clear all table data via mutation (which has ctx.db access)
-
-  const tables = Object.keys(schema.tables);
-  for (const table of tables) {
-    console.log(`Removing document from table ${table}`);
-    const count = yield* Effect.tryPromise({
-      try: () => ctx.runMutation(internal.admin.deleteDocument, { table: table }),
-      catch: (cause) => new ExternalComponentFailed({ component: "deleteDocument", cause }),
-    });
-    switch (table) {
-      case "idempotencyKeys":
-        deleted.idempotencyKeys += count;
-        break;
-      case "scoreBreakdowns":
-        deleted.scoreBreakdowns += count;
-        break;
-      case "roundEvents":
-        deleted.roundEvents += count;
-        break;
-      case "roundPlayerStates":
-        deleted.roundPlayerStates += count;
-        break;
-      case "rounds":
-        deleted.rounds += count;
-        break;
-      case "playerSessions":
-        deleted.playerSessions += count;
-        break;
-      case "players":
-        deleted.players += count;
-        break;
-      case "matches":
-        deleted.matches += count;
-        break;
-      default:
-        break;
-    }
-  }
-
-  // Reset rate limiters
-  for (const sessionId of sessionIds) {
-    yield* Effect.tryPromise({
-      try: () => rateLimiter.reset(ctx, "createMatch", { key: sessionId }),
-      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
-    });
-    yield* Effect.tryPromise({
-      try: () => rateLimiter.reset(ctx, "joinByCode", { key: sessionId }),
-      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
-    });
-    yield* Effect.tryPromise({
-      try: () => rateLimiter.reset(ctx, "joinMatch", { key: sessionId }),
-      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
-    });
-    yield* Effect.tryPromise({
-      try: () => rateLimiter.reset(ctx, "startMatch", { key: sessionId }),
-      catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
-    });
-    deleted.rateLimitKeysReset += 4;
-  }
-
+function makeAdminCleanupDeps(ctx: ActionCtx): AdminCleanupDeps {
   return {
-    deleted
+    listSessionIds: Effect.promise(() => ctx.runQuery(internal.admin.listSessionIds, {})),
+    listMatchIds: Effect.promise(() => ctx.runQuery(internal.admin.listMatchIds, {})),
+    deleteAllFromTable: (table) =>
+      Effect.tryPromise({
+        try: () => ctx.runMutation(internal.admin.deleteDocument, { table }),
+        catch: (cause) => new ExternalComponentFailed({ component: "deleteDocument", cause }),
+      }),
+    removePresenceRoom: (matchId) =>
+      Effect.tryPromise({
+        try: () => presence.removeRoom(ctx, matchId),
+        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+      }),
+    resetRateLimit: (sessionId, key) =>
+      Effect.tryPromise({
+        try: () => rateLimiter.reset(ctx, key, { key: sessionId }),
+        catch: (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
+      }),
   };
+}
+
+function runClearAllAppData(deps: AdminCleanupDeps) {
+  return Effect.gen(function* () {
+    const sessionIds = yield* deps.listSessionIds;
+    const deleted = {
+      idempotencyKeys: 0,
+      scoreBreakdowns: 0,
+      roundEvents: 0,
+      roundPlayerStates: 0,
+      rounds: 0,
+      playerSessions: 0,
+      players: 0,
+      matches: 0,
+      presenceRooms: 0,
+      rateLimitKeysReset: 0,
+    };
+
+    // Clean up presence rooms
+    const matchIds = yield* deps.listMatchIds;
+    for (const matchId of matchIds) {
+      yield* deps.removePresenceRoom(matchId);
+      deleted.presenceRooms += 1;
+    }
+
+    // Clear all table data via mutation
+    const tables = Object.keys(schema.tables);
+    for (const table of tables) {
+      console.log(`Removing document from table ${table}`);
+      const count = yield* deps.deleteAllFromTable(table);
+      switch (table) {
+        case "idempotencyKeys":
+          deleted.idempotencyKeys += count;
+          break;
+        case "scoreBreakdowns":
+          deleted.scoreBreakdowns += count;
+          break;
+        case "roundEvents":
+          deleted.roundEvents += count;
+          break;
+        case "roundPlayerStates":
+          deleted.roundPlayerStates += count;
+          break;
+        case "rounds":
+          deleted.rounds += count;
+          break;
+        case "playerSessions":
+          deleted.playerSessions += count;
+          break;
+        case "players":
+          deleted.players += count;
+          break;
+        case "matches":
+          deleted.matches += count;
+          break;
+        default:
+          break;
+      }
+    }
+
+    // Reset rate limiters
+    for (const sessionId of sessionIds) {
+      yield* deps.resetRateLimit(sessionId, "createMatch");
+      yield* deps.resetRateLimit(sessionId, "joinByCode");
+      yield* deps.resetRateLimit(sessionId, "joinMatch");
+      yield* deps.resetRateLimit(sessionId, "startMatch");
+      deleted.rateLimitKeysReset += 4;
+    }
+
+    return {
+      deleted,
+    };
   });
 }
