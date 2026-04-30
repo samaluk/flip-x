@@ -131,7 +131,15 @@ export function HomeClient() {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexError(message, tErrors) : t("toastCreateFailed"));
+      toast.error(
+        message
+          ? translateConvexError(message, tErrors, (detail) =>
+              tErrors("generic", {
+                message: detail,
+              }),
+            )
+          : t("toastCreateFailed"),
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -172,7 +180,15 @@ export function HomeClient() {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexError(message, tErrors) : t("toastJoinFailed"));
+      toast.error(
+        message
+          ? translateConvexError(message, tErrors, (detail) =>
+              tErrors("generic", {
+                message: detail,
+              }),
+            )
+          : t("toastJoinFailed"),
+      );
     } finally {
       setIsSubmitting(false);
     }

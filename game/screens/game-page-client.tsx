@@ -87,7 +87,15 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
         setPlayerName("");
       } catch (error) {
         const message = error instanceof Error ? error.message : "";
-        toast.error(message ? translateConvexError(message, tErrors) : t("toastJoinFailed"));
+        toast.error(
+          message
+            ? translateConvexError(message, tErrors, (detail) =>
+                tErrors("generic", {
+                  message: detail,
+                }),
+              )
+            : t("toastJoinFailed"),
+        );
       } finally {
         setIsJoining(false);
       }

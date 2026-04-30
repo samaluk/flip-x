@@ -34,7 +34,15 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexError(message, tErrors) : t("toastFailed"));
+      toast.error(
+        message
+          ? translateConvexError(message, tErrors, (detail) =>
+              tErrors("generic", {
+                message: detail,
+              }),
+            )
+          : t("toastFailed"),
+      );
     } finally {
       setIsSubmitting(false);
     }

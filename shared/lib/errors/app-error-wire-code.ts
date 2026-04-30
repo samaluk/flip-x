@@ -27,6 +27,8 @@ export const APP_ERROR_WIRE_CODE = {
 } as const;
 
 const CANONICAL_CODES = new Set<string>(Object.values(APP_ERROR_WIRE_CODE));
+type AppErrorWireCode = (typeof APP_ERROR_WIRE_CODE)[keyof typeof APP_ERROR_WIRE_CODE];
+type ErrorCodeTranslator = (key: AppErrorWireCode) => string;
 
 /**
  * Maps Convex/client error strings to localized copy. Accepts canonical wire codes
@@ -34,13 +36,14 @@ const CANONICAL_CODES = new Set<string>(Object.values(APP_ERROR_WIRE_CODE));
  */
 export function translateConvexError(
   message: string,
-  t: (key: string, values?: Record<string, string | number>) => string,
+  t: ErrorCodeTranslator,
+  translateGeneric: (message: string) => string,
 ): string {
   if (CANONICAL_CODES.has(message)) {
-    return t(message);
+    return t(message as AppErrorWireCode);
   }
   if (message in APP_ERROR_WIRE_CODE) {
     return t(APP_ERROR_WIRE_CODE[message as keyof typeof APP_ERROR_WIRE_CODE]);
   }
-  return t("generic", { message });
+  return translateGeneric(message);
 }

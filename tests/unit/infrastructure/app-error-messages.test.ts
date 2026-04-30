@@ -36,6 +36,10 @@ function mockErrorsT(key: string, values?: Record<string, string | number>): str
   return values !== undefined && key === "generic" ? `generic:${values.message}` : key;
 }
 
+function mockGenericErrorT(message: string): string {
+  return `generic:${message}`;
+}
+
 describe("AppError wire codes and Errors.* messages", () => {
   const errors: AppError[] = [
     matchNotFound({ matchId: "match-1" }),
@@ -105,8 +109,14 @@ describe("AppError wire codes and Errors.* messages", () => {
   });
 
   it("translateConvexError resolves canonical codes and legacy _tag names", () => {
-    expect(translateConvexError("MATCH_NOT_FOUND", mockErrorsT)).toBe("MATCH_NOT_FOUND");
-    expect(translateConvexError("MatchNotFound", mockErrorsT)).toBe("MATCH_NOT_FOUND");
-    expect(translateConvexError("unknown-code", mockErrorsT)).toBe("generic:unknown-code");
+    expect(translateConvexError("MATCH_NOT_FOUND", mockErrorsT, mockGenericErrorT)).toBe(
+      "MATCH_NOT_FOUND",
+    );
+    expect(translateConvexError("MatchNotFound", mockErrorsT, mockGenericErrorT)).toBe(
+      "MATCH_NOT_FOUND",
+    );
+    expect(translateConvexError("unknown-code", mockErrorsT, mockGenericErrorT)).toBe(
+      "generic:unknown-code",
+    );
   });
 });
