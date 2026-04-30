@@ -12,7 +12,7 @@ export default function LoadingGamePage() {
       </div>
 
       <div className="surface-elevated rounded-2xl p-5">
-        <div className="border-border flex items-start justify-between gap-4 border-b pb-4">
+        <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
           <div className="space-y-2">
             <Skeleton className="h-6 w-44 rounded-lg" />
             <Skeleton className="h-4 w-64 rounded-lg" />
@@ -23,8 +23,8 @@ export default function LoadingGamePage() {
           </div>
         </div>
 
-        <div className="grid gap-5 pt-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="space-y-4">
+        <div className="grid gap-5 pt-5 xl:grid-cols-3">
+          <div className="space-y-4 xl:col-span-2">
             <Skeleton className="h-24 w-full rounded-xl" />
             <div className="space-y-3">
               <Skeleton className="h-28 w-full rounded-xl" />

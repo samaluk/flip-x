@@ -138,54 +138,54 @@ function PlayerLaneSidebar({
       </Avatar>
 
       <div className="flex w-full min-w-0 flex-col items-center gap-0.5 text-center">
-        <h3 className="font-heading text-foreground w-full truncate text-sm font-medium tracking-tight">
+        <h3 className="w-full truncate font-heading text-sm font-medium tracking-tight text-foreground">
           {player.displayName}
         </h3>
-        <div className="text-muted-foreground text-xs tabular-nums">
+        <div className="text-xs text-muted-foreground tabular-nums">
           {t("totalScore", { score: player.totalScore })}
         </div>
-        <div className="text-foreground text-lg font-semibold tabular-nums">{player.pointsAtRisk}</div>
-        <div className="text-muted-foreground text-[0.65rem] leading-none">{t("pointsAtRisk")}</div>
+        <div className="text-lg font-semibold text-foreground tabular-nums">{player.pointsAtRisk}</div>
+        <div className="text-xs leading-none text-muted-foreground">{t("pointsAtRisk")}</div>
       </div>
 
       <div className="flex w-full flex-col items-center gap-1">
         {roundStatusLabelKey ? (
-          <Badge variant={statusVariant(displayStatus)} className="max-w-full text-[0.65rem]">
+          <Badge variant={statusVariant(displayStatus)} className="max-w-full text-xs">
             {t(roundStatusLabelKey)}
           </Badge>
         ) : null}
         {isDealer ? (
-          <Badge variant="default" className="text-[0.65rem]">
+          <Badge variant="default" className="text-xs">
             {t("dealer")}
           </Badge>
         ) : null}
         {isViewer ? (
           <Badge
             variant="default"
-            className="bg-primary/15 text-primary border-primary/30 text-[0.65rem]"
+            className="border-primary/30 bg-primary/15 text-xs text-primary"
           >
             {t("you")}
           </Badge>
         ) : null}
         {player.isOnline && !isViewer ? (
-          <Badge variant="secondary" className="text-[0.65rem]">
+          <Badge variant="secondary" className="text-xs">
             {t("online")}
           </Badge>
         ) : null}
         {isSelfTargeting ? (
-          <Badge variant="outline" className="text-[0.65rem]">
+          <Badge variant="outline" className="text-xs">
             <UserIcon className="size-3" />
             {t("selfTarget")}
           </Badge>
         ) : null}
         {incomingActionKind ? (
-          <Badge variant="destructive" className="text-[0.65rem]">
+          <Badge variant="destructive" className="text-xs">
             <CrosshairIcon className="size-3" />
             {t("incomingAction")}
           </Badge>
         ) : null}
         {flip3Remaining !== null && flip3Remaining > 0 ? (
-          <Badge variant="outline" className="text-[0.65rem]">
+          <Badge variant="outline" className="text-xs">
             <RefreshCwIcon className="size-3 animate-spin" />
             {t("flip3Remaining", { count: flip3Remaining })}
           </Badge>
@@ -408,11 +408,11 @@ export const PlayerLane = memo(function PlayerLane({
         "rounded-xl border border-border bg-card text-card-foreground transition-shadow duration-300",
         isActive && "ring-2 ring-primary/50 ring-offset-2 ring-offset-background",
         isDealer && "border-primary/30",
-        isPinned && "border-primary/30 bg-primary/[0.03]",
+        isPinned && "border-primary/30 bg-primary/3",
         compact ? "p-3" : "p-4",
-        overlapCards && "relative z-0 hover:z-40 focus-within:z-40",
+        overlapCards && "relative z-0 focus-within:z-40 hover:z-40",
         (isTargetable || isSelfTargeting) &&
-          "ring-2 ring-yellow-500/70 ring-offset-2 ring-offset-background cursor-pointer",
+          "cursor-pointer ring-2 ring-yellow-500/70 ring-offset-2 ring-offset-background",
       )}
       onClick={() => {
         if (onSelectTarget && (isTargetable || isSelfTargeting)) {

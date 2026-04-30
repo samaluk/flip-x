@@ -27,7 +27,7 @@ async function renderGameTable(snapshot: MatchSnapshot) {
           data-vrt-snapshot
           role="img"
           aria-label="Game table preview"
-          className="bg-background text-foreground inline-block min-w-[1280px] p-6 align-top"
+          className="inline-block min-w-7xl bg-background p-6 align-top text-foreground"
         >
           <GameTableView
             snapshot={snapshot}

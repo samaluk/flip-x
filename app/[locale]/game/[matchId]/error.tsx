@@ -14,16 +14,16 @@ export default function GamePageError({ error, reset }: { error: Error; reset: (
   }, [error]);
 
   return (
-    <div className="flex min-h-[60dvh] flex-1 items-center justify-center px-4">
+    <div className="flex min-h-svh flex-1 items-center justify-center px-4">
       <div className="w-full max-w-md space-y-6 text-center">
-        <div className="bg-destructive/10 mx-auto flex h-12 w-12 items-center justify-center rounded-full">
-          <AlertCircleIcon className="text-destructive h-6 w-6" />
+        <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-destructive/10">
+          <AlertCircleIcon className="size-6 text-destructive" />
         </div>
         <div className="space-y-2">
-          <h2 className="font-heading text-foreground text-xl font-medium tracking-tight">
+          <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
             {t("errorTitle")}
           </h2>
-          <p className="text-muted-foreground text-sm leading-relaxed">{error.message}</p>
+          <p className="text-sm leading-relaxed text-muted-foreground">{error.message}</p>
         </div>
         <Button variant="outline" onClick={reset} className="mx-auto">
           {t("tryAgain")}

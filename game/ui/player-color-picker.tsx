@@ -22,7 +22,7 @@ export function PlayerColorPicker({
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-foreground text-sm font-medium">{label}</div>
+      <div className="text-sm font-medium text-foreground">{label}</div>
       <div className="grid grid-cols-10 gap-2" role="radiogroup" aria-label={label}>
         {PLAYER_COLORS.map((color) => {
           const disabled = used.has(color.id) && color.id !== value;
@@ -38,7 +38,7 @@ export function PlayerColorPicker({
               disabled={disabled}
               onClick={() => onChange(color.id)}
               className={cn(
-                "size-7 rounded-full border transition-all focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-none",
+                "size-7 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
                 selected ? "border-foreground ring-2 ring-primary/70" : "border-border",
                 disabled && "cursor-not-allowed opacity-25 grayscale",
               )}

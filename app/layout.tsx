@@ -27,7 +27,7 @@ export default async function RootLayout({
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="bg-background text-foreground flex min-h-full flex-col">
+      <body className="flex min-h-full flex-col bg-background text-foreground">
         <NuqsAdapter>{children}</NuqsAdapter>
         <Toaster richColors position="top-center" />
       </body>

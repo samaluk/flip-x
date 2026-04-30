@@ -55,7 +55,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
         size="lg"
         className="gap-2 rounded-full px-6"
       >
-        <PlayIcon className="h-4 w-4" />
+        <PlayIcon className="size-4" />
         {isSubmitting ? t("starting") : t("startGame")}
       </Button>
     </motion.div>

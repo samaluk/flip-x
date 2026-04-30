@@ -20,12 +20,12 @@ function cardShell(card: ReactNode, snapshotWrap?: boolean) {
   );
   if (snapshotWrap) {
     return (
-      <div data-vrt-snapshot className="bg-background text-foreground inline-block p-4">
+      <div data-vrt-snapshot className="inline-block bg-background p-4 text-foreground">
         {inner}
       </div>
     );
   }
-  return <div className="bg-background text-foreground inline-block p-4">{inner}</div>;
+  return <div className="inline-block bg-background p-4 text-foreground">{inner}</div>;
 }
 
 describe("Flip7Card VRT", () => {

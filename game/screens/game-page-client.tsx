@@ -118,8 +118,8 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
           <Skeleton className="h-9 w-36 rounded-lg" />
         </div>
         <Skeleton className="h-48 w-full rounded-2xl" />
-        <div className="grid gap-4 lg:grid-cols-[1fr_22rem]">
-          <div className="space-y-3">
+        <div className="grid gap-4 lg:grid-cols-3">
+          <div className="space-y-3 lg:col-span-2">
             <Skeleton className="h-32 w-full rounded-2xl" />
             <Skeleton className="h-32 w-full rounded-2xl" />
           </div>
@@ -154,7 +154,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 pt-4 pb-6 sm:gap-5 sm:px-5 sm:pt-5 sm:pb-8 lg:px-6">
       {isSetup || !snapshotWithPresence.viewerPlayerId ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 pr-24 sm:pr-28">
+        <div className="flex flex-wrap items-center justify-between gap-3 pe-24 sm:pe-28">
           <div className="flex flex-wrap items-center gap-3">
             {isSetup && snapshotWithPresence.lobbyCode ? (
               <LobbyCodeDisplay code={snapshotWithPresence.lobbyCode} />
@@ -174,7 +174,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
           </Button>
         </div>
       ) : (
-        <div className="flex justify-end pr-24 sm:pr-28">
+        <div className="flex justify-end pe-24 sm:pe-28">
           <Button variant="ghost" size="sm" onClick={copyInviteLink}>
             <LinkIcon />
             <span className="hidden sm:inline">{t("copyInvite")}</span>
@@ -184,10 +184,10 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
 
       {!snapshotWithPresence.viewerPlayerId && isSetup ? (
         <div className="surface-elevated rounded-2xl p-6">
-          <h2 className="font-heading text-foreground text-lg font-medium tracking-tight">
+          <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
             {t("joinTitle")}
           </h2>
-          <p className="text-muted-foreground mt-1 mb-4 text-sm">{t("joinSubtitle")}</p>
+          <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("joinSubtitle")}</p>
           <form onSubmit={handleJoin} className="flex flex-col gap-4 sm:max-w-md">
             <div className="flex gap-3">
               <Input

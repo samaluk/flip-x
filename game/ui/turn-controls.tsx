@@ -110,19 +110,19 @@ export function TurnControls({
       );
     case "pending_resolve":
       return (
-        <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
-          <div className="text-muted-foreground text-sm">
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-4">
+          <div className="text-sm text-muted-foreground">
             {phase.actionKind === "freeze"
               ? t("freezePrompt")
               : t("flipThreePrompt")}
           </div>
-          <div className="text-muted-foreground text-xs">{t("selectTargetHint")}</div>
+          <div className="text-xs text-muted-foreground">{t("selectTargetHint")}</div>
         </div>
       );
     case "pending_wait":
       return (
-        <div className="border-border bg-muted/30 flex flex-col gap-2 rounded-xl border p-4">
-          <div className="text-muted-foreground text-sm">
+        <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-4">
+          <div className="text-sm text-muted-foreground">
             {phase.actionKind === "freeze"
               ? t("waitingFreeze")
               : t("waitingFlipThree")}
@@ -131,9 +131,9 @@ export function TurnControls({
       );
     case "active_turn": {
       const statusHint = !phase.hasViewer ? (
-        <div className="text-muted-foreground text-xs">{t("claimToPlay")}</div>
+        <div className="text-xs text-muted-foreground">{t("claimToPlay")}</div>
       ) : !phase.viewerControlsTurn ? (
-        <div className="text-muted-foreground text-xs">
+        <div className="text-xs text-muted-foreground">
           {t("waitingFor", { name: phase.activeDisplayName })}
         </div>
       ) : null;

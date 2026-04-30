@@ -30,11 +30,11 @@ export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
     <div
       role="status"
       aria-label={t("statusLabel")}
-      className="border-border bg-card flex items-center gap-3 rounded-xl border px-5 py-3 shadow-[inset_0_1px_0_oklch(1_0_0_/_4%)]"
+      className="surface-elevated flex items-center gap-3 rounded-xl px-5 py-3"
     >
-      <span className="text-foreground font-mono text-3xl font-bold tracking-[0.3em]">{code}</span>
+      <span className="font-mono text-3xl font-bold tracking-widest text-foreground">{code}</span>
       <Button variant="outline" size="sm" onClick={copyCode} className="gap-2">
-        {copied ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+        {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
         {copied ? t("copied") : t("copy")}
       </Button>
     </div>

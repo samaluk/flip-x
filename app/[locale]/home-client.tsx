@@ -179,11 +179,11 @@ export function HomeClient() {
   }
 
   return (
-    <main className="selection:bg-primary/20 relative flex min-h-dvh flex-1 items-center justify-center px-6">
+    <main className="relative flex min-h-dvh flex-1 items-center justify-center px-6 selection:bg-primary/20">
       <div className="w-full max-w-md space-y-10">
         <div className="text-center">
-          <h1 className="text-foreground text-5xl font-medium tracking-tighter">FLIP 7</h1>
-          <p className="text-muted-foreground mt-2 text-sm">
+          <h1 className="text-5xl font-medium tracking-tighter text-foreground">FLIP 7</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             {isJoinMode
               ? "Enter your name and join the game"
               : "Create a game or join an existing one"}
@@ -192,7 +192,7 @@ export function HomeClient() {
 
         <div className="space-y-6">
           <div className="flex flex-col gap-2">
-            <label htmlFor="playerName" className="text-foreground text-sm font-medium">
+            <label htmlFor="playerName" className="text-sm font-medium text-foreground">
               {t("yourName")}
             </label>
             <Input
@@ -230,7 +230,7 @@ export function HomeClient() {
                   <div className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background text-muted-foreground px-2">or</span>
+                  <span className="bg-background px-2 text-muted-foreground">or</span>
                 </div>
               </div>
 
@@ -246,7 +246,7 @@ export function HomeClient() {
           ) : (
             <form onSubmit={handleJoin} className="space-y-4">
               <div className="flex flex-col gap-2">
-                <label htmlFor="joinCode" className="text-foreground text-sm font-medium">
+                <label htmlFor="joinCode" className="text-sm font-medium text-foreground">
                   {tLobby("lobbyCode")}
                 </label>
                 <Input
@@ -255,7 +255,7 @@ export function HomeClient() {
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   placeholder={tLobby("codePlaceholder")}
                   maxLength={4}
-                  className="h-12 text-center font-mono text-2xl tracking-[0.25em] uppercase"
+                  className="h-12 text-center font-mono text-2xl tracking-widest uppercase"
                 />
               </div>
 

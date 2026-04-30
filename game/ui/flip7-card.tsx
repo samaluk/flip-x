@@ -80,7 +80,7 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
 
   const shellClass = cn(
     "flip7-card-shell shrink-0",
-    isCompact ? "h-[4.75rem] w-[3.68rem] overflow-visible" : "w-32 sm:w-48",
+    isCompact ? "h-19 w-15 overflow-visible" : "w-32 sm:w-48",
     props.dealing && "flip7-card-deal",
     props.stateAnimation === "bust" && "flip7-card-bust",
     props.stateAnimation === "stay" && "flip7-card-stay",
@@ -99,20 +99,19 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
     );
 
   const faceUp = (
-    <div className="absolute inset-0 overflow-hidden rounded-2xl [backface-visibility:hidden]">
+    <div className="absolute inset-0 overflow-hidden rounded-2xl backface-hidden">
       <ScreenReaderSummary {...props} />
       <FaceContent {...props} />
     </div>
   );
 
   const faceDown = (
-    <div className="border-border bg-card text-primary absolute inset-0 overflow-hidden rounded-2xl border p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_14px_30px_rgba(0,0,0,0.24)]">
-      <div className="border-primary/20 pointer-events-none absolute inset-2 rounded-xl border" />
-      <div className="border-primary/10 pointer-events-none absolute inset-4 rounded-lg border" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-70" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(45deg,transparent_0%,transparent_43%,oklch(0.72_0.14_160_/_0.08)_43%,oklch(0.72_0.14_160_/_0.08)_57%,transparent_57%,transparent_100%)] opacity-60" />
-      <div className="bg-primary/15 pointer-events-none absolute inset-y-6 left-1/2 w-px -translate-x-1/2" />
-      <div className="bg-primary/15 pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2" />
+    <div className="absolute inset-0 overflow-hidden rounded-2xl border border-border bg-card p-3 text-primary shadow-2xl inset-shadow-2xs">
+      <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
+      <div className="pointer-events-none absolute inset-4 rounded-lg border border-primary/10" />
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-70" />
+      <div className="pointer-events-none absolute inset-y-6 start-1/2 w-px -translate-x-1/2 bg-primary/15" />
+      <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/15" />
     </div>
   );
 
@@ -121,7 +120,7 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
     return (
       <div className={shellClass}>
         {compactScaleWrap(
-          <div className="relative aspect-[4/5] w-full">{props.faceDown ? faceDown : faceUp}</div>,
+          <div className="relative aspect-4/5 w-full">{props.faceDown ? faceDown : faceUp}</div>,
         )}
       </div>
     );
@@ -136,12 +135,12 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
       {compactScaleWrap(
         <div
           className={cn(
-            "relative aspect-[4/5] transition-transform duration-700 [transform-style:preserve-3d]",
-            props.faceDown && "[transform:rotateY(180deg)]",
+            "relative aspect-4/5 transition-transform duration-700 transform-3d",
+            props.faceDown && "rotate-y-180",
           )}
         >
           {faceUp}
-          <div className="absolute inset-0 [transform:rotateY(180deg)] [backface-visibility:hidden]">
+          <div className="absolute inset-0 rotate-y-180 backface-hidden">
             {faceDown}
           </div>
         </div>,

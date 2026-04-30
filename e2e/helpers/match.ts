@@ -112,7 +112,7 @@ export async function clickStartGameWhenReady(hostPage: Page) {
   await start.click();
   // Do not assert on the Start locator alone: the label becomes "Starting..." then the control unmounts,
   // so /start game/i can match 0 nodes and `not.toBeVisible` would pass too early.
-  await expect(hostPage.locator(".game-match-status")).toHaveAttribute(
+  await expect(hostPage.locator('[data-slot="match-status"]')).toHaveAttribute(
     "data-status",
     "in_progress",
     { timeout: 45_000 },
@@ -167,7 +167,7 @@ export async function findPageWithEnabledHitButton(pages: Page[]): Promise<Page>
 
 /** Latest-resolution body is mounted twice in the game table UI (aside + round table); one copy is hidden via CSS. */
 export function latestResolutionBodyLocator(page: Page) {
-  return page.locator(".game-latest-resolution").filter({ visible: true });
+  return page.locator('[data-slot="latest-resolution"]').filter({ visible: true });
 }
 
 /** Count of Flip7Cards for a player (modifier + number + held action + received action cards). */

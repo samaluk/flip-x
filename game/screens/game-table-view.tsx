@@ -168,7 +168,7 @@ export function GameTableView({
 
       {viewer ? (
         <section aria-label={t("yourHand")} className="space-y-2">
-          <div className="text-muted-foreground px-1 text-[0.7rem] font-medium tracking-wide uppercase">
+          <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
             {t("yourHand")}
           </div>
           <MatchPlayerLane
@@ -202,7 +202,7 @@ export function GameTableView({
         <div
           role="region"
           aria-label={t("turnActions")}
-          className="border-border bg-background/95 fixed inset-x-0 bottom-0 z-30 max-h-[55svh] overflow-y-auto border-t px-4 py-3 shadow-[0_-10px_30px_-12px_oklch(0_0_0/0.35)] backdrop-blur-md lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
         >
           <div className="mx-auto max-w-5xl">{turnControls}</div>
         </div>
@@ -235,20 +235,20 @@ function GameTableHud({
   return (
     <section
       aria-label={t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
-      className="surface-elevated text-foreground overflow-hidden rounded-2xl"
+      className="surface-elevated overflow-hidden rounded-2xl text-foreground"
     >
       <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-2.5">
           {matchComplete ? (
-            <TrophyIcon className="text-primary size-5 shrink-0" aria-hidden />
+            <TrophyIcon className="size-5 shrink-0 text-primary" aria-hidden />
           ) : (
-            <CircleDotIcon className="text-primary size-5 shrink-0" aria-hidden />
+            <CircleDotIcon className="size-5 shrink-0 text-primary" aria-hidden />
           )}
           <div className="flex min-w-0 flex-col leading-tight">
-            <h1 className="font-heading text-foreground truncate text-sm font-medium tracking-tight sm:text-base">
+            <h1 className="truncate font-heading text-sm font-medium tracking-tight text-foreground sm:text-base">
               {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
             </h1>
-            <span className="text-muted-foreground text-xs">
+            <span className="text-xs text-muted-foreground">
               {t("roundRace", {
                 round: snapshot.currentRoundNumber,
                 target: snapshot.targetScore,
@@ -257,15 +257,15 @@ function GameTableHud({
           </div>
         </div>
 
-        <div className="ml-auto flex flex-wrap items-center gap-1.5">
-          <Badge variant="outline" className="game-match-status" data-status={snapshot.status}>
+        <div className="ms-auto flex flex-wrap items-center gap-1.5">
+          <Badge variant="outline" data-slot="match-status" data-status={snapshot.status}>
             {t(`matchStatus.${snapshot.status}`)}
           </Badge>
           <Badge variant="outline" className="hidden sm:inline-flex">
             {t("dealerSeat", { n: snapshot.dealerSeat + 1 })}
           </Badge>
           {activePlayer ? (
-            <Badge variant="default" className="max-w-[12rem]">
+            <Badge variant="default" className="max-w-48">
               <UserRoundIcon className="size-3" aria-hidden />
               <span className="truncate">{t("turnFor", { name: activePlayer.displayName })}</span>
             </Badge>
@@ -279,30 +279,30 @@ function GameTableHud({
         </div>
       </div>
 
-      <div className="border-border grid gap-3 border-t px-4 py-2.5 sm:grid-cols-2 sm:px-5">
+      <div className="grid gap-3 border-t border-border px-4 py-2.5 sm:grid-cols-2 sm:px-5">
         <div className="space-y-0.5">
-          <div className="text-muted-foreground text-[0.65rem] font-medium tracking-wide uppercase">
+          <div className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
             {t("tableCall")}
           </div>
-          <div className="text-foreground text-sm leading-snug">{callText}</div>
+          <div className="text-sm leading-snug text-foreground">{callText}</div>
           {viewerPlayer ? (
-            <div className="text-muted-foreground text-xs">
+            <div className="text-xs text-muted-foreground">
               {t("playingAs", { name: viewerPlayer.displayName })}
             </div>
           ) : (
-            <div className="text-muted-foreground text-xs">{t("joinHint")}</div>
+            <div className="text-xs text-muted-foreground">{t("joinHint")}</div>
           )}
         </div>
-        <div className="border-border space-y-0.5 border-t pt-2.5 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
-          <div className="text-muted-foreground flex items-center gap-1.5 text-[0.65rem] font-medium tracking-wide uppercase">
+        <div className="space-y-0.5 border-t border-border pt-2.5 sm:border-s sm:border-t-0 sm:ps-4 sm:pt-0">
+          <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
             <AlertTriangleIcon className="size-3" aria-hidden />
             {t("latestResolution")}
           </div>
-          <div className="game-latest-resolution text-foreground text-sm leading-snug">
+          <div data-slot="game-latest-resolution" className="text-sm leading-snug text-foreground">
             {latestBody}
           </div>
           {snapshot.latestEvent?.playerNames ? (
-            <div className="text-muted-foreground text-xs">{snapshot.latestEvent.playerNames}</div>
+            <div className="text-xs text-muted-foreground">{snapshot.latestEvent.playerNames}</div>
           ) : null}
         </div>
       </div>
@@ -354,7 +354,7 @@ function GameTableOpponentsSection({
   return (
     <section aria-label={t("opponents")} className="space-y-2">
       <div className="flex items-center justify-between px-1">
-        <div className="text-muted-foreground flex items-center gap-1.5 text-[0.7rem] font-medium tracking-wide uppercase">
+        <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
           <UsersIcon className="size-3.5" aria-hidden />
           <span>{t("opponents")}</span>
           <span className="text-muted-foreground/60">·</span>
@@ -470,7 +470,7 @@ function RoundHistorySection({
             </AccordionTrigger>
             <AccordionContent>
               <div className="px-5 pt-2">
-                <p className="text-muted-foreground text-sm">
+                <p className="text-sm text-muted-foreground">
                   {tHistory("currentRoundBreakdownSubtitle")}
                 </p>
               </div>
