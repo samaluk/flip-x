@@ -26,6 +26,40 @@ type AppTableName =
   | "idempotencyKeys";
 
 type RateLimitKey = "createMatch" | "joinByCode" | "joinMatch" | "startMatch";
+type CleanupDeleted = {
+  idempotencyKeys: number;
+  scoreBreakdowns: number;
+  roundEvents: number;
+  roundPlayerStates: number;
+  rounds: number;
+  playerSessions: number;
+  players: number;
+  matches: number;
+  presenceRooms: number;
+  rateLimitKeysReset: number;
+};
+
+const appTableNames = new Set<string>(Object.keys(schema.tables));
+const cleanupTableCounters: Partial<Record<AppTableName, keyof CleanupDeleted>> = {
+  idempotencyKeys: "idempotencyKeys",
+  scoreBreakdowns: "scoreBreakdowns",
+  roundEvents: "roundEvents",
+  roundPlayerStates: "roundPlayerStates",
+  rounds: "rounds",
+  playerSessions: "playerSessions",
+  players: "players",
+  matches: "matches",
+};
+const rateLimitKeys: readonly RateLimitKey[] = [
+  "createMatch",
+  "joinByCode",
+  "joinMatch",
+  "startMatch",
+];
+
+function isAppTableName(table: string): table is AppTableName {
+  return appTableNames.has(table);
+}
 
 function collectDependentIdsByRound(
   reader: DatabaseReader,
@@ -35,6 +69,26 @@ function collectDependentIdsByRound(
   return reader
     .table(table)
     .index("by_round", (query) => query.eq("roundId", roundId))
+    .collect()
+    .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
+}
+
+function collectDependentIdsByMatch(
+  reader: DatabaseReader,
+  table: "players" | "rounds",
+  matchId: string,
+) {
+  return reader
+    .table(table)
+    .index("by_match", (query) => query.eq("matchId", matchId as Id<"matches">))
+    .collect()
+    .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
+}
+
+function collectPlayerSessionIdsByPlayer(reader: DatabaseReader, playerId: string) {
+  return reader
+    .table("playerSessions")
+    .index("by_player_id", (query) => query.eq("playerId", playerId as Id<"players">))
     .collect()
     .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
 }
@@ -67,53 +121,8 @@ export function resolveDependents(
     parentId: string;
   },
 ): Effect.Effect<readonly string[], unknown, never> {
-  return Effect.gen(function* () {
-    switch (`${args.sourceTable}:${args.parentTable}`) {
-      case "players:matches": {
-        const rows = yield* reader
-          .table("players")
-          .index("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
-          .collect();
-        return rows.map((row) => String(row._id));
-      }
-      case "rounds:matches": {
-        const rows = yield* reader
-          .table("rounds")
-          .index("by_match", (query) => query.eq("matchId", args.parentId as Id<"matches">))
-          .collect();
-        return rows.map((row) => String(row._id));
-      }
-      case "playerSessions:players": {
-        const rows = yield* reader
-          .table("playerSessions")
-          .index("by_player_id", (query) =>
-            query.eq("playerId", args.parentId as Id<"players">),
-          )
-          .collect();
-        return rows.map((row) => String(row._id));
-      }
-      case "roundPlayerStates:rounds":
-        return yield* collectDependentIdsByRound(
-          reader,
-          "roundPlayerStates",
-          args.parentId as Id<"rounds">,
-        );
-      case "roundEvents:rounds":
-        return yield* collectDependentIdsByRound(
-          reader,
-          "roundEvents",
-          args.parentId as Id<"rounds">,
-        );
-      case "scoreBreakdowns:rounds":
-        return yield* collectDependentIdsByRound(
-          reader,
-          "scoreBreakdowns",
-          args.parentId as Id<"rounds">,
-        );
-      default:
-        return yield* unsupportedRelationship();
-    }
-  });
+  const resolver = dependentResolvers[`${args.sourceTable}:${args.parentTable}`];
+  return resolver ? resolver(reader, args.parentId) : unsupportedRelationship();
 }
 
 function deleteAllFromTable<TableName extends AppTableName>(
@@ -140,27 +149,17 @@ export function deleteDocument(
   },
 ): Effect.Effect<number, unknown, never> {
   return Effect.gen(function* () {
-    const table = args.table as AppTableName;
-    const unsupportedId = args.id ?? "";
-
-    switch (table) {
-      case "matches":
-      case "players":
-      case "playerSessions":
-      case "rounds":
-      case "roundPlayerStates":
-      case "roundEvents":
-      case "scoreBreakdowns":
-      case "idempotencyKeys":
-        if (args.id === undefined) {
-          return yield* deleteAllFromTable(reader, writer, table);
-        }
-        console.log(`Removing document from table ${args.table} with id ${args.id}`);
-        yield* writer.table(table).delete(args.id as Id<typeof table>);
-        return 1;
-      default:
-        return yield* unsupportedTable({ table: args.table, id: unsupportedId });
+    if (!isAppTableName(args.table)) {
+      return yield* unsupportedTable({ table: args.table, id: args.id ?? "" });
     }
+
+    if (args.id === undefined) {
+      return yield* deleteAllFromTable(reader, writer, args.table);
+    }
+
+    console.log(`Removing document from table ${args.table} with id ${args.id}`);
+    yield* writer.table(args.table).delete(args.id as Id<typeof args.table>);
+    return 1;
   });
 }
 
@@ -184,7 +183,7 @@ export function resetRateLimit(
   });
 }
 
-export interface AdminCleanupDeps {
+interface AdminCleanupDeps {
   readonly listSessionIds: Effect.Effect<readonly string[], unknown>;
   readonly listMatchIds: Effect.Effect<readonly string[], unknown>;
   readonly deleteAllFromTable: (table: string) => Effect.Effect<number, ExternalComponentFailed>;
@@ -193,6 +192,54 @@ export interface AdminCleanupDeps {
     sessionId: string,
     key: RateLimitKey,
   ) => Effect.Effect<void, ExternalComponentFailed>;
+}
+
+function initialCleanupDeleted(): CleanupDeleted {
+  return {
+    idempotencyKeys: 0,
+    scoreBreakdowns: 0,
+    roundEvents: 0,
+    roundPlayerStates: 0,
+    rounds: 0,
+    playerSessions: 0,
+    players: 0,
+    matches: 0,
+    presenceRooms: 0,
+    rateLimitKeysReset: 0,
+  };
+}
+
+function removePresenceRooms(deps: AdminCleanupDeps, matchIds: readonly string[]) {
+  return Effect.gen(function* () {
+    for (const matchId of matchIds) {
+      yield* deps.removePresenceRoom(matchId);
+    }
+    return matchIds.length;
+  });
+}
+
+function deleteAppTables(deps: AdminCleanupDeps, deleted: CleanupDeleted) {
+  return Effect.gen(function* () {
+    for (const table of Object.keys(schema.tables) as AppTableName[]) {
+      console.log(`Removing document from table ${table}`);
+      const count = yield* deps.deleteAllFromTable(table);
+      const counter = cleanupTableCounters[table];
+      if (counter) {
+        deleted[counter] += count;
+      }
+    }
+  });
+}
+
+function resetSessionRateLimits(deps: AdminCleanupDeps, sessionIds: readonly string[]) {
+  return Effect.gen(function* () {
+    for (const sessionId of sessionIds) {
+      for (const key of rateLimitKeys) {
+        yield* deps.resetRateLimit(sessionId, key);
+      }
+    }
+    return sessionIds.length * rateLimitKeys.length;
+  });
 }
 
 export function runClearAllAppData(
@@ -217,72 +264,35 @@ export function runClearAllAppData(
 > {
   return Effect.gen(function* () {
     const sessionIds = yield* deps.listSessionIds;
-    const deleted = {
-      idempotencyKeys: 0,
-      scoreBreakdowns: 0,
-      roundEvents: 0,
-      roundPlayerStates: 0,
-      rounds: 0,
-      playerSessions: 0,
-      players: 0,
-      matches: 0,
-      presenceRooms: 0,
-      rateLimitKeysReset: 0,
-    };
+    const deleted = initialCleanupDeleted();
 
-    // Clean up presence rooms
     const matchIds = yield* deps.listMatchIds;
-    for (const matchId of matchIds) {
-      yield* deps.removePresenceRoom(matchId);
-      deleted.presenceRooms += 1;
-    }
-
-    // Clear all table data via mutation
-    const tables = Object.keys(schema.tables);
-    for (const table of tables) {
-      console.log(`Removing document from table ${table}`);
-      const count = yield* deps.deleteAllFromTable(table);
-      switch (table) {
-        case "idempotencyKeys":
-          deleted.idempotencyKeys += count;
-          break;
-        case "scoreBreakdowns":
-          deleted.scoreBreakdowns += count;
-          break;
-        case "roundEvents":
-          deleted.roundEvents += count;
-          break;
-        case "roundPlayerStates":
-          deleted.roundPlayerStates += count;
-          break;
-        case "rounds":
-          deleted.rounds += count;
-          break;
-        case "playerSessions":
-          deleted.playerSessions += count;
-          break;
-        case "players":
-          deleted.players += count;
-          break;
-        case "matches":
-          deleted.matches += count;
-          break;
-        default:
-          break;
-      }
-    }
-
-    // Reset rate limiters
-    for (const sessionId of sessionIds) {
-      yield* deps.resetRateLimit(sessionId, "createMatch");
-      yield* deps.resetRateLimit(sessionId, "joinByCode");
-      yield* deps.resetRateLimit(sessionId, "joinMatch");
-      yield* deps.resetRateLimit(sessionId, "startMatch");
-      deleted.rateLimitKeysReset += 4;
-    }
+    deleted.presenceRooms = yield* removePresenceRooms(deps, matchIds);
+    yield* deleteAppTables(deps, deleted);
+    deleted.rateLimitKeysReset = yield* resetSessionRateLimits(deps, sessionIds);
 
     return {
       deleted,
     };
   });
 }
+
+const dependentResolvers: Record<
+  string,
+  (
+    reader: DatabaseReader,
+    parentId: string,
+  ) => Effect.Effect<readonly string[], unknown, never>
+> = {
+  "players:matches": (reader, parentId) =>
+    collectDependentIdsByMatch(reader, "players", parentId),
+  "rounds:matches": (reader, parentId) =>
+    collectDependentIdsByMatch(reader, "rounds", parentId),
+  "playerSessions:players": collectPlayerSessionIdsByPlayer,
+  "roundPlayerStates:rounds": (reader, parentId) =>
+    collectDependentIdsByRound(reader, "roundPlayerStates", parentId as Id<"rounds">),
+  "roundEvents:rounds": (reader, parentId) =>
+    collectDependentIdsByRound(reader, "roundEvents", parentId as Id<"rounds">),
+  "scoreBreakdowns:rounds": (reader, parentId) =>
+    collectDependentIdsByRound(reader, "scoreBreakdowns", parentId as Id<"rounds">),
+};

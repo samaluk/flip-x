@@ -26,6 +26,7 @@
     "tailwindcss",
     "@confect/test",
     "@effect/vitest",
-    "convex-test"
+    "convex-test",
+    "eslint-plugin-i18next"
   ]
 }

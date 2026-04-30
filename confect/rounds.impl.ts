@@ -4,6 +4,7 @@ import { Effect, Layer } from "effect";
 import api from "./_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { MutationCtx } from "./_generated/services";
+import { cloneDeterministicStart } from "./lib/deterministic_start";
 import * as roundFns from "./rounds";
 
 const startNextRound = FunctionImpl.make(api, "rounds", "startNextRound", (args) =>
@@ -12,9 +13,7 @@ const startNextRound = FunctionImpl.make(api, "rounds", "startNextRound", (args)
     return yield* roundFns.startNextRoundForSession(ctx, {
       ...args,
       matchId: args.matchId as Id<"matches">,
-      deterministicStart: args.deterministicStart
-        ? { roundSeed: { drawPile: [...args.deterministicStart.roundSeed.drawPile] } }
-        : undefined,
+      deterministicStart: cloneDeterministicStart(args.deterministicStart),
     });
   }).pipe(Effect.orDie),
 );
