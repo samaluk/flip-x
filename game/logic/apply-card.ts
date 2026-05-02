@@ -9,18 +9,12 @@ import {
 import { resolveHeldTargetAction } from "./action-resolution";
 import { discardCard } from "./draw";
 import { addEvent, type RoundEvent } from "./events";
-import { isFlip3ActiveForPlayer } from "./flip-three";
+import { deferFlip3TargetAction, isFlip3ActiveForPlayer, isTargetActionCard } from "./flip-three";
 import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import { activePlayerIds } from "./turn-order";
 
 type ApplyCardResult = { pending: boolean };
-
-function isTargetActionCard(
-  card: ActionCard,
-): card is ActionCard & { actionKind: PendingAction["actionKind"] } {
-  return card.actionKind === "flip_three" || card.actionKind === "freeze";
-}
 
 function applyHeldSecondChance(
   round: RoundRuntime,
@@ -191,14 +185,7 @@ function applyFlipThreeOrHeldTargetAction(
   events: RoundEvent[],
 ): ApplyCardResult {
   if (isFlip3ActiveForPlayer(round, playerId)) {
-    playerState.heldActionCards.push(card);
-    round.pendingFlip3?.deferredActionCards.push(card);
-    addEvent(events, {
-      eventType: "deferred_action",
-      actorPlayerId: playerId,
-      targetPlayerId: playerId,
-      payload: { actionKind: card.actionKind },
-    });
+    deferFlip3TargetAction(round, playerState, card, events);
     return { pending: false };
   }
 

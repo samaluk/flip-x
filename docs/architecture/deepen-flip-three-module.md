@@ -35,21 +35,25 @@ Do not introduce a new seam with multiple adapters unless something actually var
 
 ## Checklist
 
-- [ ] Read `docs/game-rules.md`, especially the Flip Three section and edge cases.
-- [ ] Map every current Flip Three rule across `command-handler.ts`, `apply-card.ts`, `flip-three.ts`, and `action-resolution.ts`.
-- [ ] Identify the smallest interface that lets command handling say "advance this hit" without knowing deferred-card internals.
-- [ ] Move Flip Three progression logic behind that interface.
-- [ ] Keep card application responsible only for applying a drawn card to a player, unless the chosen interface deliberately includes card application.
-- [ ] Remove duplicated `isTargetActionCard` logic if the new module can own it cleanly.
-- [ ] Update unit tests to target the new module interface where useful.
-- [ ] Keep deterministic replay tests passing.
-- [ ] Run `pnpm test:unit -- tests/unit/engine/flip-three.test.ts`.
-- [ ] Run `pnpm test`.
+- [x] Read `docs/game-rules.md`, especially the Flip Three section and edge cases.
+- [x] Map every current Flip Three rule across `command-handler.ts`, `apply-card.ts`, `flip-three.ts`, and `action-resolution.ts`.
+- [x] Identify the smallest interface that lets command handling say "advance this hit" without knowing deferred-card internals.
+- [x] Move Flip Three progression logic behind that interface.
+- [x] Keep card application responsible only for applying a drawn card to a player, unless the chosen interface deliberately includes card application.
+- [x] Remove duplicated `isTargetActionCard` logic if the new module can own it cleanly.
+- [x] Update unit tests to target the new module interface where useful.
+- [x] Keep deterministic replay tests passing.
+- [x] Run `pnpm exec vitest run --project engine tests/unit/engine/flip-three.test.ts`.
+- [x] Run `pnpm test`.
 
 ## Verification Questions
 
-- [ ] Can a reader understand Flip Three behavior mostly from one module?
-- [ ] Can tests exercise Flip Three without manually coordinating `pendingFlip3` internals across multiple modules?
-- [ ] Does the module hide implementation details while preserving the existing game rules exactly?
-- [ ] Did locality improve for future Flip Three bug fixes?
+- [x] Can a reader understand Flip Three behavior mostly from one module?
+- [x] Can tests exercise Flip Three without manually coordinating `pendingFlip3` internals across multiple modules?
+- [x] Does the module hide implementation details while preserving the existing game rules exactly?
+- [x] Did locality improve for future Flip Three bug fixes?
 
+## Progress Notes
+
+- `pnpm test:unit -- tests/unit/engine/flip-three.test.ts` is stale in the current `package.json`; the focused equivalent is `pnpm exec vitest run --project engine tests/unit/engine/flip-three.test.ts`.
+- Flip Three progression now lives behind `advanceFlip3Hit` in `game/logic/flip-three.ts`. `command-handler.ts` still owns drawing the card and turn advancement, while `apply-card.ts` still owns applying card effects; the Flip Three module owns countdown, abort cleanup, completion, deferred target-action tracking, and deferred action replay.

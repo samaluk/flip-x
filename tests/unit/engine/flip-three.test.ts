@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
+import { applyCardToPlayer } from "@/game/logic/apply-card";
 import { takeTurnAction } from "@/game/logic/command-handler";
+import { advanceFlip3Hit } from "@/game/logic/flip-three";
+import type { RoundEvent } from "@/game/logic/events";
 import { actionCard, numberCard, modifierCard } from "@/tests/builders/cards";
 import { activePlayerHitsDuplicateSeven } from "@/tests/builders/duplicate-seven-hit";
 import {
@@ -12,6 +15,34 @@ import {
 type TakeTurnResolved = ReturnType<typeof takeTurnAction>;
 
 describe("flip three", () => {
+  it("advances a pending sequence through the Flip Three module interface", () => {
+    const playerStates = createActivePlayerStates();
+    const round = createTurnRound();
+    const events: RoundEvent[] = [];
+    round.pendingFlip3 = {
+      sourcePlayerId: "p2",
+      targetPlayerId: "p1",
+      cardsRemaining: 3,
+      deferredActionCards: [],
+    };
+
+    const advanced = advanceFlip3Hit(
+      round,
+      testPlayers3P,
+      playerStates,
+      "p1",
+      numberCard("n2", 2),
+      (card) => {
+        applyCardToPlayer(round, testPlayers3P, playerStates, "p1", card, "turns", events);
+      },
+      events,
+    );
+
+    expect(advanced).toBe(true);
+    expect(round.pendingFlip3?.cardsRemaining).toBe(2);
+    expect(events.map((event) => event.eventType)).toEqual(["flip3_hit", "number_drawn"]);
+  });
+
   it("keeps the Flip Three target on turn until all required cards are drawn", () => {
     const playerStates = createActivePlayerStates();
     const round = createTurnRound();

@@ -4,11 +4,7 @@ import { applyResolvedTargetAction } from "./action-resolution";
 import { applyCardToPlayer } from "./apply-card";
 import { addEvent, cardEventPayload, type RoundEvent } from "./events";
 import { drawCard } from "./draw";
-import {
-  discardDeferredFlip3Cards,
-  isFlip3ActiveForPlayer,
-  resolveDeferredFlip3Actions,
-} from "./flip-three";
+import { advanceFlip3Hit, isFlip3ActiveForPlayer } from "./flip-three";
 import { maybeFinishRound } from "./round-finalization";
 import {
   clonePendingFlip3,
@@ -205,59 +201,11 @@ function applyStayTurn(
   });
 }
 
-function handleFlipThreeProgressAfterHit(
-  round: RoundRuntime,
-  players: OrderedPlayer[],
-  playerStates: Record<string, PlayerRoundState>,
-  playerId: string,
-  currentState: PlayerRoundState,
-  events: RoundEvent[],
-) {
-  const flip3 = round.pendingFlip3;
-
-  if (!flip3) {
-    // A nested Flip Three cannot replace the active one until the current sequence ends.
-  } else if (round.phase !== "player_turns") {
-    discardDeferredFlip3Cards(round, currentState, flip3.deferredActionCards);
-    round.pendingFlip3 = null;
-  } else if (currentState.status !== "active") {
-    discardDeferredFlip3Cards(round, currentState, flip3.deferredActionCards);
-    round.pendingFlip3 = null;
-  } else {
-    flip3.cardsRemaining -= 1;
-    if (flip3.cardsRemaining <= 0) {
-      const deferredCards = [...flip3.deferredActionCards];
-      round.pendingFlip3 = null;
-      addEvent(events, {
-        eventType: "flip3_completed",
-        actorPlayerId: playerId,
-        targetPlayerId: playerId,
-        payload: {},
-      });
-      if (deferredCards.length > 0) {
-        round.pendingFlip3 = {
-          ...flip3,
-          cardsRemaining: 0,
-          deferredActionCards: deferredCards,
-        };
-        resolveDeferredFlip3Actions(round, players, playerStates, playerId, events);
-        if (
-          round.pendingFlip3?.targetPlayerId === playerId &&
-          round.pendingFlip3.cardsRemaining === 0
-        ) {
-          round.pendingFlip3 = null;
-        }
-      }
-    }
-  }
-}
-
 function executeHitTurn(
   round: RoundRuntime,
   players: OrderedPlayer[],
   playerStates: Record<string, PlayerRoundState>,
   playerId: string,
-  currentState: PlayerRoundState,
   events: RoundEvent[],
 ) {
   const card = drawCard(round);
@@ -269,18 +217,29 @@ function executeHitTurn(
 
   const isFlip3Turn = isFlip3ActiveForPlayer(round, playerId);
 
+  if (isFlip3Turn) {
+    advanceFlip3Hit(
+      round,
+      players,
+      playerStates,
+      playerId,
+      card,
+      (drawnCard) => {
+        applyCardToPlayer(round, players, playerStates, playerId, drawnCard, "turns", events);
+      },
+      events,
+    );
+    return;
+  }
+
   addEvent(events, {
-    eventType: isFlip3Turn ? "flip3_hit" : "hit",
+    eventType: "hit",
     actorPlayerId: playerId,
     targetPlayerId: playerId,
     payload: cardEventPayload(card),
   });
 
   applyCardToPlayer(round, players, playerStates, playerId, card, "turns", events);
-
-  if (isFlip3Turn) {
-    handleFlipThreeProgressAfterHit(round, players, playerStates, playerId, currentState, events);
-  }
 }
 
 function advanceTurnWhenQueueClear(
@@ -311,7 +270,7 @@ export function takeTurnAction(
   if (action === "stay") {
     applyStayTurn(round, playerId, currentState, events);
   } else {
-    executeHitTurn(round, players, playerStates, playerId, currentState, events);
+    executeHitTurn(round, players, playerStates, playerId, events);
   }
 
   maybeFinishRound(round, players, playerStates);
