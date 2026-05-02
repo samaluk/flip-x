@@ -32,7 +32,7 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
 2. Start Convex development sync:
 
    ```bash
-    CONVEX_AGENT_MODE=anonymous npx convex dev
+   npx convex dev
    ```
 
 3. Start the app:
@@ -51,10 +51,10 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
 - `pnpm test:contract`: Vitest contract tests in `tests/contract/**`.
 - `pnpm test:integration`: Vitest integration tests in `tests/integration/**`.
 - `pnpm test:confect`: Node-based Confect tests in `tests/confect/**`.
-- `pnpm test:backend`: preview-backed Convex backend tests in `tests/backend/**`.
+- `pnpm test:backend`: Convex backend smoke tests in `tests/backend/**` (local backend by default; see `docs/testing.md`).
 - `pnpm test:vrt`: visual regression tests with Vitest browser in Linux Docker.
 - `pnpm test:vrt:update`: refresh visual regression baselines.
-- `pnpm test:e2e`: Playwright end-to-end tests against a Convex preview deployment.
+- `pnpm test:e2e`: Playwright end-to-end tests (uses the same Convex URL as backend smoke; local by default).
 
 Tooling split:
 
@@ -63,13 +63,11 @@ Tooling split:
 - Vitest browser: `pnpm test:vrt`
 - Playwright: `pnpm test:e2e`
 
-Preview-backed suites:
+Backend and E2E (`pnpm test:backend`, `pnpm test:e2e`):
 
-- Backend and E2E tests always run against a named Convex preview deployment, creating or reusing it as needed.
-- Set `CONVEX_DEPLOY_KEY` before running `pnpm test:backend` or `pnpm test:e2e`, or keep it in `.env.local` for local runs.
-- Local preview names use `local-<user>-<git-branch>` so local runs do not replace CI previews.
-- CI preview names use `pr-<number>` for pull requests and the branch name for push builds.
-- The preview wrapper clears all app data in the target preview deployment before running tests, so do not point it at a shared deployment.
+- **By default (your machine):** these use a **local** Convex deployment — run `npx convex deployment create local --select` once, then the test wrapper runs `convex dev --once` and reads `NEXT_PUBLIC_CONVEX_URL` from `.env.local`. No `CONVEX_DEPLOY_KEY` is required.
+- **CI and optional local preview:** when `CI` / `GITHUB_ACTIONS` is set, or you set `CONVEX_TEST_USE_PREVIEW=1`, the wrapper deploys to a **cloud preview**; set `CONVEX_DEPLOY_KEY` (or use `.env.local` for the key). Preview names: `pr-<number>` in PR CI, `local-<user>-<git-branch>` for local preview mode, or override with `PREVIEW_DEPLOYMENT_NAME`.
+- The wrapper clears all app data in the target deployment before running tests, so do not point it at a shared production deployment.
 
 ## Quality checks
 
