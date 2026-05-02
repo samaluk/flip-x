@@ -43,24 +43,28 @@ Its implementation should hide:
 
 ## Checklist
 
-- [ ] Read `docs/testing.md` and `specs/004-deterministic-game-tests/spec.md`.
-- [ ] List the current facts every replay scenario must repeat.
-- [ ] Separate game-language expectation fields from snapshot implementation fields.
-- [ ] Design a compact scenario expectation shape for only meaningful game facts.
-- [ ] Keep canonical snapshot conversion internal to the replay module.
-- [ ] Hide session and command metadata in the harness implementation.
-- [ ] Preserve existing divergence reporting quality.
-- [ ] Convert one existing replay scenario as a spike.
-- [ ] Convert the remaining replay scenarios only after the spike proves the interface is deeper.
-- [ ] Update unit tests for invalid/diverged/matched replay results.
-- [ ] Run `pnpm test:unit -- tests/unit/engine/deterministic-replay.test.ts`.
-- [ ] Run `pnpm test:confect -- tests/confect/deterministic-replay.test.ts tests/confect/deterministic-divergence.test.ts`.
-- [ ] Run `pnpm test`.
+- [x] Read `docs/testing.md` and `specs/004-deterministic-game-tests/spec.md`.
+- [x] List the current facts every replay scenario must repeat.
+- [x] Separate game-language expectation fields from snapshot implementation fields.
+- [x] Design a compact scenario expectation shape for only meaningful game facts.
+- [x] Keep canonical snapshot conversion internal to the replay module.
+- [x] Hide session and command metadata in the harness implementation.
+- [x] Preserve existing divergence reporting quality.
+- [x] Convert one existing replay scenario as a spike.
+- [x] Convert the remaining replay scenarios only after the spike proves the interface is deeper.
+- [x] Update unit tests for invalid/diverged/matched replay results.
+- [x] Run `pnpm test:engine -- tests/unit/engine/deterministic-replay.test.ts`.
+- [x] Run `pnpm test:confect -- tests/confect/deterministic-replay.test.ts tests/confect/deterministic-divergence.test.ts`.
+- [x] Run `pnpm test`.
 
 ## Verification Questions
 
-- [ ] Can a new deterministic case be written without knowing `MatchSnapshot` structure?
-- [ ] Can a snapshot shape change be handled mostly inside replay assertions?
-- [ ] Does the replay module provide leverage for both unit and Confect tests?
-- [ ] Did scenario files become more focused on Flip 7 rules than backend mechanics?
+- [x] Can a new deterministic case be written without knowing `MatchSnapshot` structure?
+- [x] Can a snapshot shape change be handled mostly inside replay assertions?
+- [x] Does the replay module provide leverage for both unit and Confect tests?
+- [x] Did scenario files become more focused on Flip 7 rules than backend mechanics?
 
+## Progress Notes
+
+- Replay scenarios previously repeated snapshot implementation facts such as `status`, `dealerSeat`, empty action-card arrays, modifier arrays, player seat metadata, and null pending fields. Scenarios now declare only the game facts each step cares about, keyed by player display name.
+- `pnpm test:unit` is stale for the current package scripts. The equivalent focused command is `pnpm test:engine -- tests/unit/engine/deterministic-replay.test.ts`.

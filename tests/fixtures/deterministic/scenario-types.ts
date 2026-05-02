@@ -71,6 +71,14 @@ export type CanonicalReplaySnapshot = {
   } | null;
 };
 
+export type ReplayExpectedPlayerFacts = Partial<
+  Omit<CanonicalReplaySnapshot["players"][number], "displayName">
+>;
+
+export type ReplayExpectedState = Partial<Omit<CanonicalReplaySnapshot, "players">> & {
+  players?: Record<string, ReplayExpectedPlayerFacts>;
+};
+
 export type DeterministicReplayScenario = {
   name: string;
   scope: "match" | "round";
@@ -78,7 +86,7 @@ export type DeterministicReplayScenario = {
   setupMatch: DeterministicStartOptions;
   setupRound?: DeterministicStartOptions;
   decisionScript: ReplayDecisionStep[];
-  expectedStates: CanonicalReplaySnapshot[];
+  expectedStates: ReplayExpectedState[];
 };
 
 export type ReplayResult =
@@ -97,8 +105,8 @@ export type ReplayResult =
       divergence: {
         stepNumber: number;
         decision: ReplayDecisionStep;
-        expectedState: CanonicalReplaySnapshot;
-        actualState: CanonicalReplaySnapshot;
+        expectedState: ReplayExpectedState;
+        actualState: ReplayExpectedState;
         message: string;
       };
     }

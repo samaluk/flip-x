@@ -1,8 +1,8 @@
 import { actionCard, numberCard, withReplayFillerCards } from "./card-builders";
-import type { CanonicalReplaySnapshot, DeterministicReplayScenario } from "./scenario-types";
+import type { DeterministicReplayScenario, ReplayExpectedState } from "./scenario-types";
 import { cloneDeterministicStartOptions } from "./scenario-runner";
 
-function state(snapshot: CanonicalReplaySnapshot): CanonicalReplaySnapshot {
+function expectState(snapshot: ReplayExpectedState): ReplayExpectedState {
   return snapshot;
 }
 
@@ -20,78 +20,45 @@ export const MATCH_REPLAY_SCENARIO: DeterministicReplayScenario = {
     { stepNumber: 2, actor: "Guest", decisionType: "turn_action", choice: "stay" },
   ],
   expectedStates: [
-    state({
-      status: "in_progress",
-      currentRoundNumber: 1,
-      dealerSeat: 0,
+    expectState({
       activePlayer: "Guest",
       roundStatus: "player_turns",
-      endedBy: "unknown",
-      pendingAction: null,
-      pendingFlip3: null,
-      players: [
-        {
-          displayName: "Host",
-          seatIndex: 0,
-          totalScore: 0,
+      players: {
+        Host: {
           roundStatus: "stayed",
           pointsAtRisk: 1,
           numberCards: [1],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Guest",
-          seatIndex: 1,
-          totalScore: 0,
+        Guest: {
           roundStatus: "active",
           pointsAtRisk: 7,
           numberCards: [7],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-      ],
+      },
       latestEvent: {
         type: "stay",
         payload: {},
         playerNames: "Host",
       },
     }),
-    state({
-      status: "in_progress",
-      currentRoundNumber: 1,
-      dealerSeat: 0,
+    expectState({
       activePlayer: null,
       roundStatus: "completed",
       endedBy: "all_inactive",
-      pendingAction: null,
-      pendingFlip3: null,
-      players: [
-        {
-          displayName: "Host",
-          seatIndex: 0,
+      players: {
+        Host: {
           totalScore: 1,
           roundStatus: "completed",
           pointsAtRisk: 1,
           numberCards: [1],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Guest",
-          seatIndex: 1,
+        Guest: {
           totalScore: 7,
           roundStatus: "completed",
           pointsAtRisk: 7,
           numberCards: [7],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-      ],
+      },
       latestEvent: {
         type: "round_scored",
         payload: { finalRoundScore: 7 },
@@ -137,13 +104,10 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
     { stepNumber: 4, actor: "Host", decisionType: "turn_action", choice: "stay" },
   ],
   expectedStates: [
-    state({
-      status: "in_progress",
+    expectState({
       currentRoundNumber: 2,
-      dealerSeat: 1,
       activePlayer: "Guest",
       roundStatus: "resolving_action",
-      endedBy: "unknown",
       pendingAction: {
         actionKind: "freeze",
         sourcePlayer: "Guest",
@@ -151,191 +115,123 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
         resume: "turns",
       },
       pendingFlip3: null,
-      players: [
-        {
-          displayName: "Host",
-          seatIndex: 0,
+      players: {
+        Host: {
           totalScore: 1,
           roundStatus: "active",
           pointsAtRisk: 6,
           numberCards: [6],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Guest",
-          seatIndex: 1,
+        Guest: {
           totalScore: 2,
           roundStatus: "active",
           pointsAtRisk: 4,
           numberCards: [4],
-          modifierCards: [],
           heldActionCards: ["freeze"],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Third",
-          seatIndex: 2,
+        Third: {
           totalScore: 3,
           roundStatus: "active",
           pointsAtRisk: 5,
           numberCards: [5],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-      ],
+      },
       latestEvent: {
         type: "pending_action",
         payload: { actionKind: "freeze" },
         playerNames: "Guest",
       },
     }),
-    state({
-      status: "in_progress",
+    expectState({
       currentRoundNumber: 2,
-      dealerSeat: 1,
       activePlayer: "Guest",
       roundStatus: "player_turns",
-      endedBy: "unknown",
       pendingAction: null,
       pendingFlip3: null,
-      players: [
-        {
-          displayName: "Host",
-          seatIndex: 0,
+      players: {
+        Host: {
           totalScore: 1,
           roundStatus: "active",
           pointsAtRisk: 6,
           numberCards: [6],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Guest",
-          seatIndex: 1,
+        Guest: {
           totalScore: 2,
           roundStatus: "active",
           pointsAtRisk: 4,
           numberCards: [4],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Third",
-          seatIndex: 2,
+        Third: {
           totalScore: 3,
           roundStatus: "frozen",
           pointsAtRisk: 5,
           numberCards: [5],
-          modifierCards: [],
-          heldActionCards: [],
           receivedActionCards: ["freeze"],
         },
-      ],
+      },
       latestEvent: {
         type: "freeze_applied",
         payload: {},
         playerNames: "Guest → Third",
       },
     }),
-    state({
-      status: "in_progress",
+    expectState({
       currentRoundNumber: 2,
-      dealerSeat: 1,
       activePlayer: "Host",
       roundStatus: "player_turns",
-      endedBy: "unknown",
-      pendingAction: null,
-      pendingFlip3: null,
-      players: [
-        {
-          displayName: "Host",
-          seatIndex: 0,
+      players: {
+        Host: {
           totalScore: 1,
           roundStatus: "active",
           pointsAtRisk: 6,
           numberCards: [6],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Guest",
-          seatIndex: 1,
+        Guest: {
           totalScore: 2,
           roundStatus: "stayed",
           pointsAtRisk: 4,
           numberCards: [4],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Third",
-          seatIndex: 2,
+        Third: {
           totalScore: 3,
           roundStatus: "frozen",
           pointsAtRisk: 5,
           numberCards: [5],
-          modifierCards: [],
-          heldActionCards: [],
           receivedActionCards: ["freeze"],
         },
-      ],
+      },
       latestEvent: {
         type: "stay",
         payload: {},
         playerNames: "Guest",
       },
     }),
-    state({
-      status: "in_progress",
+    expectState({
       currentRoundNumber: 2,
-      dealerSeat: 1,
       activePlayer: null,
       roundStatus: "completed",
       endedBy: "all_inactive",
-      pendingAction: null,
-      pendingFlip3: null,
-      players: [
-        {
-          displayName: "Host",
-          seatIndex: 0,
+      players: {
+        Host: {
           totalScore: 7,
           roundStatus: "completed",
           pointsAtRisk: 6,
           numberCards: [6],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Guest",
-          seatIndex: 1,
+        Guest: {
           totalScore: 6,
           roundStatus: "completed",
           pointsAtRisk: 4,
           numberCards: [4],
-          modifierCards: [],
-          heldActionCards: [],
-          receivedActionCards: [],
         },
-        {
-          displayName: "Third",
-          seatIndex: 2,
+        Third: {
           totalScore: 8,
           roundStatus: "completed",
           pointsAtRisk: 5,
           numberCards: [5],
-          modifierCards: [],
-          heldActionCards: [],
           receivedActionCards: ["freeze"],
         },
-      ],
+      },
       latestEvent: {
         type: "round_scored",
         payload: { finalRoundScore: 5 },

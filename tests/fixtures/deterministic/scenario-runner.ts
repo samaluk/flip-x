@@ -1,5 +1,5 @@
 import type { Card } from "@/game/logic/card-types";
-import { canonicalizeSnapshot } from "./replay-assertions";
+import { canonicalizeSnapshot, projectExpectedReplayState } from "./replay-assertions";
 import type { ConfectMatchSnapshot } from "./confect-match-snapshot";
 import type { DeterministicStartOptions } from "./scenario-types";
 import type {
@@ -90,8 +90,8 @@ function divergedResult(
   scenario: DeterministicReplayScenario,
   stepsConsumed: number,
   decision: ReplayDecisionStep,
-  expectedState: ReturnType<typeof canonicalizeSnapshot>,
-  actualState: ReturnType<typeof canonicalizeSnapshot>,
+  expectedState: NonNullable<DeterministicReplayScenario["expectedStates"][number]>,
+  actualState: NonNullable<DeterministicReplayScenario["expectedStates"][number]>,
 ): ReplayResult {
   return {
     scenarioName: scenario.name,
@@ -112,6 +112,19 @@ type StartedMatch = Awaited<ReturnType<ReplayHarness["createStartedMatch"]>>;
 
 function isReplayResult(value: ConfectMatchSnapshot | ReplayResult): value is ReplayResult {
   return value.status === "invalid" || value.status === "diverged" || value.status === "matched";
+}
+
+function stableJson(value: unknown): string {
+  if (Array.isArray(value)) {
+    return `[${value.map((item) => stableJson(item)).join(",")}]`;
+  }
+  if (value && typeof value === "object") {
+    const entries = Object.entries(value).toSorted(([left], [right]) => left.localeCompare(right));
+    return `{${entries
+      .map(([key, entryValue]) => `${JSON.stringify(key)}:${stableJson(entryValue)}`)
+      .join(",")}}`;
+  }
+  return JSON.stringify(value);
 }
 
 async function loadReplayInitialSnapshot(
@@ -227,8 +240,9 @@ function checkStepMatchesExpectedCanonical(
     );
   }
 
-  if (JSON.stringify(actualState) !== JSON.stringify(expectedState)) {
-    return divergedResult(scenario, index + 1, decision, expectedState, actualState);
+  const actualFacts = projectExpectedReplayState(actualState, expectedState);
+  if (stableJson(actualFacts) !== stableJson(expectedState)) {
+    return divergedResult(scenario, index + 1, decision, expectedState, actualFacts);
   }
 
   return { snapshot: nextSnapshot };

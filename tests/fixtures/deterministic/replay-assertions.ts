@@ -1,6 +1,6 @@
 import { expect } from "vitest";
 
-import type { CanonicalReplaySnapshot, ReplayResult } from "./scenario-types";
+import type { CanonicalReplaySnapshot, ReplayExpectedState, ReplayResult } from "./scenario-types";
 import type { ConfectMatchSnapshot } from "./confect-match-snapshot";
 
 export function canonicalizeSnapshot(snapshot: ConfectMatchSnapshot): CanonicalReplaySnapshot {
@@ -64,10 +64,41 @@ export function canonicalizeSnapshot(snapshot: ConfectMatchSnapshot): CanonicalR
 
 export function expectSnapshotToMatchExpected(
   snapshot: ConfectMatchSnapshot,
-  expected: CanonicalReplaySnapshot,
+  expected: ReplayExpectedState,
   message?: string,
 ) {
-  expect(canonicalizeSnapshot(snapshot), message).toEqual(expected);
+  const actual = canonicalizeSnapshot(snapshot);
+  expect(projectExpectedReplayState(actual, expected), message).toEqual(expected);
+}
+
+export function projectExpectedReplayState(
+  actual: CanonicalReplaySnapshot,
+  expected: ReplayExpectedState,
+): ReplayExpectedState {
+  const projected: ReplayExpectedState = {};
+
+  for (const key of Object.keys(expected) as Array<keyof ReplayExpectedState>) {
+    if (key === "players") continue;
+    projected[key] = actual[key] as never;
+  }
+
+  if (expected.players) {
+    const players: Record<string, NonNullable<ReplayExpectedState["players"]>[string]> = {};
+    for (const [displayName, expectedPlayer] of Object.entries(expected.players)) {
+      const actualPlayer = actual.players.find((player) => player.displayName === displayName);
+      if (!actualPlayer) {
+        players[displayName] = {};
+        continue;
+      }
+      players[displayName] = {};
+      for (const key of Object.keys(expectedPlayer) as Array<keyof typeof expectedPlayer>) {
+        players[displayName]![key] = actualPlayer[key] as never;
+      }
+    }
+    projected.players = players;
+  }
+
+  return projected;
 }
 
 export function describeReplayResult(result: ReplayResult) {

@@ -5,9 +5,10 @@ export const DIVERGED_REPLAY_SCENARIO = (() => {
   scenario.name = "match-replay-diverged";
   scenario.expectedStates[1] = {
     ...scenario.expectedStates[1]!,
-    players: scenario.expectedStates[1]!.players.map((player) =>
-      player.displayName === "Guest" ? { ...player, totalScore: 8 } : player,
-    ),
+    players: {
+      ...scenario.expectedStates[1]!.players,
+      Guest: { ...scenario.expectedStates[1]!.players?.Guest, totalScore: 8 },
+    },
   };
   return scenario;
 })();
