@@ -8,43 +8,14 @@ if [[ $# -lt 1 ]]; then
 fi
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 
-read_env_file_value() {
-  local name file line value
-  name="$1"
-  file="$2"
-
-  while IFS= read -r line || [[ -n "$line" ]]; do
-    case "$line" in
-      "$name"=*)
-        value="${line#*=}"
-        if [[ "$value" == \"*\" && "$value" == *\" ]]; then
-          value="${value#\"}"
-          value="${value%\"}"
-        elif [[ "$value" == \'*\' && "$value" == *\' ]]; then
-          value="${value#\'}"
-          value="${value%\'}"
-        fi
-        printf '%s' "$value"
-        return 0
-        ;;
-    esac
-  done < "$file"
-
-  return 1
+use_preview_path() {
+  [[ "${CONVEX_TEST_USE_PREVIEW:-}" == "1" ]] ||
+    [[ "${CI:-}" == "true" ]] ||
+    [[ "${CI:-}" == "1" ]] ||
+    [[ -n "${GITHUB_ACTIONS:-}" ]]
 }
-
-if [[ -z "${CONVEX_DEPLOY_KEY:-}" && -f "$ROOT/.env.local" ]]; then
-  local_deploy_key="$(read_env_file_value CONVEX_DEPLOY_KEY "$ROOT/.env.local" || true)"
-  if [[ -n "$local_deploy_key" ]]; then
-    export CONVEX_DEPLOY_KEY="$local_deploy_key"
-  fi
-fi
-
-if [[ -z "${CONVEX_DEPLOY_KEY:-}" ]]; then
-  printf 'CONVEX_DEPLOY_KEY is required for preview-backed tests.\n' >&2
-  exit 1
-fi
 
 slugify() {
   local value
@@ -87,30 +58,67 @@ resolve_preview_name() {
   printf 'local-%s-%s' "$(slugify "$user_name")" "$(slugify "$branch_name")"
 }
 
-preview_name="$(resolve_preview_name)"
-url_file="$(mktemp)"
+run_local_path() {
+  printf 'Using local Convex backend (convex dev --once). For cloud preview instead, set CONVEX_TEST_USE_PREVIEW=1.\n'
 
-cleanup() {
-  rm -f "$url_file"
+  pnpm exec convex dev --once --typecheck try
+
+  if [[ ! -f "$ROOT/.env.local" ]]; then
+    printf 'Expected %s after convex dev --once. Run: npx convex deployment create local --select\n' "$ROOT/.env.local" >&2
+    exit 1
+  fi
+
+  local url
+  url="$(node "$ROOT/scripts/read-env-value-from-file.mjs" "$ROOT/.env.local" NEXT_PUBLIC_CONVEX_URL)" || true
+
+  if [[ -z "${url:-}" ]]; then
+    printf 'Could not read NEXT_PUBLIC_CONVEX_URL from .env.local. Run: npx convex deployment create local --select\n' >&2
+    exit 1
+  fi
+
+  export NEXT_PUBLIC_CONVEX_URL="$url"
+  printf 'Using NEXT_PUBLIC_CONVEX_URL=%s\n' "$NEXT_PUBLIC_CONVEX_URL"
+
+  pnpm exec node "$ROOT/scripts/clear-convex-app-data.mjs"
 }
 
-trap cleanup EXIT
+run_preview_path() {
+  local preview_name url_file
 
-printf 'Using Convex preview deployment: %s\n' "$preview_name"
+  preview_name="$(resolve_preview_name)"
+  url_file="$(mktemp)"
 
-pnpm exec convex deploy \
-  --preview-name "$preview_name" \
-  --typecheck try \
-  --cmd "node \"$ROOT/scripts/write-convex-url.mjs\" \"$url_file\"" \
-  --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL
+  cleanup() {
+    rm -f "$url_file"
+  }
 
-export NEXT_PUBLIC_CONVEX_URL="$(<"$url_file")"
-printf 'Using NEXT_PUBLIC_CONVEX_URL=%s\n' "$NEXT_PUBLIC_CONVEX_URL"
+  trap cleanup EXIT
 
-pnpm exec node "$ROOT/scripts/clear-convex-preview.mjs"
+  printf 'Using Convex preview deployment: %s\n' "$preview_name"
 
-if [[ -n "${NEXT_PUBLIC_CONVEX_SITE_URL:-}" ]]; then
-  printf 'Ignoring NEXT_PUBLIC_CONVEX_SITE_URL for preview-backed tests.\n'
+  pnpm exec convex deploy \
+    --preview-name "$preview_name" \
+    --typecheck try \
+    --cmd "node \"$ROOT/scripts/write-convex-url.mjs\" \"$url_file\"" \
+    --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL
+
+  export NEXT_PUBLIC_CONVEX_URL="$(<"$url_file")"
+  printf 'Using NEXT_PUBLIC_CONVEX_URL=%s\n' "$NEXT_PUBLIC_CONVEX_URL"
+
+  pnpm exec node "$ROOT/scripts/clear-convex-app-data.mjs"
+
+  if [[ -n "${NEXT_PUBLIC_CONVEX_SITE_URL:-}" ]]; then
+    printf 'Ignoring NEXT_PUBLIC_CONVEX_SITE_URL for preview-backed tests.\n'
+  fi
+
+  cleanup
+  trap - EXIT
+}
+
+if use_preview_path; then
+  run_preview_path
+else
+  run_local_path
 fi
 
 exec "$@"
