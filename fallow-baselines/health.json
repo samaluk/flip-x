@@ -11,17 +11,17 @@
         "count": 2
       }
     },
-    "confect/admin.ts": {
-      "crap_moderate": {
-        "count": 2
-      }
-    },
     "confect/matches.ts": {
       "crap_moderate": {
         "count": 1
       }
     },
     "game/cards/action-content.tsx": {
+      "complexity_moderate": {
+        "count": 1
+      }
+    },
+    "game/infrastructure/save-command-result.ts": {
       "complexity_moderate": {
         "count": 1
       }
@@ -42,6 +42,11 @@
     "tests/confect/command-finalization.test.ts": {
       "crap_moderate": {
         "count": 1
+      }
+    },
+    "tests/unit/engine/deterministic-replay.test.ts": {
+      "crap_moderate": {
+        "count": 2
       }
     }
   },
