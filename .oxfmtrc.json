@@ -1,5 +1,5 @@
 {
   "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "sortTailwindcss": false,
-  "ignorePatterns": ["*.md", "*/_generated/*"]
+  "ignorePatterns": ["*.md", "*/_generated/*", "shared/ui/**"]
 }
