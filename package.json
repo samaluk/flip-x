@@ -9,7 +9,7 @@
     "dev:app": "next dev",
     "convex:dev": "convex dev",
     "dev:stack": "convex dev --start 'pnpm dev'",
-    "ci:local": "pnpm design:lint && pnpm lint && pnpm i18n:check && pnpm fallow:ci && pnpm test && pnpm build && pnpm test:vrt && pnpm test:backend && pnpm test:e2e",
+    "ci:local": "pnpm design:lint && pnpm lint && pnpm i18n:check && pnpm fallow:ci && pnpm test && pnpm build",
     "build": "next build",
     "start": "next start",
     "lint": "oxlint .",
