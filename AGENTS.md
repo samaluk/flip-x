@@ -1,78 +1,164 @@
+# AGENTS.md
+
 <!-- BEGIN:nextjs-agent-rules -->
 
-# This is NOT the Next.js you know
+## Next.js Version Warning
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
+This is not the Next.js version you may know from training data. Before changing
+Next.js code, read the relevant guide in `node_modules/next/dist/docs/` and heed
+deprecation notices.
 
 <!-- END:nextjs-agent-rules -->
 
-## Design System
+## Project Overview
 
-When generating or editing UI, always read `DESIGN.md` at the repository root first.
+Flip 7 is a shared-table web app for playing the press-your-luck card game with
+live turn tracking, action-card resolution, and automatic scoring to 200 points.
 
-- Use only the colors, typography, spacing, radii, and component patterns defined in `DESIGN.md` unless the user explicitly asks to deviate.
-- Keep new UI work aligned with the guidance in the `## Do's and Don'ts` section of `DESIGN.md`.
-- If `DESIGN.md` changes, validate it with `pnpm design:lint` before finishing.
+- Runtime stack: TypeScript 6.0.3, Next.js 16.2.4, React 19.2.5, Convex 1.36.1,
+  Confect 5.0.0, Effect 3.21.2.
+- UI stack: Tailwind CSS 4, shadcn/ui, Base UI, Lucide icons, Motion.
+- Testing stack: Vitest 4.1.5, Playwright 1.59.1, convex-test.
+- Package manager: `pnpm@10.33.2`.
 
-## Active Technologies
-- TypeScript 6.0.3 on Node test runtimes, Next.js 16.2.4, React 19.2.5 + Next.js, Convex 1.36.1, Confect 5.0.0, Effect 3.21.1, Vitest 4.1.4, Playwright 1.59.1 (004-deterministic-game-tests)
-- Convex tables for matches, players, rounds, round player states, round events, and score breakdowns; repo fixtures for deterministic scenarios (004-deterministic-game-tests)
+Architecture references:
 
-- TypeScript (Next.js 16.2.3, React 19.2.4) + Convex (backend), Next.js, shadcn/ui, Lucide icons (003-lobby-code-system)
-- Convex serverless database (003-lobby-code-system)
+- `docs/repo-layout.md` describes the repository layout.
+- Gameplay mutations flow through thin `confect/` entrypoints into
+  `game/application/run-command.ts`.
+- Pure rules live in `game/logic/`.
+- Convex document loading, persistence, and snapshot rebuilding live in
+  `game/infrastructure/`.
 
-## Recent Changes
+## Required Reading
 
-- 003-lobby-code-system: Added TypeScript (Next.js 16.2.3, React 19.2.4) + Convex (backend), Next.js, shadcn/ui, Lucide icons
+- For UI changes, read `DESIGN.md` before editing. Use only its colors,
+  typography, spacing, radii, and component patterns unless the user explicitly
+  asks to deviate. Follow its `## Do's and Don'ts` section.
+- For Convex changes, read `convex/_generated/ai/guidelines.md` before editing
+  Convex code. Those rules override general Convex knowledge.
+- For Next.js changes, read the relevant docs under `node_modules/next/dist/docs/`
+  before editing.
 
-<!-- convex-ai-start -->
-This project uses [Convex](https://convex.dev) as its backend.
+If `DESIGN.md` changes, run `pnpm design:lint` before finishing.
 
-When working on Convex code, **always read `convex/_generated/ai/guidelines.md` first** for important guidelines on how to correctly use Convex APIs and patterns. The file contains rules that override what you may have learned about Convex from training data.
+## Development Workflow
 
-Convex agent skills for common tasks can be installed by running `npx convex ai-files install`.
-<!-- convex-ai-end -->
+Install dependencies:
 
-## Cursor Cloud specific instructions
+```bash
+pnpm install
+```
 
-### Services overview
+Start local Convex sync, which refreshes `.env.local`:
 
-| Service | Command | Port | Notes |
-|---------|---------|------|-------|
-| Convex backend / E2E tests | `pnpm test:backend` / `pnpm test:e2e` | n/a | **Local (default off CI):** `convex dev --once` + local deployment URL; no `CONVEX_DEPLOY_KEY`. **CI / `CONVEX_TEST_USE_PREVIEW=1`:** named cloud preview; `CONVEX_DEPLOY_KEY` from env or `.env.local`. Clears app data before tests. |
-| Next.js dev server | `pnpm dev` | n/a | Runs at `https://flip7.localhost` (worktree: `<branch>.flip7.localhost`) via portless proxy; reads `NEXT_PUBLIC_CONVEX_URL` from `.env.local` for local development. |
+```bash
+npx convex dev
+```
 
-### Running services
+Start the Next.js dev server through portless:
 
-1. For local app development, start `npx convex dev` to refresh `.env.local` with your development deployment.
-2. Then start Next.js dev server with `pnpm dev` (runs through portless proxy at `https://flip7.localhost`). On first run, portless generates a local CA and may prompt for sudo to trust it (one-time setup).
-3. For backend or E2E tests, run `pnpm test:backend` or `pnpm test:e2e` (local Convex by default). For CI-style cloud preview, set `CONVEX_TEST_USE_PREVIEW=1` and a preview `CONVEX_DEPLOY_KEY` (or rely on CI secrets).
-4. **Worktree support**: portless automatically detects git worktrees and prepends the branch name as a subdomain (e.g., `https://<branch>.flip7.localhost`). No config changes needed.
-5. **Bypass portless**: Run `PORTLESS=0 pnpm dev` to start Next.js directly on `localhost:3000` without the proxy.
+```bash
+pnpm dev
+```
 
-### Key commands
+The app runs at `https://flip7.localhost`. In git worktrees, portless prepends
+the branch name, for example `https://<branch>.flip7.localhost`.
 
-- **Lint:** `pnpm lint` (oxlint)
-- **Fast local tests:** `pnpm test` (Vitest `unit`, `contract`, `integration`, and `confect`)
-- **Unit tests:** `pnpm test:unit`
-- **Contract tests:** `pnpm test:contract`
-- **Integration tests:** `pnpm test:integration`
-- **Confect tests:** `pnpm test:confect`
-- **Build:** `pnpm build`
-- **Convex backend tests:** `pnpm test:backend` (local Convex by default; preview on CI)
-- **Visual regression tests:** `pnpm test:vrt`
-- **End-to-end tests:** `pnpm test:e2e`
+Useful development commands:
 
-### Gotchas
+- `pnpm dev:stack`: start Convex and the app together.
+- `pnpm convex:dev`: start Convex development sync.
+- `pnpm dev:app`: run `next dev` directly.
+- `PORTLESS=0 pnpm dev`: bypass portless and use direct localhost serving.
+- `pnpm confect:codegen`: regenerate Confect types and bindings.
+- `pnpm confect:dev`: run Confect development tooling.
 
-- The `pnpm-workspace.yaml` lists `ignoredBuiltDependencies` for `sharp` and `unrs-resolver`. After `pnpm install`, build scripts for `esbuild`, `@swc/core`, `@parcel/watcher`, and `msw` are blocked by default. To allow them, temporarily add those packages to `onlyBuiltDependencies` in `pnpm-workspace.yaml` and re-run `pnpm install`, then revert the file. Alternatively, run `pnpm rebuild esbuild @swc/core @parcel/watcher msw`.
-- Preview mode (`CI`, `GITHUB_ACTIONS`, or `CONVEX_TEST_USE_PREVIEW=1`) requires `CONVEX_DEPLOY_KEY`; the Convex CLI also reads `.env.local` when present. Default local smoke tests use the local backend and do not need a deploy key.
-- `.env.local` is git-ignored and auto-generated by `npx convex dev` for local development only.
+## Quality Checks
 
-<!-- convex-ai-start -->
-This project uses [Convex](https://convex.dev) as its backend.
+- `pnpm lint`: run oxlint.
+- `pnpm lint:fix`: run oxlint autofixes.
+- `pnpm format:check`: check formatting with oxfmt.
+- `pnpm format`: write formatting changes with oxfmt.
+- `pnpm i18n:check`: validate locale messages and usage.
+- `pnpm design:lint`: validate `DESIGN.md`.
+- `pnpm build`: run the Next.js production build.
 
-When working on Convex code, **always read `convex/_generated/ai/guidelines.md` first** for important guidelines on how to correctly use Convex APIs and patterns. The file contains rules that override what you may have learned about Convex from training data.
+Run the narrowest meaningful checks while working, then broaden before handing
+off changes that touch shared behavior.
 
-Convex agent skills for common tasks can be installed by running `npx convex ai-files install`.
-<!-- convex-ai-end -->
+## Testing
+
+Detailed reference: `docs/testing.md`.
+
+- `pnpm test`: fast local default; runs Vitest `engine`, `infrastructure`,
+  `contract`, `ui`, and `confect` projects.
+- `pnpm test:engine`: pure gameplay logic tests.
+- `pnpm test:infra`: infrastructure tests.
+- `pnpm test:contract`: contract tests.
+- `pnpm test:ui`: UI tests.
+- `pnpm test:confect`: Confect tests.
+- `pnpm test:backend`: Convex backend smoke tests.
+- `pnpm test:e2e`: Playwright end-to-end tests.
+- `pnpm test:vrt`: visual regression tests in Linux Docker.
+- `pnpm test:vrt:update`: refresh visual regression baselines.
+
+Backend and E2E tests use a local Convex deployment by default. For CI-style
+cloud previews, set `CONVEX_TEST_USE_PREVIEW=1` and provide `CONVEX_DEPLOY_KEY`
+from the environment or `.env.local`.
+
+The backend and E2E wrappers clear all app data in the target deployment before
+running tests. Do not point them at a shared production deployment.
+
+## Commit Planning
+
+Before making non-trivial edits, plan the work as a sequence of commits. Each
+planned commit must be auto-sustentable: it should build on its own, pass the
+relevant checks for the touched area, and leave the repository in a coherent
+state without relying on a later commit for correctness.
+
+Use this planning rule to shape the implementation:
+
+- Keep unrelated concerns in separate commits.
+- Put required schema, type, and generated-code updates in the same commit as
+  the behavior that needs them.
+- Include tests with the commit that changes the behavior being tested.
+- Avoid temporary broken states, feature stubs, or half-migrations unless they
+  are deliberately hidden and safe.
+- When a change cannot be split into independently valid commits, keep it as one
+  commit and explain why.
+
+## Code Style
+
+- Prefer existing project patterns over new abstractions.
+- Keep pure gameplay rules in `game/logic/`; do not mix Convex persistence into
+  rule code.
+- Keep backend contract and implementation wiring aligned with Confect patterns.
+- Use Effect where the existing boundary already uses Effect; do not introduce
+  Effect into plain gameplay rules without a clear architectural reason.
+- Use Lucide icons for UI iconography when a matching icon exists.
+- Preserve i18n patterns for user-facing text and run `pnpm i18n:check` when
+  changing messages or message usage.
+- Do not commit `.env.local`; it is git-ignored and generated by Convex for
+  local development.
+
+## Build And Deployment
+
+- Production build: `pnpm build`.
+- Production start after build: `pnpm start`.
+- GitHub repository: `https://github.com/samaluk/flip7`.
+- Vercel project: `flip7`, deployed from `master`.
+- Convex production URL: `https://valuable-peacock-13.convex.cloud`.
+- Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`.
+
+## Troubleshooting
+
+- `pnpm-workspace.yaml` lists `sharp` and `unrs-resolver` under
+  `ignoredBuiltDependencies`. After `pnpm install`, build scripts for `esbuild`,
+  `@swc/core`, `@parcel/watcher`, and `msw` may be blocked. Prefer
+  `pnpm rebuild esbuild @swc/core @parcel/watcher msw`; if you temporarily add
+  packages to `onlyBuiltDependencies`, revert that workspace-file change before
+  finishing.
+- Preview mode is enabled by `CI`, `GITHUB_ACTIONS`, or
+  `CONVEX_TEST_USE_PREVIEW=1` and requires `CONVEX_DEPLOY_KEY`.
+- Local backend and E2E smoke tests do not need `CONVEX_DEPLOY_KEY`.
