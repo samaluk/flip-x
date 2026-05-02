@@ -2,6 +2,7 @@
   "unused_files": [],
   "unused_exports": [],
   "unused_types": [],
+  "private_type_leaks": [],
   "unused_dependencies": [],
   "unused_dev_dependencies": [],
   "circular_dependencies": [],

@@ -12,7 +12,7 @@ import { useSessionId } from "convex-helpers/react/sessions";
 type SessionRef = Ref.AnyPublicQuery | Ref.AnyPublicMutation | Ref.AnyPublicAction;
 type SessionArgs<T extends SessionRef> = Extract<Ref.Args<T>, { sessionId: string }>;
 type SessionlessArgs<T extends SessionRef> = Omit<SessionArgs<T>, "sessionId">;
-type SessionConfectOptimisticLocalStore = {
+export type SessionConfectOptimisticLocalStore = {
   getQuery<Query extends Ref.AnyPublicQuery>(
     ref: Query,
     args: SessionlessArgs<Query>,
