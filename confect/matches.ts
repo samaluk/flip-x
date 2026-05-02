@@ -28,7 +28,7 @@ import {
   staleGameState,
 } from "../shared/lib/errors/domain";
 import { runGameCommand } from "../game/application/run-command";
-import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
+import { buildCurrentMatchSnapshotForViewer } from "../game/infrastructure/snapshot-store";
 import {
   DEFAULT_GAME_SETTINGS,
   gameSettingsEqual,
@@ -46,29 +46,18 @@ type MatchReadCtx = QueryCtx | MutationCtx;
 function snapshotForMatchSession(
   ctx: MatchReadCtx,
   matchId: Id<"matches">,
-  match: Doc<"matches">,
   sessionId: SessionId,
 ) {
   return Effect.gen(function* () {
-    const round = yield* Effect.promise(() => getLatestRound(ctx, matchId));
-    return yield* Effect.promise(() => buildSnapshot(ctx, match, round, sessionId));
-  });
-}
+    const snapshot = yield* Effect.promise(() =>
+      buildCurrentMatchSnapshotForViewer(ctx, matchId, sessionId),
+    );
 
-function snapshotAfterMatchReload(
-  ctx: MatchReadCtx,
-  reader: Effect.Effect.Success<typeof DatabaseReaderService>,
-  matchId: Id<"matches">,
-  sessionId: SessionId,
-) {
-  return Effect.gen(function* () {
-    const nextMatch = yield* reader.table("matches").get(matchId);
-
-    if (!nextMatch) {
+    if (!snapshot) {
       return yield* matchNotFound({ matchId: String(matchId) });
     }
 
-    return yield* snapshotForMatchSession(ctx, matchId, nextMatch, sessionId);
+    return snapshot;
   });
 }
 
@@ -205,12 +194,7 @@ export function createMatchForSession(
     yield* setPlayerSessionWithServices(reader, writer, sessionId, hostPlayerId);
     yield* writer.table("matches").patch(matchId, { hostPlayerId });
 
-    const match = yield* reader.table("matches").get(matchId);
-    if (!match) {
-      return yield* matchNotFound({ matchId: String(matchId) });
-    }
-
-    return yield* Effect.promise(() => buildSnapshot(ctx, match, null, sessionId));
+    return yield* snapshotForMatchSession(ctx, matchId, sessionId);
   });
 }
 
@@ -254,15 +238,9 @@ function loadMatchSnapshotForSession(
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
-    // queryWithSession executes as a plain Convex query, so Confect services are
-    // not layered here; use the raw query ctx directly at this boundary.
-    const match = yield* Effect.promise(() => ctx.db.get(args.matchId));
-
-    if (!match) {
-      return null;
-    }
-
-    return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
+    return yield* Effect.promise(() =>
+      buildCurrentMatchSnapshotForViewer(ctx, args.matchId, sessionId),
+    );
   });
 }
 
@@ -314,7 +292,7 @@ export function joinMatchForSession(
         .table("players")
         .patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId });
 
-      return yield* snapshotAfterMatchReload(ctx, reader, args.matchId, sessionId);
+      return yield* snapshotForMatchSession(ctx, args.matchId, sessionId);
     }
 
     const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
@@ -335,7 +313,7 @@ export function joinMatchForSession(
 
     yield* setPlayerSessionWithServices(reader, writer, sessionId, playerId);
 
-    return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
+    return yield* snapshotForMatchSession(ctx, args.matchId, sessionId);
   });
 }
 
@@ -430,7 +408,7 @@ export function updateMatchSettingsForSession(
     });
 
     if (gameSettingsEqual(currentSettings, nextSettings)) {
-      return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
+      return yield* snapshotForMatchSession(ctx, args.matchId, sessionId);
     }
 
     yield* writer.table("matches").patch(args.matchId, {
@@ -440,6 +418,6 @@ export function updateMatchSettingsForSession(
       updatedAt: Date.now(),
     });
 
-    return yield* snapshotAfterMatchReload(ctx, reader, args.matchId, sessionId);
+    return yield* snapshotForMatchSession(ctx, args.matchId, sessionId);
   });
 }

@@ -39,22 +39,21 @@ Those helpers should remain internal unless another module has a real need for t
 
 ## Checklist
 
-- [ ] Read `docs/repo-layout.md`, especially the backend command flow and snapshot store description.
-- [ ] List every call site for `buildSnapshot`, `buildLatestMatchSnapshot`, `getLatestRound`, and `buildMatchSnapshot`.
-- [ ] Decide whether public callers should use only `buildCurrentMatchSnapshotForViewer` or equivalent domain naming.
-- [ ] Reduce caller knowledge in `confect/matches.ts` so it does not assemble match/round/session combinations.
-- [ ] Keep `buildMatchSnapshot` available only if contract tests or pure view model tests need that seam.
-- [ ] Move latest event and round history loading behind the snapshot module interface.
-- [ ] Ensure setup-state snapshots still work when no round exists.
-- [ ] Ensure viewer-specific fields like `viewerPlayerId` and `isHost` remain correct.
-- [ ] Update contract tests to clarify whether they test pure view model shape or infrastructure snapshot loading.
-- [ ] Run `pnpm test:contract -- tests/contract/match-snapshot-contract.test.ts`.
-- [ ] Run `pnpm test`.
+- [x] Read `docs/repo-layout.md`, especially the backend command flow and snapshot store description.
+- [x] List every call site for `buildSnapshot`, `buildLatestMatchSnapshot`, `getLatestRound`, and `buildMatchSnapshot`.
+- [x] Decide whether public callers should use only `buildCurrentMatchSnapshotForViewer` or equivalent domain naming.
+- [x] Reduce caller knowledge in `confect/matches.ts` so it does not assemble match/round/session combinations.
+- [x] Keep `buildMatchSnapshot` available only if contract tests or pure view model tests need that seam.
+- [x] Move latest event and round history loading behind the snapshot module interface.
+- [x] Ensure setup-state snapshots still work when no round exists.
+- [x] Ensure viewer-specific fields like `viewerPlayerId` and `isHost` remain correct.
+- [x] Update contract tests to clarify whether they test pure view model shape or infrastructure snapshot loading.
+- [x] Run `pnpm test:contract -- tests/contract/match-snapshot-contract.test.ts`.
+- [x] Run `pnpm test`.
 
 ## Verification Questions
 
-- [ ] Can Confect callers request a snapshot without knowing about latest round lookup?
-- [ ] Is the snapshot interface small relative to the behavior it performs?
-- [ ] Are normalization and round history concerns local to snapshot construction?
-- [ ] Did tests become clearer about pure view model behavior versus persisted snapshot loading?
-
+- [x] Can Confect callers request a snapshot without knowing about latest round lookup?
+- [x] Is the snapshot interface small relative to the behavior it performs?
+- [x] Are normalization and round history concerns local to snapshot construction?
+- [x] Did tests become clearer about pure view model behavior versus persisted snapshot loading?

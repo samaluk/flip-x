@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { createPlayerRoundStates, createRoundRuntime } from "@/game/logic/command-handler";
 import { buildMatchSnapshot } from "@/game/logic/view-models";
 
-describe("game session contract", () => {
+describe("pure match snapshot view model contract", () => {
   it("returns the expected top-level snapshot fields", () => {
     const snapshot = buildMatchSnapshot({
       matchId: "match-1",

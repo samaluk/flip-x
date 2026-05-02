@@ -45,7 +45,7 @@ async function getLatestRoundEvent(ctx: Ctx, roundId: Id<"rounds">) {
   return events.toSorted((left, right) => right.sequence - left.sequence)[0] ?? null;
 }
 
-export async function buildSnapshot(
+async function buildSnapshotFromLoadedMatch(
   ctx: Ctx,
   match: Doc<"matches">,
   round: Doc<"rounds"> | null,
@@ -111,7 +111,7 @@ export async function buildSnapshot(
   });
 }
 
-export async function buildLatestMatchSnapshot(
+export async function buildCurrentMatchSnapshotForViewer(
   ctx: Ctx,
   matchId: Id<"matches">,
   sessionId?: SessionId,
@@ -122,5 +122,7 @@ export async function buildLatestMatchSnapshot(
   }
 
   const round = await getLatestRound(ctx, matchId);
-  return await buildSnapshot(ctx, match, round, sessionId);
+  return await buildSnapshotFromLoadedMatch(ctx, match, round, sessionId);
 }
+
+export const buildLatestMatchSnapshot = buildCurrentMatchSnapshotForViewer;
