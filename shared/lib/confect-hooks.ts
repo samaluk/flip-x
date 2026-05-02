@@ -12,12 +12,29 @@ import { useSessionId } from "convex-helpers/react/sessions";
 type SessionRef = Ref.AnyPublicQuery | Ref.AnyPublicMutation | Ref.AnyPublicAction;
 type SessionArgs<T extends SessionRef> = Extract<Ref.Args<T>, { sessionId: string }>;
 type SessionlessArgs<T extends SessionRef> = Omit<SessionArgs<T>, "sessionId">;
+type SessionConfectOptimisticLocalStore = {
+  getQuery<Query extends Ref.AnyPublicQuery>(
+    ref: Query,
+    args: SessionlessArgs<Query>,
+  ): Ref.Returns<Query> | undefined;
+  getAllQueries<Query extends Ref.AnyPublicQuery>(
+    ref: Query,
+  ): Array<{
+    args: SessionlessArgs<Query>;
+    value: Ref.Returns<Query> | undefined;
+  }>;
+  setQuery<Query extends Ref.AnyPublicQuery>(
+    ref: Query,
+    args: SessionlessArgs<Query>,
+    value: Ref.Returns<Query> | undefined,
+  ): void;
+};
 type SessionConfectMutation<Mutation extends Ref.AnyPublicMutation> = ((
   args: SessionlessArgs<Mutation>,
 ) => Promise<Ref.Returns<Mutation>>) & {
   withOptimisticUpdate(
     optimisticUpdate: (
-      localStore: ConfectOptimisticLocalStore,
+      localStore: SessionConfectOptimisticLocalStore,
       args: SessionlessArgs<Mutation>,
     ) => void,
   ): SessionConfectMutation<Mutation>;
@@ -64,11 +81,44 @@ function wrapSessionConfectMutation<Mutation extends Ref.AnyPublicMutation>(
   sessionMutation.withOptimisticUpdate = (optimisticUpdate) =>
     wrapSessionConfectMutation(
       mutate.withOptimisticUpdate((localStore, args) => {
-        const { sessionId: _sessionId, ...sessionlessArgs } = args as SessionArgs<Mutation>;
-        optimisticUpdate(localStore, sessionlessArgs as SessionlessArgs<Mutation>);
+        optimisticUpdate(
+          wrapSessionOptimisticLocalStore(localStore, (args as SessionArgs<Mutation>).sessionId),
+          withoutSessionArgs(args),
+        );
       }),
       sessionId,
     );
 
   return sessionMutation;
+}
+
+function withSessionArgs<T extends SessionRef>(
+  args: SessionlessArgs<T>,
+  sessionId: string,
+): Ref.Args<T> {
+  return {
+    ...(args as object),
+    sessionId,
+  } as Ref.Args<T>;
+}
+
+function withoutSessionArgs<T extends SessionRef>(args: Ref.Args<T>): SessionlessArgs<T> {
+  const { sessionId: _sessionId, ...sessionlessArgs } = args as SessionArgs<T>;
+  return sessionlessArgs as SessionlessArgs<T>;
+}
+
+function wrapSessionOptimisticLocalStore(
+  localStore: ConfectOptimisticLocalStore,
+  sessionId: string,
+): SessionConfectOptimisticLocalStore {
+  return {
+    getQuery: (ref, args) => localStore.getQuery(ref, withSessionArgs(args, sessionId)),
+    getAllQueries: (ref) =>
+      localStore.getAllQueries(ref).map(({ args, value }) => ({
+        args: withoutSessionArgs(args),
+        value,
+      })),
+    setQuery: (ref, args, value) =>
+      localStore.setQuery(ref, withSessionArgs(args, sessionId), value),
+  };
 }

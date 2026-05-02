@@ -273,6 +273,8 @@
     "hitFlip3": "Draw ({count})",
     "hitFor": "Hit for {name}",
     "stayFor": "Stay for {name}",
+    "drawing": "Drawing...",
+    "staying": "Staying...",
     "claimToPlay": "Join the game from this device to play.",
     "waitingFor": "Waiting for {name}."
   },

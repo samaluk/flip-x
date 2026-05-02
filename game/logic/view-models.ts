@@ -71,6 +71,10 @@ export type MatchSnapshot = {
   }>;
   latestEvent: LatestRoundEvent | null;
   roundHistory: RoundHistoryEntry[];
+  optimisticTurn?: {
+    action: "hit" | "stay";
+    playerId: string;
+  };
 };
 
 function toLatestRoundEvent<TEvent extends RoundEvent>(

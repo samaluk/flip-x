@@ -273,6 +273,8 @@
     "hitFlip3": "Robar ({count})",
     "hitFor": "Pedir carta para {name}",
     "stayFor": "Plantarse con {name}",
+    "drawing": "Robando...",
+    "staying": "Plantándose...",
     "claimToPlay": "Únete a la partida desde este dispositivo para jugar.",
     "waitingFor": "Esperando a {name}."
   },

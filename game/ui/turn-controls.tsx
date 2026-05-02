@@ -27,6 +27,7 @@ type TurnControlsPhase =
       isInFlip3: boolean;
       flip3CardsRemaining: number;
       activeDisplayName: string;
+      optimisticAction: "hit" | "stay" | null;
     };
 
 function pendingActionPhase(snapshot: MatchSnapshot): TurnControlsPhase | null {
@@ -61,6 +62,10 @@ function activeTurnPhase(snapshot: MatchSnapshot): TurnControlsPhase {
     isInFlip3,
     flip3CardsRemaining: flip3State?.cardsRemaining ?? 0,
     activeDisplayName: activePlayer.displayName,
+    optimisticAction:
+      snapshot.optimisticTurn?.playerId === snapshot.viewerPlayerId
+        ? snapshot.optimisticTurn.action
+        : null,
   };
 }
 
@@ -131,30 +136,39 @@ export function TurnControls({
         <div className="text-xs text-muted-foreground">
           {t("waitingFor", { name: phase.activeDisplayName })}
         </div>
+      ) : phase.optimisticAction ? (
+        <div className="text-xs text-muted-foreground" aria-live="polite">
+          {phase.optimisticAction === "hit" ? t("drawing") : t("staying")}
+        </div>
       ) : null;
+      const turnPending = phase.optimisticAction !== null;
 
       return (
         <div className="flex flex-wrap items-center gap-3">
           <Button
             onClick={onHit}
-            disabled={!phase.viewerControlsTurn}
+            disabled={!phase.viewerControlsTurn || turnPending}
             size="lg"
             className="rounded-full px-6"
           >
             <HandIcon />
-            {phase.isInFlip3
-              ? t("hitFlip3", { count: String(phase.flip3CardsRemaining) })
-              : t("hitFor", { name: phase.activeDisplayName })}
+            {phase.optimisticAction === "hit"
+              ? t("drawing")
+              : phase.isInFlip3
+                ? t("hitFlip3", { count: String(phase.flip3CardsRemaining) })
+                : t("hitFor", { name: phase.activeDisplayName })}
           </Button>
           <Button
             variant="outline"
             onClick={onStay}
-            disabled={!phase.viewerControlsTurn || phase.isInFlip3}
+            disabled={!phase.viewerControlsTurn || phase.isInFlip3 || turnPending}
             size="lg"
             className="rounded-full px-6"
           >
             <BanIcon />
-            {t("stayFor", { name: phase.activeDisplayName })}
+            {phase.optimisticAction === "stay"
+              ? t("staying")
+              : t("stayFor", { name: phase.activeDisplayName })}
           </Button>
           {statusHint}
         </div>

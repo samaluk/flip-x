@@ -151,7 +151,7 @@ export function GameTableView({
       <GameTableHud
         snapshot={snapshot}
         t={t}
-        isPending={isPending}
+        isPending={isPending || !!snapshot.optimisticTurn}
         callText={callText}
         latestBody={latestBody}
         activePlayer={activePlayer}

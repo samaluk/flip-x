@@ -13,7 +13,33 @@ import type { MatchSnapshot } from "@/game/logic/view-models";
 
 export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const [isPending, startTransition] = useTransition();
-  const takeTurn = useSessionConfectMutation(refs.public.turns.takeTurn);
+  const takeTurn = useSessionConfectMutation(refs.public.turns.takeTurn).withOptimisticUpdate(
+    (localStore, args) => {
+      const current = localStore.getQuery(refs.public.matches.getMatchSnapshot, {
+        matchId,
+      });
+      if (
+        !current ||
+        current.version !== args.expectedVersion ||
+        !current.viewerPlayerId ||
+        current.viewerPlayerId !== current.activePlayerId
+      ) {
+        return;
+      }
+
+      localStore.setQuery(
+        refs.public.matches.getMatchSnapshot,
+        { matchId },
+        {
+          ...current,
+          optimisticTurn: {
+            action: args.action,
+            playerId: current.viewerPlayerId,
+          },
+        },
+      );
+    },
+  );
   const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
   const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
   const tErrors = useTranslations("Errors");

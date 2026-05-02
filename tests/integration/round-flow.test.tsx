@@ -99,4 +99,14 @@ describe("round flow UI", () => {
     expect(screen.getByRole("button", { name: /draw \(2\)/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /stay for alex/i })).toBeDisabled();
   });
+
+  it("shows immediate feedback while a hit is optimistic", () => {
+    renderTurnControls({
+      ...snapshot(),
+      optimisticTurn: { action: "hit", playerId: "p1" },
+    });
+
+    expect(screen.getByRole("button", { name: /drawing/i })).toBeDisabled();
+    expect(screen.getByRole("button", { name: /stay for alex/i })).toBeDisabled();
+  });
 });
