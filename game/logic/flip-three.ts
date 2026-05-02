@@ -155,7 +155,7 @@ export function advanceFlip3Hit(
     payload: cardEventPayload(card),
   });
 
-  applyCard(card, "flip3_hit");
+  applyCard(card);
 
   if (round.phase !== "player_turns" || playerState.status !== "active") {
     clearFlip3AndDiscardDeferredActions(round, playerState, flip3.deferredActionCards);
