@@ -1,0 +1,136 @@
+diff --git a/dist/Ref.d.ts b/dist/Ref.d.ts
+index 3d7c623b3c38c4f2bffb03a20132382dfc14e66a..51d148b6b222ccf3c76aaf8b2c632eba906621c8 100644
+--- a/dist/Ref.d.ts
++++ b/dist/Ref.d.ts
+@@ -5,7 +5,7 @@ import { FunctionReference as FunctionReference$1, FunctionVisibility } from "co
+ 
+ //#region src/Ref.d.ts
+ declare namespace Ref_d_exports {
+-  export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Returns, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
++  export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Returns, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
+ }
+ interface Ref<_RuntimeAndFunctionType extends RuntimeAndFunctionType, _FunctionVisibility extends FunctionVisibility, _Args, _Returns> {
+   readonly _RuntimeAndFunctionType?: _RuntimeAndFunctionType;
+@@ -41,13 +41,17 @@ functionNamespace: string, functionSpec: FunctionSpec_) => FromFunctionSpec<Func
+ declare const getConvexFunctionName: (ref: Any) => string;
+ declare const getFunctionReference: <Ref_ extends Any>(ref: Ref_) => FunctionReference<Ref_>;
+ declare const encodeArgs: <Ref_ extends Any>(ref: Ref_, args: Args<Ref_>) => Effect.Effect<unknown, ParseResult.ParseError>;
++declare const decodeArgs: <Ref_ extends Any>(ref: Ref_, encodedArgs: unknown) => Effect.Effect<Args<Ref_>, ParseResult.ParseError>;
++declare const encodeReturns: <Ref_ extends Any>(ref: Ref_, returns: Returns<Ref_>) => Effect.Effect<unknown, ParseResult.ParseError>;
+ declare const decodeReturns: <Ref_ extends Any>(ref: Ref_, returns: unknown) => Effect.Effect<Returns<Ref_>, ParseResult.ParseError>;
++declare const decodeArgsSync: <Ref_ extends Any>(ref: Ref_, encodedArgs: unknown) => Args<Ref_>;
+ declare const encodeArgsSync: <Ref_ extends Any>(ref: Ref_, args: Args<Ref_>) => unknown;
++declare const encodeReturnsSync: <Ref_ extends Any>(ref: Ref_, returns: Returns<Ref_>) => unknown;
+ declare const decodeReturnsSync: <Ref_ extends Any>(ref: Ref_, encodedReturns: unknown) => Returns<Ref_>;
+ declare const runWithCodec: {
+   <Ref_ extends Any, E>(ref: Ref_, args: Args<Ref_>, f: (functionReference: FunctionReference<Ref_>, encodedArgs: unknown) => Effect.Effect<unknown, E>): Effect.Effect<Returns<Ref_>, E | ParseResult.ParseError>;
+   <Ref_ extends Any>(ref: Ref_, args: Args<Ref_>, f: (functionReference: FunctionReference<Ref_>, encodedArgs: unknown) => PromiseLike<unknown>): Effect.Effect<Returns<Ref_>, ParseResult.ParseError>;
+ };
+ //#endregion
+-export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Ref_d_exports, Returns, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
++export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Ref_d_exports, Returns, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
+ //# sourceMappingURL=Ref.d.ts.map
+diff --git a/dist/Ref.js b/dist/Ref.js
+index 1f3efbe408c121edb998cc77c4e6a571924cc65e..d2f7e8a1cbf6e8e917064e6465666d6df241b5ca 100644
+--- a/dist/Ref.js
++++ b/dist/Ref.js
+@@ -4,10 +4,14 @@ import { makeFunctionReference } from "convex/server";
+ 
+ //#region src/Ref.ts
+ var Ref_exports = /* @__PURE__ */ __exportAll({
++	decodeArgs: () => decodeArgs,
++	decodeArgsSync: () => decodeArgsSync,
+ 	decodeReturns: () => decodeReturns,
+ 	decodeReturnsSync: () => decodeReturnsSync,
+ 	encodeArgs: () => encodeArgs,
+ 	encodeArgsSync: () => encodeArgsSync,
++	encodeReturns: () => encodeReturns,
++	encodeReturnsSync: () => encodeReturnsSync,
+ 	getConvexFunctionName: () => getConvexFunctionName,
+ 	getFunctionReference: () => getFunctionReference,
+ 	make: () => make,
+@@ -20,8 +24,12 @@ const make = (functionNamespace, functionSpec) => ({
+ const getConvexFunctionName = (ref) => `${ref.functionNamespace}:${ref.functionSpec.name}`;
+ const getFunctionReference = (ref) => makeFunctionReference(getConvexFunctionName(ref));
+ const encodeArgs = (ref, args) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.encode(c.args)(args)), Match.tag("Convex", () => Effect.succeed(args)), Match.exhaustive);
++const decodeArgs = (ref, encodedArgs) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.decode(c.args)(encodedArgs)), Match.tag("Convex", () => Effect.succeed(encodedArgs)), Match.exhaustive);
++const encodeReturns = (ref, returns) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.encode(c.returns)(returns)), Match.tag("Convex", () => Effect.succeed(returns)), Match.exhaustive);
+ const decodeReturns = (ref, returns) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.decode(c.returns)(returns)), Match.tag("Convex", () => Effect.succeed(returns)), Match.exhaustive);
++const decodeArgsSync = (ref, encodedArgs) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.decodeSync(c.args)(encodedArgs)), Match.tag("Convex", () => encodedArgs), Match.exhaustive);
+ const encodeArgsSync = (ref, args) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.encodeSync(c.args)(args)), Match.tag("Convex", () => args), Match.exhaustive);
++const encodeReturnsSync = (ref, returns) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.encodeSync(c.returns)(returns)), Match.tag("Convex", () => returns), Match.exhaustive);
+ const decodeReturnsSync = (ref, encodedReturns) => Match.value(ref.functionSpec.functionProvenance).pipe(Match.tag("Confect", (c) => Schema.decodeSync(c.returns)(encodedReturns)), Match.tag("Convex", () => encodedReturns), Match.exhaustive);
+ const runWithCodec = (ref, args, f) => Effect.gen(function* () {
+ 	const functionReference = getFunctionReference(ref);
+@@ -37,5 +45,5 @@ const runWithCodec = (ref, args, f) => Effect.gen(function* () {
+ });
+ 
+ //#endregion
+-export { Ref_exports, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
++export { Ref_exports, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
+ //# sourceMappingURL=Ref.js.map
+diff --git a/src/Ref.ts b/src/Ref.ts
+index 1f9a102c6f391a3cba1d4f3c1183566a5ea0e190..4bee3fc085d53e8c9c9c854ee652812f63df7288 100644
+--- a/src/Ref.ts
++++ b/src/Ref.ts
+@@ -173,6 +173,26 @@ export const encodeArgs = <Ref_ extends Any>(
+     Match.exhaustive,
+   );
+ 
++export const decodeArgs = <Ref_ extends Any>(
++  ref: Ref_,
++  encodedArgs: unknown,
++): Effect.Effect<Args<Ref_>, ParseResult.ParseError> =>
++  Match.value(ref.functionSpec.functionProvenance).pipe(
++    Match.tag("Confect", (c) => Schema.decode(c.args)(encodedArgs)),
++    Match.tag("Convex", () => Effect.succeed(encodedArgs)),
++    Match.exhaustive,
++  ) as Effect.Effect<Args<Ref_>, ParseResult.ParseError>;
++
++export const encodeReturns = <Ref_ extends Any>(
++  ref: Ref_,
++  returns: Returns<Ref_>,
++): Effect.Effect<unknown, ParseResult.ParseError> =>
++  Match.value(ref.functionSpec.functionProvenance).pipe(
++    Match.tag("Confect", (c) => Schema.encode(c.returns)(returns)),
++    Match.tag("Convex", () => Effect.succeed(returns)),
++    Match.exhaustive,
++  );
++
+ export const decodeReturns = <Ref_ extends Any>(
+   ref: Ref_,
+   returns: unknown,
+@@ -183,6 +203,16 @@ export const decodeReturns = <Ref_ extends Any>(
+     Match.exhaustive,
+   );
+ 
++export const decodeArgsSync = <Ref_ extends Any>(
++  ref: Ref_,
++  encodedArgs: unknown,
++): Args<Ref_> =>
++  Match.value(ref.functionSpec.functionProvenance).pipe(
++    Match.tag("Confect", (c) => Schema.decodeSync(c.args)(encodedArgs)),
++    Match.tag("Convex", () => encodedArgs),
++    Match.exhaustive,
++  ) as Args<Ref_>;
++
+ export const encodeArgsSync = <Ref_ extends Any>(
+   ref: Ref_,
+   args: Args<Ref_>,
+@@ -193,6 +223,16 @@ export const encodeArgsSync = <Ref_ extends Any>(
+     Match.exhaustive,
+   );
+ 
++export const encodeReturnsSync = <Ref_ extends Any>(
++  ref: Ref_,
++  returns: Returns<Ref_>,
++): unknown =>
++  Match.value(ref.functionSpec.functionProvenance).pipe(
++    Match.tag("Confect", (c) => Schema.encodeSync(c.returns)(returns)),
++    Match.tag("Convex", () => returns),
++    Match.exhaustive,
++  );
++
+ export const decodeReturnsSync = <Ref_ extends Any>(
+   ref: Ref_,
+   encodedReturns: unknown,
