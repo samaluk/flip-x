@@ -2,7 +2,7 @@
 
 ## Goal
 
-Author a deterministic Flip7 scenario that can run in fast local tests and, for a smaller confidence slice, against the real Convex preview-backed backend.
+Author a deterministic Flip7 scenario that can run in fast local tests and, for a smaller confidence slice, against the real Convex-backed smoke deployment (local backend by default).
 
 ## 1. Choose the replay scope
 
@@ -31,7 +31,7 @@ Minimum decision coverage:
 
 - `tests/unit`: rules-engine edge cases and small deterministic sequences
 - `tests/confect`: app-backend behavior, persisted state, and reusable scenario runner coverage
-- `tests/backend`: a smaller confidence slice proving the deterministic path works against a real preview deployment
+- `tests/backend`: a smaller confidence slice proving the deterministic path works against a real deployed Convex backend (local by default; see `docs/testing.md`)
 - `tests/contract`: snapshot or replay-result shape checks if the contract changes
 
 ## 4. Run the fast local coverage first
@@ -42,10 +42,18 @@ pnpm test:confect
 pnpm test:contract
 ```
 
-## 5. Run selective preview-backed coverage
+## 5. Run selective deployed-backend coverage
+
+Default (local Convex — no deploy key):
 
 ```bash
-CONVEX_DEPLOY_KEY=... pnpm test:backend
+pnpm test:backend
+```
+
+CI-style cloud preview (requires `CONVEX_DEPLOY_KEY`):
+
+```bash
+CONVEX_TEST_USE_PREVIEW=1 CONVEX_DEPLOY_KEY=... pnpm test:backend
 ```
 
 ## 6. Validate replay fidelity
@@ -65,4 +73,4 @@ For each deterministic scenario, confirm that:
 4. Include later-round score and action context when replaying a mid-match round.
 5. List every explicit player decision in order.
 6. Record the canonical state after each decision.
-7. Run the fast test layers before adding preview-backed coverage.
+7. Run the fast test layers before adding deployed-backend coverage.
