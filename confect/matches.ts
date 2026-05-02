@@ -55,6 +55,23 @@ function snapshotForMatchSession(
   });
 }
 
+function snapshotAfterMatchReload(
+  ctx: MatchReadCtx,
+  reader: Effect.Effect.Success<typeof DatabaseReaderService>,
+  matchId: Id<"matches">,
+  sessionId: SessionId,
+) {
+  return Effect.gen(function* () {
+    const nextMatch = yield* reader.table("matches").get(matchId);
+
+    if (!nextMatch) {
+      return yield* matchNotFound({ matchId: String(matchId) });
+    }
+
+    return yield* snapshotForMatchSession(ctx, matchId, nextMatch, sessionId);
+  });
+}
+
 function resolveUniqueLobbyCodeAttempt(
   lookupMatchByLobbyCode: (lobbyCode: string) => Effect.Effect<Doc<"matches"> | null, unknown>,
   initialLobbyCode: string,
@@ -296,13 +313,8 @@ export function joinMatchForSession(
       yield* writer
         .table("players")
         .patch(existingViewerPlayerId, { displayName: playerName, colorId: playerColorId });
-      const nextMatch = yield* reader.table("matches").get(args.matchId);
 
-      if (!nextMatch) {
-        return yield* matchNotFound({ matchId: String(args.matchId) });
-      }
-
-      return yield* snapshotForMatchSession(ctx, args.matchId, nextMatch, sessionId);
+      return yield* snapshotAfterMatchReload(ctx, reader, args.matchId, sessionId);
     }
 
     const existingNames = new Set(players.map((player) => player.displayName.toLowerCase()));
@@ -428,12 +440,6 @@ export function updateMatchSettingsForSession(
       updatedAt: Date.now(),
     });
 
-    const nextMatch = yield* reader.table("matches").get(args.matchId);
-
-    if (!nextMatch) {
-      return yield* matchNotFound({ matchId: String(args.matchId) });
-    }
-
-    return yield* snapshotForMatchSession(ctx, args.matchId, nextMatch, sessionId);
+    return yield* snapshotAfterMatchReload(ctx, reader, args.matchId, sessionId);
   });
 }

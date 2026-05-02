@@ -73,7 +73,7 @@ export function recommendedPresetForPlayerCount(playerCount: number) {
   return "big-table";
 }
 
-export function settingsModeLabel(settings: Pick<GameSettings, "maxNumberCardValue">) {
+function settingsModeLabel(settings: Pick<GameSettings, "maxNumberCardValue">) {
   if (settings.maxNumberCardValue === 12) {
     return "Classic Game";
   }

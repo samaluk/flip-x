@@ -6,6 +6,31 @@ import refs from "@/confect/_generated/refs";
 
 import * as TestConfect from "./TestConfect";
 
+function createHostMatch() {
+  return Effect.gen(function* () {
+    const client = yield* TestConfect.TestConfect;
+    return yield* client.mutation(refs.public.matches.createMatch, {
+      hostName: "Host",
+      sessionId: "session-host",
+    });
+  });
+}
+
+function createTwoPlayerMatch() {
+  return Effect.gen(function* () {
+    const client = yield* TestConfect.TestConfect;
+    const created = yield* createHostMatch();
+
+    yield* client.mutation(refs.public.matches.joinMatch, {
+      matchId: created.matchId,
+      playerName: "Guest",
+      sessionId: "session-guest",
+    });
+
+    return created;
+  });
+}
+
 describe("Confect matches", () => {
   it.effect("creates a match and reads it back through refs", () =>
     Effect.gen(function* () {
@@ -87,16 +112,7 @@ describe("Confect matches", () => {
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;
 
-      const created = yield* client.mutation(refs.public.matches.createMatch, {
-        hostName: "Host",
-        sessionId: "session-host",
-      });
-
-      yield* client.mutation(refs.public.matches.joinMatch, {
-        matchId: created.matchId,
-        playerName: "Guest",
-        sessionId: "session-guest",
-      });
+      const created = yield* createTwoPlayerMatch();
 
       const started = yield* client.mutation(refs.public.matches.startMatch, {
         matchId: created.matchId,
@@ -121,16 +137,7 @@ describe("Confect matches", () => {
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;
 
-      const created = yield* client.mutation(refs.public.matches.createMatch, {
-        hostName: "Host",
-        sessionId: "session-host",
-      });
-
-      yield* client.mutation(refs.public.matches.joinMatch, {
-        matchId: created.matchId,
-        playerName: "Guest",
-        sessionId: "session-guest",
-      });
+      const created = yield* createTwoPlayerMatch();
 
       const updated = yield* client.mutation(refs.public.matches.updateMatchSettings, {
         matchId: created.matchId,
@@ -162,10 +169,7 @@ describe("Confect matches", () => {
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;
 
-      const created = yield* client.mutation(refs.public.matches.createMatch, {
-        hostName: "Host",
-        sessionId: "session-host",
-      });
+      const created = yield* createHostMatch();
 
       const unchanged = yield* client.mutation(refs.public.matches.updateMatchSettings, {
         matchId: created.matchId,
@@ -185,16 +189,7 @@ describe("Confect matches", () => {
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;
 
-      const created = yield* client.mutation(refs.public.matches.createMatch, {
-        hostName: "Host",
-        sessionId: "session-host",
-      });
-
-      yield* client.mutation(refs.public.matches.joinMatch, {
-        matchId: created.matchId,
-        playerName: "Guest",
-        sessionId: "session-guest",
-      });
+      const created = yield* createTwoPlayerMatch();
 
       const nonHostExit = yield* client
         .mutation(refs.public.matches.updateMatchSettings, {
