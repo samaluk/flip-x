@@ -1,3 +1,6 @@
 ignoredBuiltDependencies:
   - sharp
   - unrs-resolver
+patchedDependencies:
+  "@confect/core@5.0.0": patches/@confect__core@5.0.0.patch
+  "@confect/react@5.0.0": patches/@confect__react@5.0.0.patch
