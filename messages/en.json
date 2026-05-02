@@ -94,6 +94,34 @@
     "errorTitle": "Could not load the match",
     "tryAgain": "Try again"
   },
+  "GameSettings": {
+    "title": "Game settings",
+    "pointsToWin": "Points to win",
+    "cards": "Cards",
+    "modifiers": "Modifiers",
+    "mode": "Mode",
+    "locked": "Locked",
+    "recommended": "Recommended for this lobby: {preset}",
+    "recommendedBadge": "Recommended",
+    "advanced": "Advanced",
+    "maxNumberCard": "Max number card",
+    "advancedHelper": "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2.",
+    "toastUpdateFailed": "Could not update game settings.",
+    "preset": {
+      "classic": {
+        "label": "Classic",
+        "helper": "Official baseline. Best for 2-4 players."
+      },
+      "extended": {
+        "label": "Extended",
+        "helper": "Better for 4-5 players. More cards and a slightly longer match."
+      },
+      "big-table": {
+        "label": "Big Table",
+        "helper": "Better for 6+ players. Larger deck, higher ceiling, longer match."
+      }
+    }
+  },
   "Errors": {
     "generic": "{message}",
     "INVALID_MATCH_STATE": "This action is not allowed in the current match state.",
@@ -106,6 +134,7 @@
     "INVALID_ACTION": "That action is not valid right now.",
     "INVALID_TARGET": "That target is not allowed.",
     "INVALID_HOST_NAME": "Enter a valid host name.",
+    "INVALID_GAME_SETTINGS": "Choose valid game settings.",
     "LOBBY_CODE_UNAVAILABLE": "Could not assign a lobby code. Try again.",
     "LOBBY_NOT_FOUND": "No lobby found for that code.",
     "INVALID_PLAYER_NAME": "Enter a valid player name.",

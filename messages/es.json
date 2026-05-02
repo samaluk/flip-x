@@ -94,6 +94,34 @@
     "errorTitle": "No se pudo cargar la partida",
     "tryAgain": "Reintentar"
   },
+  "GameSettings": {
+    "title": "Configuración de partida",
+    "pointsToWin": "Puntos para ganar",
+    "cards": "Cartas",
+    "modifiers": "Modificadores",
+    "mode": "Modo",
+    "locked": "Bloqueada",
+    "recommended": "Recomendado para este lobby: {preset}",
+    "recommendedBadge": "Recomendado",
+    "advanced": "Avanzado",
+    "maxNumberCard": "Carta numérica máxima",
+    "advancedHelper": "Las cartas incluirán números 0-{maxNumberCardValue}. Los modificadores llegarán hasta +{maxModifierValue}, más x2.",
+    "toastUpdateFailed": "No se pudo actualizar la configuración.",
+    "preset": {
+      "classic": {
+        "label": "Clásico",
+        "helper": "Base oficial. Mejor para 2-4 jugadores."
+      },
+      "extended": {
+        "label": "Extendido",
+        "helper": "Mejor para 4-5 jugadores. Más cartas y una partida un poco más larga."
+      },
+      "big-table": {
+        "label": "Mesa grande",
+        "helper": "Mejor para 6+ jugadores. Mazo más grande, techo más alto y partida más larga."
+      }
+    }
+  },
   "Errors": {
     "generic": "{message}",
     "INVALID_MATCH_STATE": "Esta acción no está permitida en el estado actual de la partida.",
@@ -106,6 +134,7 @@
     "INVALID_ACTION": "Esa acción no es válida ahora.",
     "INVALID_TARGET": "Ese objetivo no está permitido.",
     "INVALID_HOST_NAME": "Introduce un nombre de anfitrión válido.",
+    "INVALID_GAME_SETTINGS": "Elige una configuración de partida válida.",
     "LOBBY_CODE_UNAVAILABLE": "No se pudo asignar un código de lobby. Inténtalo de nuevo.",
     "LOBBY_NOT_FOUND": "No hay lobby con ese código.",
     "INVALID_PLAYER_NAME": "Introduce un nombre de jugador válido.",

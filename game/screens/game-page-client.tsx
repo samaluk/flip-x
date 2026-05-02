@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import refs from "@/confect/_generated/refs";
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
 import { GameTable } from "@/game/screens/game-table";
+import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
 import { StartGameButton } from "@/game/screens/start-game-button";
 import { useMatchPresence } from "@/game/hooks/use-match-presence";
@@ -214,6 +215,8 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
           </form>
         </div>
       ) : null}
+
+      {isSetup ? <GameSettingsPanel snapshot={snapshotWithPresence} /> : null}
 
       <GameTable snapshot={snapshotWithPresence} />
     </main>
