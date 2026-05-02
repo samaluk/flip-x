@@ -82,7 +82,10 @@ describe("Confect deterministic setup", () => {
         },
       };
 
-      const { matchId, sessions } = yield* createStartedMatchWithOptions(["Host", "Guest", "Third"], {});
+      const { matchId, sessions } = yield* createStartedMatchWithOptions(
+        ["Host", "Guest", "Third"],
+        {},
+      );
 
       yield* advanceUntilRoundBoundary(matchId, sessions);
 

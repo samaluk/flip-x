@@ -140,7 +140,6 @@ export function buildGameSettingsSnapshot(settings: GameSettings): GameSettingsS
 
 export function gameSettingsEqual(left: GameSettings, right: GameSettings) {
   return (
-    left.targetScore === right.targetScore &&
-    left.maxNumberCardValue === right.maxNumberCardValue
+    left.targetScore === right.targetScore && left.maxNumberCardValue === right.maxNumberCardValue
   );
 }

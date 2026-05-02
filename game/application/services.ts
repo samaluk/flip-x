@@ -6,7 +6,10 @@ import type { MutationCtx } from "../../convex/_generated/server";
 import type { AppError } from "../../shared/lib/errors/domain";
 import { buildLatestMatchSnapshot } from "../infrastructure/snapshot-store";
 import { loadMatchAggregate, type MatchAggregate } from "../infrastructure/load-match-aggregate";
-import { saveCommandResult, type SaveCommandResultInput } from "../infrastructure/save-command-result";
+import {
+  saveCommandResult,
+  type SaveCommandResultInput,
+} from "../infrastructure/save-command-result";
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameCommand } from "./game-command";
 

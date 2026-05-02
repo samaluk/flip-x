@@ -6,7 +6,11 @@ import type { Card } from "@/game/logic/card-types";
 import refs from "@/confect/_generated/refs";
 
 import * as TestConfect from "./TestConfect";
-import { createStartedMatchWithOptions, getSnapshotForAnySession, requireActiveSessionForSnapshot } from "./helpers";
+import {
+  createStartedMatchWithOptions,
+  getSnapshotForAnySession,
+  requireActiveSessionForSnapshot,
+} from "./helpers";
 
 const nonActionDrawPile: Card[] = Array.from({ length: 50 }, (_, i) => ({
   id: `num-${i}`,

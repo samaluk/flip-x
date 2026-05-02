@@ -372,12 +372,7 @@ function GameTableOpponentsSection({
           ))}
         </div>
       ) : (
-        <motion.div
-          variants={listStagger}
-          initial="hidden"
-          animate="show"
-          className={gridClass}
-        >
+        <motion.div variants={listStagger} initial="hidden" animate="show" className={gridClass}>
           {opponents.map((player) => (
             <motion.div key={player.playerId} variants={listItem}>
               {laneFor(player)}
@@ -412,9 +407,7 @@ function MatchPlayerLane({
 }: MatchPlayerLaneProps) {
   const pendingAction = snapshot.pendingAction;
   const isTargetable =
-    viewerIsSource &&
-    !!pendingAction &&
-    pendingAction.eligibleTargetIds.includes(player.playerId);
+    viewerIsSource && !!pendingAction && pendingAction.eligibleTargetIds.includes(player.playerId);
   const isSelfTargeting = !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
   const incomingActionKindVal = incomingActionKindForPlayer(pendingAction, player.playerId);
   const flip3RemainingVal =

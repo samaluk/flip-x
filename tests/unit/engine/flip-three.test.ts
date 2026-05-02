@@ -129,7 +129,9 @@ describe("flip three", () => {
       id: "freeze-1" as const,
       actionKind: "freeze" as const,
       assertExtra: (resolved: TakeTurnResolved) => {
-        expect(resolved.playerStates.p1.heldActionCards).toEqual([actionCard("freeze-1", "freeze")]);
+        expect(resolved.playerStates.p1.heldActionCards).toEqual([
+          actionCard("freeze-1", "freeze"),
+        ]);
         expect(resolved.events.some((event) => event.eventType === "deferred_action")).toBe(true);
       },
     },
@@ -141,26 +143,29 @@ describe("flip three", () => {
         expect(resolved.events.some((event) => event.eventType === "flip3_completed")).toBe(true);
       },
     },
-  ])("defers %s drawn during Flip Three until the sequence completes", ({ id, actionKind, assertExtra }) => {
-    const playerStates = createActivePlayerStates();
-    const round = createTurnRound();
-    round.pendingFlip3 = {
-      sourcePlayerId: "p2",
-      targetPlayerId: "p1",
-      cardsRemaining: 1,
-      deferredActionCards: [],
-    };
-    round.drawPile = [actionCard(id, actionKind)];
+  ])(
+    "defers %s drawn during Flip Three until the sequence completes",
+    ({ id, actionKind, assertExtra }) => {
+      const playerStates = createActivePlayerStates();
+      const round = createTurnRound();
+      round.pendingFlip3 = {
+        sourcePlayerId: "p2",
+        targetPlayerId: "p1",
+        cardsRemaining: 1,
+        deferredActionCards: [],
+      };
+      round.drawPile = [actionCard(id, actionKind)];
 
-    const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
+      const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
 
-    expect(resolved.round.pendingFlip3).toBeNull();
-    expect(resolved.round.pendingAction).toMatchObject({
-      sourcePlayerId: "p1",
-      actionKind,
-    });
-    assertExtra(resolved);
-  });
+      expect(resolved.round.pendingFlip3).toBeNull();
+      expect(resolved.round.pendingAction).toMatchObject({
+        sourcePlayerId: "p1",
+        actionKind,
+      });
+      assertExtra(resolved);
+    },
+  );
 
   it("preserves a nested Flip Three that auto-resolves to a single active target", () => {
     const playerStates = createActivePlayerStates();

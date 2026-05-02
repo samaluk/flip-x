@@ -155,10 +155,7 @@ async function rewriteScoreBreakdowns(
   }
 }
 
-async function persistRoundCompletionOutcome(
-  ctx: MutationCtx,
-  input: SaveCommandResultInput,
-) {
+async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveCommandResultInput) {
   const { playerIdMap, transition } = input;
   const finalized = transition.finalized;
 

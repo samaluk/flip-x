@@ -83,9 +83,7 @@ export class PlayerColorAlreadyTaken extends Data.TaggedError("PlayerColorAlread
   message: string;
 }> {}
 
-export const playerColorAlreadyTaken = (fields: {
-  colorId: string;
-}): PlayerColorAlreadyTaken =>
+export const playerColorAlreadyTaken = (fields: { colorId: string }): PlayerColorAlreadyTaken =>
   new PlayerColorAlreadyTaken({ ...fields, message: W.PlayerColorAlreadyTaken });
 
 export class NotHost extends Data.TaggedError("NotHost")<{
@@ -146,10 +144,8 @@ export class UnsupportedTable extends Data.TaggedError("UnsupportedTable")<{
   message: string;
 }> {}
 
-export const unsupportedTable = (fields: {
-  table: string;
-  id: string;
-}): UnsupportedTable => new UnsupportedTable({ ...fields, message: W.UnsupportedTable });
+export const unsupportedTable = (fields: { table: string; id: string }): UnsupportedTable =>
+  new UnsupportedTable({ ...fields, message: W.UnsupportedTable });
 
 export class InvalidConfirmation extends Data.TaggedError("InvalidConfirmation")<{
   message: string;

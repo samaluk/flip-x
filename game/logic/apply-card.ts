@@ -224,15 +224,7 @@ export function applyCardToPlayer(
   }
 
   if (card.actionKind === "second_chance") {
-    return applySecondChanceCard(
-      round,
-      players,
-      playerStates,
-      playerId,
-      playerState,
-      card,
-      events,
-    );
+    return applySecondChanceCard(round, players, playerStates, playerId, playerState, card, events);
   }
 
   return applyFlipThreeOrHeldTargetAction(

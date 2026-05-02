@@ -83,21 +83,18 @@ function buildStartRoundTransition(
   });
   const resolved = continueRound(players, baseRound, playerStates);
 
-  return finalizeIfNeeded(
-    input,
-    {
-      command: input.command.type,
-      roundWrite: {
-        kind: "create",
-        roundNumber: input.roundNumber,
-        startedAt: input.nowMillis,
-        round: resolved.round,
-      },
-      playerStates: resolved.playerStates,
-      events: resolved.events,
-      matchUpdateContext: input.matchUpdateContext,
+  return finalizeIfNeeded(input, {
+    command: input.command.type,
+    roundWrite: {
+      kind: "create",
+      roundNumber: input.roundNumber,
+      startedAt: input.nowMillis,
+      round: resolved.round,
     },
-  );
+    playerStates: resolved.playerStates,
+    events: resolved.events,
+    matchUpdateContext: input.matchUpdateContext,
+  });
 }
 
 type RunGameCommandInput = {
@@ -236,20 +233,17 @@ function handleTakeTurnCommand(
       String(viewerPlayerId),
       command.action,
     );
-    return finalizeIfNeeded(
-      ctx,
-      {
-        command: command.type,
-        roundWrite: {
-          kind: "update",
-          roundId: latestRound._id,
-          round: resolved.round,
-        },
-        playerStates: resolved.playerStates,
-        events: resolved.events,
-        matchUpdateContext: {},
+    return finalizeIfNeeded(ctx, {
+      command: command.type,
+      roundWrite: {
+        kind: "update",
+        roundId: latestRound._id,
+        round: resolved.round,
       },
-    );
+      playerStates: resolved.playerStates,
+      events: resolved.events,
+      matchUpdateContext: {},
+    });
   });
 }
 
@@ -276,20 +270,17 @@ function handleResolveActionCommand(
       ctx.playerStates,
       command.targetPlayerId,
     );
-    return finalizeIfNeeded(
-      ctx,
-      {
-        command: command.type,
-        roundWrite: {
-          kind: "update",
-          roundId: latestRound._id,
-          round: resolved.round,
-        },
-        playerStates: resolved.playerStates,
-        events: resolved.events,
-        matchUpdateContext: {},
+    return finalizeIfNeeded(ctx, {
+      command: command.type,
+      roundWrite: {
+        kind: "update",
+        roundId: latestRound._id,
+        round: resolved.round,
       },
-    );
+      playerStates: resolved.playerStates,
+      events: resolved.events,
+      matchUpdateContext: {},
+    });
   });
 }
 

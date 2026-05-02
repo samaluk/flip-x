@@ -39,12 +39,11 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const settings = snapshot.settings;
   const hostCanEdit = snapshot.status === "setup" && (snapshot.isHost ?? false);
   const recommendedPresetId = recommendedPresetForPlayerCount(snapshot.players.length);
-  const recommendedPreset = GAME_SETTING_PRESETS.find((preset) => preset.id === recommendedPresetId);
+  const recommendedPreset = GAME_SETTING_PRESETS.find(
+    (preset) => preset.id === recommendedPresetId,
+  );
 
-  async function updateSettings(patch: {
-    targetScore?: number;
-    maxNumberCardValue?: number;
-  }) {
+  async function updateSettings(patch: { targetScore?: number; maxNumberCardValue?: number }) {
     setIsUpdating(true);
     try {
       await updateMatchSettings({
@@ -86,10 +85,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
 
         <dl className="grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <SettingSummaryItem label={t("pointsToWin")} value={String(settings.targetScore)} />
-          <SettingSummaryItem
-            label={t("cards")}
-            value={`0-${settings.maxNumberCardValue}`}
-          />
+          <SettingSummaryItem label={t("cards")} value={`0-${settings.maxNumberCardValue}`} />
           <SettingSummaryItem
             label={t("modifiers")}
             value={`+2 to +${settings.modifierRange.max}, x2`}

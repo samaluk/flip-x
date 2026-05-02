@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { applyCardToPlayer } from "@/game/logic/apply-card";
 import { takeTurnAction, resolvePendingAction } from "@/game/logic/command-handler";
 import { InvalidTurn, InvalidAction, InvalidTarget } from "@/shared/lib/errors/domain";
 import { actionCard, numberCard } from "@/tests/builders/cards";
@@ -35,6 +36,66 @@ describe("turn actions", () => {
     expect(resolved.playerStates.p1.status).toBe("active");
     expect(resolved.playerStates.p1.bustCard).toBeNull();
     expect(resolved.playerStates.p1.numberCards).toEqual([numberCard("n1", 7)]);
+  });
+
+  it("passes a duplicate Second Chance to the next eligible active player", () => {
+    const playerStates = createActivePlayerStates();
+    playerStates.p1.heldActionCards = [actionCard("sc-held", "second_chance")];
+    playerStates.p2.heldActionCards = [actionCard("sc-p2", "second_chance")];
+    const round = createTurnRound();
+    const events = [];
+
+    applyCardToPlayer(
+      round,
+      testPlayers3P,
+      playerStates,
+      "p1",
+      actionCard("sc-drawn", "second_chance"),
+      "turns",
+      events,
+    );
+
+    expect(playerStates.p1.heldActionCards).toEqual([actionCard("sc-held", "second_chance")]);
+    expect(playerStates.p2.heldActionCards).toEqual([actionCard("sc-p2", "second_chance")]);
+    expect(playerStates.p3.heldActionCards).toEqual([actionCard("sc-drawn", "second_chance")]);
+    expect(round.discardPile).toEqual([]);
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        eventType: "second_chance_passed",
+        actorPlayerId: "p1",
+        targetPlayerId: "p3",
+      }),
+    );
+  });
+
+  it("discards a duplicate Second Chance when no active player can receive it", () => {
+    const playerStates = createActivePlayerStates();
+    playerStates.p1.heldActionCards = [actionCard("sc-held", "second_chance")];
+    playerStates.p2.status = "stayed";
+    playerStates.p3.status = "busted";
+    const round = createTurnRound();
+    const duplicateSecondChance = actionCard("sc-drawn", "second_chance");
+    const events = [];
+
+    applyCardToPlayer(
+      round,
+      testPlayers3P,
+      playerStates,
+      "p1",
+      duplicateSecondChance,
+      "turns",
+      events,
+    );
+
+    expect(playerStates.p1.heldActionCards).toEqual([actionCard("sc-held", "second_chance")]);
+    expect(round.discardPile).toEqual([duplicateSecondChance]);
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        eventType: "second_chance_discarded",
+        actorPlayerId: "p1",
+        targetPlayerId: null,
+      }),
+    );
   });
 
   it("rejects staying during Flip Three", () => {

@@ -45,7 +45,12 @@ const RoundEventType = Schema.Literal(
   "round_scored",
 );
 
-const CommandType = Schema.Literal("START_MATCH", "START_NEXT_ROUND", "TAKE_TURN", "RESOLVE_ACTION");
+const CommandType = Schema.Literal(
+  "START_MATCH",
+  "START_NEXT_ROUND",
+  "TAKE_TURN",
+  "RESOLVE_ACTION",
+);
 
 const Matches = Table.make(
   "matches",

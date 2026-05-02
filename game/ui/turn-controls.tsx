@@ -47,8 +47,7 @@ function activeTurnPhase(snapshot: MatchSnapshot): TurnControlsPhase {
   if (!activePlayer || snapshot.roundStatus !== "player_turns") {
     return { kind: "none" };
   }
-  const viewerControlsTurn =
-    snapshot.viewerPlayerId === snapshot.activePlayerId;
+  const viewerControlsTurn = snapshot.viewerPlayerId === snapshot.activePlayerId;
   const flip3State = snapshot.pendingFlip3;
   const isInFlip3 =
     !!flip3State &&
@@ -112,9 +111,7 @@ export function TurnControls({
       return (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-4">
           <div className="text-sm text-muted-foreground">
-            {phase.actionKind === "freeze"
-              ? t("freezePrompt")
-              : t("flipThreePrompt")}
+            {phase.actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt")}
           </div>
           <div className="text-xs text-muted-foreground">{t("selectTargetHint")}</div>
         </div>
@@ -123,9 +120,7 @@ export function TurnControls({
       return (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-muted/30 p-4">
           <div className="text-sm text-muted-foreground">
-            {phase.actionKind === "freeze"
-              ? t("waitingFreeze")
-              : t("waitingFlipThree")}
+            {phase.actionKind === "freeze" ? t("waitingFreeze") : t("waitingFlipThree")}
           </div>
         </div>
       );

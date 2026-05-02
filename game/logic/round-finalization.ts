@@ -1,6 +1,11 @@
 import { scoreRound } from "./scoring";
 import { addEvent, type RoundEvent } from "./events";
-import { clonePlayerStates, type OrderedPlayer, type PlayerRoundState, type RoundRuntime } from "./round-state";
+import {
+  clonePlayerStates,
+  type OrderedPlayer,
+  type PlayerRoundState,
+  type RoundRuntime,
+} from "./round-state";
 import { activePlayerIds } from "./turn-order";
 
 export function maybeFinishRound(

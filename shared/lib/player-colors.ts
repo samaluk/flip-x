@@ -59,7 +59,9 @@ export function isPlayerColorId(value: string): value is PlayerColorId {
 export function getPlayerColor(colorId: string | null | undefined, fallbackIndex = 0) {
   return (
     PLAYER_COLORS.find((color) => color.id === colorId) ??
-    PLAYER_COLORS[((fallbackIndex % PLAYER_COLORS.length) + PLAYER_COLORS.length) % PLAYER_COLORS.length]
+    PLAYER_COLORS[
+      ((fallbackIndex % PLAYER_COLORS.length) + PLAYER_COLORS.length) % PLAYER_COLORS.length
+    ]
   );
 }
 
@@ -70,6 +72,9 @@ export function firstAvailablePlayerColorId(usedColorIds: Iterable<string>) {
 
 export function playerInitials(displayName: string) {
   const parts = displayName.trim().split(/\s+/).filter(Boolean);
-  const initials = parts.length >= 2 ? `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}` : parts[0]?.slice(0, 2) ?? "?";
+  const initials =
+    parts.length >= 2
+      ? `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`
+      : (parts[0]?.slice(0, 2) ?? "?");
   return initials.toUpperCase();
 }

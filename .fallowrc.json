@@ -13,11 +13,7 @@
     "scripts/**",
     "confect/_generated/**"
   ],
-  "dynamicallyLoaded": [
-    "confect/**/*.impl.ts",
-    "confect/impl.ts",
-    "confect/spec.ts"
-  ],
+  "dynamicallyLoaded": ["confect/**/*.impl.ts", "confect/impl.ts", "confect/spec.ts"],
   "ignoreDependencies": [
     "@base-ui/react",
     "class-variance-authority",

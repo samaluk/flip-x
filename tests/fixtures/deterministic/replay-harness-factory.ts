@@ -49,7 +49,10 @@ export function createDeterministicReplayHarness(
   },
 ): ReplayHarness {
   return {
-    createStartedMatch: async (playerNames, options: { deterministicStart?: DeterministicStartOptions }) => {
+    createStartedMatch: async (
+      playerNames,
+      options: { deterministicStart?: DeterministicStartOptions },
+    ) => {
       const [hostName, ...guestNames] = playerNames;
       const sessions = playerNames.map((name, index) => ({
         name,

@@ -23,10 +23,7 @@ import {
   UnsupportedTable,
 } from "./errors/domain";
 
-export function translateConvexErrorToast(
-  message: string,
-  tErrors: unknown,
-): string {
+export function translateConvexErrorToast(message: string, tErrors: unknown): string {
   const t = tErrors as (key: string, values?: { message: string }) => string;
   return translateConvexError(
     message,

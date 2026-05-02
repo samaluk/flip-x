@@ -54,11 +54,7 @@ export function computeScoreBreakdown(playerState: PlayerRoundState): ScoreBreak
     };
   }
 
-  return scoreRound(
-    playerState.numberCards,
-    playerState.modifierCards,
-    playerState.hasFlip7,
-  );
+  return scoreRound(playerState.numberCards, playerState.modifierCards, playerState.hasFlip7);
 }
 
 export function updatePointsAtRisk(playerState: PlayerRoundState) {

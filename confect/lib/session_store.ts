@@ -16,10 +16,7 @@ function getPlayerSessionBySessionId(reader: DatabaseReader, sessionId: SessionI
     .pipe(Effect.map(Option.getOrNull));
 }
 
-export function getPlayerIdForSessionWithReader(
-  reader: DatabaseReader,
-  sessionId?: SessionId,
-) {
+export function getPlayerIdForSessionWithReader(reader: DatabaseReader, sessionId?: SessionId) {
   return Effect.gen(function* () {
     if (!sessionId) {
       return null;

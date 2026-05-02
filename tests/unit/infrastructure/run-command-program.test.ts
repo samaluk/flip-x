@@ -75,9 +75,13 @@ function makeLayer(overrides: {
     nowMillis: Effect.succeed(overrides.nowMillis ?? 1234),
   });
 
-  return Layer.mergeAll(aggregate, commandResults, snapshots, idempotency, clock) as Layer.Layer<
-    RunGameCommandServices
-  >;
+  return Layer.mergeAll(
+    aggregate,
+    commandResults,
+    snapshots,
+    idempotency,
+    clock,
+  ) as Layer.Layer<RunGameCommandServices>;
 }
 
 describe("runGameCommandProgram", () => {

@@ -12,9 +12,7 @@ import { defineConfig, devices } from "@playwright/test";
 const convexUrlFromPreviewCmd = process.env.NEXT_PUBLIC_CONVEX_URL;
 const useCiLoopback = !!process.env.CI;
 
-const e2ePort =
-  process.env.E2E_PORT ??
-  (convexUrlFromPreviewCmd ? "3001" : "3000");
+const e2ePort = process.env.E2E_PORT ?? (convexUrlFromPreviewCmd ? "3001" : "3000");
 
 function getPortlessPublicUrl(): string {
   try {
@@ -47,9 +45,7 @@ const convexWebServerEnv = convexUrlFromPreviewCmd
 
 const webServerEnv = {
   ...convexWebServerEnv,
-  ...(useCiLoopback || !existsSync(portlessCaPath)
-    ? {}
-    : { NODE_EXTRA_CA_CERTS: portlessCaPath }),
+  ...(useCiLoopback || !existsSync(portlessCaPath) ? {} : { NODE_EXTRA_CA_CERTS: portlessCaPath }),
 };
 
 export default defineConfig({

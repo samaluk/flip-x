@@ -9,7 +9,10 @@ export function numberCard(id: string, numberValue: number): NumberCard {
   };
 }
 
-export function modifierCard(id: string, modifierValue: ModifierCard["modifierValue"]): ModifierCard {
+export function modifierCard(
+  id: string,
+  modifierValue: ModifierCard["modifierValue"],
+): ModifierCard {
   return {
     id,
     type: "modifier",

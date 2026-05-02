@@ -43,11 +43,7 @@ import {
 
 type MatchReadCtx = QueryCtx | MutationCtx;
 
-function snapshotForMatchSession(
-  ctx: MatchReadCtx,
-  matchId: Id<"matches">,
-  sessionId: SessionId,
-) {
+function snapshotForMatchSession(ctx: MatchReadCtx, matchId: Id<"matches">, sessionId: SessionId) {
   return Effect.gen(function* () {
     const snapshot = yield* Effect.promise(() =>
       buildCurrentMatchSnapshotForViewer(ctx, matchId, sessionId),
@@ -80,7 +76,10 @@ function resolveUniqueLobbyCodeAttempt(
   });
 }
 
-function readMatchByLobbyCode(reader: Effect.Effect.Success<typeof DatabaseReaderService>, lobbyCode: string) {
+function readMatchByLobbyCode(
+  reader: Effect.Effect.Success<typeof DatabaseReaderService>,
+  lobbyCode: string,
+) {
   return reader
     .table("matches")
     .index("by_lobby_code", (query) => query.eq("lobbyCode", lobbyCode))
@@ -171,25 +170,25 @@ export function createMatchForSession(
     const timestamp = Date.now();
     const lobbyCode = yield* generateUniqueLobbyCode((code) => readMatchByLobbyCode(reader, code));
     const matchId = yield* writer.table("matches").insert({
-        status: "setup",
-        lobbyCode,
-        targetScore: DEFAULT_GAME_SETTINGS.targetScore,
-        maxNumberCardValue: DEFAULT_GAME_SETTINGS.maxNumberCardValue,
-        currentRoundNumber: 0,
-        dealerSeat: 0,
-        version: 0,
-        createdAt: timestamp,
-        updatedAt: timestamp,
-      });
+      status: "setup",
+      lobbyCode,
+      targetScore: DEFAULT_GAME_SETTINGS.targetScore,
+      maxNumberCardValue: DEFAULT_GAME_SETTINGS.maxNumberCardValue,
+      currentRoundNumber: 0,
+      dealerSeat: 0,
+      version: 0,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    });
 
     const hostPlayerId = yield* writer.table("players").insert({
-        matchId,
-        displayName: hostName,
-        colorId: hostColorId,
-        seatIndex: 0,
-        totalScore: 0,
-        hasWon: false,
-      });
+      matchId,
+      displayName: hostName,
+      colorId: hostColorId,
+      seatIndex: 0,
+      totalScore: 0,
+      hasWon: false,
+    });
 
     yield* setPlayerSessionWithServices(reader, writer, sessionId, hostPlayerId);
     yield* writer.table("matches").patch(matchId, { hostPlayerId });
@@ -268,7 +267,11 @@ export function joinMatchForSession(
     }
 
     const players = yield* getPlayersByMatchWithReader(reader, args.matchId);
-    const existingViewerPlayerId = yield* getViewerPlayerIdWithReader(reader, args.matchId, sessionId);
+    const existingViewerPlayerId = yield* getViewerPlayerIdWithReader(
+      reader,
+      args.matchId,
+      sessionId,
+    );
     const takenColorIds = players
       .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
       .map((player) => player.colorId)
@@ -303,13 +306,13 @@ export function joinMatchForSession(
     const nextSeat =
       players.length === 0 ? 0 : Math.max(...players.map((player) => player.seatIndex)) + 1;
     const playerId = yield* writer.table("players").insert({
-        matchId: args.matchId,
-        displayName: playerName,
-        colorId: playerColorId,
-        seatIndex: nextSeat,
-        totalScore: 0,
-        hasWon: false,
-      });
+      matchId: args.matchId,
+      displayName: playerName,
+      colorId: playerColorId,
+      seatIndex: nextSeat,
+      totalScore: 0,
+      hasWon: false,
+    });
 
     yield* setPlayerSessionWithServices(reader, writer, sessionId, playerId);
 

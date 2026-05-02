@@ -1,11 +1,6 @@
 import type { ActionKind, ModifierCard, NumberCard } from "./card-types";
 import { scoreRound } from "./scoring";
-import type {
-  OrderedPlayer,
-  PendingAction,
-  PlayerRoundState,
-  RoundRuntime,
-} from "./round-state";
+import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import type { RoundEvent } from "./events";
 import {
   buildGameSettingsSnapshot,

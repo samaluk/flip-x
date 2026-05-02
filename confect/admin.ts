@@ -4,10 +4,7 @@ import { Effect } from "effect";
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import type { ActionCtx } from "../convex/_generated/server";
-import {
-  unsupportedRelationship,
-  unsupportedTable,
-} from "../shared/lib/errors/domain";
+import { unsupportedRelationship, unsupportedTable } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 import type { DatabaseReader, DatabaseWriter } from "./_generated/services";
 import { rateLimiter } from "./lib/rate_limiter";
@@ -242,9 +239,7 @@ function resetSessionRateLimits(deps: AdminCleanupDeps, sessionIds: readonly str
   });
 }
 
-export function runClearAllAppData(
-  deps: AdminCleanupDeps,
-): Effect.Effect<
+export function runClearAllAppData(deps: AdminCleanupDeps): Effect.Effect<
   {
     deleted: {
       idempotencyKeys: number;
@@ -279,15 +274,10 @@ export function runClearAllAppData(
 
 const dependentResolvers: Record<
   string,
-  (
-    reader: DatabaseReader,
-    parentId: string,
-  ) => Effect.Effect<readonly string[], unknown, never>
+  (reader: DatabaseReader, parentId: string) => Effect.Effect<readonly string[], unknown, never>
 > = {
-  "players:matches": (reader, parentId) =>
-    collectDependentIdsByMatch(reader, "players", parentId),
-  "rounds:matches": (reader, parentId) =>
-    collectDependentIdsByMatch(reader, "rounds", parentId),
+  "players:matches": (reader, parentId) => collectDependentIdsByMatch(reader, "players", parentId),
+  "rounds:matches": (reader, parentId) => collectDependentIdsByMatch(reader, "rounds", parentId),
   "playerSessions:players": collectPlayerSessionIdsByPlayer,
   "roundPlayerStates:rounds": (reader, parentId) =>
     collectDependentIdsByRound(reader, "roundPlayerStates", parentId as Id<"rounds">),

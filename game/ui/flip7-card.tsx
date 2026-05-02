@@ -140,9 +140,7 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
           )}
         >
           {faceUp}
-          <div className="absolute inset-0 rotate-y-180 backface-hidden">
-            {faceDown}
-          </div>
+          <div className="absolute inset-0 rotate-y-180 backface-hidden">{faceDown}</div>
         </div>,
       )}
     </motion.div>

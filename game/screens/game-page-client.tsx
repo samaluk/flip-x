@@ -49,7 +49,8 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
     () =>
       snapshot?.players
         .map((player) => player.colorId)
-        .filter((playerColorId): playerColorId is string => typeof playerColorId === "string") ?? [],
+        .filter((playerColorId): playerColorId is string => typeof playerColorId === "string") ??
+      [],
     [snapshot?.players],
   );
 

@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  APP_ERROR_WIRE_CODE,
-  translateConvexError,
-} from "@/shared/lib/errors/app-error-wire-code";
+import { APP_ERROR_WIRE_CODE, translateConvexError } from "@/shared/lib/errors/app-error-wire-code";
 import {
   insufficientPlayers,
   invalidAction,

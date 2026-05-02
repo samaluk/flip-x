@@ -28,4 +28,3 @@ export function getViewerPlayerIdWithReader(
     return player?.matchId === matchId ? player._id : null;
   });
 }
-

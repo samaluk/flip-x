@@ -70,9 +70,7 @@ const clearAllAppDataViaCli = FunctionImpl.make(api, "admin", "clearAllAppDataVi
         ),
       removePresenceRoom: (matchId) =>
         runAction(refs.internal.admin.removePresenceRoom, { matchId }).pipe(
-          Effect.mapError(
-            (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-          ),
+          Effect.mapError((cause) => new ExternalComponentFailed({ component: "presence", cause })),
           Effect.asVoid,
         ),
       resetRateLimit: (sessionId, key) =>

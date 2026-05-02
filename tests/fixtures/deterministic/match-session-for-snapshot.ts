@@ -11,9 +11,7 @@ export type SnapshotWithActivePlayer = {
 };
 
 /** Resolves the session whose player is currently active; throws if none match. */
-export function requireActiveSessionForSnapshot<
-  S extends { name: string },
->(
+export function requireActiveSessionForSnapshot<S extends { name: string }>(
   snapshot: SnapshotWithActivePlayer,
   sessions: S[],
   errorMessage: string,
@@ -83,10 +81,7 @@ export type RoundBoundaryAdvanceAfterLoad<
 export function classifyRoundBoundaryAdvanceStepOrThrow<
   Snap extends SnapshotForRoundBoundaryAdvance,
   S extends { name: string; sessionId: unknown },
->(
-  snapshot: Snap | null | undefined,
-  sessions: S[],
-): RoundBoundaryAdvanceAfterLoad<Snap, S> {
+>(snapshot: Snap | null | undefined, sessions: S[]): RoundBoundaryAdvanceAfterLoad<Snap, S> {
   const step = classifyRoundBoundaryAdvanceStep(snapshot, sessions);
   if (step.kind === "no-snapshot") {
     throw new Error("Expected a match snapshot while resolving gameplay");
@@ -97,10 +92,7 @@ export function classifyRoundBoundaryAdvanceStepOrThrow<
 export function classifyRoundBoundaryAdvanceStep<
   Snap extends SnapshotForRoundBoundaryAdvance,
   S extends { name: string; sessionId: unknown },
->(
-  snapshot: Snap | null | undefined,
-  sessions: S[],
-): RoundBoundaryAdvanceClassification<Snap, S> {
+>(snapshot: Snap | null | undefined, sessions: S[]): RoundBoundaryAdvanceClassification<Snap, S> {
   if (!snapshot) {
     return { kind: "no-snapshot" };
   }

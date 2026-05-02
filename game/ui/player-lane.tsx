@@ -21,9 +21,7 @@ import { getPlayerColor, playerInitials } from "@/shared/lib/player-colors";
 
 type LaneRoundStatus = MatchSnapshot["players"][number]["roundStatus"];
 
-function getDisplayStatus(
-  player: MatchSnapshot["players"][number],
-): LaneRoundStatus {
+function getDisplayStatus(player: MatchSnapshot["players"][number]): LaneRoundStatus {
   if (player.bustCard !== null) {
     return "busted";
   }
@@ -151,7 +149,9 @@ function PlayerLaneSidebar({
         <div className="text-xs text-muted-foreground tabular-nums">
           {t("totalScore", { score: String(player.totalScore) })}
         </div>
-        <div className="text-lg font-semibold text-foreground tabular-nums">{player.pointsAtRisk}</div>
+        <div className="text-lg font-semibold text-foreground tabular-nums">
+          {player.pointsAtRisk}
+        </div>
         <div className="text-xs leading-none text-muted-foreground">{t("pointsAtRisk")}</div>
       </div>
 
@@ -167,10 +167,7 @@ function PlayerLaneSidebar({
           </Badge>
         ) : null}
         {isViewer ? (
-          <Badge
-            variant="default"
-            className="border-primary/30 bg-primary/15 text-xs text-primary"
-          >
+          <Badge variant="default" className="border-primary/30 bg-primary/15 text-xs text-primary">
             {t("you")}
           </Badge>
         ) : null}
@@ -397,11 +394,7 @@ export const PlayerLane = memo(function PlayerLane({
 
     previousStatus.current = displayStatus;
 
-    if (
-      displayStatus === "busted" ||
-      displayStatus === "stayed" ||
-      displayStatus === "frozen"
-    ) {
+    if (displayStatus === "busted" || displayStatus === "stayed" || displayStatus === "frozen") {
       const timeout = window.setTimeout(() => setStateAnimation(null), 900);
       return () => window.clearTimeout(timeout);
     }
@@ -547,13 +540,7 @@ function areNumberCardsEqual(
   right: MatchSnapshot["players"][number]["numberCards"],
 ) {
   return areParallelSnapshotCardsEqual(left, right, (a, b) =>
-    Boolean(
-      a &&
-        b &&
-        a.id === b.id &&
-        a.label === b.label &&
-        a.numberValue === b.numberValue,
-    ),
+    Boolean(a && b && a.id === b.id && a.label === b.label && a.numberValue === b.numberValue),
   );
 }
 
@@ -562,13 +549,7 @@ function areModifierCardsEqual(
   right: MatchSnapshot["players"][number]["modifierCards"],
 ) {
   return areParallelSnapshotCardsEqual(left, right, (a, b) =>
-    Boolean(
-      a &&
-        b &&
-        a.id === b.id &&
-        a.label === b.label &&
-        a.modifierValue === b.modifierValue,
-    ),
+    Boolean(a && b && a.id === b.id && a.label === b.label && a.modifierValue === b.modifierValue),
   );
 }
 
