@@ -1,0 +1,4 @@
+interface:
+  display_name: "Complete Architecture Checklist"
+  short_description: "Finish one architecture checklist doc end to end."
+  default_prompt: "Use this skill to take one docs/architecture checklist file to completion."
