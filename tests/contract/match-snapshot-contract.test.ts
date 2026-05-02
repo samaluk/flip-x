@@ -80,6 +80,14 @@ describe("game session contract", () => {
         status: "in_progress",
         currentRoundNumber: 1,
         dealerSeat: 0,
+        targetScore: 200,
+        settings: expect.objectContaining({
+          targetScore: 200,
+          maxNumberCardValue: 12,
+          numberCardRange: { min: 0, max: 12 },
+          modifierRange: { min: 2, max: 10, includesX2: true },
+          modeLabel: "Classic Game",
+        }),
         viewerPlayerId: "p1",
         activePlayerId: "p1",
         roundHistory: expect.arrayContaining([

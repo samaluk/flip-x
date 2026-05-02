@@ -9,6 +9,7 @@ export const APP_ERROR_WIRE_CODE = {
   InvalidAction: "INVALID_ACTION",
   InvalidTarget: "INVALID_TARGET",
   InvalidHostName: "INVALID_HOST_NAME",
+  InvalidGameSettings: "INVALID_GAME_SETTINGS",
   LobbyCodeUnavailable: "LOBBY_CODE_UNAVAILABLE",
   LobbyNotFound: "LOBBY_NOT_FOUND",
   InvalidPlayerName: "INVALID_PLAYER_NAME",

@@ -50,6 +50,15 @@ const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
     });
   }).pipe(Effect.orDie),
 );
+const updateMatchSettings = FunctionImpl.make(api, "matches", "updateMatchSettings", (args) =>
+  Effect.gen(function* () {
+    const ctx = yield* MutationCtx;
+    return yield* matchFns.updateMatchSettingsForSession(ctx, {
+      ...args,
+      matchId: args.matchId as Id<"matches">,
+    });
+  }).pipe(Effect.orDie),
+);
 
 export const matches = GroupImpl.make(api, "matches").pipe(
   Layer.provide(createMatch),
@@ -58,4 +67,5 @@ export const matches = GroupImpl.make(api, "matches").pipe(
   Layer.provide(joinByCode),
   Layer.provide(joinMatch),
   Layer.provide(startMatch),
+  Layer.provide(updateMatchSettings),
 );

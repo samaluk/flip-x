@@ -16,16 +16,26 @@ import {
 } from "../shared/lib/player-colors";
 import {
   invalidHostName,
+  invalidMatchState,
   invalidPlayerColor,
   invalidPlayerName,
   lobbyCodeUnavailable,
   lobbyNotFound,
   matchNotFound,
   nameAlreadyTaken,
+  notHost,
   playerColorAlreadyTaken,
+  staleGameState,
 } from "../shared/lib/errors/domain";
 import { runGameCommand } from "../game/application/run-command";
 import { buildSnapshot, getLatestRound } from "../game/infrastructure/snapshot-store";
+import {
+  DEFAULT_GAME_SETTINGS,
+  gameSettingsEqual,
+  normalizeAndValidateGameSettings,
+  settingsFromMatch,
+  type GameSettings,
+} from "../game/logic/game-settings";
 import {
   DatabaseReader as DatabaseReaderService,
   DatabaseWriter as DatabaseWriterService,
@@ -157,7 +167,8 @@ export function createMatchForSession(
     const matchId = yield* writer.table("matches").insert({
         status: "setup",
         lobbyCode,
-        targetScore: 200,
+        targetScore: DEFAULT_GAME_SETTINGS.targetScore,
+        maxNumberCardValue: DEFAULT_GAME_SETTINGS.maxNumberCardValue,
         currentRoundNumber: 0,
         dealerSeat: 0,
         version: 0,
@@ -359,5 +370,70 @@ export function startMatchForSession(
         deterministicStart: args.deterministicStart,
       },
     });
+  });
+}
+
+export function updateMatchSettingsForSession(
+  ctx: MutationCtx,
+  args: {
+    matchId: Id<"matches">;
+    sessionId: string;
+    expectedVersion: number;
+    patch: Partial<GameSettings>;
+  },
+) {
+  const sessionId = toSessionId(args.sessionId);
+
+  return Effect.gen(function* () {
+    const reader = yield* DatabaseReaderService;
+    const writer = yield* DatabaseWriterService;
+
+    const match = yield* reader.table("matches").get(args.matchId);
+
+    if (!match) {
+      return yield* matchNotFound({ matchId: String(args.matchId) });
+    }
+
+    if (match.status !== "setup") {
+      return yield* invalidMatchState();
+    }
+
+    const viewerPlayerId = yield* getViewerPlayerIdWithReader(reader, args.matchId, sessionId);
+
+    if (!viewerPlayerId || match.hostPlayerId !== viewerPlayerId) {
+      return yield* notHost();
+    }
+
+    if (match.version !== args.expectedVersion) {
+      return yield* staleGameState({
+        expectedVersion: args.expectedVersion,
+        actualVersion: match.version,
+      });
+    }
+
+    const currentSettings = settingsFromMatch(match);
+    const nextSettings = normalizeAndValidateGameSettings({
+      ...currentSettings,
+      ...args.patch,
+    });
+
+    if (gameSettingsEqual(currentSettings, nextSettings)) {
+      return yield* snapshotForMatchSession(ctx, args.matchId, match, sessionId);
+    }
+
+    yield* writer.table("matches").patch(args.matchId, {
+      targetScore: nextSettings.targetScore,
+      maxNumberCardValue: nextSettings.maxNumberCardValue,
+      version: match.version + 1,
+      updatedAt: Date.now(),
+    });
+
+    const nextMatch = yield* reader.table("matches").get(args.matchId);
+
+    if (!nextMatch) {
+      return yield* matchNotFound({ matchId: String(args.matchId) });
+    }
+
+    return yield* snapshotForMatchSession(ctx, args.matchId, nextMatch, sessionId);
   });
 }

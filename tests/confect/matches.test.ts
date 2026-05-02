@@ -116,4 +116,144 @@ describe("Confect matches", () => {
       }
     }).pipe(Effect.provide(TestConfect.layer())),
   );
+
+  it.effect("lets the host update setup settings and publishes them in snapshots", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* client.mutation(refs.public.matches.createMatch, {
+        hostName: "Host",
+        sessionId: "session-host",
+      });
+
+      yield* client.mutation(refs.public.matches.joinMatch, {
+        matchId: created.matchId,
+        playerName: "Guest",
+        sessionId: "session-guest",
+      });
+
+      const updated = yield* client.mutation(refs.public.matches.updateMatchSettings, {
+        matchId: created.matchId,
+        sessionId: "session-host",
+        expectedVersion: created.version,
+        patch: {
+          targetScore: 250,
+          maxNumberCardValue: 14,
+        },
+      });
+
+      assertEquals(updated.version, created.version + 1);
+      assertEquals(updated.targetScore, 250);
+      assertEquals(updated.settings.targetScore, 250);
+      assertEquals(updated.settings.maxNumberCardValue, 14);
+      assertEquals(updated.settings.modifierRange.max, 12);
+
+      const guestSnapshot = yield* client.query(refs.public.matches.getMatchSnapshot, {
+        matchId: created.matchId,
+        sessionId: "session-guest",
+      });
+
+      assertEquals(guestSnapshot?.settings.targetScore, 250);
+      assertEquals(guestSnapshot?.settings.maxNumberCardValue, 14);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("does not increment version when host repeats the same settings", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* client.mutation(refs.public.matches.createMatch, {
+        hostName: "Host",
+        sessionId: "session-host",
+      });
+
+      const unchanged = yield* client.mutation(refs.public.matches.updateMatchSettings, {
+        matchId: created.matchId,
+        sessionId: "session-host",
+        expectedVersion: created.version,
+        patch: {
+          targetScore: 200,
+          maxNumberCardValue: 12,
+        },
+      });
+
+      assertEquals(unchanged.version, created.version);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("rejects non-host, stale, invalid, and started-match settings updates", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* client.mutation(refs.public.matches.createMatch, {
+        hostName: "Host",
+        sessionId: "session-host",
+      });
+
+      yield* client.mutation(refs.public.matches.joinMatch, {
+        matchId: created.matchId,
+        playerName: "Guest",
+        sessionId: "session-guest",
+      });
+
+      const nonHostExit = yield* client
+        .mutation(refs.public.matches.updateMatchSettings, {
+          matchId: created.matchId,
+          sessionId: "session-guest",
+          expectedVersion: created.version,
+          patch: { targetScore: 250 },
+        })
+        .pipe(Effect.exit);
+      if (Exit.isSuccess(nonHostExit)) {
+        throw new Error("Expected non-host settings update to fail");
+      }
+      assertEquals(Cause.pretty(nonHostExit.cause).includes("NotHost"), true);
+
+      const staleExit = yield* client
+        .mutation(refs.public.matches.updateMatchSettings, {
+          matchId: created.matchId,
+          sessionId: "session-host",
+          expectedVersion: created.version + 1,
+          patch: { targetScore: 250 },
+        })
+        .pipe(Effect.exit);
+      if (Exit.isSuccess(staleExit)) {
+        throw new Error("Expected stale settings update to fail");
+      }
+      assertEquals(Cause.pretty(staleExit.cause).includes("StaleGameState"), true);
+
+      const invalidExit = yield* client
+        .mutation(refs.public.matches.updateMatchSettings, {
+          matchId: created.matchId,
+          sessionId: "session-host",
+          expectedVersion: created.version,
+          patch: { maxNumberCardValue: 13 },
+        })
+        .pipe(Effect.exit);
+      if (Exit.isSuccess(invalidExit)) {
+        throw new Error("Expected invalid settings update to fail");
+      }
+      assertEquals(Cause.pretty(invalidExit.cause).includes("InvalidGameSettings"), true);
+
+      const started = yield* client.mutation(refs.public.matches.startMatch, {
+        matchId: created.matchId,
+        sessionId: "session-host",
+        expectedVersion: created.version,
+        idempotencyKey: "matches-settings-start",
+      });
+
+      const startedExit = yield* client
+        .mutation(refs.public.matches.updateMatchSettings, {
+          matchId: created.matchId,
+          sessionId: "session-host",
+          expectedVersion: started.version,
+          patch: { targetScore: 300 },
+        })
+        .pipe(Effect.exit);
+      if (Exit.isSuccess(startedExit)) {
+        throw new Error("Expected started-match settings update to fail");
+      }
+      assertEquals(Cause.pretty(startedExit.cause).includes("InvalidMatchState"), true);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
 });

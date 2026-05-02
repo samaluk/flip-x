@@ -9,7 +9,15 @@ function snapshot(): MatchSnapshot {
   return {
     matchId: "match-1",
     status: "in_progress",
+    version: 1,
     targetScore: 200,
+    settings: {
+      targetScore: 200,
+      maxNumberCardValue: 12,
+      numberCardRange: { min: 0, max: 12 },
+      modifierRange: { min: 2, max: 10, includesX2: true },
+      modeLabel: "Classic Game",
+    },
     currentRoundNumber: 1,
     dealerSeat: 0,
     viewerPlayerId: "p1",

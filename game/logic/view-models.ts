@@ -7,6 +7,12 @@ import type {
   RoundRuntime,
 } from "./round-state";
 import type { RoundEvent } from "./events";
+import {
+  buildGameSettingsSnapshot,
+  settingsFromMatch,
+  type GameSettings,
+  type GameSettingsSnapshot,
+} from "./game-settings";
 
 type LatestRoundEvent = {
   [TEvent in RoundEvent as TEvent["eventType"]]: {
@@ -38,6 +44,7 @@ export type MatchSnapshot = {
   status: "setup" | "in_progress" | "completed";
   version: number;
   targetScore: number;
+  settings: GameSettingsSnapshot;
   currentRoundNumber: number;
   dealerSeat: number;
   viewerPlayerId: string | null;
@@ -91,6 +98,7 @@ export function buildMatchSnapshot(args: {
   lobbyCode?: string;
   hostPlayerId?: string | null;
   targetScore: number;
+  settings?: GameSettings;
   currentRoundNumber: number;
   dealerSeat: number;
   viewerPlayerId: string | null;
@@ -107,6 +115,9 @@ export function buildMatchSnapshot(args: {
   latestEvent: RoundEvent | null;
   roundHistory: RoundHistoryEntry[];
 }): MatchSnapshot {
+  const settings = buildGameSettingsSnapshot(
+    args.settings ?? settingsFromMatch({ targetScore: args.targetScore }),
+  );
   const players = [...args.players]
     .toSorted((left, right) => left.seatIndex - right.seatIndex)
     .map((player) => {
@@ -177,6 +188,7 @@ export function buildMatchSnapshot(args: {
     status: args.status,
     version: args.version,
     targetScore: args.targetScore,
+    settings,
     currentRoundNumber: args.currentRoundNumber,
     dealerSeat: args.dealerSeat,
     viewerPlayerId: args.viewerPlayerId,

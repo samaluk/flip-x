@@ -3,6 +3,13 @@ import { scoreRound } from "@/game/logic/scoring";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 const MATCH_ID = "jz7abcd1234567890";
+const DEFAULT_SETTINGS = {
+  targetScore: 200,
+  maxNumberCardValue: 12,
+  numberCardRange: { min: 0, max: 12 },
+  modifierRange: { min: 2, max: 10, includesX2: true },
+  modeLabel: "Classic Game",
+} satisfies MatchSnapshot["settings"];
 
 function numbers(pairs: Array<{ label: string; value: number }>): NumberCard[] {
   return pairs.map(({ label, value }) => ({
@@ -137,6 +144,7 @@ export const vrtSnapshotMidRound: MatchSnapshot = {
   status: "in_progress",
   version: 1,
   targetScore: 200,
+  settings: DEFAULT_SETTINGS,
   currentRoundNumber: 3,
   dealerSeat: 1,
   viewerPlayerId: RILEY,

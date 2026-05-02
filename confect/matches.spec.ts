@@ -11,6 +11,15 @@ const CommandMetadata = {
   idempotencyKey: Schema.String,
 };
 
+const VersionMetadata = {
+  expectedVersion: Schema.Number,
+};
+
+const GameSettingsPatch = Schema.Struct({
+  targetScore: Schema.optional(Schema.Number),
+  maxNumberCardValue: Schema.optional(Schema.Number),
+});
+
 const MatchLookupResult = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.String,
@@ -68,6 +77,16 @@ const startMatch = FunctionSpec.publicMutation({
   }),
   returns: MatchSnapshot,
 });
+const updateMatchSettings = FunctionSpec.publicMutation({
+  name: "updateMatchSettings",
+  args: Schema.Struct({
+    ...SessionIdField,
+    matchId: Schema.String,
+    ...VersionMetadata,
+    patch: GameSettingsPatch,
+  }),
+  returns: MatchSnapshot,
+});
 
 export const matches = GroupSpec.make("matches")
   .addFunction(createMatch)
@@ -75,4 +94,5 @@ export const matches = GroupSpec.make("matches")
   .addFunction(getMatchByCode)
   .addFunction(joinByCode)
   .addFunction(joinMatch)
-  .addFunction(startMatch);
+  .addFunction(startMatch)
+  .addFunction(updateMatchSettings);

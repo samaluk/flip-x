@@ -14,11 +14,7 @@ export const ModifierCard = Schema.Struct({
   type: Schema.Literal("modifier"),
   label: Schema.String,
   modifierValue: Schema.Union(
-    Schema.Literal(2),
-    Schema.Literal(4),
-    Schema.Literal(6),
-    Schema.Literal(8),
-    Schema.Literal(10),
+    Schema.Number.pipe(Schema.int(), Schema.greaterThanOrEqualTo(2), Schema.multipleOf(2)),
     Schema.Literal("x2"),
   ),
 });

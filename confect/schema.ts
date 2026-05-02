@@ -54,6 +54,7 @@ const Matches = Table.make(
     lobbyCode: Schema.String,
     hostPlayerId: Schema.optional(GenericId.GenericId("players")),
     targetScore: Schema.Number,
+    maxNumberCardValue: Schema.optional(Schema.Number),
     currentRoundNumber: Schema.Number,
     dealerSeat: Schema.Number,
     version: Schema.Number,

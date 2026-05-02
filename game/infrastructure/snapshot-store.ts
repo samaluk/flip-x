@@ -6,6 +6,7 @@ import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import { buildMatchSnapshot } from "../logic/view-models";
+import { settingsFromMatch } from "../logic/game-settings";
 import { buildRoundHistory } from "./round-history-builder";
 import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
@@ -91,6 +92,7 @@ export async function buildSnapshot(
     lobbyCode: match.lobbyCode,
     hostPlayerId: match.hostPlayerId ? String(match.hostPlayerId) : null,
     targetScore: match.targetScore,
+    settings: settingsFromMatch(match),
     currentRoundNumber: match.currentRoundNumber,
     dealerSeat: match.dealerSeat,
     viewerPlayerId,

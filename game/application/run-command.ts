@@ -58,12 +58,14 @@ function buildStartRoundTransition(
     dealerSeat: number;
     nowMillis: number;
     matchUpdateContext: GameTransition["matchUpdateContext"];
+    maxNumberCardValue: number;
   },
   players: Parameters<typeof createPlayerRoundStates>[0],
 ) {
   const playerStates = createPlayerRoundStates(players);
   const baseRound = createRoundRuntime(players, input.roundNumber, input.dealerSeat, {
     drawPile: input.command.deterministicStart?.roundSeed.drawPile,
+    maxNumberCardValue: input.maxNumberCardValue,
   });
   const resolved = continueRound(players, baseRound, playerStates);
 
@@ -129,6 +131,7 @@ function handleStartMatchCommand(
           nextMatchStatus: "in_progress",
           nextCurrentRoundNumber: 1,
         },
+        maxNumberCardValue: ctx.match.maxNumberCardValue ?? 12,
       },
       ctx.orderedPlayers,
     );
@@ -159,6 +162,7 @@ function handleStartNextRoundCommand(
           nextCurrentRoundNumber: ctx.match.currentRoundNumber + 1,
           nextDealerSeat,
         },
+        maxNumberCardValue: ctx.match.maxNumberCardValue ?? 12,
       },
       ctx.orderedPlayers,
     );

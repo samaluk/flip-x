@@ -62,6 +62,7 @@ export type CreateRoundRuntimeOptions = {
   pendingFlip3?: PendingFlip3 | null;
   phase?: RoundPhase;
   rng?: RngService;
+  maxNumberCardValue?: number;
 };
 
 export type ResolveResult = {

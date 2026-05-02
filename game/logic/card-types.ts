@@ -7,7 +7,7 @@ export type NumberCard = {
   numberValue: number;
 };
 
-export type ModifierValue = 2 | 4 | 6 | 8 | 10 | "x2";
+export type ModifierValue = number | "x2";
 
 export type ModifierCard = {
   id: string;
@@ -27,10 +27,22 @@ export type ActionCard = {
 
 export type Card = NumberCard | ModifierCard | ActionCard;
 
-const MODIFIER_LABELS: ModifierValue[] = [2, 4, 6, 8, 10, "x2"];
+type BuildDeckOptions = {
+  maxNumberCardValue?: number;
+};
 
-export function buildOrderedDeck() {
+function buildModifierValues(maxNumberCardValue: number): ModifierValue[] {
+  const modifiers: ModifierValue[] = [];
+  for (let modifierValue = 2; modifierValue <= maxNumberCardValue - 2; modifierValue += 2) {
+    modifiers.push(modifierValue);
+  }
+  modifiers.push("x2");
+  return modifiers;
+}
+
+export function buildOrderedDeck(options: BuildDeckOptions = {}) {
   const cards: Card[] = [];
+  const maxNumberCardValue = options.maxNumberCardValue ?? 12;
 
   let sequence = 0;
 
@@ -46,7 +58,7 @@ export function buildOrderedDeck() {
 
   addCard({ type: "number", label: "0", numberValue: 0 });
 
-  for (let numberValue = 1; numberValue <= 12; numberValue += 1) {
+  for (let numberValue = 1; numberValue <= maxNumberCardValue; numberValue += 1) {
     for (let count = 0; count < numberValue; count += 1) {
       addCard({
         type: "number",
@@ -66,7 +78,7 @@ export function buildOrderedDeck() {
     }
   }
 
-  for (const modifierValue of MODIFIER_LABELS) {
+  for (const modifierValue of buildModifierValues(maxNumberCardValue)) {
     addCard({
       type: "modifier",
       label: modifierValue === "x2" ? "x2" : `+${modifierValue}`,
@@ -81,8 +93,8 @@ function shuffleDeck(cards: readonly Card[], rng: RngService = productionRng) {
   return rng.shuffle(cards);
 }
 
-export function createDeck(rng?: RngService) {
-  return shuffleDeck(buildOrderedDeck(), rng);
+export function createDeck(rng?: RngService, options: BuildDeckOptions = {}) {
+  return shuffleDeck(buildOrderedDeck(options), rng);
 }
 
 export function isNumberCard(card: Card): card is NumberCard {

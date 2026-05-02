@@ -35,6 +35,13 @@ export class InvalidHostName extends Data.TaggedError("InvalidHostName")<{
 export const invalidHostName = (): InvalidHostName =>
   new InvalidHostName({ message: W.InvalidHostName });
 
+export class InvalidGameSettings extends Data.TaggedError("InvalidGameSettings")<{
+  message: string;
+}> {}
+
+export const invalidGameSettings = (): InvalidGameSettings =>
+  new InvalidGameSettings({ message: W.InvalidGameSettings });
+
 export class LobbyCodeUnavailable extends Data.TaggedError("LobbyCodeUnavailable")<{
   message: string;
 }> {}
@@ -157,6 +164,7 @@ export type AppError =
   | InvalidAction
   | InvalidTarget
   | InvalidHostName
+  | InvalidGameSettings
   | LobbyCodeUnavailable
   | LobbyNotFound
   | InvalidPlayerName

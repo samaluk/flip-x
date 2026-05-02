@@ -72,6 +72,21 @@ const RoundHistoryEntry = Schema.Struct({
   ),
 });
 
+const GameSettingsSnapshot = Schema.Struct({
+  targetScore: Schema.Number,
+  maxNumberCardValue: Schema.Number,
+  numberCardRange: Schema.Struct({
+    min: Schema.Literal(0),
+    max: Schema.Number,
+  }),
+  modifierRange: Schema.Struct({
+    min: Schema.Literal(2),
+    max: Schema.Number,
+    includesX2: Schema.Literal(true),
+  }),
+  modeLabel: Schema.String,
+});
+
 export const MatchSnapshot = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.optional(Schema.String),
@@ -79,6 +94,7 @@ export const MatchSnapshot = Schema.Struct({
   status: Schema.Literal("setup", "in_progress", "completed"),
   version: Schema.Number,
   targetScore: Schema.Number,
+  settings: GameSettingsSnapshot,
   currentRoundNumber: Schema.Number,
   dealerSeat: Schema.Number,
   viewerPlayerId: Schema.NullOr(Schema.String),
