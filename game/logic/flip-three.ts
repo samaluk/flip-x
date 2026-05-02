@@ -40,7 +40,7 @@ function removeHeldActionCard(playerState: PlayerRoundState, cardId: string) {
   return card;
 }
 
-export function discardDeferredFlip3Cards(
+function discardDeferredFlip3Cards(
   round: RoundRuntime,
   playerState: PlayerRoundState,
   cards: ActionCard[],
@@ -53,7 +53,7 @@ export function discardDeferredFlip3Cards(
   }
 }
 
-export function resolveDeferredFlip3Actions(
+function resolveDeferredFlip3Actions(
   round: RoundRuntime,
   players: OrderedPlayer[],
   playerStates: Record<string, PlayerRoundState>,

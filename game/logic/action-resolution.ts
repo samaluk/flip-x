@@ -6,7 +6,7 @@ import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import { activePlayerIds, getPlayerBySeat, nextActiveSeatIndex, orderedPlayerIds } from "./turn-order";
 
-export type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
+type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
 
 function createPendingTargetAction(
   round: RoundRuntime,
