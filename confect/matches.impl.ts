@@ -5,36 +5,39 @@ import api from "./_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { MutationCtx, QueryCtx } from "./_generated/services";
 import { cloneDeterministicStart } from "./lib/deterministic_start";
-import * as matchFns from "./matches";
+import { getMatchByCode, joinByCodeForSession } from "./match-lobby";
+import { createMatchForSession, joinMatchForSession } from "./match-setup-players";
+import { updateMatchSettingsForSession } from "./match-settings";
+import { getMatchSnapshot, startMatchForSession } from "./matches";
 
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
-    return yield* matchFns.createMatchForSession(ctx, args);
+    return yield* createMatchForSession(ctx, args);
   }).pipe(Effect.orDie),
 );
-const getMatchSnapshot = FunctionImpl.make(
+const getMatchSnapshotImpl = FunctionImpl.make(
   api,
   "matches",
   "getMatchSnapshot",
-  matchFns.getMatchSnapshot,
+  getMatchSnapshot,
 );
-const getMatchByCode = FunctionImpl.make(api, "matches", "getMatchByCode", (args) =>
+const getMatchByCodeImpl = FunctionImpl.make(api, "matches", "getMatchByCode", (args) =>
   Effect.gen(function* () {
     const ctx = yield* QueryCtx;
-    return yield* matchFns.getMatchByCode(ctx, args.lobbyCode);
+    return yield* getMatchByCode(ctx, args.lobbyCode);
   }).pipe(Effect.orDie),
 );
 const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
-    return yield* matchFns.joinByCodeForSession(ctx, args);
+    return yield* joinByCodeForSession(ctx, args);
   }).pipe(Effect.orDie),
 );
 const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
-    return yield* matchFns.joinMatchForSession(ctx, {
+    return yield* joinMatchForSession(ctx, {
       ...args,
       matchId: args.matchId as Id<"matches">,
     });
@@ -43,7 +46,7 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
-    return yield* matchFns.startMatchForSession(ctx, {
+    return yield* startMatchForSession(ctx, {
       ...args,
       matchId: args.matchId as Id<"matches">,
       deterministicStart: cloneDeterministicStart(args.deterministicStart),
@@ -53,7 +56,7 @@ const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
 const updateMatchSettings = FunctionImpl.make(api, "matches", "updateMatchSettings", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
-    return yield* matchFns.updateMatchSettingsForSession(ctx, {
+    return yield* updateMatchSettingsForSession(ctx, {
       ...args,
       matchId: args.matchId as Id<"matches">,
     });
@@ -62,8 +65,8 @@ const updateMatchSettings = FunctionImpl.make(api, "matches", "updateMatchSettin
 
 export const matches = GroupImpl.make(api, "matches").pipe(
   Layer.provide(createMatch),
-  Layer.provide(getMatchSnapshot),
-  Layer.provide(getMatchByCode),
+  Layer.provide(getMatchSnapshotImpl),
+  Layer.provide(getMatchByCodeImpl),
   Layer.provide(joinByCode),
   Layer.provide(joinMatch),
   Layer.provide(startMatch),

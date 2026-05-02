@@ -3,7 +3,7 @@ import { Schema } from "effect";
 
 import { DeterministicStartOptions } from "./deterministic-schema";
 import { MatchSnapshot } from "./match-snapshot-schema";
-import * as matchFns from "./matches";
+import { getMatchSnapshot } from "./matches";
 import { SessionIdField } from "./session";
 
 const CommandMetadata = {
@@ -44,8 +44,8 @@ const createMatch = FunctionSpec.publicMutation({
   }),
   returns: MatchSnapshot,
 });
-const getMatchSnapshot =
-  FunctionSpec.convexPublicQuery<typeof matchFns.getMatchSnapshot>()("getMatchSnapshot");
+const getMatchSnapshotSpec =
+  FunctionSpec.convexPublicQuery<typeof getMatchSnapshot>()("getMatchSnapshot");
 const joinByCode = FunctionSpec.publicMutation({
   name: "joinByCode",
   args: Schema.Struct({
@@ -90,7 +90,7 @@ const updateMatchSettings = FunctionSpec.publicMutation({
 
 export const matches = GroupSpec.make("matches")
   .addFunction(createMatch)
-  .addFunction(getMatchSnapshot)
+  .addFunction(getMatchSnapshotSpec)
   .addFunction(getMatchByCode)
   .addFunction(joinByCode)
   .addFunction(joinMatch)
