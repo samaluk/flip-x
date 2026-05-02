@@ -37,22 +37,32 @@ The interface should be smaller than the implementation it hides. Avoid creating
 
 ## Checklist
 
-- [ ] Read `docs/game-rules.md`, especially Freeze, Flip Three, opening deal, and active player rules.
-- [ ] List all current target-action behaviors in `action-resolution.ts`.
-- [ ] List all caller responsibilities in `apply-card.ts` and `command-handler.ts`.
-- [ ] Define the target action module around domain language, not storage or UI language.
-- [ ] Move eligibility calculation into the target action module.
-- [ ] Move held/received action card transfer into the target action module.
-- [ ] Move pending prompt creation and auto-target behavior into the target action module.
-- [ ] Simplify command handling so it only commits the chosen target and asks the module for the result.
-- [ ] Update opening deal and turn action tests for the new interface.
-- [ ] Run `pnpm test:unit -- tests/unit/engine/opening-deal.test.ts tests/unit/engine/turn-actions.test.ts`.
+- [x] Read `docs/game-rules.md`, especially Freeze, Flip Three, opening deal, and active player rules.
+- [x] List all current target-action behaviors in `action-resolution.ts`.
+- [x] List all caller responsibilities in `apply-card.ts` and `command-handler.ts`.
+- [x] Define the target action module around domain language, not storage or UI language.
+- [x] Move eligibility calculation into the target action module.
+- [x] Move held/received action card transfer into the target action module.
+- [x] Move pending prompt creation and auto-target behavior into the target action module.
+- [x] Simplify command handling so it only commits the chosen target and asks the module for the result.
+- [x] Update opening deal and turn action tests for the new interface.
+- [x] Run `pnpm test:unit -- tests/unit/engine/opening-deal.test.ts tests/unit/engine/turn-actions.test.ts`.
 - [ ] Run `pnpm test`.
 
 ## Verification Questions
 
-- [ ] Can a caller apply Freeze or Flip Three without knowing eligibility details?
-- [ ] Are dealing and turns handled through the same target action interface?
-- [ ] Did phase transitions become more local to the target action module?
-- [ ] Did the tests become less dependent on intermediate mutation order?
+- [x] Can a caller apply Freeze or Flip Three without knowing eligibility details?
+- [x] Are dealing and turns handled through the same target action interface?
+- [x] Did phase transitions become more local to the target action module?
+- [x] Did the tests become less dependent on intermediate mutation order?
 
+## Rebuilt Context
+
+- `action-resolution.ts` owns dealing/turn eligibility, auto-targeting, pending prompts, held-to-received transfers, Freeze application, Flip Three startup, target-action events, pending phase commit, inactive active-player advancement, and the continuation result.
+- `apply-card.ts` now only holds target-action cards and offers them to the target-action module when Freeze or Flip Three is drawn outside an active Flip Three sequence.
+- `command-handler.ts` resolves a chosen pending target by asking the target-action module for the result, then resumes the opening deal only when the module reports `continue_dealing`.
+- The existing opening deal and turn action tests already exercised the public command interface, so no test rewrites were needed for this slice.
+
+## Progress Notes
+
+- The package no longer defines `pnpm test:unit`; the focused verification was run with `pnpm exec vitest run tests/unit/engine/opening-deal.test.ts tests/unit/engine/turn-actions.test.ts`.

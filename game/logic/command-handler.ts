@@ -1,6 +1,6 @@
 import { createDeck } from "./card-types";
-import { invalidAction, invalidTarget, invalidTurn } from "../../shared/lib/errors/domain";
-import { applyResolvedTargetAction } from "./action-resolution";
+import { invalidAction, invalidTurn } from "../../shared/lib/errors/domain";
+import { resolvePendingTargetAction } from "./action-resolution";
 import { applyCardToPlayer } from "./apply-card";
 import { addEvent, cardEventPayload, type RoundEvent } from "./events";
 import { drawCard } from "./draw";
@@ -287,34 +287,6 @@ function requirePendingActionFromRound(round: RoundRuntime): PendingAction {
   return pending;
 }
 
-function commitResolvedPendingPhase(round: RoundRuntime, pendingAction: PendingAction) {
-  round.pendingAction = null;
-  round.phase = pendingAction.resume === "dealing" ? "dealing" : "player_turns";
-}
-
-function ensurePlayerTurnsWhenFlip3Pending(round: RoundRuntime) {
-  if (round.pendingFlip3) {
-    round.phase = "player_turns";
-  }
-}
-
-function maybeAdvanceTurnIfActivePlayerInactive(
-  round: RoundRuntime,
-  players: OrderedPlayer[],
-  playerStates: Record<string, PlayerRoundState>,
-) {
-  if (round.phase !== "player_turns" || round.pendingAction || round.pendingFlip3) {
-    return;
-  }
-  const currentPlayerState = round.activePlayerId ? playerStates[round.activePlayerId] : null;
-  if (currentPlayerState?.status === "active") {
-    return;
-  }
-  const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
-  round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
-  round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
-}
-
 export function resolvePendingAction(
   players: OrderedPlayer[],
   roundInput: RoundRuntime,
@@ -330,27 +302,16 @@ export function resolvePendingAction(
   const events: RoundEvent[] = [];
   const pendingAction = requirePendingActionFromRound(round);
 
-  if (!pendingAction.eligibleTargetIds.includes(targetPlayerId)) {
-    throw invalidTarget();
-  }
-
-  commitResolvedPendingPhase(round, pendingAction);
-
-  applyResolvedTargetAction(
+  const targetResolution = resolvePendingTargetAction(
     round,
     players,
     playerStates,
-    pendingAction.sourcePlayerId,
-    pendingAction.actionKind,
+    pendingAction,
     targetPlayerId,
     events,
   );
 
-  ensurePlayerTurnsWhenFlip3Pending(round);
-  maybeAdvanceTurnIfActivePlayerInactive(round, players, playerStates);
-  maybeFinishRound(round, players, playerStates);
-
-  if (round.phase === "dealing" && !round.pendingAction) {
+  if (targetResolution === "continue_dealing") {
     const continued = continueRound(players, round, playerStates);
     return {
       round: continued.round,

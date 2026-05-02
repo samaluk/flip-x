@@ -1,8 +1,12 @@
 import type { ActionCard } from "./card-types";
+import { invalidTarget } from "../../shared/lib/errors/domain";
 import { addEvent, type RoundEvent } from "./events";
+import { maybeFinishRound } from "./round-finalization";
 import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
-import { activePlayerIds, orderedPlayerIds } from "./turn-order";
+import { activePlayerIds, getPlayerBySeat, nextActiveSeatIndex, orderedPlayerIds } from "./turn-order";
+
+export type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
 
 function createPendingTargetAction(
   round: RoundRuntime,
@@ -50,7 +54,7 @@ function createPendingTargetAction(
   return null;
 }
 
-export function applyResolvedTargetAction(
+function applyResolvedTargetAction(
   round: RoundRuntime,
   players: OrderedPlayer[],
   playerStates: Record<string, PlayerRoundState>,
@@ -97,6 +101,69 @@ export function applyResolvedTargetAction(
     cardsRemaining: 3,
     deferredActionCards: [],
   };
+}
+
+function commitResolvedPendingPhase(round: RoundRuntime, pendingAction: PendingAction) {
+  round.pendingAction = null;
+  round.phase = pendingAction.resume === "dealing" ? "dealing" : "player_turns";
+}
+
+function ensurePlayerTurnsWhenFlip3Pending(round: RoundRuntime) {
+  if (round.pendingFlip3) {
+    round.phase = "player_turns";
+  }
+}
+
+function maybeAdvanceTurnIfActivePlayerInactive(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+) {
+  if (round.phase !== "player_turns" || round.pendingAction || round.pendingFlip3) {
+    return;
+  }
+  const currentPlayerState = round.activePlayerId ? playerStates[round.activePlayerId] : null;
+  if (currentPlayerState?.status === "active") {
+    return;
+  }
+  const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
+  round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
+  round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
+}
+
+export function resolvePendingTargetAction(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+  pendingAction: PendingAction,
+  targetPlayerId: string,
+  events: RoundEvent[],
+): TargetActionResolution {
+  if (!pendingAction.eligibleTargetIds.includes(targetPlayerId)) {
+    throw invalidTarget();
+  }
+
+  commitResolvedPendingPhase(round, pendingAction);
+
+  applyResolvedTargetAction(
+    round,
+    players,
+    playerStates,
+    pendingAction.sourcePlayerId,
+    pendingAction.actionKind,
+    targetPlayerId,
+    events,
+  );
+
+  ensurePlayerTurnsWhenFlip3Pending(round);
+  maybeAdvanceTurnIfActivePlayerInactive(round, players, playerStates);
+  maybeFinishRound(round, players, playerStates);
+
+  if (round.pendingAction || round.pendingFlip3 || round.phase === "scoring") {
+    return "wait_for_input";
+  }
+
+  return round.phase === "dealing" ? "continue_dealing" : "continue_turns";
 }
 
 export function resolveHeldTargetAction(
