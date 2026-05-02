@@ -1,7 +1,7 @@
 import type { ModifierCard, NumberCard } from "./card-types";
 import type { PlayerRoundState } from "./round-state";
 
-type ScoreBreakdown = {
+export type ScoreBreakdown = {
   numberCardTotal: number;
   multiplierApplied: boolean;
   multipliedTotal: number;

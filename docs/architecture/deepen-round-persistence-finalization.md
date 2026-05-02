@@ -37,24 +37,31 @@ The outcome should describe:
 
 ## Checklist
 
-- [ ] Read `docs/game-rules.md`, especially round end, scoring, target score, and winner rules.
-- [ ] Map every match completion rule currently inside `save-command-result.ts`.
-- [ ] Decide which rules belong in gameplay finalization versus persistence.
-- [ ] Create a domain-level completion outcome type.
-- [ ] Have `run-command.ts` or a nearby application module build the completion outcome.
-- [ ] Narrow `save-command-result.ts` so it writes the outcome and handles Convex document mechanics.
-- [ ] Keep score breakdown calculation out of Convex write code if it is part of the domain outcome.
-- [ ] Ensure version increments remain exactly once per accepted command.
-- [ ] Update unit tests to verify winner and score carry-forward without a Convex persistence fixture when possible.
-- [ ] Keep backend tests for persistence correctness.
-- [ ] Run `pnpm test:unit -- tests/unit/infrastructure/run-command-program.test.ts`.
-- [ ] Run `pnpm test:confect`.
-- [ ] Run `pnpm test`.
+- [x] Read `docs/game-rules.md`, especially round end, scoring, target score, and winner rules.
+- [x] Map every match completion rule currently inside `save-command-result.ts`.
+- [x] Decide which rules belong in gameplay finalization versus persistence.
+- [x] Create a domain-level completion outcome type.
+- [x] Have `run-command.ts` or a nearby application module build the completion outcome.
+- [x] Narrow `save-command-result.ts` so it writes the outcome and handles Convex document mechanics.
+- [x] Keep score breakdown calculation out of Convex write code if it is part of the domain outcome.
+- [x] Ensure version increments remain exactly once per accepted command.
+- [x] Update unit tests to verify winner and score carry-forward without a Convex persistence fixture when possible.
+- [x] Keep backend tests for persistence correctness.
+- [x] Run `pnpm test:unit -- tests/unit/infrastructure/run-command-program.test.ts`.
+- [x] Run `pnpm test:confect`.
+- [x] Run `pnpm test`.
 
 ## Verification Questions
 
-- [ ] Can match completion be tested without inspecting Convex writes?
-- [ ] Does persistence still contain only adapter logic and write ordering?
-- [ ] Are winner and score carry-forward rules local to a domain/application module?
-- [ ] Did the persistence interface gain leverage by hiding more write details behind a smaller input?
+- [x] Can match completion be tested without inspecting Convex writes?
+- [x] Does persistence still contain only adapter logic and write ordering?
+- [x] Are winner and score carry-forward rules local to a domain/application module?
+- [x] Did the persistence interface gain leverage by hiding more write details behind a smaller input?
 
+## Progress Notes
+
+- Match completion rules moved from `game/infrastructure/save-command-result.ts` into `game/application/round-completion.ts`: score breakdown calculation, player total carry-forward, target-score completion, unique winner selection, winner flags, and match completion patch data.
+- Persistence now writes the completion outcome and still owns Convex mechanics: round creation/update, player state upserts, event sequencing, score breakdown rewrites, player document patches, match document patch, and ID mapping.
+- Winner selection now follows `docs/game-rules.md`: the match completes only when there is one unique high scorer at or above the target. A high-score tie keeps the match in progress with no `hasWon` flags.
+- The documented `pnpm test:unit -- tests/unit/infrastructure/run-command-program.test.ts` script is stale in this checkout (`test:unit` is not present). Equivalent focused verification was run with `pnpm exec vitest run --project infrastructure tests/unit/infrastructure/round-completion.test.ts tests/unit/infrastructure/run-command-program.test.ts`.
+- `pnpm test:backend` could not run locally because `CONVEX_DEPLOY_KEY` is not available; local unit, Confect, full Vitest, and lint checks passed.

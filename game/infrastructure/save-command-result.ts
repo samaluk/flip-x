@@ -1,6 +1,6 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
-import { computeScoreBreakdown } from "../logic/scoring";
+import type { RoundCompletionOutcome } from "../application/round-completion";
 import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "../application/game-command";
@@ -27,11 +27,7 @@ export type GameTransition = {
       };
   playerStates: Record<string, PlayerRoundState>;
   events: RoundEvent[];
-  finalized?: {
-    round: RoundRuntime;
-    playerStates: Record<string, PlayerRoundState>;
-    events: RoundEvent[];
-  };
+  finalized?: RoundCompletionOutcome;
   matchUpdateContext: {
     nextMatchStatus?: "in_progress" | "completed";
     nextCurrentRoundNumber?: number;
@@ -138,7 +134,7 @@ async function persistEvents(
 async function rewriteScoreBreakdowns(
   ctx: MutationCtx,
   roundId: Id<"rounds">,
-  playerStates: Record<string, PlayerRoundState>,
+  scoreBreakdowns: RoundCompletionOutcome["scoreBreakdowns"],
   playerIdMap: Map<string, Id<"players">>,
 ) {
   const existingBreakdowns = await ctx.db
@@ -150,58 +146,34 @@ async function rewriteScoreBreakdowns(
     await ctx.db.delete(breakdown._id);
   }
 
-  for (const [playerId, playerState] of Object.entries(playerStates)) {
+  for (const [playerId, scoreBreakdown] of Object.entries(scoreBreakdowns)) {
     await ctx.db.insert("scoreBreakdowns", {
       roundId,
       playerId: playerIdMap.get(playerId)!,
-      ...computeScoreBreakdown(playerState),
+      ...scoreBreakdown,
     });
   }
 }
 
-async function carryForwardScoresAndMaybeCompleteMatch(
+async function persistRoundCompletionOutcome(
   ctx: MutationCtx,
   input: SaveCommandResultInput,
-  finalizedPlayerStates: Record<string, PlayerRoundState>,
-  nowMillis: number,
 ) {
-  const { match, players } = input;
+  const { playerIdMap, transition } = input;
+  const finalized = transition.finalized;
 
-  for (const player of players) {
-    const playerState = finalizedPlayerStates[String(player._id)];
-    if (!playerState) {
-      continue;
-    }
-
-    await ctx.db.patch(player._id, {
-      totalScore: player.totalScore + playerState.roundScore,
-    });
-  }
-
-  const updatedPlayers = await ctx.db
-    .query("players")
-    .withIndex("by_match", (query) => query.eq("matchId", match._id))
-    .collect();
-  const winner = updatedPlayers
-    .filter((player) => player.totalScore >= match.targetScore)
-    .toSorted((left, right) => right.totalScore - left.totalScore)[0];
-
-  if (!winner) {
+  if (!finalized) {
     return false;
   }
 
-  await ctx.db.patch(match._id, {
-    status: "completed",
-    winnerPlayerId: winner._id,
-    version: match.version + 1,
-    updatedAt: nowMillis,
-  });
-
-  for (const player of updatedPlayers) {
-    await ctx.db.patch(player._id, { hasWon: player._id === winner._id });
+  for (const [playerId, patch] of Object.entries(finalized.playerScorePatches)) {
+    await ctx.db.patch(playerIdMap.get(playerId)!, {
+      totalScore: patch.totalScore,
+      hasWon: patch.hasWon,
+    });
   }
 
-  return true;
+  return finalized.matchCompleted;
 }
 
 export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResultInput) {
@@ -223,33 +195,35 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
   let matchCompleted = false;
 
   if (transition.finalized) {
-    await rewriteScoreBreakdowns(ctx, roundId, transition.finalized.playerStates, playerIdMap);
-    matchCompleted = await carryForwardScoresAndMaybeCompleteMatch(
-      ctx,
-      input,
-      transition.finalized.playerStates,
-      nowMillis,
-    );
+    await rewriteScoreBreakdowns(ctx, roundId, transition.finalized.scoreBreakdowns, playerIdMap);
+    matchCompleted = await persistRoundCompletionOutcome(ctx, input);
   }
 
-  if (!matchCompleted) {
-    const patch: Partial<Doc<"matches">> = {
-      version: match.version + 1,
-      updatedAt: nowMillis,
-    };
+  const patch: Partial<Doc<"matches">> = {
+    version: match.version + 1,
+    updatedAt: nowMillis,
+  };
 
-    if (transition.matchUpdateContext.nextMatchStatus) {
-      patch.status = transition.matchUpdateContext.nextMatchStatus;
-    }
-    if (transition.matchUpdateContext.nextCurrentRoundNumber !== undefined) {
-      patch.currentRoundNumber = transition.matchUpdateContext.nextCurrentRoundNumber;
-    }
-    if (transition.matchUpdateContext.nextDealerSeat !== undefined) {
-      patch.dealerSeat = transition.matchUpdateContext.nextDealerSeat;
-    }
+  const matchPatch = transition.finalized?.matchPatch;
+  const nextMatchStatus = matchPatch?.status ?? transition.matchUpdateContext.nextMatchStatus;
+  const nextCurrentRoundNumber =
+    matchPatch?.currentRoundNumber ?? transition.matchUpdateContext.nextCurrentRoundNumber;
+  const nextDealerSeat = matchPatch?.dealerSeat ?? transition.matchUpdateContext.nextDealerSeat;
 
-    await ctx.db.patch(match._id, patch);
+  if (nextMatchStatus) {
+    patch.status = nextMatchStatus;
   }
+  if (nextCurrentRoundNumber !== undefined) {
+    patch.currentRoundNumber = nextCurrentRoundNumber;
+  }
+  if (nextDealerSeat !== undefined) {
+    patch.dealerSeat = nextDealerSeat;
+  }
+  if (matchPatch?.winnerPlayerId) {
+    patch.winnerPlayerId = playerIdMap.get(matchPatch.winnerPlayerId)!;
+  }
+
+  await ctx.db.patch(match._id, patch);
 
   return {
     roundId,

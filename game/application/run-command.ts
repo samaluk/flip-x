@@ -21,12 +21,12 @@ import {
   resolvePendingAction,
   takeTurnAction,
 } from "../logic/command-handler";
-import { finalizeRound } from "../logic/round-finalization";
 import type { MatchAggregate } from "../infrastructure/load-match-aggregate";
 import type { RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "./game-command";
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameTransition } from "../infrastructure/save-command-result";
+import { buildRoundCompletionOutcome } from "./round-completion";
 import {
   AppClock,
   CommandResultStore,
@@ -37,14 +37,26 @@ import {
   type RunGameCommandServices,
 } from "./services";
 
-function finalizeIfNeeded(transition: Omit<GameTransition, "finalized">): GameTransition {
+function finalizeIfNeeded(
+  input: {
+    match: Doc<"matches">;
+    players: Doc<"players">[];
+  },
+  transition: Omit<GameTransition, "finalized">,
+): GameTransition {
   const finalizedRound = transition.roundWrite.round.phase === "scoring";
 
   if (!finalizedRound) {
     return transition;
   }
 
-  const finalized = finalizeRound(transition.roundWrite.round, transition.playerStates);
+  const finalized = buildRoundCompletionOutcome({
+    round: transition.roundWrite.round,
+    playerStates: transition.playerStates,
+    players: input.players,
+    match: input.match,
+    matchUpdateContext: transition.matchUpdateContext,
+  });
   return {
     ...transition,
     finalized,
@@ -57,6 +69,8 @@ function buildStartRoundTransition(
     roundNumber: number;
     dealerSeat: number;
     nowMillis: number;
+    match: Doc<"matches">;
+    players: Doc<"players">[];
     matchUpdateContext: GameTransition["matchUpdateContext"];
     maxNumberCardValue: number;
   },
@@ -69,18 +83,21 @@ function buildStartRoundTransition(
   });
   const resolved = continueRound(players, baseRound, playerStates);
 
-  return finalizeIfNeeded({
-    command: input.command.type,
-    roundWrite: {
-      kind: "create",
-      roundNumber: input.roundNumber,
-      startedAt: input.nowMillis,
-      round: resolved.round,
+  return finalizeIfNeeded(
+    input,
+    {
+      command: input.command.type,
+      roundWrite: {
+        kind: "create",
+        roundNumber: input.roundNumber,
+        startedAt: input.nowMillis,
+        round: resolved.round,
+      },
+      playerStates: resolved.playerStates,
+      events: resolved.events,
+      matchUpdateContext: input.matchUpdateContext,
     },
-    playerStates: resolved.playerStates,
-    events: resolved.events,
-    matchUpdateContext: input.matchUpdateContext,
-  });
+  );
 }
 
 type RunGameCommandInput = {
@@ -127,6 +144,8 @@ function handleStartMatchCommand(
         roundNumber: 1,
         dealerSeat: ctx.match.dealerSeat,
         nowMillis,
+        match: ctx.match,
+        players: ctx.players,
         matchUpdateContext: {
           nextMatchStatus: "in_progress",
           nextCurrentRoundNumber: 1,
@@ -158,6 +177,8 @@ function handleStartNextRoundCommand(
         roundNumber: ctx.match.currentRoundNumber + 1,
         dealerSeat: nextDealerSeat,
         nowMillis,
+        match: ctx.match,
+        players: ctx.players,
         matchUpdateContext: {
           nextCurrentRoundNumber: ctx.match.currentRoundNumber + 1,
           nextDealerSeat,
@@ -215,17 +236,20 @@ function handleTakeTurnCommand(
       String(viewerPlayerId),
       command.action,
     );
-    return finalizeIfNeeded({
-      command: command.type,
-      roundWrite: {
-        kind: "update",
-        roundId: latestRound._id,
-        round: resolved.round,
+    return finalizeIfNeeded(
+      ctx,
+      {
+        command: command.type,
+        roundWrite: {
+          kind: "update",
+          roundId: latestRound._id,
+          round: resolved.round,
+        },
+        playerStates: resolved.playerStates,
+        events: resolved.events,
+        matchUpdateContext: {},
       },
-      playerStates: resolved.playerStates,
-      events: resolved.events,
-      matchUpdateContext: {},
-    });
+    );
   });
 }
 
@@ -252,17 +276,20 @@ function handleResolveActionCommand(
       ctx.playerStates,
       command.targetPlayerId,
     );
-    return finalizeIfNeeded({
-      command: command.type,
-      roundWrite: {
-        kind: "update",
-        roundId: latestRound._id,
-        round: resolved.round,
+    return finalizeIfNeeded(
+      ctx,
+      {
+        command: command.type,
+        roundWrite: {
+          kind: "update",
+          roundId: latestRound._id,
+          round: resolved.round,
+        },
+        playerStates: resolved.playerStates,
+        events: resolved.events,
+        matchUpdateContext: {},
       },
-      playerStates: resolved.playerStates,
-      events: resolved.events,
-      matchUpdateContext: {},
-    });
+    );
   });
 }
 
