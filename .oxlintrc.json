@@ -18,6 +18,8 @@
   "jsPlugins": ["oxlint-tailwindcss", "eslint-plugin-i18next"],
   "rules": {
     "react/react-in-jsx-scope": "off",
+    // Convex documents use `_id`; Effect tagged errors use `_tag`.
+    "no-underscore-dangle": ["error", { "allow": ["_id", "_tag"] }],
     // Correctness
     "tailwindcss/no-unknown-classes": "error",
     "tailwindcss/no-duplicate-classes": "error",
