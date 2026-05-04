@@ -94,7 +94,7 @@ importers:
         version: 5.0.0(8f38e282ae3afdeaeec2289a89e18eba)
       '@confect/test':
         specifier: 5.0.0
-        version: 5.0.0(@confect/core@5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@5.0.0(53f1fe80e131b85075517a876ed47c99))(convex-test@0.0.50(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)
+        version: 5.0.0(@confect/core@5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@5.0.0(53f1fe80e131b85075517a876ed47c99))(convex-test@0.0.51(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)
       '@effect/vitest':
         specifier: 0.29.0
         version: 0.29.0(effect@3.21.2)(vitest@4.1.5)
@@ -141,8 +141,8 @@ importers:
         specifier: 4.1.5
         version: 4.1.5(@vitest/browser@4.1.5)(vitest@4.1.5)
       convex-test:
-        specifier: 0.0.50
-        version: 0.0.50(convex@1.37.0(react@19.2.5))
+        specifier: 0.0.51
+        version: 0.0.51(convex@1.37.0(react@19.2.5))
       eslint-plugin-i18next:
         specifier: 6.1.4
         version: 6.1.4
@@ -2510,8 +2510,8 @@ packages:
       zod:
         optional: true
 
-  convex-test@0.0.50:
-    resolution: {integrity: sha512-rMNfrgcKJGToYDqNns2n1AO9KUP1NyC/AF9ldYEuWwTfRbgC9RQiHjlZsZQ/sOjLIVPUyKKIjoI/fNJUzy1urw==}
+  convex-test@0.0.51:
+    resolution: {integrity: sha512-J+4YRpKGXJDfnQqiWUUT+ylNmNO36MpkuwqG3JG4ld+7QtroZGF8HqO4qzMmfv5ltm71rPbkBvi//MoMHjnVvQ==}
     peerDependencies:
       convex: ^1.32.0
 
@@ -4872,12 +4872,12 @@ snapshots:
       convex: 1.37.0(react@19.2.5)
       effect: 3.21.2
 
-  '@confect/test@5.0.0(@confect/core@5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@5.0.0(53f1fe80e131b85075517a876ed47c99))(convex-test@0.0.50(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)':
+  '@confect/test@5.0.0(@confect/core@5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@5.0.0(53f1fe80e131b85075517a876ed47c99))(convex-test@0.0.51(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)':
     dependencies:
       '@confect/core': 5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
       '@confect/server': 5.0.0(53f1fe80e131b85075517a876ed47c99)
       convex: 1.37.0(react@19.2.5)
-      convex-test: 0.0.50(convex@1.37.0(react@19.2.5))
+      convex-test: 0.0.51(convex@1.37.0(react@19.2.5))
       effect: 3.21.2
 
   '@convex-dev/migrations@0.3.4(convex@1.37.0(react@19.2.5))':
@@ -6461,7 +6461,7 @@ snapshots:
       typescript: 6.0.3
       zod: 3.25.76
 
-  convex-test@0.0.50(convex@1.37.0(react@19.2.5)):
+  convex-test@0.0.51(convex@1.37.0(react@19.2.5)):
     dependencies:
       convex: 1.37.0(react@19.2.5)
 
