@@ -5,6 +5,7 @@ import { useSessionId } from "convex-helpers/react/sessions";
 import { useEffect } from "react";
 
 import refs from "@/confect/_generated/refs";
+import { matchIdFromConfectWire } from "@/confect/lib/convex-id-bridge";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
@@ -21,7 +22,7 @@ export function useMatchPresence(matchId: string, playerId: Id<"players"> | unde
     }
 
     void syncPlayer({
-      matchId: matchId as Id<"matches">,
+      matchId: matchIdFromConfectWire(matchId),
       playerId,
     });
   }, [matchId, playerId, sessionId, syncPlayer]);

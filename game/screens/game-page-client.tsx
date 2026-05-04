@@ -7,7 +7,7 @@ import { type SubmitEvent, useCallback, useEffect, useMemo, useState } from "rea
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
-import type { Id } from "@/convex/_generated/dataModel";
+import { matchIdFromConfectWire } from "@/confect/lib/convex-id-bridge";
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
 import { GameTable } from "@/game/screens/game-table";
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
@@ -33,7 +33,7 @@ import {
 const COLOR_STORAGE_KEY = "flip7_player_color";
 
 export function GamePageClient({ matchId }: { matchId: string }) {
-  const matchIdConvex = matchId as Id<"matches">;
+  const matchIdConvex = matchIdFromConfectWire(matchId);
   const [sessionId] = useSessionId();
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");

@@ -5,6 +5,7 @@ import { Effect } from "effect";
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { mutation, query } from "../convex/_generated/server";
+import { playerIdFromConfectWire } from "./lib/convex-id-bridge";
 import { mutationWithSession } from "./lib/session_functions";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 
@@ -88,7 +89,7 @@ export const listMatchPresence = query({
             return [];
           }
 
-          return [{ playerId: state.data as Id<"players">, online: true }];
+          return [{ playerId: playerIdFromConfectWire(state.data), online: true }];
         });
       }),
     );

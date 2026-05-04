@@ -144,12 +144,12 @@ export function buildMatchSnapshot(args: {
     ? (() => {
         const playerMap = new Map(args.players.map((p) => [String(p.playerId), p.displayName]));
         const actorName = args.latestEvent.actorPlayerId
-          ? playerMap.get(String(args.latestEvent.actorPlayerId))
+          ? playerMap.get(args.latestEvent.actorPlayerId)
           : null;
         const targetName =
           args.latestEvent.targetPlayerId &&
           args.latestEvent.targetPlayerId !== args.latestEvent.actorPlayerId
-            ? playerMap.get(String(args.latestEvent.targetPlayerId))
+            ? playerMap.get(args.latestEvent.targetPlayerId)
             : null;
         let playerNames: string | undefined;
         if (actorName && targetName && actorName !== targetName) {

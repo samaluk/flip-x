@@ -1,9 +1,9 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
-import type { Id } from "../convex/_generated/dataModel";
 import api from "./_generated/api";
 import { MutationCtx } from "./_generated/services";
+import { matchIdFromConfectWire, playerIdFromConfectWire } from "./lib/convex-id-bridge";
 import * as turnFns from "./turns";
 
 const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
@@ -11,7 +11,7 @@ const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
     const ctx = yield* MutationCtx;
     return yield* turnFns.takeTurnForSession(ctx, {
       ...args,
-      matchId: args.matchId as Id<"matches">,
+      matchId: matchIdFromConfectWire(args.matchId),
     });
   }).pipe(Effect.orDie),
 );
@@ -20,8 +20,8 @@ const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
     const ctx = yield* MutationCtx;
     return yield* turnFns.resolveActionForSession(ctx, {
       ...args,
-      matchId: args.matchId as Id<"matches">,
-      targetPlayerId: args.targetPlayerId as Id<"players">,
+      matchId: matchIdFromConfectWire(args.matchId),
+      targetPlayerId: playerIdFromConfectWire(args.targetPlayerId),
     });
   }).pipe(Effect.orDie),
 );

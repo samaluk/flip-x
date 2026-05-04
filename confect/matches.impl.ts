@@ -1,9 +1,9 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
-import type { Id } from "../convex/_generated/dataModel";
 import api from "./_generated/api";
 import { MutationCtx, QueryCtx } from "./_generated/services";
+import { matchIdFromConfectWire } from "./lib/convex-id-bridge";
 import { cloneDeterministicStart } from "./lib/deterministic_start";
 import { getMatchByCode, joinByCodeForSession } from "./match-lobby";
 import { createMatchForSession, joinMatchForSession } from "./match-setup-players";
@@ -39,7 +39,7 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
     const ctx = yield* MutationCtx;
     return yield* joinMatchForSession(ctx, {
       ...args,
-      matchId: args.matchId as Id<"matches">,
+      matchId: matchIdFromConfectWire(args.matchId),
     });
   }).pipe(Effect.orDie),
 );
@@ -48,7 +48,7 @@ const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
     const ctx = yield* MutationCtx;
     return yield* startMatchForSession(ctx, {
       ...args,
-      matchId: args.matchId as Id<"matches">,
+      matchId: matchIdFromConfectWire(args.matchId),
       deterministicStart: cloneDeterministicStart(args.deterministicStart),
     });
   }).pipe(Effect.orDie),
@@ -58,7 +58,7 @@ const updateMatchSettings = FunctionImpl.make(api, "matches", "updateMatchSettin
     const ctx = yield* MutationCtx;
     return yield* updateMatchSettingsForSession(ctx, {
       ...args,
-      matchId: args.matchId as Id<"matches">,
+      matchId: matchIdFromConfectWire(args.matchId),
     });
   }).pipe(Effect.orDie),
 );
