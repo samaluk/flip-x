@@ -90,8 +90,8 @@ importers:
         version: 1.4.0
     devDependencies:
       '@confect/cli':
-        specifier: 5.0.0
-        version: 5.0.0(8f38e282ae3afdeaeec2289a89e18eba)
+        specifier: 6.0.0
+        version: 6.0.0(8f38e282ae3afdeaeec2289a89e18eba)
       '@confect/test':
         specifier: 5.0.0
         version: 5.0.0(@confect/core@5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@5.0.0(53f1fe80e131b85075517a876ed47c99))(convex-test@0.0.50(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)
@@ -373,13 +373,13 @@ packages:
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
     hasBin: true
 
-  '@confect/cli@5.0.0':
-    resolution: {integrity: sha512-AvjE5ERWKAvtVKrfYJHzHvDAfMNHjnv2VSpi0fZLnEiWuBgU2MkBjftHNbCxnxfcFbU5L1KCyG62rnsqRJLAQg==}
+  '@confect/cli@6.0.0':
+    resolution: {integrity: sha512-I2J445lARkym+YMD/ys8A+u7ZUQuEmVOWJemnFeJmAXOXzbp3GoayObNmsrJ0W8UCBemlkzY8O0WGBVb+ExPBw==}
     engines: {node: '>=22', pnpm: '>=10'}
     hasBin: true
     peerDependencies:
-      '@confect/core': 5.0.0
-      '@confect/server': 5.0.0
+      '@confect/core': 6.0.0
+      '@confect/server': 6.0.0
       '@effect/platform': ^0.94.5
       effect: ^3.19.16
 
@@ -4831,7 +4831,7 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
-  '@confect/cli@5.0.0(8f38e282ae3afdeaeec2289a89e18eba)':
+  '@confect/cli@6.0.0(8f38e282ae3afdeaeec2289a89e18eba)':
     dependencies:
       '@confect/core': 5.0.0(patch_hash=9864a0a774f4c4596f2a907b306db8349a89f1db2d5643e7b04cadf9d8c47f62)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
       '@confect/server': 5.0.0(53f1fe80e131b85075517a876ed47c99)
