@@ -76,8 +76,9 @@ Useful development commands:
 
 ## Quality Checks
 
-- `pnpm lint`: run oxlint.
-- `pnpm lint:fix`: run oxlint autofixes.
+- `pnpm lint`: run oxlint with `oxlint-tsgolint` type-aware rules.
+- `pnpm lint:fix`: run oxlint autofixes with the same type-aware setup.
+- `OXC_LOG=debug pnpm lint`: diagnose slow or memory-heavy type-aware runs.
 - `pnpm format:check`: check formatting with oxfmt.
 - `pnpm format`: write formatting changes with oxfmt.
 - `pnpm i18n:check`: validate locale messages and usage.
