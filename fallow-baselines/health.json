@@ -11,11 +11,6 @@
         "count": 2
       }
     },
-    "confect/matches.ts": {
-      "crap_moderate": {
-        "count": 1
-      }
-    },
     "game/cards/action-content.tsx": {
       "complexity_moderate": {
         "count": 1
@@ -44,7 +39,7 @@
         "count": 1
       }
     },
-    "tests/confect/command-finalization.test.ts": {
+    "tests/confect/helpers.ts": {
       "crap_moderate": {
         "count": 1
       }

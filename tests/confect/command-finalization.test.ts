@@ -8,9 +8,9 @@ import { runGameCommand } from "@/game/application/run-command";
 import * as TestConfect from "./TestConfect";
 import {
   createStartedMatch,
+  driveMatchUntilCompleted,
   getSnapshotForAnySession,
   readRoundState,
-  runCommand,
 } from "./helpers";
 
 describe("Confect command runner finalization", () => {
@@ -32,50 +32,7 @@ describe("Confect command runner finalization", () => {
         throw new Error("Expected snapshot before finalization");
       }
 
-      let finalSnapshot = snapshot;
-
-      for (let guard = 0; guard < 50 && finalSnapshot.roundStatus !== "completed"; guard += 1) {
-        if (finalSnapshot.pendingAction) {
-          const sourceSession = sessions.find(
-            (session) =>
-              finalSnapshot.pendingAction?.sourcePlayerId ===
-              finalSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
-          );
-          if (!sourceSession) {
-            throw new Error("Expected a source session while completing the round");
-          }
-
-          finalSnapshot = yield* runCommand(matchId, sourceSession.sessionId, {
-            type: "RESOLVE_ACTION",
-            expectedVersion: finalSnapshot.version,
-            idempotencyKey: `runner-finalize-resolve-${guard}`,
-            targetPlayerId: finalSnapshot.pendingAction.eligibleTargetIds[0]!,
-          });
-          continue;
-        }
-
-        const activeSession = sessions.find(
-          (session) =>
-            finalSnapshot.activePlayerId ===
-            finalSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
-        );
-        if (!activeSession) {
-          break;
-        }
-
-        const flip3 = finalSnapshot.pendingFlip3;
-        const mustHitFlip3 =
-          flip3 !== null &&
-          flip3.cardsRemaining > 0 &&
-          flip3.targetPlayerId === finalSnapshot.activePlayerId;
-
-        finalSnapshot = yield* runCommand(matchId, activeSession.sessionId, {
-          type: "TAKE_TURN",
-          expectedVersion: finalSnapshot.version,
-          idempotencyKey: `runner-finalize-turn-${guard}`,
-          action: mustHitFlip3 ? "hit" : "stay",
-        });
-      }
+      const finalSnapshot = yield* driveMatchUntilCompleted(matchId, sessions, snapshot);
 
       const roundState = yield* readRoundState(matchId);
       const winningPlayers = roundState.players.filter((player) => player.hasWon);

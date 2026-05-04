@@ -154,6 +154,73 @@ export function runCommand(
   });
 }
 
+export function driveMatchUntilCompleted(
+  matchId: string,
+  sessions: SessionRecord[],
+  initialSnapshot: NonNullable<Snapshot>,
+) {
+  return Effect.gen(function* () {
+    let finalSnapshot = initialSnapshot;
+
+    for (let guard = 0; guard < 150 && finalSnapshot.status !== "completed"; guard += 1) {
+      if (
+        finalSnapshot.roundStatus === "completed" &&
+        finalSnapshot.status === "in_progress"
+      ) {
+        finalSnapshot = yield* runCommand(matchId, sessions[0]!.sessionId, {
+          type: "START_NEXT_ROUND",
+          expectedVersion: finalSnapshot.version,
+          idempotencyKey: `runner-finalize-next-round-${guard}`,
+        });
+        continue;
+      }
+
+      if (finalSnapshot.pendingAction) {
+        const sourceSession = sessions.find(
+          (session) =>
+            finalSnapshot.pendingAction?.sourcePlayerId ===
+            finalSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
+        );
+        if (!sourceSession) {
+          throw new Error("Expected a source session while completing the round");
+        }
+
+        finalSnapshot = yield* runCommand(matchId, sourceSession.sessionId, {
+          type: "RESOLVE_ACTION",
+          expectedVersion: finalSnapshot.version,
+          idempotencyKey: `runner-finalize-resolve-${guard}`,
+          targetPlayerId: finalSnapshot.pendingAction.eligibleTargetIds[0]!,
+        });
+        continue;
+      }
+
+      const activeSession = sessions.find(
+        (session) =>
+          finalSnapshot.activePlayerId ===
+          finalSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      );
+      if (!activeSession) {
+        break;
+      }
+
+      const flip3 = finalSnapshot.pendingFlip3;
+      const mustHitFlip3 =
+        flip3 !== null &&
+        flip3.cardsRemaining > 0 &&
+        flip3.targetPlayerId === finalSnapshot.activePlayerId;
+
+      finalSnapshot = yield* runCommand(matchId, activeSession.sessionId, {
+        type: "TAKE_TURN",
+        expectedVersion: finalSnapshot.version,
+        idempotencyKey: `runner-finalize-turn-${guard}`,
+        action: mustHitFlip3 ? "hit" : "stay",
+      });
+    }
+
+    return finalSnapshot;
+  });
+}
+
 export function readRoundState(matchId: string) {
   const RoundStateSummary = Schema.Struct({
     eventTypes: Schema.Array(Schema.String),
