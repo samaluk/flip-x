@@ -257,7 +257,7 @@ export function HomeClient() {
                   className="h-12 flex-1"
                   onClick={() => {
                     setHasOpenedJoinFlow(false);
-                    setJoinCode(null);
+                    void setJoinCode(null);
                   }}
                 >
                   {t("cancel")}

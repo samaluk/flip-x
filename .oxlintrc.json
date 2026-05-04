@@ -10,6 +10,9 @@
     "public/**",
     "shared/ui/**"
   ],
+  "options": {
+    "typeAware": true
+  },
   "categories": {
     "correctness": "error",
     "suspicious": "error"
@@ -20,6 +23,16 @@
     "react/react-in-jsx-scope": "off",
     // Convex documents use `_id`; Effect tagged errors use `_tag`.
     "no-underscore-dangle": ["error", { "allow": ["_id", "_tag"] }],
+    // Type-aware rollout: keep the noisiest strict rules visible but non-blocking.
+    "typescript/no-unsafe-type-assertion": "warn",
+    "typescript/no-unnecessary-type-assertion": "warn",
+    "typescript/no-unnecessary-type-conversion": "warn",
+    "typescript/consistent-return": "warn",
+    "typescript/no-unnecessary-type-arguments": "warn",
+    "typescript/no-unnecessary-type-parameters": "warn",
+    "typescript/no-redundant-type-constituents": "warn",
+    "typescript/no-misused-promises": "warn",
+    "typescript/no-floating-promises": "error",
     // Correctness
     "tailwindcss/no-unknown-classes": "error",
     "tailwindcss/no-duplicate-classes": "error",
