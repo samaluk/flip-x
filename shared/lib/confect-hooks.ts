@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @typescript-eslint/no-unsafe-type-assertion -- merges SessionlessArgs with sessionId into Confect Ref.Args; types are validated by Ref at codegen */
+
 import { Ref } from "@confect/core";
 import {
   type ConfectMutation,

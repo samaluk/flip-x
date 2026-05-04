@@ -1,3 +1,4 @@
+import type { Id } from "../../convex/_generated/dataModel";
 import type { ActionKind, ModifierCard, NumberCard } from "./card-types";
 import { scoreRound } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
@@ -8,16 +9,7 @@ import {
   type GameSettings,
   type GameSettingsSnapshot,
 } from "./game-settings";
-
-type LatestRoundEvent = {
-  [TEvent in RoundEvent as TEvent["eventType"]]: {
-    type: TEvent["eventType"];
-    payload: TEvent["payload"];
-    actorPlayerId?: TEvent["actorPlayerId"];
-    targetPlayerId?: TEvent["targetPlayerId"];
-    playerNames?: string;
-  };
-}[RoundEvent["eventType"]];
+import { toLatestRoundEvent, type LatestRoundEvent } from "./latest-round-event";
 
 export type RoundHistoryEntry = {
   roundNumber: number;
@@ -33,7 +25,7 @@ export type RoundHistoryEntry = {
 };
 
 export type MatchSnapshot = {
-  matchId: string;
+  matchId: Id<"matches">;
   lobbyCode?: string;
   isHost?: boolean;
   status: "setup" | "in_progress" | "completed";
@@ -42,7 +34,7 @@ export type MatchSnapshot = {
   settings: GameSettingsSnapshot;
   currentRoundNumber: number;
   dealerSeat: number;
-  viewerPlayerId: string | null;
+  viewerPlayerId: Id<"players"> | null;
   activePlayerId: string | null;
   pendingAction: PendingAction | null;
   pendingFlip3: {
@@ -54,7 +46,7 @@ export type MatchSnapshot = {
   roundStatus: RoundRuntime["phase"] | null;
   endedBy: RoundRuntime["endedBy"] | null;
   players: Array<{
-    playerId: string;
+    playerId: Id<"players">;
     displayName: string;
     colorId?: string;
     seatIndex: number;
@@ -73,37 +65,24 @@ export type MatchSnapshot = {
   roundHistory: RoundHistoryEntry[];
   optimisticTurn?: {
     action: "hit" | "stay";
-    playerId: string;
+    playerId: Id<"players">;
   };
 };
 
-function toLatestRoundEvent<TEvent extends RoundEvent>(
-  event: TEvent,
-  playerNames: string | undefined,
-): LatestRoundEvent {
-  return {
-    actorPlayerId: event.actorPlayerId,
-    targetPlayerId: event.targetPlayerId,
-    playerNames,
-    type: event.eventType,
-    payload: event.payload,
-  } as LatestRoundEvent;
-}
-
 export function buildMatchSnapshot(args: {
-  matchId: string;
+  matchId: Id<"matches">;
   status: MatchSnapshot["status"];
   version: number;
   lobbyCode?: string;
-  hostPlayerId?: string | null;
+  hostPlayerId?: Id<"players"> | null;
   targetScore: number;
   settings?: GameSettings;
   currentRoundNumber: number;
   dealerSeat: number;
-  viewerPlayerId: string | null;
+  viewerPlayerId: Id<"players"> | null;
   round: RoundRuntime | null;
   players: Array<{
-    playerId: string;
+    playerId: Id<"players">;
     displayName: string;
     colorId?: string;
     seatIndex: number;
@@ -163,14 +142,14 @@ export function buildMatchSnapshot(args: {
 
   const latestEvent = args.latestEvent
     ? (() => {
-        const playerMap = new Map(args.players.map((p) => [p.playerId, p.displayName]));
+        const playerMap = new Map(args.players.map((p) => [String(p.playerId), p.displayName]));
         const actorName = args.latestEvent.actorPlayerId
-          ? playerMap.get(args.latestEvent.actorPlayerId)
+          ? playerMap.get(String(args.latestEvent.actorPlayerId))
           : null;
         const targetName =
           args.latestEvent.targetPlayerId &&
           args.latestEvent.targetPlayerId !== args.latestEvent.actorPlayerId
-            ? playerMap.get(args.latestEvent.targetPlayerId)
+            ? playerMap.get(String(args.latestEvent.targetPlayerId))
             : null;
         let playerNames: string | undefined;
         if (actorName && targetName && actorName !== targetName) {

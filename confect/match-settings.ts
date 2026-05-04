@@ -24,10 +24,7 @@ import {
   DatabaseWriter as DatabaseWriterService,
 } from "./_generated/services";
 
-function requireSetupMatchForSettings(
-  match: Doc<"matches"> | null,
-  matchId: Id<"matches">,
-) {
+function requireSetupMatchForSettings(match: Doc<"matches"> | null, matchId: Id<"matches">) {
   return Effect.gen(function* () {
     if (!match) {
       return yield* matchNotFound({ matchId: String(matchId) });

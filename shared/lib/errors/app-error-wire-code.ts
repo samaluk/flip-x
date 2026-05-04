@@ -31,6 +31,14 @@ const CANONICAL_CODES = new Set<string>(Object.values(APP_ERROR_WIRE_CODE));
 type AppErrorWireCode = (typeof APP_ERROR_WIRE_CODE)[keyof typeof APP_ERROR_WIRE_CODE];
 type ErrorCodeTranslator = (key: AppErrorWireCode) => string;
 
+function isWireCodeMessage(message: string): message is AppErrorWireCode {
+  return CANONICAL_CODES.has(message);
+}
+
+function isLegacyErrorTag(message: string): message is keyof typeof APP_ERROR_WIRE_CODE {
+  return Object.prototype.hasOwnProperty.call(APP_ERROR_WIRE_CODE, message);
+}
+
 /**
  * Maps Convex/client error strings to localized copy. Accepts canonical wire codes
  * (`MATCH_NOT_FOUND`) and legacy `_tag` names (`MatchNotFound`) from older payloads.
@@ -40,11 +48,11 @@ export function translateConvexError(
   t: ErrorCodeTranslator,
   translateGeneric: (message: string) => string,
 ): string {
-  if (CANONICAL_CODES.has(message)) {
-    return t(message as AppErrorWireCode);
+  if (isWireCodeMessage(message)) {
+    return t(message);
   }
-  if (message in APP_ERROR_WIRE_CODE) {
-    return t(APP_ERROR_WIRE_CODE[message as keyof typeof APP_ERROR_WIRE_CODE]);
+  if (isLegacyErrorTag(message)) {
+    return t(APP_ERROR_WIRE_CODE[message]);
   }
   return translateGeneric(message);
 }

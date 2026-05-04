@@ -204,7 +204,7 @@ export function HomeClient() {
 
           {!isJoinMode ? (
             <div className="space-y-6">
-              <form onSubmit={handleCreate}>
+              <form onSubmit={(event) => void handleCreate(event)}>
                 <Button
                   type="submit"
                   size="lg"
@@ -234,7 +234,7 @@ export function HomeClient() {
               </Button>
             </div>
           ) : (
-            <form onSubmit={handleJoin} className="space-y-4">
+            <form onSubmit={(event) => void handleJoin(event)} className="space-y-4">
               <div className="flex flex-col gap-2">
                 <label htmlFor="joinCode" className="text-sm font-medium text-foreground">
                   {tLobby("lobbyCode")}
@@ -242,7 +242,9 @@ export function HomeClient() {
                 <Input
                   id="joinCode"
                   value={joinCode ?? ""}
-                  onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
+                  onChange={(e) => {
+                    void setJoinCode(e.target.value.toUpperCase());
+                  }}
                   placeholder={tLobby("codePlaceholder")}
                   maxLength={4}
                   className="h-12 text-center font-mono text-2xl tracking-widest uppercase"

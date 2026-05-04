@@ -15,6 +15,7 @@ import {
 } from "@/game/logic/game-settings";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
+import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import { translateConvexErrorToast } from "@/shared/lib/convex-error";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import {
@@ -32,8 +33,7 @@ type GameSettingsPanelProps = {
 export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const t = useTranslations("GameSettings");
   const tErrors = useTranslations("Errors");
-  const tLoose = (key: string, values?: Record<string, string | number>) =>
-    t(key as never, values as never);
+  const tLoose = toLooseTranslate(t);
   const updateMatchSettings = useSessionConfectMutation(refs.public.matches.updateMatchSettings);
   const [isUpdating, setIsUpdating] = useState(false);
   const settings = snapshot.settings;
@@ -108,7 +108,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     type="button"
                     variant={isActive ? "default" : "outline"}
                     disabled={isUpdating}
-                    onClick={() => updateSettings(preset.settings)}
+                    onClick={() => void updateSettings(preset.settings)}
                     className={cn(
                       "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-left whitespace-normal",
                       isRecommended && !isActive ? "border-primary/70" : "",
@@ -140,14 +140,14 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                       value={settings.targetScore}
                       values={TARGET_SCORE_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(targetScore) => updateSettings({ targetScore })}
+                      onChange={(targetScore) => void updateSettings({ targetScore })}
                     />
                     <SettingsSelect
                       label={t("maxNumberCard")}
                       value={settings.maxNumberCardValue}
                       values={MAX_NUMBER_CARD_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(maxNumberCardValue) => updateSettings({ maxNumberCardValue })}
+                      onChange={(maxNumberCardValue) => void updateSettings({ maxNumberCardValue })}
                     />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">

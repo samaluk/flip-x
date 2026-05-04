@@ -33,7 +33,7 @@ export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
       className="surface-elevated flex items-center gap-3 rounded-xl px-5 py-3"
     >
       <span className="font-mono text-3xl font-bold tracking-widest text-foreground">{code}</span>
-      <Button variant="outline" size="sm" onClick={copyCode} className="gap-2">
+      <Button variant="outline" size="sm" onClick={() => void copyCode()} className="gap-2">
         {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
         {copied ? t("copied") : t("copy")}
       </Button>

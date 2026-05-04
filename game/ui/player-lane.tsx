@@ -12,6 +12,7 @@ import {
   useState,
 } from "react";
 
+import type { Id } from "@/convex/_generated/dataModel";
 import { Flip7Card } from "@/game/ui/flip7-card";
 import { Badge } from "@/shared/ui/badge";
 import type { MatchSnapshot } from "@/game/logic/view-models";
@@ -97,7 +98,7 @@ type PlayerLaneProps = {
   /** Flip 3 cards remaining to draw */
   flip3Remaining?: number | null;
   /** Callback when player is clicked as target */
-  onSelectTarget?: (playerId: string) => void;
+  onSelectTarget?: (playerId: Id<"players">) => void;
 };
 
 type PlayerLaneSidebarProps = {
@@ -363,41 +364,47 @@ export const PlayerLane = memo(function PlayerLane({
   const dealingIdSet = useMemo(() => new Set(dealingIds), [dealingIds]);
 
   useEffect(() => {
+    let clear: (() => void) | undefined;
     if (!initialCardSyncDone.current) {
       initialCardSyncDone.current = true;
       previousCardIds.current = cardIds;
-      return;
+    } else {
+      const newIds = cardIds.filter((id) => !previousCardIds.current.includes(id));
+      if (newIds.length > 0) {
+        setDealingIds(newIds);
+        const timeout = window.setTimeout(() => setDealingIds([]), 750);
+        previousCardIds.current = cardIds;
+        clear = () => {
+          window.clearTimeout(timeout);
+        };
+      } else {
+        previousCardIds.current = cardIds;
+      }
     }
-
-    const newIds = cardIds.filter((id) => !previousCardIds.current.includes(id));
-
-    if (newIds.length > 0) {
-      setDealingIds(newIds);
-      const timeout = window.setTimeout(() => setDealingIds([]), 750);
-      previousCardIds.current = cardIds;
-      return () => window.clearTimeout(timeout);
-    }
-
-    previousCardIds.current = cardIds;
+    return () => {
+      clear?.();
+    };
   }, [cardIds]);
 
   useEffect(() => {
-    if (previousStatus.current === displayStatus) {
-      return;
+    let clear: (() => void) | undefined;
+    if (previousStatus.current !== displayStatus) {
+      if (displayStatus === "busted") {
+        setStateAnimation("bust");
+      } else if (displayStatus === "stayed" || displayStatus === "frozen") {
+        setStateAnimation("stay");
+      }
+      previousStatus.current = displayStatus;
+      if (displayStatus === "busted" || displayStatus === "stayed" || displayStatus === "frozen") {
+        const timeout = window.setTimeout(() => setStateAnimation(null), 900);
+        clear = () => {
+          window.clearTimeout(timeout);
+        };
+      }
     }
-
-    if (displayStatus === "busted") {
-      setStateAnimation("bust");
-    } else if (displayStatus === "stayed" || displayStatus === "frozen") {
-      setStateAnimation("stay");
-    }
-
-    previousStatus.current = displayStatus;
-
-    if (displayStatus === "busted" || displayStatus === "stayed" || displayStatus === "frozen") {
-      const timeout = window.setTimeout(() => setStateAnimation(null), 900);
-      return () => window.clearTimeout(timeout);
-    }
+    return () => {
+      clear?.();
+    };
   }, [displayStatus]);
 
   const cardStateAnimation = stateAnimation ?? poseFromStatus(displayStatus);

@@ -3,15 +3,10 @@ import { Effect, Option } from "effect";
 import type { Doc } from "../convex/_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";
 import { generateLobbyCode } from "../shared/lib/lobby-code";
-import {
-  lobbyCodeUnavailable,
-  lobbyNotFound,
-} from "../shared/lib/errors/domain";
+import { lobbyCodeUnavailable, lobbyNotFound } from "../shared/lib/errors/domain";
 import { enforceRateLimit } from "./lib/rate_limiter";
 import { getPlayersByMatchWithReader } from "./lib/store";
-import {
-  DatabaseReader as DatabaseReaderService,
-} from "./_generated/services";
+import { DatabaseReader as DatabaseReaderService } from "./_generated/services";
 
 type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
 
@@ -109,7 +104,7 @@ export function joinByCodeForSession(
   return Effect.gen(function* () {
     const reader = yield* DatabaseReaderService;
 
-    yield* enforceRateLimit(ctx, "joinByCode", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "joinByCode", args.sessionId);
 
     const normalized = args.lobbyCode.trim().toUpperCase();
     if (normalized.length !== 4) {

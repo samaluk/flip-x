@@ -4,6 +4,7 @@ import { BanIcon, HandIcon, SparklesIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import { Button } from "@/shared/ui/button";
+import { assertNever } from "@/shared/lib/utils";
 import type { Id } from "@/convex/_generated/dataModel";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
@@ -173,6 +174,9 @@ export function TurnControls({
           {statusHint}
         </div>
       );
+    }
+    default: {
+      return assertNever(phase);
     }
   }
 }

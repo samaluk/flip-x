@@ -1,6 +1,8 @@
 import { Presence } from "@convex-dev/presence";
 import { Effect } from "effect";
 
+/* eslint-disable @typescript-eslint/no-unsafe-type-assertion -- admin cleanup uses dynamic table/id wiring against Convex typed indexes */
+
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import type { ActionCtx } from "../convex/_generated/server";
@@ -90,9 +92,7 @@ function collectPlayerSessionIdsByPlayer(reader: DatabaseReader, playerId: strin
     .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
 }
 
-export function listMatchIds(
-  reader: DatabaseReader,
-): Effect.Effect<readonly string[], unknown, never> {
+export function listMatchIds(reader: DatabaseReader): Effect.Effect<readonly string[], unknown> {
   return reader
     .table("matches")
     .index("by_creation_time")
@@ -100,14 +100,12 @@ export function listMatchIds(
     .pipe(Effect.map((matches) => matches.map((match) => String(match._id))));
 }
 
-export function listSessionIds(
-  reader: DatabaseReader,
-): Effect.Effect<readonly string[], unknown, never> {
+export function listSessionIds(reader: DatabaseReader): Effect.Effect<readonly string[], unknown> {
   return reader
     .table("playerSessions")
     .index("by_creation_time")
     .collect()
-    .pipe(Effect.map((sessions) => sessions.map((session) => String(session.sessionId))));
+    .pipe(Effect.map((sessions) => sessions.map((session) => session.sessionId)));
 }
 
 export function resolveDependents(
@@ -117,21 +115,17 @@ export function resolveDependents(
     parentTable: string;
     parentId: string;
   },
-): Effect.Effect<readonly string[], unknown, never> {
+): Effect.Effect<readonly string[], unknown> {
   const resolver = dependentResolvers[`${args.sourceTable}:${args.parentTable}`];
   return resolver ? resolver(reader, args.parentId) : unsupportedRelationship();
 }
 
-function deleteAllFromTable<TableName extends AppTableName>(
-  reader: DatabaseReader,
-  writer: DatabaseWriter,
-  table: TableName,
-) {
+function deleteAllFromTable(reader: DatabaseReader, writer: DatabaseWriter, table: AppTableName) {
   return Effect.gen(function* () {
     console.log(`Removing all documents from table ${table}`);
     const docs = yield* reader.table(table).index("by_creation_time").collect();
     for (const doc of docs) {
-      yield* writer.table(table).delete(doc._id as Id<TableName>);
+      yield* writer.table(table).delete(doc._id);
     }
     return docs.length;
   });
@@ -144,7 +138,7 @@ export function deleteDocument(
     table: string;
     id?: string;
   },
-): Effect.Effect<number, unknown, never> {
+): Effect.Effect<number, unknown> {
   return Effect.gen(function* () {
     if (!isAppTableName(args.table)) {
       return yield* unsupportedTable({ table: args.table, id: args.id ?? "" });
@@ -254,8 +248,7 @@ export function runClearAllAppData(deps: AdminCleanupDeps): Effect.Effect<
       rateLimitKeysReset: number;
     };
   },
-  unknown,
-  never
+  unknown
 > {
   return Effect.gen(function* () {
     const sessionIds = yield* deps.listSessionIds;
@@ -274,7 +267,7 @@ export function runClearAllAppData(deps: AdminCleanupDeps): Effect.Effect<
 
 const dependentResolvers: Record<
   string,
-  (reader: DatabaseReader, parentId: string) => Effect.Effect<readonly string[], unknown, never>
+  (reader: DatabaseReader, parentId: string) => Effect.Effect<readonly string[], unknown>
 > = {
   "players:matches": (reader, parentId) => collectDependentIdsByMatch(reader, "players", parentId),
   "rounds:matches": (reader, parentId) => collectDependentIdsByMatch(reader, "rounds", parentId),

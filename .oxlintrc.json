@@ -60,5 +60,14 @@
     "tailwindcss/no-hardcoded-colors": "error",
     "tailwindcss/no-unnecessary-arbitrary-value": "error",
     "i18next/no-literal-string": ["error", { "markupOnly": true }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.ts"],
+      "rules": {
+        "typescript/no-unsafe-type-assertion": "off",
+        "typescript/no-unnecessary-type-assertion": "off"
+      }
+    }
+  ]
 }

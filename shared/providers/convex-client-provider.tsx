@@ -15,6 +15,7 @@ function useLocalSessionStorage(key: string, initialValue: SessionId | undefined
 
     const existing = window.localStorage.getItem(key);
     if (existing) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- SessionId is a string brand; value comes from our own localStorage key
       return existing as SessionId;
     }
 

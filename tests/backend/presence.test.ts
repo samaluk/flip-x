@@ -25,7 +25,7 @@ describe("Convex presence", () => {
     const matchId = created.matchId as Id<"matches">;
 
     const heartbeat = await client.mutation(api.presence.heartbeat, {
-      roomId: String(matchId),
+      roomId: matchId,
       userId: String(sessionId),
       sessionId: "tab-host",
       interval: 5_000,
@@ -57,7 +57,7 @@ describe("Convex presence", () => {
     });
 
     const heartbeat = await client.mutation(api.presence.heartbeat, {
-      roomId: String(created.matchId),
+      roomId: created.matchId,
       userId: String(sessionId),
       sessionId: "tab-host",
       interval: 5_000,
@@ -84,13 +84,13 @@ describe("Convex presence", () => {
     const matchId = created.matchId as Id<"matches">;
 
     const firstHeartbeat = await client.mutation(api.presence.heartbeat, {
-      roomId: String(matchId),
+      roomId: matchId,
       userId: String(sessionId),
       sessionId: "tab-host-a",
       interval: 5_000,
     });
     await client.mutation(api.presence.heartbeat, {
-      roomId: String(matchId),
+      roomId: matchId,
       userId: String(sessionId),
       sessionId: "tab-host-b",
       interval: 5_000,

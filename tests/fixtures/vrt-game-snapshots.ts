@@ -1,8 +1,9 @@
 import type { ActionKind, ModifierCard, NumberCard } from "@/game/logic/card-types";
 import { scoreRound } from "@/game/logic/scoring";
 import type { MatchSnapshot } from "@/game/logic/view-models";
+import type { Id } from "@/convex/_generated/dataModel";
 
-const MATCH_ID = "jz7abcd1234567890";
+const MATCH_ID = "jz7abcd1234567890" as Id<"matches">;
 const DEFAULT_SETTINGS = {
   targetScore: 200,
   maxNumberCardValue: 12,
@@ -54,7 +55,7 @@ type PlayerArgs = {
 function playerRow(args: PlayerArgs): MatchSnapshot["players"][number] {
   const hasFlip7 = args.numberCards.length >= 7;
   return {
-    playerId: args.playerId,
+    playerId: args.playerId as Id<"players">,
     displayName: args.displayName,
     seatIndex: args.seatIndex,
     totalScore: args.totalScore,
@@ -74,9 +75,9 @@ function roundHistory(entries: MatchSnapshot["roundHistory"]): MatchSnapshot["ro
   return entries;
 }
 
-const RILEY = "p_riley_viewer";
-const SAM = "p_sam_opponent";
-const JORDAN = "p_jordan_opponent";
+const RILEY = "p_riley_viewer" as Id<"players">;
+const SAM = "p_sam_opponent" as Id<"players">;
+const JORDAN = "p_jordan_opponent" as Id<"players">;
 
 /** Completed rounds 1–2 shared by mid-round vs round-complete VRT snapshots. */
 const VRT_ROUND_HISTORY_COMPLETED_FIRST_TWO: MatchSnapshot["roundHistory"] = [

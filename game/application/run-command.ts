@@ -14,6 +14,7 @@ import {
   playerNotJoined,
   staleGameState,
 } from "../../shared/lib/errors/domain";
+import { assertNever } from "../../shared/lib/utils";
 import {
   continueRound,
   createPlayerRoundStates,
@@ -299,6 +300,8 @@ function resolveCommandToTransition(
       return handleTakeTurnCommand(ctx, input.matchId, cmd);
     case "RESOLVE_ACTION":
       return handleResolveActionCommand(ctx, input.matchId, cmd);
+    default:
+      return assertNever(cmd);
   }
 }
 

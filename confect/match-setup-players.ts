@@ -63,6 +63,7 @@ function assertMatchInSetup(reader: DatabaseReader, matchId: Id<"matches">) {
     if (!match || match.status !== "setup") {
       return yield* matchNotFound({ matchId: String(matchId) });
     }
+    return undefined;
   });
 }
 
@@ -97,7 +98,12 @@ function prepareJoinPlayersState(
     const existingViewerPlayerId = yield* getViewerPlayerIdWithReader(reader, matchId, sessionId);
     const takenColorIds = takenColorIdsExcludingViewer(players, existingViewerPlayerId);
     const playerColorId = yield* normalizePlayerColorId(requestedColorId, takenColorIds);
-    return { players, existingViewerPlayerId, playerName, playerColorId } satisfies PreparedJoinPlayers;
+    return {
+      players,
+      existingViewerPlayerId,
+      playerName,
+      playerColorId,
+    } satisfies PreparedJoinPlayers;
   });
 }
 
@@ -175,7 +181,7 @@ export function createMatchForSession(
     const reader = yield* DatabaseReaderService;
     const writer = yield* DatabaseWriterService;
 
-    yield* enforceRateLimit(ctx, "createMatch", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "createMatch", args.sessionId);
 
     const hostName = args.hostName.trim();
 
@@ -225,7 +231,7 @@ export function joinMatchForSession(
     const reader = yield* DatabaseReaderService;
     const writer = yield* DatabaseWriterService;
 
-    yield* enforceRateLimit(ctx, "joinMatch", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "joinMatch", args.sessionId);
 
     const prepared = yield* prepareJoinPlayersState(
       reader,

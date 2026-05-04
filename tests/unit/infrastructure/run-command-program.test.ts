@@ -11,10 +11,23 @@ import {
   type RunGameCommandServices,
 } from "@/game/application/services";
 import { MatchNotFound, StaleGameState } from "@/shared/lib/errors/domain";
+import type { Id } from "@/convex/_generated/dataModel";
 
 type RunGameCommandInput = Parameters<typeof runGameCommandProgram>[0];
 
-const matchId = "match-1" as never;
+type TestCachedSnapshot = {
+  matchId: string;
+  status: string;
+  version: number;
+};
+
+const matchId = "match-1" as Id<"matches">;
+
+const snapshot: TestCachedSnapshot = {
+  matchId: "match-1",
+  status: "setup",
+  version: 1,
+};
 
 const input: RunGameCommandInput = {
   matchId,
@@ -26,19 +39,13 @@ const input: RunGameCommandInput = {
   },
 };
 
-const snapshot = {
-  matchId: "match-1",
-  status: "setup",
-  version: 1,
-} as never;
-
 function makeLayer(overrides: {
   load?: () => Effect.Effect<unknown>;
-  cached?: typeof snapshot | null;
+  cached?: TestCachedSnapshot | null;
   match?: Record<string, unknown> | null;
   onSave?: (input: unknown) => void;
   onPut?: (input: unknown, nowMillis: number) => void;
-  builtSnapshot?: typeof snapshot | null;
+  builtSnapshot?: TestCachedSnapshot | null;
   nowMillis?: number;
 }) {
   const aggregate = Layer.succeed(MatchAggregateStore, {

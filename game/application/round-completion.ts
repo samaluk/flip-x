@@ -41,7 +41,7 @@ function selectUniqueWinner(
   const highScore = Math.max(...contenders.map((player) => player.totalScore));
   const winners = contenders.filter((player) => player.totalScore === highScore);
 
-  return winners.length === 1 ? winners[0]! : null;
+  return winners.length === 1 ? winners[0] : null;
 }
 
 export function buildRoundCompletionOutcome(input: {

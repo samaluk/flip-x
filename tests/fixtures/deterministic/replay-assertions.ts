@@ -1,5 +1,7 @@
 import { expect } from "vitest";
 
+import { assertNever } from "@/shared/lib/utils";
+
 import type { CanonicalReplaySnapshot, ReplayExpectedState, ReplayResult } from "./scenario-types";
 import type { ConfectMatchSnapshot } from "./confect-match-snapshot";
 
@@ -109,6 +111,8 @@ export function describeReplayResult(result: ReplayResult) {
       return `${result.scenarioName} invalid after ${result.stepsConsumed} steps: ${result.validationError}`;
     case "diverged":
       return `${result.scenarioName} diverged at step ${result.divergence.stepNumber}: ${result.divergence.message}`;
+    default:
+      return assertNever(result);
   }
 }
 

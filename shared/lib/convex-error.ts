@@ -24,6 +24,7 @@ import {
 } from "./errors/domain";
 
 export function translateConvexErrorToast(message: string, tErrors: unknown): string {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- next-intl translator from useTranslations("Errors")
   const t = tErrors as (key: string, values?: { message: string }) => string;
   return translateConvexError(
     message,

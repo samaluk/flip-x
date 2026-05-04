@@ -24,7 +24,7 @@ type TakeTurnArgs = {
 function canOptimisticallyMarkTurn(
   snapshot: MatchSnapshot | null | undefined,
   expectedVersion: number,
-): snapshot is MatchSnapshot & { viewerPlayerId: string } {
+): snapshot is MatchSnapshot & { viewerPlayerId: Id<"players"> } {
   return (
     !!snapshot &&
     snapshot.version === expectedVersion &&
@@ -65,7 +65,7 @@ const optimisticTakeTurn =
 
 export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const [isPending, startTransition] = useTransition();
-  const matchId = snapshot.matchId as Id<"matches">;
+  const matchId = snapshot.matchId;
   const takeTurn = useSessionConfectMutation(refs.public.turns.takeTurn).withOptimisticUpdate(
     optimisticTakeTurn(matchId),
   );

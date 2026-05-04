@@ -21,6 +21,7 @@ import { RoundHistoryTable } from "@/game/ui/round-history-table";
 import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
 import { cn } from "@/shared/lib/utils";
+import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import {
   Accordion,
   AccordionContent,
@@ -103,10 +104,8 @@ export function GameTableView({
     (player) => player.playerId === snapshot.activePlayerId,
   );
   const { viewer, opponents } = partitionPlayers(snapshot);
-  const tEventsLoose = (key: string, values?: Record<string, string | number>) =>
-    tEvents(key as never, values as never);
-  const tCardsLoose = (key: string, values?: Record<string, string | number>) =>
-    tCards(key as never, values as never);
+  const tEventsLoose = toLooseTranslate(tEvents);
+  const tCardsLoose = toLooseTranslate(tCards);
 
   const latestBody = snapshot.latestEvent
     ? formatLatestRoundEventBody(snapshot.latestEvent, tEventsLoose, tCardsLoose)
@@ -408,7 +407,7 @@ function MatchPlayerLane({
   const pendingAction = snapshot.pendingAction;
   const isTargetable =
     viewerIsSource && !!pendingAction && pendingAction.eligibleTargetIds.includes(player.playerId);
-  const isSelfTargeting = !!viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
+  const isSelfTargeting = viewerCanTargetSelf && player.playerId === snapshot.viewerPlayerId;
   const incomingActionKindVal = incomingActionKindForPlayer(pendingAction, player.playerId);
   const flip3RemainingVal =
     snapshot.pendingFlip3 && snapshot.pendingFlip3.targetPlayerId === player.playerId
@@ -421,15 +420,13 @@ function MatchPlayerLane({
       isActive={snapshot.activePlayerId === player.playerId}
       isViewer={snapshot.viewerPlayerId === player.playerId}
       isDealer={player.seatIndex === snapshot.dealerSeat}
-      isActionSource={!!viewerIsSource}
+      isActionSource={viewerIsSource}
       isTargetable={isTargetable}
       isSelfTargeting={isSelfTargeting}
       incomingActionKind={incomingActionKindVal}
       flip3Remaining={flip3RemainingVal}
       onSelectTarget={
-        viewerIsSource
-          ? (playerId: string) => onResolveAction(playerId as Id<"players">)
-          : undefined
+        viewerIsSource ? (playerId: Id<"players">) => onResolveAction(playerId) : undefined
       }
       disableCardFlip3d={disableCardFlip3d}
       compact={compact}

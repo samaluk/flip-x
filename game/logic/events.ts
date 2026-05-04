@@ -99,11 +99,15 @@ function isModifierValue(value: unknown): value is ModifierCard["modifierValue"]
   return value === "x2" || typeof value === "number";
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
 function payloadRecord(payload: unknown): Record<string, unknown> {
-  if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+  if (!isRecord(payload)) {
     throw new Error("Round event payload must be an object");
   }
-  return payload as Record<string, unknown>;
+  return payload;
 }
 
 function decodeCardPayload(payload: unknown): CardEventPayload {

@@ -20,5 +20,6 @@ export const mutationWithSession = customMutation(mutation, {
 });
 
 export function toSessionId(sessionId: string): SessionId {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- SessionId is a string brand from convex-helpers
   return sessionId as SessionId;
 }

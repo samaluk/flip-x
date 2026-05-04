@@ -7,6 +7,7 @@ import { type SubmitEvent, useCallback, useEffect, useMemo, useState } from "rea
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
+import type { Id } from "@/convex/_generated/dataModel";
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
 import { GameTable } from "@/game/screens/game-table";
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
@@ -22,7 +23,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Skeleton } from "@/shared/ui/skeleton";
-import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
 import { translateConvexErrorToast } from "@/shared/lib/convex-error";
 import {
@@ -32,19 +32,20 @@ import {
 
 const COLOR_STORAGE_KEY = "flip7_player_color";
 
-export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
+export function GamePageClient({ matchId }: { matchId: string }) {
+  const matchIdConvex = matchId as Id<"matches">;
   const [sessionId] = useSessionId();
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
   const [colorId, setColorId] = useState<PlayerColorId>("cyan");
   const [isJoining, setIsJoining] = useState(false);
-  const snapshot = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, { matchId });
+  const snapshot = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
+    matchId: matchIdConvex,
+  });
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
-  const viewerPlayerId = snapshot?.viewerPlayerId
-    ? (snapshot.viewerPlayerId as Id<"players">)
-    : undefined;
-  const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId);
+  const viewerPlayerId = snapshot?.viewerPlayerId;
+  const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId ?? undefined);
   const usedColorIds = useMemo(
     () =>
       snapshot?.players
@@ -81,7 +82,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
       setIsJoining(true);
       try {
         await joinMatch({
-          matchId,
+          matchId: matchIdConvex,
           playerName: trimmedName,
           playerColorId: colorId,
         });
@@ -94,7 +95,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
         setIsJoining(false);
       }
     },
-    [colorId, joinMatch, matchId, playerName, sessionId, t, tErrors],
+    [colorId, joinMatch, matchIdConvex, playerName, sessionId, t, tErrors],
   );
 
   const copyInviteLink = useCallback(async () => {
@@ -146,7 +147,7 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
     ...snapshot,
     players: snapshot.players.map((player) => ({
       ...player,
-      isOnline: onlinePlayerIds?.includes(player.playerId as Id<"players">) ?? false,
+      isOnline: onlinePlayerIds?.includes(player.playerId) ?? false,
     })),
   };
 
@@ -170,14 +171,14 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
               />
             ) : null}
           </div>
-          <Button variant="outline" size="sm" onClick={copyInviteLink}>
+          <Button variant="outline" size="sm" onClick={() => void copyInviteLink()}>
             <LinkIcon />
             <span className="hidden sm:inline">{t("copyInvite")}</span>
           </Button>
         </div>
       ) : (
         <div className="flex justify-end pe-24 sm:pe-28">
-          <Button variant="ghost" size="sm" onClick={copyInviteLink}>
+          <Button variant="ghost" size="sm" onClick={() => void copyInviteLink()}>
             <LinkIcon />
             <span className="hidden sm:inline">{t("copyInvite")}</span>
           </Button>
@@ -190,7 +191,10 @@ export function GamePageClient({ matchId }: { matchId: Id<"matches"> }) {
             {t("joinTitle")}
           </h2>
           <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("joinSubtitle")}</p>
-          <form onSubmit={handleJoin} className="flex flex-col gap-4 sm:max-w-md">
+          <form
+            onSubmit={(event) => void handleJoin(event)}
+            className="flex flex-col gap-4 sm:max-w-md"
+          >
             <div className="flex gap-3">
               <Input
                 value={playerName}

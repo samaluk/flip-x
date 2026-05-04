@@ -163,10 +163,7 @@ export function driveMatchUntilCompleted(
     let finalSnapshot = initialSnapshot;
 
     for (let guard = 0; guard < 150 && finalSnapshot.status !== "completed"; guard += 1) {
-      if (
-        finalSnapshot.roundStatus === "completed" &&
-        finalSnapshot.status === "in_progress"
-      ) {
+      if (finalSnapshot.roundStatus === "completed" && finalSnapshot.status === "in_progress") {
         finalSnapshot = yield* runCommand(matchId, sessions[0]!.sessionId, {
           type: "START_NEXT_ROUND",
           expectedVersion: finalSnapshot.version,

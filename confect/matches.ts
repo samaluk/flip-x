@@ -42,7 +42,7 @@ export function startMatchForSession(
   const sessionId = toSessionId(args.sessionId);
 
   return Effect.gen(function* () {
-    yield* enforceRateLimit(ctx, "startMatch", String(args.sessionId));
+    yield* enforceRateLimit(ctx, "startMatch", args.sessionId);
 
     return yield* runGameCommand(ctx, {
       matchId: args.matchId,

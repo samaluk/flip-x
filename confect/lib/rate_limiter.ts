@@ -27,5 +27,6 @@ export function enforceRateLimit(
     if (!status.ok) {
       return yield* rateLimited();
     }
+    return undefined;
   });
 }

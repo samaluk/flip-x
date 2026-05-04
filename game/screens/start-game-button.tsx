@@ -50,7 +50,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
     >
       <Button
-        onClick={handleStart}
+        onClick={() => void handleStart()}
         disabled={isSubmitting || playerCount < 2}
         size="lg"
         className="gap-2 rounded-full px-6"

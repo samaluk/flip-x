@@ -1,5 +1,5 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
-import type { ActionCard, Card } from "../logic/card-types";
+import { isActionCard, isModifierCard, isNumberCard, type Card } from "../logic/card-types";
 import { decodeRoundEvent, encodeRoundEvent, type RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 
@@ -56,12 +56,12 @@ export function deserializeRoundRuntime(doc: Doc<"rounds">): RoundRuntime {
         }
       : null,
     pendingFlip3: doc.pendingFlip3
-      ? {
+      ? ({
           sourcePlayerId: String(doc.pendingFlip3.sourcePlayerId),
           targetPlayerId: String(doc.pendingFlip3.targetPlayerId),
           cardsRemaining: doc.pendingFlip3.cardsRemaining,
-          deferredActionCards: doc.pendingFlip3.deferredActionCards as ActionCard[],
-        }
+          deferredActionCards: doc.pendingFlip3.deferredActionCards.filter(isActionCard),
+        } satisfies NonNullable<RoundRuntime["pendingFlip3"]>)
       : null,
   };
 }
@@ -95,18 +95,27 @@ export function serializePlayerRoundStatePatch(playerState: PlayerRoundState) {
 }
 
 export function deserializePlayerRoundState(doc: Doc<"roundPlayerStates">): PlayerRoundState {
+  const numberCards = doc.numberCards.filter(isNumberCard);
+  const modifierCards = doc.modifierCards.filter(isModifierCard);
+  const heldActionCards = doc.heldActionCards.filter(isActionCard);
+  const receivedActionCards = doc.receivedActionCards.filter(isActionCard);
+  const bustCard =
+    doc.bustCard !== null && doc.bustCard !== undefined && isNumberCard(doc.bustCard)
+      ? doc.bustCard
+      : null;
+
   return {
     playerId: String(doc.playerId),
     status: doc.status,
-    numberCards: doc.numberCards as PlayerRoundState["numberCards"],
-    modifierCards: doc.modifierCards as PlayerRoundState["modifierCards"],
-    heldActionCards: doc.heldActionCards as PlayerRoundState["heldActionCards"],
-    receivedActionCards: doc.receivedActionCards as PlayerRoundState["receivedActionCards"],
+    numberCards,
+    modifierCards,
+    heldActionCards,
+    receivedActionCards,
     roundScore: doc.roundScore,
     pointsAtRisk: doc.pointsAtRisk,
     hasFlip7: doc.hasFlip7,
-    bustCard: doc.bustCard ? (doc.bustCard as PlayerRoundState["bustCard"]) : null,
-  };
+    bustCard,
+  } satisfies PlayerRoundState;
 }
 
 export function serializeRoundEvent(event: RoundEvent, playerIdMap: PlayerIdMap) {
