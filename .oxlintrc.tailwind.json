@@ -1,0 +1,39 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/npm/oxlint/configuration_schema.json",
+  "options": {
+    "typeAware": false,
+    "typeCheck": false
+  },
+  "plugins": [],
+  "jsPlugins": ["oxlint-tailwindcss"],
+  "settings": {
+    "tailwindcss": {
+      "entryPoint": "app/globals.css",
+      "timeout": 60000
+    }
+  },
+  "rules": {
+    "tailwindcss/no-unknown-classes": "error",
+    "tailwindcss/no-duplicate-classes": "error",
+    "tailwindcss/no-conflicting-classes": "error",
+    "tailwindcss/no-deprecated-classes": "error",
+    "tailwindcss/no-unnecessary-whitespace": "error",
+    "tailwindcss/no-dark-without-light": "error",
+    "tailwindcss/no-contradicting-variants": "error",
+    "tailwindcss/enforce-canonical": "error",
+    "tailwindcss/enforce-sort-order": "error",
+    "tailwindcss/enforce-shorthand": "error",
+    "tailwindcss/enforce-logical": "error",
+    "tailwindcss/enforce-physical": "off",
+    "tailwindcss/enforce-consistent-important-position": "error",
+    "tailwindcss/enforce-negative-arbitrary-values": "error",
+    "tailwindcss/enforce-consistent-variable-syntax": "error",
+    "tailwindcss/consistent-variant-order": "error",
+    "tailwindcss/max-class-count": "error",
+    "tailwindcss/enforce-consistent-line-wrapping": "off",
+    "tailwindcss/no-restricted-classes": "error",
+    "tailwindcss/no-arbitrary-value": "error",
+    "tailwindcss/no-hardcoded-colors": "error",
+    "tailwindcss/no-unnecessary-arbitrary-value": "error"
+  }
+}

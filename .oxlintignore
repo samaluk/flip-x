@@ -1,0 +1,11 @@
+.next/**
+node_modules/**
+coverage/**
+dist/**
+build/**
+convex/_generated/**
+public/**
+shared/ui/**
+tests/**
+**/*.test.ts
+**/*.test.tsx
