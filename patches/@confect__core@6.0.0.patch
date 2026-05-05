@@ -1,17 +1,17 @@
 diff --git a/dist/Ref.d.ts b/dist/Ref.d.ts
-index 3d7c623b3c38c4f2bffb03a20132382dfc14e66a..51d148b6b222ccf3c76aaf8b2c632eba906621c8 100644
+index 4fb6570fa4896054c511f6b7f2e20e4f91a6c764..1d0e3fb49e96c00bbe56f48cef33cbaad4594517 100644
 --- a/dist/Ref.d.ts
 +++ b/dist/Ref.d.ts
 @@ -5,7 +5,7 @@ import { FunctionReference as FunctionReference$1, FunctionVisibility } from "co
  
  //#region src/Ref.d.ts
  declare namespace Ref_d_exports {
--  export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Returns, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
-+  export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Returns, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
+-  export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, OptionalArgs, Ref, Returns, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
++  export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, OptionalArgs, Ref, Returns, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
  }
  interface Ref<_RuntimeAndFunctionType extends RuntimeAndFunctionType, _FunctionVisibility extends FunctionVisibility, _Args, _Returns> {
    readonly _RuntimeAndFunctionType?: _RuntimeAndFunctionType;
-@@ -41,13 +41,17 @@ functionNamespace: string, functionSpec: FunctionSpec_) => FromFunctionSpec<Func
+@@ -42,13 +42,17 @@ functionNamespace: string, functionSpec: FunctionSpec_) => FromFunctionSpec<Func
  declare const getConvexFunctionName: (ref: Any) => string;
  declare const getFunctionReference: <Ref_ extends Any>(ref: Ref_) => FunctionReference<Ref_>;
  declare const encodeArgs: <Ref_ extends Any>(ref: Ref_, args: Args<Ref_>) => Effect.Effect<unknown, ParseResult.ParseError>;
@@ -27,8 +27,8 @@ index 3d7c623b3c38c4f2bffb03a20132382dfc14e66a..51d148b6b222ccf3c76aaf8b2c632eba
    <Ref_ extends Any>(ref: Ref_, args: Args<Ref_>, f: (functionReference: FunctionReference<Ref_>, encodedArgs: unknown) => PromiseLike<unknown>): Effect.Effect<Returns<Ref_>, ParseResult.ParseError>;
  };
  //#endregion
--export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Ref_d_exports, Returns, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
-+export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, Ref, Ref_d_exports, Returns, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
+-export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, OptionalArgs, Ref, Ref_d_exports, Returns, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
++export { Any, AnyAction, AnyInternal, AnyMutation, AnyPublic, AnyPublicAction, AnyPublicMutation, AnyPublicQuery, AnyQuery, Args, FromFunctionSpec, FunctionReference, GetFunctionType, GetFunctionVisibility, GetRuntime, GetRuntimeAndFunctionType, OptionalArgs, Ref, Ref_d_exports, Returns, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
  //# sourceMappingURL=Ref.d.ts.map
 diff --git a/dist/Ref.js b/dist/Ref.js
 index 1f3efbe408c121edb998cc77c4e6a571924cc65e..d2f7e8a1cbf6e8e917064e6465666d6df241b5ca 100644
@@ -70,10 +70,10 @@ index 1f3efbe408c121edb998cc77c4e6a571924cc65e..d2f7e8a1cbf6e8e917064e6465666d6d
 +export { Ref_exports, decodeArgs, decodeArgsSync, decodeReturns, decodeReturnsSync, encodeArgs, encodeArgsSync, encodeReturns, encodeReturnsSync, getConvexFunctionName, getFunctionReference, make, runWithCodec };
  //# sourceMappingURL=Ref.js.map
 diff --git a/src/Ref.ts b/src/Ref.ts
-index 1f9a102c6f391a3cba1d4f3c1183566a5ea0e190..4bee3fc085d53e8c9c9c854ee652812f63df7288 100644
+index 654db218f7b8a938de18309c0c686cf58a7f9341..b89bb9d177581fc092e1411dd2c07a28872f3367 100644
 --- a/src/Ref.ts
 +++ b/src/Ref.ts
-@@ -173,6 +173,26 @@ export const encodeArgs = <Ref_ extends Any>(
+@@ -177,6 +177,26 @@ export const encodeArgs = <Ref_ extends Any>(
      Match.exhaustive,
    );
  
@@ -100,7 +100,7 @@ index 1f9a102c6f391a3cba1d4f3c1183566a5ea0e190..4bee3fc085d53e8c9c9c854ee652812f
  export const decodeReturns = <Ref_ extends Any>(
    ref: Ref_,
    returns: unknown,
-@@ -183,6 +203,16 @@ export const decodeReturns = <Ref_ extends Any>(
+@@ -197,6 +217,26 @@ export const encodeArgsSync = <Ref_ extends Any>(
      Match.exhaustive,
    );
  
@@ -114,13 +114,6 @@ index 1f9a102c6f391a3cba1d4f3c1183566a5ea0e190..4bee3fc085d53e8c9c9c854ee652812f
 +    Match.exhaustive,
 +  ) as Args<Ref_>;
 +
- export const encodeArgsSync = <Ref_ extends Any>(
-   ref: Ref_,
-   args: Args<Ref_>,
-@@ -193,6 +223,16 @@ export const encodeArgsSync = <Ref_ extends Any>(
-     Match.exhaustive,
-   );
- 
 +export const encodeReturnsSync = <Ref_ extends Any>(
 +  ref: Ref_,
 +  returns: Returns<Ref_>,

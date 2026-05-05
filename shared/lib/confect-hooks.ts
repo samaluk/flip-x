@@ -49,7 +49,7 @@ export function useSessionConfectQuery<Query extends Ref.AnyPublicQuery>(
   const [sessionId] = useSessionId();
 
   if (args === "skip" || !sessionId) {
-    return useConfectQuery(ref, "skip");
+    return useConfectQuery(ref, ...(["skip"] as const));
   }
 
   return useConfectQuery(ref, {
