@@ -5,12 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@confect/core@6.0.0':
-    hash: 843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed
-    path: patches/@confect__core@6.0.0.patch
-  '@confect/react@6.0.0':
-    hash: fa8cf59aa36b4771e1a5a2c08257a8bf09f19eb5cab5933366de9f66711f81cb
-    path: patches/@confect__react@6.0.0.patch
+  '@confect/core@6.0.0': 843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed
+  '@confect/react@6.0.0': fa8cf59aa36b4771e1a5a2c08257a8bf09f19eb5cab5933366de9f66711f81cb
 
 importers:
 
