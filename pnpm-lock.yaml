@@ -14,28 +14,28 @@ importers:
     dependencies:
       '@base-ui/react':
         specifier: 1.4.1
-        version: 1.4.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 1.4.1(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@confect/core':
         specifier: 6.0.0
-        version: 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
+        version: 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2)
       '@confect/react':
         specifier: 6.0.0
-        version: 6.0.0(patch_hash=fa8cf59aa36b4771e1a5a2c08257a8bf09f19eb5cab5933366de9f66711f81cb)(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(convex@1.37.0(react@19.2.5))(effect@3.21.2)(react@19.2.5)
+        version: 6.0.0(patch_hash=fa8cf59aa36b4771e1a5a2c08257a8bf09f19eb5cab5933366de9f66711f81cb)(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2))(convex@1.37.0(react@19.2.6))(effect@3.21.2)(react@19.2.6)
       '@confect/server':
         specifier: 6.0.0
-        version: 6.0.0(47d2c1d85e3f3be0c5ecb9b3221fea58)
+        version: 6.0.0(df731c1bd7cee428541cad7f203020f8)
       '@convex-dev/migrations':
         specifier: 0.3.4
-        version: 0.3.4(convex@1.37.0(react@19.2.5))
+        version: 0.3.4(convex@1.37.0(react@19.2.6))
       '@convex-dev/presence':
         specifier: 0.3.0
-        version: 0.3.0(convex@1.37.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 0.3.0(convex@1.37.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@convex-dev/rate-limiter':
         specifier: 0.3.2
-        version: 0.3.2(convex@1.37.0(react@19.2.5))(react@19.2.5)
+        version: 0.3.2(convex@1.37.0(react@19.2.6))(react@19.2.6)
       '@sholajegede/convex-cascading-deletes':
         specifier: 0.1.2
-        version: 0.1.2(convex@1.37.0(react@19.2.5))(react@19.2.5)
+        version: 0.1.2(convex@1.37.0(react@19.2.6))(react@19.2.6)
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1
@@ -44,40 +44,40 @@ importers:
         version: 2.1.1
       convex:
         specifier: 1.37.0
-        version: 1.37.0(react@19.2.5)
+        version: 1.37.0(react@19.2.6)
       convex-helpers:
         specifier: 0.1.115
-        version: 0.1.115(@standard-schema/spec@1.1.0)(convex@1.37.0(react@19.2.5))(hono@4.12.12)(react@19.2.5)(typescript@6.0.3)(zod@3.25.76)
+        version: 0.1.115(@standard-schema/spec@1.1.0)(convex@1.37.0(react@19.2.6))(hono@4.12.12)(react@19.2.6)(typescript@6.0.3)(zod@3.25.76)
       effect:
         specifier: 3.21.2
         version: 3.21.2
       lucide-react:
         specifier: 1.14.0
-        version: 1.14.0(react@19.2.5)
+        version: 1.14.0(react@19.2.6)
       motion:
         specifier: 12.38.0
-        version: 12.38.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 12.38.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       next:
         specifier: 16.2.6
-        version: 16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       next-intl:
         specifier: 4.11.0
-        version: 4.11.0(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(typescript@6.0.3)
+        version: 4.11.0(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(typescript@6.0.3)
       nuqs:
         specifier: 2.8.9
-        version: 2.8.9(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        version: 2.8.9(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
       react:
-        specifier: 19.2.5
-        version: 19.2.5
+        specifier: 19.2.6
+        version: 19.2.6
       react-dom:
-        specifier: 19.2.5
-        version: 19.2.5(react@19.2.5)
+        specifier: 19.2.6
+        version: 19.2.6(react@19.2.6)
       shadcn:
         specifier: 4.6.0
         version: 4.6.0(@types/node@24.12.2)(typescript@6.0.3)
       sonner:
         specifier: 2.0.7
-        version: 2.0.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       tailwind-merge:
         specifier: 3.5.0
         version: 3.5.0
@@ -87,10 +87,10 @@ importers:
     devDependencies:
       '@confect/cli':
         specifier: 6.0.0
-        version: 6.0.0(704a7afa4a12696309a11be6e6a462f2)
+        version: 6.0.0(8defc061042ee27faa2831d2398917e2)
       '@confect/test':
         specifier: 6.0.0
-        version: 6.0.0(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@6.0.0(47d2c1d85e3f3be0c5ecb9b3221fea58))(convex-test@0.0.51(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)
+        version: 6.0.0(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2))(@confect/server@6.0.0(df731c1bd7cee428541cad7f203020f8))(convex-test@0.0.51(convex@1.37.0(react@19.2.6)))(convex@1.37.0(react@19.2.6))(effect@3.21.2)
       '@effect/vitest':
         specifier: 0.29.0
         version: 0.29.0(effect@3.21.2)(vitest@4.1.5)
@@ -114,7 +114,7 @@ importers:
         version: 6.9.1
       '@testing-library/react':
         specifier: 16.3.2
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@types/node':
         specifier: 24.12.2
         version: 24.12.2
@@ -141,7 +141,7 @@ importers:
         version: 4.1.5(@vitest/browser@4.1.5)(vitest@4.1.5)
       convex-test:
         specifier: 0.0.51
-        version: 0.0.51(convex@1.37.0(react@19.2.5))
+        version: 0.0.51(convex@1.37.0(react@19.2.6))
       eslint-plugin-i18next:
         specifier: 6.1.4
         version: 6.1.4
@@ -3983,10 +3983,10 @@ packages:
     resolution: {integrity: sha512-K5zQjDllxWkf7Z5xJdV0/B0WTNqx6vxG70zJE4N0kBs4LovmEYWJzQGxC9bS9RAKu3bgM40lrd5zoLJ12MQ5BA==}
     engines: {node: '>= 0.10'}
 
-  react-dom@19.2.5:
-    resolution: {integrity: sha512-J5bAZz+DXMMwW/wV3xzKke59Af6CHY7G4uYLN1OvBcKEsWOs4pQExj86BBKamxl/Ik5bx9whOrvBlSDfWzgSag==}
+  react-dom@19.2.6:
+    resolution: {integrity: sha512-0prMI+hvBbPjsWnxDLxlCGyM8PN6UuWjEUCYmZhO67xIV9Xasa/r/vDnq+Xyq4Lo27g8QSbO5YzARu0D1Sps3g==}
     peerDependencies:
-      react: ^19.2.5
+      react: ^19.2.6
 
   react-is@17.0.2:
     resolution: {integrity: sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==}
@@ -3999,6 +3999,10 @@ packages:
 
   react@19.2.5:
     resolution: {integrity: sha512-llUJLzz1zTUBrskt2pwZgLq59AemifIftw4aB7JxOqf1HY2FDaGDxgwpAPVzHU1kdWabH7FauP4i1oEeer2WCA==}
+    engines: {node: '>=0.10.0'}
+
+  react@19.2.6:
+    resolution: {integrity: sha512-sfWGGfavi0xr8Pg0sVsyHMAOziVYKgPLNrS7ig+ivMNb3wbCBw3KxtflsGBAwD3gYQlE/AEZsTLgToRrSCjb0Q==}
     engines: {node: '>=0.10.0'}
 
   recast@0.23.11:
@@ -4875,26 +4879,26 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
-  '@base-ui/react@1.4.1(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@base-ui/react@1.4.1(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@babel/runtime': 7.29.2
-      '@base-ui/utils': 0.2.8(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
-      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@base-ui/utils': 0.2.8(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@floating-ui/react-dom': 2.1.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@floating-ui/utils': 0.2.11
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
-      use-sync-external-store: 1.6.0(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+      use-sync-external-store: 1.6.0(react@19.2.6)
     optionalDependencies:
       '@types/react': 19.2.14
 
-  '@base-ui/utils@0.2.8(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@base-ui/utils@0.2.8(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@babel/runtime': 7.29.2
       '@floating-ui/utils': 0.2.11
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
       reselect: 5.1.1
-      use-sync-external-store: 1.6.0(react@19.2.5)
+      use-sync-external-store: 1.6.0(react@19.2.6)
     optionalDependencies:
       '@types/react': 19.2.14
 
@@ -4906,10 +4910,10 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
-  '@confect/cli@6.0.0(704a7afa4a12696309a11be6e6a462f2)':
+  '@confect/cli@6.0.0(8defc061042ee27faa2831d2398917e2)':
     dependencies:
-      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
-      '@confect/server': 6.0.0(47d2c1d85e3f3be0c5ecb9b3221fea58)
+      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2)
+      '@confect/server': 6.0.0(df731c1bd7cee428541cad7f203020f8)
       '@effect/cli': 0.73.2(@effect/platform@0.94.5(effect@3.21.2))(@effect/printer-ansi@0.47.0(@effect/typeclass@0.38.0(effect@3.21.2))(effect@3.21.2))(@effect/printer@0.47.0(@effect/typeclass@0.38.0(effect@3.21.2))(effect@3.21.2))(effect@3.21.2)
       '@effect/platform': 0.94.5(effect@3.21.2)
       '@effect/platform-node': 0.104.1(@effect/cluster@0.56.4(@effect/platform@0.94.5(effect@3.21.2))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(effect@3.21.2)
@@ -4927,49 +4931,49 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2)':
+  '@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2)':
     dependencies:
-      convex: 1.37.0(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
       effect: 3.21.2
 
-  '@confect/react@6.0.0(patch_hash=fa8cf59aa36b4771e1a5a2c08257a8bf09f19eb5cab5933366de9f66711f81cb)(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(convex@1.37.0(react@19.2.5))(effect@3.21.2)(react@19.2.5)':
+  '@confect/react@6.0.0(patch_hash=fa8cf59aa36b4771e1a5a2c08257a8bf09f19eb5cab5933366de9f66711f81cb)(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2))(convex@1.37.0(react@19.2.6))(effect@3.21.2)(react@19.2.6)':
     dependencies:
-      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
-      convex: 1.37.0(react@19.2.5)
+      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2)
+      convex: 1.37.0(react@19.2.6)
       effect: 3.21.2
-      react: 19.2.5
+      react: 19.2.6
 
-  '@confect/server@6.0.0(47d2c1d85e3f3be0c5ecb9b3221fea58)':
+  '@confect/server@6.0.0(df731c1bd7cee428541cad7f203020f8)':
     dependencies:
-      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
+      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2)
       '@effect/platform': 0.94.5(effect@3.21.2)
       '@effect/platform-node': 0.104.1(@effect/cluster@0.56.4(@effect/platform@0.94.5(effect@3.21.2))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(@effect/rpc@0.73.2(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(@effect/platform@0.94.5(effect@3.21.2))(effect@3.21.2))(effect@3.21.2)
-      convex: 1.37.0(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
       effect: 3.21.2
 
-  '@confect/test@6.0.0(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2))(@confect/server@6.0.0(47d2c1d85e3f3be0c5ecb9b3221fea58))(convex-test@0.0.51(convex@1.37.0(react@19.2.5)))(convex@1.37.0(react@19.2.5))(effect@3.21.2)':
+  '@confect/test@6.0.0(@confect/core@6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2))(@confect/server@6.0.0(df731c1bd7cee428541cad7f203020f8))(convex-test@0.0.51(convex@1.37.0(react@19.2.6)))(convex@1.37.0(react@19.2.6))(effect@3.21.2)':
     dependencies:
-      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.5))(effect@3.21.2)
-      '@confect/server': 6.0.0(47d2c1d85e3f3be0c5ecb9b3221fea58)
-      convex: 1.37.0(react@19.2.5)
-      convex-test: 0.0.51(convex@1.37.0(react@19.2.5))
+      '@confect/core': 6.0.0(patch_hash=843a3acf68eba9600e0b0a863873aacfe7322c267759cb3020faffe4303289ed)(convex@1.37.0(react@19.2.6))(effect@3.21.2)
+      '@confect/server': 6.0.0(df731c1bd7cee428541cad7f203020f8)
+      convex: 1.37.0(react@19.2.6)
+      convex-test: 0.0.51(convex@1.37.0(react@19.2.6))
       effect: 3.21.2
 
-  '@convex-dev/migrations@0.3.4(convex@1.37.0(react@19.2.5))':
+  '@convex-dev/migrations@0.3.4(convex@1.37.0(react@19.2.6))':
     dependencies:
-      convex: 1.37.0(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
 
-  '@convex-dev/presence@0.3.0(convex@1.37.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@convex-dev/presence@0.3.0(convex@1.37.0(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
-      convex: 1.37.0(react@19.2.5)
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
-  '@convex-dev/rate-limiter@0.3.2(convex@1.37.0(react@19.2.5))(react@19.2.5)':
+  '@convex-dev/rate-limiter@0.3.2(convex@1.37.0(react@19.2.6))(react@19.2.6)':
     dependencies:
-      convex: 1.37.0(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
     optionalDependencies:
-      react: 19.2.5
+      react: 19.2.6
 
   '@csstools/color-helpers@6.0.2': {}
 
@@ -5322,11 +5326,11 @@ snapshots:
       '@floating-ui/core': 1.7.5
       '@floating-ui/utils': 0.2.11
 
-  '@floating-ui/react-dom@2.1.8(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@floating-ui/react-dom@2.1.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@floating-ui/dom': 1.7.6
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   '@floating-ui/utils@0.2.11': {}
 
@@ -5983,10 +5987,10 @@ snapshots:
 
   '@sec-ant/readable-stream@0.4.1': {}
 
-  '@sholajegede/convex-cascading-deletes@0.1.2(convex@1.37.0(react@19.2.5))(react@19.2.5)':
+  '@sholajegede/convex-cascading-deletes@0.1.2(convex@1.37.0(react@19.2.6))(react@19.2.6)':
     dependencies:
-      convex: 1.37.0(react@19.2.5)
-      react: 19.2.5
+      convex: 1.37.0(react@19.2.6)
+      react: 19.2.6
 
   '@sindresorhus/merge-streams@4.0.0': {}
 
@@ -6154,12 +6158,12 @@ snapshots:
       picocolors: 1.1.1
       redent: 3.0.0
 
-  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@testing-library/react@16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@babel/runtime': 7.29.2
       '@testing-library/dom': 10.4.1
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
     optionalDependencies:
       '@types/react': 19.2.14
       '@types/react-dom': 19.2.3(@types/react@19.2.14)
@@ -6572,27 +6576,27 @@ snapshots:
 
   convert-to-spaces@2.0.1: {}
 
-  convex-helpers@0.1.115(@standard-schema/spec@1.1.0)(convex@1.37.0(react@19.2.5))(hono@4.12.12)(react@19.2.5)(typescript@6.0.3)(zod@3.25.76):
+  convex-helpers@0.1.115(@standard-schema/spec@1.1.0)(convex@1.37.0(react@19.2.6))(hono@4.12.12)(react@19.2.6)(typescript@6.0.3)(zod@3.25.76):
     dependencies:
-      convex: 1.37.0(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
     optionalDependencies:
       '@standard-schema/spec': 1.1.0
       hono: 4.12.12
-      react: 19.2.5
+      react: 19.2.6
       typescript: 6.0.3
       zod: 3.25.76
 
-  convex-test@0.0.51(convex@1.37.0(react@19.2.5)):
+  convex-test@0.0.51(convex@1.37.0(react@19.2.6)):
     dependencies:
-      convex: 1.37.0(react@19.2.5)
+      convex: 1.37.0(react@19.2.6)
 
-  convex@1.37.0(react@19.2.5):
+  convex@1.37.0(react@19.2.6):
     dependencies:
       esbuild: 0.27.0
       prettier: 3.8.2
       ws: 8.18.0
     optionalDependencies:
-      react: 19.2.5
+      react: 19.2.6
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -6985,14 +6989,14 @@ snapshots:
 
   forwarded@0.2.0: {}
 
-  framer-motion@12.38.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  framer-motion@12.38.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       motion-dom: 12.38.0
       motion-utils: 12.36.0
       tslib: 2.8.1
     optionalDependencies:
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   fresh@2.0.0: {}
 
@@ -7394,9 +7398,9 @@ snapshots:
     dependencies:
       yallist: 3.1.1
 
-  lucide-react@1.14.0(react@19.2.5):
+  lucide-react@1.14.0(react@19.2.6):
     dependencies:
-      react: 19.2.5
+      react: 19.2.6
 
   lz-string@1.5.0: {}
 
@@ -7774,13 +7778,13 @@ snapshots:
 
   motion-utils@12.36.0: {}
 
-  motion@12.38.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  motion@12.38.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
-      framer-motion: 12.38.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      framer-motion: 12.38.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       tslib: 2.8.1
     optionalDependencies:
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   mrmime@2.0.1: {}
 
@@ -7837,33 +7841,33 @@ snapshots:
 
   next-intl-swc-plugin-extractor@4.11.0: {}
 
-  next-intl@4.11.0(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)(typescript@6.0.3):
+  next-intl@4.11.0(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)(typescript@6.0.3):
     dependencies:
       '@formatjs/intl-localematcher': 0.8.2
       '@parcel/watcher': 2.5.6
       '@swc/core': 1.15.24
       icu-minify: 4.11.0
       negotiator: 1.0.0
-      next: 16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       next-intl-swc-plugin-extractor: 4.11.0
       po-parser: 2.1.1
-      react: 19.2.5
-      use-intl: 4.11.0(react@19.2.5)
+      react: 19.2.6
+      use-intl: 4.11.0(react@19.2.6)
     optionalDependencies:
       typescript: 6.0.3
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
       '@next/env': 16.2.6
       '@swc/helpers': 0.5.15
       baseline-browser-mapping: 2.10.17
       caniuse-lite: 1.0.30001787
       postcss: 8.4.31
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
-      styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
+      styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.6)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.2.6
       '@next/swc-darwin-x64': 16.2.6
@@ -7905,12 +7909,12 @@ snapshots:
       path-key: 4.0.0
       unicorn-magic: 0.3.0
 
-  nuqs@2.8.9(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5):
+  nuqs@2.8.9(next@16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6):
     dependencies:
       '@standard-schema/spec': 1.0.0
-      react: 19.2.5
+      react: 19.2.6
     optionalDependencies:
-      next: 16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      next: 16.2.6(@babel/core@7.29.0)(@playwright/test@1.59.1)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
 
   object-assign@4.1.1: {}
 
@@ -8153,9 +8157,9 @@ snapshots:
       iconv-lite: 0.7.2
       unpipe: 1.0.0
 
-  react-dom@19.2.5(react@19.2.5):
+  react-dom@19.2.6(react@19.2.6):
     dependencies:
-      react: 19.2.5
+      react: 19.2.6
       scheduler: 0.27.0
 
   react-is@17.0.2: {}
@@ -8166,6 +8170,8 @@ snapshots:
       scheduler: 0.27.0
 
   react@19.2.5: {}
+
+  react@19.2.6: {}
 
   recast@0.23.11:
     dependencies:
@@ -8448,10 +8454,10 @@ snapshots:
       ansi-styles: 6.2.3
       is-fullwidth-code-point: 5.1.0
 
-  sonner@2.0.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5):
+  sonner@2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6):
     dependencies:
-      react: 19.2.5
-      react-dom: 19.2.5(react@19.2.5)
+      react: 19.2.6
+      react-dom: 19.2.6(react@19.2.6)
 
   source-map-js@1.2.1: {}
 
@@ -8517,10 +8523,10 @@ snapshots:
     dependencies:
       min-indent: 1.0.1
 
-  styled-jsx@5.1.6(@babel/core@7.29.0)(react@19.2.5):
+  styled-jsx@5.1.6(@babel/core@7.29.0)(react@19.2.6):
     dependencies:
       client-only: 0.0.1
-      react: 19.2.5
+      react: 19.2.6
     optionalDependencies:
       '@babel/core': 7.29.0
 
@@ -8661,17 +8667,17 @@ snapshots:
       escalade: 3.2.0
       picocolors: 1.1.1
 
-  use-intl@4.11.0(react@19.2.5):
+  use-intl@4.11.0(react@19.2.6):
     dependencies:
       '@formatjs/fast-memoize': 3.1.1
       '@schummar/icu-type-parser': 1.21.5
       icu-minify: 4.11.0
       intl-messageformat: 11.2.0
-      react: 19.2.5
+      react: 19.2.6
 
-  use-sync-external-store@1.6.0(react@19.2.5):
+  use-sync-external-store@1.6.0(react@19.2.6):
     dependencies:
-      react: 19.2.5
+      react: 19.2.6
 
   util-deprecate@1.0.2: {}
 
