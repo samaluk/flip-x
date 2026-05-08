@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 
 import { PLAYER_COLORS, type PlayerColorId } from "@/shared/lib/player-colors";
 import { cn } from "@/shared/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 
 type PlayerColorPickerProps = {
   value: PlayerColorId;
@@ -23,22 +24,28 @@ export function PlayerColorPicker({
   return (
     <div className="flex flex-col gap-2">
       <div className="text-sm font-medium text-foreground">{label}</div>
-      <div className="grid grid-cols-10 gap-2" role="radiogroup" aria-label={label}>
+      <RadioGroup
+        value={value}
+        onValueChange={(v) => {
+          const match = PLAYER_COLORS.find((c) => c.id === v);
+          if (match) onChange(match.id);
+        }}
+        aria-label={label}
+        className="grid w-full grid-cols-10 gap-2"
+      >
         {PLAYER_COLORS.map((color) => {
           const disabled = used.has(color.id) && color.id !== value;
           const selected = value === color.id;
 
           return (
-            <button
+            <RadioGroupItem
               key={color.id}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              aria-label={color.label}
+              value={color.id}
               disabled={disabled}
-              onClick={() => onChange(color.id)}
+              aria-label={color.label}
               className={cn(
-                "size-7 rounded-full border transition-all focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                "size-7 border transition-all focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:outline-none",
+                "[&_[data-slot=radio-group-indicator]]:hidden",
                 selected ? "border-foreground ring-2 ring-primary/70" : "border-border",
                 disabled && "cursor-not-allowed opacity-25 grayscale",
               )}
@@ -48,12 +55,10 @@ export function PlayerColorPicker({
                   color: color.foreground,
                 } satisfies CSSProperties
               }
-            >
-              <span className="sr-only">{color.label}</span>
-            </button>
+            />
           );
         })}
-      </div>
+      </RadioGroup>
     </div>
   );
 }
