@@ -73,8 +73,8 @@ importers:
         specifier: 19.2.6
         version: 19.2.6(react@19.2.6)
       shadcn:
-        specifier: 4.6.0
-        version: 4.6.0(@types/node@24.12.2)(typescript@6.0.3)
+        specifier: 4.7.0
+        version: 4.7.0(@types/node@24.12.2)(typescript@6.0.3)
       sonner:
         specifier: 2.0.7
         version: 2.0.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -4109,8 +4109,8 @@ packages:
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
 
-  shadcn@4.6.0:
-    resolution: {integrity: sha512-4XeMwFf8ZZxmqQQp+U+Nsq2M+cY4Da8Joo/EaMdHVc4uVuWSTJoeidlZ3gDjyxXCjYB1FLcxYwR4lYQAH8emOg==}
+  shadcn@4.7.0:
+    resolution: {integrity: sha512-70fwnesNrY1GgeD7Kdzn+3SsYeyfibm8immsA5L68+OusoPTvYF01oWExl8/latKpMpvVXcbgdbbE6VFBJQ38w==}
     hasBin: true
 
   sharp@0.34.5:
@@ -5416,7 +5416,7 @@ snapshots:
   '@google/design.md@0.1.1(@types/react@19.2.14)':
     dependencies:
       '@json-render/core': 0.16.0(zod@3.25.76)
-      '@json-render/ink': 0.16.0(ink@7.0.1(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)(zod@3.25.76)
+      '@json-render/ink': 0.16.0(ink@7.0.1(@types/react@19.2.14)(react@19.2.6))(react@19.2.5)(zod@3.25.76)
       citty: 0.1.6
       ink: 7.0.1(@types/react@19.2.14)(react@19.2.5)
       mdast: 3.0.0
@@ -5588,7 +5588,7 @@ snapshots:
     dependencies:
       zod: 3.25.76
 
-  '@json-render/ink@0.16.0(ink@7.0.1(@types/react@19.2.14)(react@19.2.5))(react@19.2.5)(zod@3.25.76)':
+  '@json-render/ink@0.16.0(ink@7.0.1(@types/react@19.2.14)(react@19.2.6))(react@19.2.5)(zod@3.25.76)':
     dependencies:
       '@json-render/core': 0.16.0(zod@3.25.76)
       ink: 7.0.1(@types/react@19.2.14)(react@19.2.5)
@@ -8326,7 +8326,7 @@ snapshots:
 
   setprototypeof@1.2.0: {}
 
-  shadcn@4.6.0(@types/node@24.12.2)(typescript@6.0.3):
+  shadcn@4.7.0(@types/node@24.12.2)(typescript@6.0.3):
     dependencies:
       '@babel/core': 7.29.0
       '@babel/parser': 7.29.2
