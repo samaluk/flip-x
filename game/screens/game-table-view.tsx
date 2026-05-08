@@ -202,13 +202,12 @@ export function GameTableView({
       />
 
       {hasTurnControls ? (
-        <div
-          role="region"
+        <section
           aria-label={t("turnActions")}
           className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
         >
           <div className="mx-auto max-w-5xl">{turnControls}</div>
-        </div>
+        </section>
       ) : null}
     </div>
   );
