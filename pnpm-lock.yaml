@@ -164,8 +164,8 @@ importers:
         specifier: 0.22.1
         version: 0.22.1
       portless:
-        specifier: 0.12.0
-        version: 0.12.0
+        specifier: 0.13.0
+        version: 0.13.0
       tailwindcss:
         specifier: 4.2.4
         version: 4.2.4
@@ -3918,8 +3918,8 @@ packages:
   po-parser@2.1.1:
     resolution: {integrity: sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==}
 
-  portless@0.12.0:
-    resolution: {integrity: sha512-zE8EYJ5xIEtKEBu1wnD+FavOE90/GNxRixF4Mu2hxMvDuVx1ftUbA6VbjbxI9sP9LUt0L26l6OiENGo4EFtLfw==}
+  portless@0.13.0:
+    resolution: {integrity: sha512-PxMZ5BHH+ZZi9rTq4T8m003aZxh56qI0aBdNsxLn7jrTtvNJYBWYD3lc5PuQrom/aVh6z8iLb+tKUI6b7QNYQw==}
     engines: {node: '>=20'}
     os: [darwin, linux, win32]
     hasBin: true
@@ -8095,7 +8095,7 @@ snapshots:
 
   po-parser@2.1.1: {}
 
-  portless@0.12.0: {}
+  portless@0.13.0: {}
 
   postcss-selector-parser@7.1.1:
     dependencies:
