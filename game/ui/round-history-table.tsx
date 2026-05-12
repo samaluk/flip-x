@@ -42,7 +42,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
         <table className="w-full min-w-2xl border-separate border-spacing-0 text-left">
           <thead>
             <tr className="bg-muted/35">
-              <th className="sticky start-0 z-20 min-w-40 border-b bg-background px-4 py-3 text-xs font-medium tracking-wide uppercase">
+              <th className="sticky inset-s-0 z-20 min-w-40 border-b bg-background px-4 py-3 text-xs font-medium tracking-wide uppercase">
                 {t("playerColumn")}
               </th>
               {history.map((entry) => (
@@ -72,7 +72,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
           <tbody>
             {orderedPlayers.map((player) => (
               <tr key={player.playerId} className="align-top">
-                <th className="sticky start-0 z-10 border-b bg-background px-4 py-4">
+                <th className="sticky inset-s-0 z-10 border-b bg-background px-4 py-4">
                   <div className="text-sm font-medium text-foreground">{player.displayName}</div>
                   <div className="text-xs text-muted-foreground">
                     {t("seatLabel", { seat: String(player.seatIndex + 1) })}
