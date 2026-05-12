@@ -110,7 +110,7 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
       <div className="pointer-events-none absolute inset-2 rounded-xl border border-primary/20" />
       <div className="pointer-events-none absolute inset-4 rounded-lg border border-primary/10" />
       <div className="pointer-events-none absolute inset-0 bg-linear-to-br from-primary/10 to-transparent opacity-70" />
-      <div className="pointer-events-none absolute inset-y-6 start-1/2 w-px -translate-x-1/2 bg-primary/15" />
+      <div className="pointer-events-none absolute inset-y-6 inset-s-1/2 w-px -translate-x-1/2 bg-primary/15" />
       <div className="pointer-events-none absolute inset-x-6 top-1/2 h-px -translate-y-1/2 bg-primary/15" />
     </div>
   );
