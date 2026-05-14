@@ -22,6 +22,9 @@
       }
     },
     "game/screens/game-page-client.tsx": {
+      "complexity_critical": {
+        "count": 1
+      },
       "crap_critical": {
         "count": 1
       },
