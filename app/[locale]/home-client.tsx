@@ -1,7 +1,7 @@
 "use client";
 
 import { parseAsString, useQueryState } from "nuqs";
-import { useQuery as useConfectQuery } from "@confect/react";
+import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
 import { startTransition, type SubmitEvent, useEffect, useState } from "react";
@@ -73,11 +73,14 @@ export function HomeClient() {
   const createMatch = useSessionConfectMutation(refs.public.matches.createMatch);
   const joinByCode = useSessionConfectMutation(refs.public.matches.joinByCode);
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
-  const lobbyLookup = useConfectQuery(
+  const lobbyLookupResult = useConfectQuery(
     refs.public.matches.getMatchByCode,
     joinCode && joinCode.length === 4 ? { lobbyCode: joinCode } : "skip",
   );
-  const usedColorIds = lobbyLookup?.usedColorIds ?? NO_USED_COLORS;
+  const usedColorIds = QueryResult.match(lobbyLookupResult, {
+    onLoading: () => NO_USED_COLORS,
+    onSuccess: (lookup) => lookup?.usedColorIds ?? NO_USED_COLORS,
+  });
   const selectedColorId = usedColorIds.includes(colorId)
     ? firstAvailablePlayerColorId(usedColorIds)
     : colorId;

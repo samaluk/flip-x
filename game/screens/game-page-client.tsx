@@ -1,5 +1,6 @@
 "use client";
 
+import { QueryResult } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -39,9 +40,10 @@ export function GamePageClient({ matchId }: { matchId: string }) {
   const [playerName, setPlayerName] = useState("");
   const [colorId, setColorId] = useState<PlayerColorId>("cyan");
   const [isJoining, setIsJoining] = useState(false);
-  const snapshot = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
+  const snapshotResult = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
     matchId: matchIdConvex,
   });
+  const snapshot = QueryResult.isSuccess(snapshotResult) ? snapshotResult.value : undefined;
   const t = useTranslations("Game");
   const tErrors = useTranslations("Errors");
   const viewerPlayerId = snapshot?.viewerPlayerId;
@@ -110,7 +112,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
     }
   }, [snapshot?.lobbyCode, t]);
 
-  if (snapshot === undefined) {
+  if (QueryResult.isLoading(snapshotResult)) {
     return (
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
@@ -128,6 +130,17 @@ export function GamePageClient({ matchId }: { matchId: string }) {
           </div>
           <Skeleton className="h-48 w-full rounded-2xl" />
         </div>
+      </div>
+    );
+  }
+
+  if (QueryResult.isFailure(snapshotResult)) {
+    return (
+      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+        <Alert>
+          <AlertTitle>{tErrors("MATCH_NOT_FOUND")}</AlertTitle>
+          <AlertDescription>{t("matchNotFoundBody")}</AlertDescription>
+        </Alert>
       </div>
     );
   }
