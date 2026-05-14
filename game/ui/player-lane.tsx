@@ -17,7 +17,7 @@ import { Flip7Card } from "@/game/ui/flip7-card";
 import { Badge } from "@/shared/ui/badge";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
-import { Avatar, AvatarFallback } from "@/shared/ui/avatar";
+import { Avatar, AvatarBadge, AvatarFallback } from "@/shared/ui/avatar";
 import { getPlayerColor, playerInitials } from "@/shared/lib/player-colors";
 
 type LaneRoundStatus = MatchSnapshot["players"][number]["roundStatus"];
@@ -128,35 +128,51 @@ function PlayerLaneSidebar({
   const initials = playerInitials(player.displayName);
 
   return (
-    <div className={cn("flex shrink-0 flex-col items-center gap-2", compact ? "w-24" : "w-32")}>
-      <Avatar size="lg" className={cn("ring-2 ring-border", compact ? "size-11" : "size-14")}>
-        <AvatarFallback
-          className="text-base font-semibold tracking-tight"
-          style={
-            {
-              backgroundColor: playerColor.background,
-              color: playerColor.foreground,
-            } satisfies CSSProperties
-          }
+    <aside
+      className={cn(
+        "flex min-w-0 shrink-0 flex-col gap-2.5 rounded-lg border border-border/70 bg-background/35 p-2.5 shadow-sm",
+        compact ? "sm:w-30" : "sm:w-39",
+      )}
+    >
+      <div className="flex min-w-0 items-center gap-2.5">
+        <Avatar
+          size="lg"
+          className={cn("shadow-sm ring-2 ring-border/80", compact ? "size-11" : "size-14")}
         >
-          {initials}
-        </AvatarFallback>
-      </Avatar>
+          <AvatarFallback
+            className="text-base font-semibold tracking-tight"
+            style={
+              {
+                backgroundColor: playerColor.background,
+                color: playerColor.foreground,
+              } satisfies CSSProperties
+            }
+          >
+            {initials}
+          </AvatarFallback>
+          {player.isOnline ? (
+            <AvatarBadge className="border border-background bg-primary ring-background" />
+          ) : null}
+        </Avatar>
 
-      <div className="flex w-full min-w-0 flex-col items-center gap-0.5 text-center">
-        <h3 className="w-full truncate font-heading text-sm font-medium tracking-tight text-foreground">
-          {player.displayName}
-        </h3>
-        <div className="text-xs text-muted-foreground tabular-nums">
-          {t("totalScore", { score: String(player.totalScore) })}
+        <div className="min-w-0 flex-1 text-left">
+          <h3 className="truncate font-heading text-sm leading-5 font-medium tracking-tight text-foreground">
+            {player.displayName}
+          </h3>
+          <div className="truncate text-xs leading-4 text-muted-foreground tabular-nums">
+            {t("totalScore", { score: String(player.totalScore) })}
+          </div>
         </div>
-        <div className="text-lg font-semibold text-foreground tabular-nums">
-          {player.pointsAtRisk}
-        </div>
-        <div className="text-xs leading-none text-muted-foreground">{t("pointsAtRisk")}</div>
       </div>
 
-      <div className="flex w-full flex-col items-center gap-1">
+      <div className="flex items-end justify-between gap-2 rounded-md border border-border/55 bg-card/55 px-2 py-1.5">
+        <div className="min-w-0 text-xs leading-4 text-muted-foreground">{t("pointsAtRisk")}</div>
+        <div className="text-lg leading-5 font-semibold text-foreground tabular-nums">
+          {player.pointsAtRisk}
+        </div>
+      </div>
+
+      <div className="flex w-full flex-wrap gap-1">
         {roundStatusLabelKey ? (
           <Badge variant={statusVariant(displayStatus)} className="max-w-full text-xs">
             {t(roundStatusLabelKey)}
@@ -196,7 +212,7 @@ function PlayerLaneSidebar({
           </Badge>
         ) : null}
       </div>
-    </div>
+    </aside>
   );
 }
 
@@ -306,8 +322,13 @@ function PlayerLaneCardStack({
   );
 
   return (
-    <div className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain pb-1">
-      <div className={cn("flex flex-nowrap items-start", compact ? "gap-1.5" : "gap-3")}>
+    <div className="min-w-0 flex-1 pb-1">
+      <div
+        className={cn(
+          "flex min-w-0 flex-wrap content-start items-start",
+          compact ? "gap-1.5" : "gap-2.5 sm:gap-3",
+        )}
+      >
         {cardElements.length > 0 ? cardElements : null}
       </div>
     </div>
@@ -419,7 +440,7 @@ export const PlayerLane = memo(function PlayerLane({
         compact ? "p-3" : "p-4",
         overlapCards && "relative z-0 focus-within:z-40 hover:z-40",
         (isTargetable || isSelfTargeting) &&
-          "cursor-pointer ring-2 ring-yellow-500/70 ring-offset-2 ring-offset-background",
+          "cursor-pointer ring-2 ring-primary/70 ring-offset-2 ring-offset-background",
       )}
       onClick={() => {
         if (onSelectTarget && (isTargetable || isSelfTargeting)) {
@@ -435,7 +456,12 @@ export const PlayerLane = memo(function PlayerLane({
       tabIndex={targetingActive ? 0 : undefined}
       aria-label={targetingActive ? `Select ${player.displayName} as target` : undefined}
     >
-      <div className="flex items-stretch gap-4">
+      <div
+        className={cn(
+          "flex flex-col items-start gap-3 sm:flex-row",
+          compact ? "sm:items-stretch" : "sm:items-start",
+        )}
+      >
         <PlayerLaneSidebar
           player={player}
           compact={compact}
