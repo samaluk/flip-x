@@ -12,7 +12,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # Keep in sync with @playwright/test / Docker tag (https://playwright.dev/docs/docker)
-IMAGE="mcr.microsoft.com/playwright:v1.59.0-noble"
+IMAGE="mcr.microsoft.com/playwright:v1.60.0-noble"
 
 EXTRA=()
 if [[ "${1:-}" == "--update" ]]; then
