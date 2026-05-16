@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import {
   memo,
   type CSSProperties,
+  type KeyboardEvent,
   type ReactElement,
   useEffect,
   useMemo,
@@ -351,6 +352,7 @@ export const PlayerLane = memo(function PlayerLane({
   flip3Remaining = null,
   onSelectTarget,
 }: PlayerLaneProps) {
+  const t = useTranslations("PlayerLane");
   const previousCardIds = useRef<string[]>([]);
   const initialCardSyncDone = useRef(false);
   const displayStatus = getDisplayStatus(player);
@@ -430,6 +432,25 @@ export const PlayerLane = memo(function PlayerLane({
 
   const cardStateAnimation = stateAnimation ?? poseFromStatus(displayStatus);
 
+  const selectTarget = onSelectTarget;
+  const canSelectAsTarget = Boolean(selectTarget && targetingActive);
+  const targetSelectionProps = canSelectAsTarget && selectTarget
+    ? {
+        role: "button" as const,
+        tabIndex: 0 as const,
+        "aria-label": t("selectTargetLabel", { name: player.displayName }),
+        onClick: () => {
+          selectTarget(player.playerId);
+        },
+        onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            selectTarget(player.playerId);
+          }
+        },
+      }
+    : {};
+
   return (
     <section
       className={cn(
@@ -442,19 +463,7 @@ export const PlayerLane = memo(function PlayerLane({
         (isTargetable || isSelfTargeting) &&
           "cursor-pointer ring-2 ring-primary/70 ring-offset-2 ring-offset-background",
       )}
-      onClick={() => {
-        if (onSelectTarget && (isTargetable || isSelfTargeting)) {
-          onSelectTarget(player.playerId);
-        }
-      }}
-      onKeyUp={(e) => {
-        if (e.key === "Enter" && onSelectTarget && (isTargetable || isSelfTargeting)) {
-          onSelectTarget(player.playerId);
-        }
-      }}
-      role={targetingActive ? "button" : undefined}
-      tabIndex={targetingActive ? 0 : undefined}
-      aria-label={targetingActive ? `Select ${player.displayName} as target` : undefined}
+      {...targetSelectionProps}
     >
       <div
         className={cn(
