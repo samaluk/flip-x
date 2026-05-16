@@ -27,8 +27,7 @@ export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
   }
 
   return (
-    <div
-      role="status"
+    <output
       aria-label={t("statusLabel")}
       className="surface-elevated flex items-center gap-3 rounded-xl px-5 py-3"
     >
@@ -37,6 +36,6 @@ export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
         {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
         {copied ? t("copied") : t("copy")}
       </Button>
-    </div>
+    </output>
   );
 }

@@ -13,12 +13,11 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   const t = useTranslations("LanguageSwitcher");
 
   return (
-    <div
+    <fieldset
       className={cn(
-        "fixed inset-e-4 top-4 z-50 flex items-center gap-1 rounded-full border border-border bg-background/80 px-1 py-1 shadow-sm backdrop-blur-sm",
+        "fixed inset-e-4 top-4 z-50 m-0 flex min-w-0 items-center gap-1 rounded-full border border-border bg-background/80 px-1 py-1 shadow-sm backdrop-blur-sm",
         className,
       )}
-      role="group"
       aria-label={t("aria")}
     >
       {routing.locales.map((loc) => (
@@ -36,6 +35,6 @@ export function LanguageSwitcher({ className }: { className?: string }) {
           {loc === "en" ? t("english") : t("spanish")}
         </button>
       ))}
-    </div>
+    </fieldset>
   );
 }

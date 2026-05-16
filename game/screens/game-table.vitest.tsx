@@ -25,8 +25,7 @@ async function renderGameTable(snapshot: MatchSnapshot) {
       withIntlEn(
         <div
           data-vrt-snapshot
-          role="img"
-          aria-label="Game table preview"
+          data-testid="vrt-game-table"
           className="inline-block min-w-7xl bg-background p-6 align-top text-foreground"
         >
           <GameTableView
@@ -51,7 +50,7 @@ describe("GameTable VRT", () => {
   test("mid-round with opponents and bust lane", async () => {
     await renderGameTable(vrtSnapshotMidRound);
     await page.viewport(1440, 2400);
-    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
       "game-mid-round",
     );
   });
@@ -59,7 +58,7 @@ describe("GameTable VRT", () => {
   test("pending freeze target selection", async () => {
     await renderGameTable(vrtSnapshotPendingFreeze);
     await page.viewport(1440, 2400);
-    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
       "game-pending-freeze",
     );
   });
@@ -69,7 +68,7 @@ describe("GameTable VRT", () => {
     await page.viewport(1440, 2400);
     expect(screen.getByRole("button", { name: /start next round/i })).toBeInTheDocument();
     expect(screen.getByText("Busted")).toBeInTheDocument();
-    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
       "game-round-complete",
     );
   });
@@ -77,7 +76,7 @@ describe("GameTable VRT", () => {
   test("viewer flip 7 hand", async () => {
     await renderGameTable(vrtSnapshotFlip7Hand);
     await page.viewport(1440, 2400);
-    await expect(page.getByRole("img", { name: "Game table preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
       "game-flip7-hand",
     );
   });
