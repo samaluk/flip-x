@@ -10,14 +10,14 @@ describe("LobbyCodeDisplay VRT", () => {
   test("lobby code display", async () => {
     render(
       withIntlEn(
-        <div role="img" aria-label="Lobby preview" className="bg-background p-8 text-foreground">
+        <div data-testid="vrt-lobby-preview" className="bg-background p-8 text-foreground">
           <LobbyCodeDisplay code="PLAY" />
         </div>,
       ),
     );
 
     await page.viewport(1280, 720);
-    await expect(page.getByRole("img", { name: "Lobby preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-lobby-preview")).toMatchScreenshot(
       "lobby-code-display",
     );
   });

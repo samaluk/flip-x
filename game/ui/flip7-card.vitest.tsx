@@ -14,7 +14,7 @@ const ACTION_KINDS = ["freeze", "flip_three", "second_chance"] as const;
 
 function cardShell(card: ReactNode, snapshotWrap?: boolean) {
   const inner = (
-    <div role="img" aria-label="Card preview">
+    <div data-testid="vrt-card-preview">
       {card}
     </div>
   );
@@ -37,7 +37,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       `flip7-number-${numberValue}`,
     );
   });
@@ -50,7 +50,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       "flip7-number-face-down",
     );
   });
@@ -66,7 +66,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       "flip7-state-dealing",
     );
   });
@@ -82,7 +82,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       "flip7-state-bust",
     );
   });
@@ -98,7 +98,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       "flip7-state-stay",
     );
   });
@@ -115,7 +115,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       `flip7-modifier-${slug}`,
     );
   });
@@ -128,7 +128,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByRole("img", { name: "Card preview" })).toMatchScreenshot(
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
       `flip7-action-${actionKind}`,
     );
   });
