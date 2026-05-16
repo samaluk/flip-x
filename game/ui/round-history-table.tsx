@@ -86,6 +86,14 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                     return null;
                   }
 
+                  const roundHeader =
+                    entry.phase === "projected"
+                      ? t("roundHeaderLive", { round: String(entry.roundNumber) })
+                      : t("roundHeader", { round: String(entry.roundNumber) });
+                  const statusText = score.reachedTarget
+                    ? t("winner")
+                    : t("pointsToTarget", { points: String(score.pointsToTarget) });
+
                   return (
                     <td
                       key={`${entry.phase}-${entry.roundNumber}-${player.playerId}`}
@@ -94,6 +102,13 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                         entry.phase === "projected" && "border-dashed bg-primary/5",
                         score.reachedTarget && "bg-emerald-500/10",
                       )}
+                      aria-label={t("scoreCellLabel", {
+                        player: player.displayName,
+                        round: roundHeader,
+                        total: String(score.totalScore),
+                        gain: String(score.roundScore),
+                        status: statusText,
+                      })}
                     >
                       <div className="flex min-h-20 flex-col gap-1.5">
                         <div className="text-lg font-semibold text-foreground tabular-nums">

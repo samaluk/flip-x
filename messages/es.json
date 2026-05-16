@@ -229,6 +229,7 @@
     "gainLabel": "Ganancia {gain}",
     "pointsToTarget": "{points} para la meta",
     "winner": "Ganador",
+    "scoreCellLabel": "{player}, {round}. Total {total}, ronda +{gain}. {status}",
     "currentRoundBreakdownTitle": "Desglose de la ronda actual",
     "currentRoundBreakdownSubtitle": "Puntuación detallada de la ronda activa o la más reciente que se completó."
   },
@@ -260,7 +261,8 @@
     "statusWaiting": "Esperando",
     "selfTarget": "Yo",
     "incomingAction": "Entrante",
-    "flip3Remaining": "{count} por robar"
+    "flip3Remaining": "{count} por robar",
+    "selectTargetLabel": "Elegir a {name} como objetivo"
   },
   "TurnControls": {
     "startNextRound": "Empezar siguiente ronda",

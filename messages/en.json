@@ -229,6 +229,7 @@
     "gainLabel": "Gain {gain}",
     "pointsToTarget": "{points} to target",
     "winner": "Winner",
+    "scoreCellLabel": "{player}, {round}. Total {total}, round +{gain}. {status}",
     "currentRoundBreakdownTitle": "Current round breakdown",
     "currentRoundBreakdownSubtitle": "Detailed scoring for the active or most recently completed round."
   },
@@ -260,7 +261,8 @@
     "statusWaiting": "Waiting",
     "selfTarget": "Self",
     "incomingAction": "Incoming",
-    "flip3Remaining": "{count} to draw"
+    "flip3Remaining": "{count} to draw",
+    "selectTargetLabel": "Select {name} as target"
   },
   "TurnControls": {
     "startNextRound": "Start next round",
