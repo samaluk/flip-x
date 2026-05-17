@@ -17,8 +17,6 @@ describe("LobbyCodeDisplay VRT", () => {
     );
 
     await page.viewport(1280, 720);
-    await expect(page.getByTestId("vrt-lobby-preview")).toMatchScreenshot(
-      "lobby-code-display",
-    );
+    await expect(page.getByTestId("vrt-lobby-preview")).toMatchScreenshot("lobby-code-display");
   });
 });

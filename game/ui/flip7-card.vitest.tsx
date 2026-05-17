@@ -13,11 +13,7 @@ const REPRESENTATIVE_MODIFIER_VALUES = [2, 10, "x2"] as const;
 const ACTION_KINDS = ["freeze", "flip_three", "second_chance"] as const;
 
 function cardShell(card: ReactNode, snapshotWrap?: boolean) {
-  const inner = (
-    <div data-testid="vrt-card-preview">
-      {card}
-    </div>
-  );
+  const inner = <div data-testid="vrt-card-preview">{card}</div>;
   if (snapshotWrap) {
     return (
       <div data-vrt-snapshot className="inline-block bg-background p-4 text-foreground">
@@ -50,9 +46,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-number-face-down",
-    );
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip7-number-face-down");
   });
 
   test("number dealing (end of deal animation)", async () => {
@@ -66,9 +60,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-state-dealing",
-    );
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip7-state-dealing");
   });
 
   test("number bust (end of bust animation)", async () => {
@@ -82,9 +74,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-state-bust",
-    );
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip7-state-bust");
   });
 
   test("number stay (end of stay animation)", async () => {
@@ -98,9 +88,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-state-stay",
-    );
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip7-state-stay");
   });
 
   test.each(REPRESENTATIVE_MODIFIER_VALUES)("modifier %s", async (modifierValue) => {
@@ -115,9 +103,7 @@ describe("Flip7Card VRT", () => {
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      `flip7-modifier-${slug}`,
-    );
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(`flip7-modifier-${slug}`);
   });
 
   test.each(ACTION_KINDS)("%s action", async (actionKind) => {

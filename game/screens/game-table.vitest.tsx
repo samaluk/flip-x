@@ -50,17 +50,13 @@ describe("GameTable VRT", () => {
   test("mid-round with opponents and bust lane", async () => {
     await renderGameTable(vrtSnapshotMidRound);
     await page.viewport(1440, 2400);
-    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
-      "game-mid-round",
-    );
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-mid-round");
   });
 
   test("pending freeze target selection", async () => {
     await renderGameTable(vrtSnapshotPendingFreeze);
     await page.viewport(1440, 2400);
-    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
-      "game-pending-freeze",
-    );
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-pending-freeze");
   });
 
   test("round complete with next round control including busted opponent", async () => {
@@ -68,16 +64,12 @@ describe("GameTable VRT", () => {
     await page.viewport(1440, 2400);
     expect(screen.getByRole("button", { name: /start next round/i })).toBeInTheDocument();
     expect(screen.getByText("Busted")).toBeInTheDocument();
-    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
-      "game-round-complete",
-    );
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-round-complete");
   });
 
   test("viewer flip 7 hand", async () => {
     await renderGameTable(vrtSnapshotFlip7Hand);
     await page.viewport(1440, 2400);
-    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot(
-      "game-flip7-hand",
-    );
+    await expect(page.getByTestId("vrt-game-table")).toMatchScreenshot("game-flip7-hand");
   });
 });

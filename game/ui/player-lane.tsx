@@ -434,22 +434,23 @@ export const PlayerLane = memo(function PlayerLane({
 
   const selectTarget = onSelectTarget;
   const canSelectAsTarget = Boolean(selectTarget && targetingActive);
-  const targetSelectionProps = canSelectAsTarget && selectTarget
-    ? {
-        role: "button" as const,
-        tabIndex: 0 as const,
-        "aria-label": t("selectTargetLabel", { name: player.displayName }),
-        onClick: () => {
-          selectTarget(player.playerId);
-        },
-        onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
+  const targetSelectionProps =
+    canSelectAsTarget && selectTarget
+      ? {
+          role: "button" as const,
+          tabIndex: 0 as const,
+          "aria-label": t("selectTargetLabel", { name: player.displayName }),
+          onClick: () => {
             selectTarget(player.playerId);
-          }
-        },
-      }
-    : {};
+          },
+          onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectTarget(player.playerId);
+            }
+          },
+        }
+      : {};
 
   return (
     <section
