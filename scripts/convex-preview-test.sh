@@ -61,7 +61,7 @@ resolve_preview_name() {
 run_local_path() {
   printf 'Using local Convex backend (convex dev --once). For cloud preview instead, set CONVEX_TEST_USE_PREVIEW=1.\n'
 
-  pnpm exec convex dev --once --typecheck try
+  pnpm exec convex-bundled dev --once --typecheck try
 
   if [[ ! -f "$ROOT/.env.local" ]]; then
     printf 'Expected %s after convex dev --once. Run: npx convex deployment create local --select\n' "$ROOT/.env.local" >&2
@@ -89,14 +89,14 @@ run_preview_path() {
   url_file="$(mktemp)"
 
   cleanup() {
-    rm -f "$url_file"
+    rm -f "${url_file:-}"
   }
 
   trap cleanup EXIT
 
   printf 'Using Convex preview deployment: %s\n' "$preview_name"
 
-  pnpm exec convex deploy \
+  pnpm exec convex-bundled deploy \
     --preview-name "$preview_name" \
     --typecheck try \
     --cmd "node \"$ROOT/scripts/write-convex-url.mjs\" \"$url_file\"" \
