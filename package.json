@@ -51,7 +51,7 @@
     "@sholajegede/convex-cascading-deletes": "0.1.2",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
-    "convex": "1.38.0",
+    "convex": "1.39.1",
     "convex-helpers": "0.1.117",
     "effect": "3.21.2",
     "lucide-react": "1.16.0",

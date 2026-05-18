@@ -89,7 +89,7 @@ run_preview_path() {
   url_file="$(mktemp)"
 
   cleanup() {
-    rm -f "$url_file"
+    rm -f "${url_file:-}"
   }
 
   trap cleanup EXIT
@@ -97,15 +97,13 @@ run_preview_path() {
   printf 'Using Convex preview deployment: %s\n' "$preview_name"
 
   pnpm exec convex deploy \
-    --preview-name "$preview_name" \
+    --preview-create "$preview_name" \
     --typecheck try \
     --cmd "node \"$ROOT/scripts/write-convex-url.mjs\" \"$url_file\"" \
     --cmd-url-env-var-name NEXT_PUBLIC_CONVEX_URL
 
   export NEXT_PUBLIC_CONVEX_URL="$(<"$url_file")"
   printf 'Using NEXT_PUBLIC_CONVEX_URL=%s\n' "$NEXT_PUBLIC_CONVEX_URL"
-
-  pnpm exec node "$ROOT/scripts/clear-convex-app-data.mjs"
 
   if [[ -n "${NEXT_PUBLIC_CONVEX_SITE_URL:-}" ]]; then
     printf 'Ignoring NEXT_PUBLIC_CONVEX_SITE_URL for preview-backed tests.\n'
