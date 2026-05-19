@@ -3,6 +3,8 @@ import type { SessionId } from "convex-helpers/server/sessions";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
+import { AnalyticsSink } from "../../shared/analytics/service";
+import { noopAnalyticsLayer } from "../../shared/analytics/noop";
 import type { AppError } from "../../shared/lib/errors/domain";
 import { buildLatestMatchSnapshot } from "../infrastructure/snapshot-store";
 import { loadMatchAggregate, type MatchAggregate } from "../infrastructure/load-match-aggregate";
@@ -67,6 +69,7 @@ export type RunGameCommandServices =
   | CommandResultStore
   | MatchSnapshotStore
   | IdempotencyStore
+  | AnalyticsSink
   | AppClock;
 
 const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
@@ -121,5 +124,5 @@ export function makeProductionCommandLayer(ctx: MutationCtx): Layer.Layer<RunGam
     nowMillis: Effect.sync(() => Date.now()),
   });
 
-  return Layer.mergeAll(aggregate, commandResults, snapshots, idempotency, clock);
+  return Layer.mergeAll(aggregate, commandResults, snapshots, idempotency, noopAnalyticsLayer, clock);
 }

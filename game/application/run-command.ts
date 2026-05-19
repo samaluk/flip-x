@@ -15,6 +15,7 @@ import {
   staleGameState,
 } from "../../shared/lib/errors/domain";
 import { assertNever } from "../../shared/lib/utils";
+import { captureAnalyticsEvents } from "../../shared/analytics/service";
 import {
   continueRound,
   createPlayerRoundStates,
@@ -37,6 +38,7 @@ import {
   MatchSnapshotStore,
   type RunGameCommandServices,
 } from "./services";
+import { buildGameCommandAnalyticsEvents } from "./analytics";
 
 function finalizeIfNeeded(
   input: {
@@ -378,6 +380,16 @@ export function runGameCommandProgram(
     if (!snapshot) {
       return yield* matchNotFound({ matchId: String(input.matchId) });
     }
+
+    yield* captureAnalyticsEvents(
+      buildGameCommandAnalyticsEvents({
+        command: input.command,
+        sessionId: input.sessionId,
+        aggregate,
+        transition,
+        snapshot,
+      }),
+    );
 
     yield* idempotencyStore.put(
       {
