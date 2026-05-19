@@ -3,7 +3,9 @@ import { Effect } from "effect";
 
 import type { Doc, Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
+import { buildMatchCreatedAnalyticsEvent, buildMatchJoinedAnalyticsEvent } from "../game/application/match-setup-analytics";
 import { DEFAULT_GAME_SETTINGS } from "../game/logic/game-settings";
+import { captureAnalyticsEvents } from "../shared/analytics/service";
 import {
   invalidHostName,
   invalidPlayerColor,
@@ -167,6 +169,16 @@ function joinNewPlayerSnapshot(
 
     yield* setPlayerSessionWithServices(reader, writer, sessionId, playerId);
 
+    yield* captureAnalyticsEvents([
+      buildMatchJoinedAnalyticsEvent({
+        sessionId,
+        matchId,
+        playerId,
+        seatIndex: nextSeat,
+        playerCount: players.length + 1,
+      }),
+    ]);
+
     return yield* snapshotForMatchSession(ctx, matchId, sessionId);
   });
 }
@@ -216,6 +228,16 @@ export function createMatchForSession(
 
     yield* setPlayerSessionWithServices(reader, writer, sessionId, hostPlayerId);
     yield* writer.table("matches").patch(matchId, { hostPlayerId });
+
+    yield* captureAnalyticsEvents([
+      buildMatchCreatedAnalyticsEvent({
+        sessionId,
+        matchId,
+        hostPlayerId,
+        targetScore: DEFAULT_GAME_SETTINGS.targetScore,
+        maxNumberCardValue: DEFAULT_GAME_SETTINGS.maxNumberCardValue,
+      }),
+    ]);
 
     return yield* snapshotForMatchSession(ctx, matchId, sessionId);
   });

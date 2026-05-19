@@ -1,6 +1,7 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
+import { noopAnalyticsLayer } from "../shared/analytics/noop";
 import api from "./_generated/api";
 import { MutationCtx, QueryCtx } from "./_generated/services";
 import { matchIdFromConfectWire } from "./lib/convex-id-bridge";
@@ -14,7 +15,7 @@ const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* createMatchForSession(ctx, args);
-  }).pipe(Effect.orDie),
+  }).pipe(Effect.provide(noopAnalyticsLayer), Effect.orDie),
 );
 const getMatchSnapshotImpl = FunctionImpl.make(
   api,
@@ -41,7 +42,7 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
       ...args,
       matchId: matchIdFromConfectWire(args.matchId),
     });
-  }).pipe(Effect.orDie),
+  }).pipe(Effect.provide(noopAnalyticsLayer), Effect.orDie),
 );
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
   Effect.gen(function* () {
