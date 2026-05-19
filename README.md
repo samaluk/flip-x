@@ -103,3 +103,8 @@ GitHub Actions runs the fast Vitest suites, build, visual regression, backend te
 - Vercel project: `flip7` deploying from the `master` branch
 - Convex production URL: `https://valuable-peacock-13.convex.cloud`
 - Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`
+- PostHog frontend environment variables: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
+- PostHog Convex environment variables: `POSTHOG_API_KEY`, `POSTHOG_HOST`
+- Optional Convex feature-flag local evaluation variable: `POSTHOG_PERSONAL_API_KEY`
+
+PostHog feature flag support is configured, but no feature flags are currently evaluated by the app.
