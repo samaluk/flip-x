@@ -11,6 +11,7 @@
 import type * as admin from "../admin.js";
 import type * as matches from "../matches.js";
 import type * as migrations from "../migrations.js";
+import type * as posthog from "../posthog.js";
 import type * as presence from "../presence.js";
 import type * as rounds from "../rounds.js";
 import type * as settings from "../settings.js";
@@ -26,6 +27,7 @@ declare const fullApi: ApiFromModules<{
   admin: typeof admin;
   matches: typeof matches;
   migrations: typeof migrations;
+  posthog: typeof posthog;
   presence: typeof presence;
   rounds: typeof rounds;
   settings: typeof settings;
@@ -62,5 +64,6 @@ export declare const components: {
   migrations: import("@convex-dev/migrations/_generated/component.js").ComponentApi<"migrations">;
   presence: import("@convex-dev/presence/_generated/component.js").ComponentApi<"presence">;
   rateLimiter: import("@convex-dev/rate-limiter/_generated/component.js").ComponentApi<"rateLimiter">;
+  posthog: import("@posthog/convex/_generated/component.js").ComponentApi<"posthog">;
   convexCascadingDeletes: import("@sholajegede/convex-cascading-deletes/_generated/component.js").ComponentApi<"convexCascadingDeletes">;
 };

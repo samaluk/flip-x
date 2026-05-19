@@ -1,6 +1,7 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
+import { makePostHogConvexAnalyticsLayer } from "../shared/analytics/posthog-convex";
 import api from "./_generated/api";
 import { MutationCtx, QueryCtx } from "./_generated/services";
 import { matchIdFromConfectWire } from "./lib/convex-id-bridge";
@@ -13,7 +14,9 @@ import { getMatchSnapshot, startMatchForSession } from "./matches";
 const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
-    return yield* createMatchForSession(ctx, args);
+    return yield* createMatchForSession(ctx, args).pipe(
+      Effect.provide(makePostHogConvexAnalyticsLayer(ctx)),
+    );
   }).pipe(Effect.orDie),
 );
 const getMatchSnapshotImpl = FunctionImpl.make(
@@ -40,7 +43,7 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
     return yield* joinMatchForSession(ctx, {
       ...args,
       matchId: matchIdFromConfectWire(args.matchId),
-    });
+    }).pipe(Effect.provide(makePostHogConvexAnalyticsLayer(ctx)));
   }).pipe(Effect.orDie),
 );
 const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
