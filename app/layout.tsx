@@ -3,6 +3,8 @@ import { getLocale } from "next-intl/server";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
 
+import { AnalyticsProvider } from "../shared/providers/analytics-provider";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,7 +30,9 @@ export default async function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <AnalyticsProvider>
+          <NuqsAdapter>{children}</NuqsAdapter>
+        </AnalyticsProvider>
         <Toaster richColors position="top-center" />
       </body>
     </html>
