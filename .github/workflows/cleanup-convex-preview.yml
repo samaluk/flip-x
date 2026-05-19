@@ -1,0 +1,23 @@
+name: Cleanup Convex preview
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.15.0
+
+      - name: Delete Convex preview for closed PR
+        env:
+          CONVEX_TEAM_ACCESS_TOKEN: ${{ secrets.CONVEX_TEAM_ACCESS_TOKEN }}
+          PREVIEW_DEPLOYMENT_NAME: pr-${{ github.event.pull_request.number }}
+        run: node scripts/delete-convex-preview.mjs

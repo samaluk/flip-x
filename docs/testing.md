@@ -108,6 +108,24 @@ Preview naming:
 
 Escape hatch: set `CONVEX_TEST_USE_PREVIEW=1` when you need to reproduce CI-style preview behavior locally.
 
+### PR preview cleanup
+
+[`.github/workflows/cleanup-convex-preview.yml`](../.github/workflows/cleanup-convex-preview.yml) deletes the cloud preview deployment when a pull request is closed or merged. It calls [`scripts/delete-convex-preview.mjs`](../scripts/delete-convex-preview.mjs) with the same preview name CI uses (`pr-<number>`).
+
+One-time setup for the workflow:
+
+1. In the [Convex dashboard](https://dashboard.convex.dev), create a **team access token** for the team that owns this project.
+2. Add it to GitHub as repository secret `CONVEX_TEAM_ACCESS_TOKEN`.
+
+Manual cleanup (same preview name as CI):
+
+```bash
+export CONVEX_TEAM_ACCESS_TOKEN='…'
+PREVIEW_DEPLOYMENT_NAME=pr-123 node scripts/delete-convex-preview.mjs
+```
+
+Convex also expires unused preview deployments automatically (5 days on Free/Starter, 14 days on higher plans). The workflow removes them immediately when the PR ends.
+
 ## Typical Commands
 
 Fast local validation:
