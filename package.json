@@ -101,7 +101,7 @@
     "typescript": "6.0.3",
     "vitest": "4.1.6"
   },
-  "packageManager": "pnpm@11.1.2",
+  "packageManager": "pnpm@11.1.3",
   "portless": {
     "name": "flip7",
     "script": "dev:app"
