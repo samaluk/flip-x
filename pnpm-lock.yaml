@@ -164,8 +164,8 @@ importers:
         specifier: 1.65.0
         version: 1.65.0(oxlint-tsgolint@0.22.1)
       oxlint-tailwindcss:
-        specifier: 0.7.1
-        version: 0.7.1(@oxlint/plugins@1.62.0)
+        specifier: 0.8.0
+        version: 0.8.0(@oxlint/plugins@1.62.0)
       oxlint-tsgolint:
         specifier: 0.22.1
         version: 0.22.1
@@ -2159,9 +2159,6 @@ packages:
   '@swc/types@0.1.26':
     resolution: {integrity: sha512-lyMwd7WGgG79RS7EERZV3T8wMdmPq3xwyg+1nmAM64kIhx5yl+juO2PYIHb7vTiPgPCj8LYjsNV2T5wiQHUEaw==}
 
-  '@tailwindcss/node@4.2.4':
-    resolution: {integrity: sha512-Ai7+yQPxz3ddrDQzFfBKdHEVBg0w3Zl83jnjuwxnZOsnH9pGn93QHQtpU0p/8rYWxvbFZHneni6p1BSLK4DkGA==}
-
   '@tailwindcss/node@4.3.0':
     resolution: {integrity: sha512-aFb4gUhFOgdh9AXo4IzBEOzBkkAxm9VigwDJnMIYv3lcfXCJVesNfbEaBl4BNgVRyid92AmdviqwBUBRKSeY3g==}
 
@@ -2919,10 +2916,6 @@ packages:
   encodeurl@2.0.0:
     resolution: {integrity: sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==}
     engines: {node: '>= 0.8'}
-
-  enhanced-resolve@5.20.1:
-    resolution: {integrity: sha512-Qohcme7V1inbAfvjItgw0EaxVX5q2rdVEZHRBrEQdRZTssLDGsL8Lwrznl8oQ/6kuTJONLaDcGjkNP247XEhcA==}
-    engines: {node: '>=10.13.0'}
 
   enhanced-resolve@5.21.2:
     resolution: {integrity: sha512-xe9vQb5kReirPUxgQrXA3ihgbCqssmTiM7cOZ+Gzu+VeGWgpV98lLZvp0dl4yriyAePcewxGUs9UpKD8PET9KQ==}
@@ -3986,8 +3979,8 @@ packages:
       svelte:
         optional: true
 
-  oxlint-tailwindcss@0.7.1:
-    resolution: {integrity: sha512-l4WuZt/iKvMwggwnfsIPCNvY/GDMK9FffXiYTWfXrh+PR0WeItRwqzU5UD1iFfV5CC0bfsiYZbLFt1CJLT6t3g==}
+  oxlint-tailwindcss@0.8.0:
+    resolution: {integrity: sha512-vfWnQ9S3AZXb9oqQPxilz9UlUcFvuKKJh7mT7vHw0lyHQVpKPOx117oS5y1/FuSAGSJAZa1gUeXCFNF8Ax28jA==}
     engines: {node: '>=20'}
     peerDependencies:
       '@oxlint/plugins': '>=1.43.0'
@@ -4469,15 +4462,8 @@ packages:
   tailwind-merge@3.6.0:
     resolution: {integrity: sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==}
 
-  tailwindcss@4.2.4:
-    resolution: {integrity: sha512-HhKppgO81FQof5m6TEnuBWCZGgfRAWbaeOaGT00KOy/Pf/j6oUihdvBpA7ltCeAvZpFhW3j0PTclkxsd4IXYDA==}
-
   tailwindcss@4.3.0:
     resolution: {integrity: sha512-y6nxMGB1nMW9R6k96e5gdIFzcfL/gTJRNaqGes1YvkLnPVXzWgbqFF2yLC0T8G774n24cx3Pe8XrKoniCOAH+Q==}
-
-  tapable@2.3.2:
-    resolution: {integrity: sha512-1MOpMXuhGzGL5TTCZFItxCc0AARf1EZFQkGqMm7ERKj8+Hgr5oLvJOVFcC+lRmR8hCe2S3jC4T5D7Vg/d7/fhA==}
-    engines: {node: '>=6'}
 
   tapable@2.3.3:
     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
@@ -6407,16 +6393,6 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
-  '@tailwindcss/node@4.2.4':
-    dependencies:
-      '@jridgewell/remapping': 2.3.5
-      enhanced-resolve: 5.20.1
-      jiti: 2.6.1
-      lightningcss: 1.32.0
-      magic-string: 0.30.21
-      source-map-js: 1.2.1
-      tailwindcss: 4.2.4
-
   '@tailwindcss/node@4.3.0':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -7093,11 +7069,6 @@ snapshots:
   emoji-regex@8.0.0: {}
 
   encodeurl@2.0.0: {}
-
-  enhanced-resolve@5.20.1:
-    dependencies:
-      graceful-fs: 4.2.11
-      tapable: 2.3.2
 
   enhanced-resolve@5.21.2:
     dependencies:
@@ -8367,11 +8338,11 @@ snapshots:
       '@oxfmt/binding-win32-ia32-msvc': 0.50.0
       '@oxfmt/binding-win32-x64-msvc': 0.50.0
 
-  oxlint-tailwindcss@0.7.1(@oxlint/plugins@1.62.0):
+  oxlint-tailwindcss@0.8.0(@oxlint/plugins@1.62.0):
     dependencies:
       '@oxlint/plugins': 1.62.0
-      '@tailwindcss/node': 4.2.4
-      tailwindcss: 4.2.4
+      '@tailwindcss/node': 4.3.0
+      tailwindcss: 4.3.0
 
   oxlint-tsgolint@0.22.1:
     optionalDependencies:
@@ -8967,11 +8938,7 @@ snapshots:
 
   tailwind-merge@3.6.0: {}
 
-  tailwindcss@4.2.4: {}
-
   tailwindcss@4.3.0: {}
-
-  tapable@2.3.2: {}
 
   tapable@2.3.3: {}
 
