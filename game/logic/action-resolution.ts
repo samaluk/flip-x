@@ -100,6 +100,12 @@ function applyResolvedTargetAction(
     payload: { cardsRemaining: 3 },
   });
 
+  const targetPlayer = players.find((player) => player.playerId === targetPlayerId);
+  if (targetPlayer) {
+    round.turnSeatIndex = targetPlayer.seatIndex;
+    round.activePlayerId = targetPlayerId;
+  }
+
   round.pendingFlip3 = {
     sourcePlayerId,
     targetPlayerId,

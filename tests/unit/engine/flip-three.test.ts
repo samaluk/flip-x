@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { applyCardToPlayer } from "@/game/logic/apply-card";
-import { takeTurnAction } from "@/game/logic/command-handler";
+import { resolvePendingAction, takeTurnAction } from "@/game/logic/command-handler";
 import { advanceFlip3Hit } from "@/game/logic/flip-three";
 import type { RoundEvent } from "@/game/logic/events";
 import { actionCard, numberCard, modifierCard } from "@/tests/builders/cards";
@@ -58,6 +58,29 @@ describe("flip three", () => {
 
     expect(resolved.round.activePlayerId).toBe("p1");
     expect(resolved.round.pendingFlip3?.cardsRemaining).toBe(2);
+  });
+
+  it("moves the active turn to the target after resolving a targeted Flip Three", () => {
+    const playerStates = createActivePlayerStates();
+    playerStates.p1.heldActionCards = [actionCard("flip3", "flip_three")];
+    const round = createTurnRound();
+    round.phase = "resolving_action";
+    round.pendingAction = {
+      sourcePlayerId: "p1",
+      actionKind: "flip_three",
+      eligibleTargetIds: ["p1", "p2", "p3"],
+      resume: "turns",
+    };
+
+    const resolved = resolvePendingAction(testPlayers3P, round, playerStates, "p2");
+
+    expect(resolved.round.pendingFlip3).toMatchObject({
+      sourcePlayerId: "p1",
+      targetPlayerId: "p2",
+      cardsRemaining: 3,
+    });
+    expect(resolved.round.activePlayerId).toBe("p2");
+    expect(resolved.round.turnSeatIndex).toBe(1);
   });
 
   it("completes Flip Three on the last required draw and advances the turn", () => {
