@@ -137,4 +137,25 @@ describe("turn actions", () => {
       InvalidTarget,
     );
   });
+
+  it("advances the turn after resolving a pending turn action with no follow-up input", () => {
+    const playerStates = createActivePlayerStates();
+    playerStates.p1.heldActionCards = [actionCard("freeze", "freeze")];
+    const round = createTurnRound();
+    round.phase = "resolving_action";
+    round.pendingAction = {
+      sourcePlayerId: "p1",
+      actionKind: "freeze",
+      eligibleTargetIds: ["p2", "p3"],
+      resume: "turns",
+    };
+
+    const resolved = resolvePendingAction(testPlayers3P, round, playerStates, "p2");
+
+    expect(resolved.playerStates.p2.status).toBe("frozen");
+    expect(resolved.round.pendingAction).toBeNull();
+    expect(resolved.round.pendingFlip3).toBeNull();
+    expect(resolved.round.activePlayerId).toBe("p3");
+    expect(resolved.round.turnSeatIndex).toBe(2);
+  });
 });
