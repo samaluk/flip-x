@@ -65,7 +65,12 @@ export const syncPlayer = mutationWithSession({
     return await Effect.runPromise(
       Effect.tryPromise({
         try: () =>
-          presence.updateRoomUser(ctx, String(args.matchId), args.sessionId, args.playerId),
+          presence.updateRoomUser(
+            ctx,
+            String(args.matchId),
+            args.playerId ?? args.sessionId,
+            args.playerId,
+          ),
         catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
       }),
     );
