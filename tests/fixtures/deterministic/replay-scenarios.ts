@@ -100,8 +100,8 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
       promptKind: "freeze",
       choice: "Third",
     },
-    { stepNumber: 3, actor: "Guest", decisionType: "turn_action", choice: "stay" },
-    { stepNumber: 4, actor: "Host", decisionType: "turn_action", choice: "stay" },
+    { stepNumber: 3, actor: "Host", decisionType: "turn_action", choice: "stay" },
+    { stepNumber: 4, actor: "Guest", decisionType: "turn_action", choice: "stay" },
   ],
   expectedStates: [
     expectState({
@@ -144,7 +144,7 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
     }),
     expectState({
       currentRoundNumber: 2,
-      activePlayer: "Guest",
+      activePlayer: "Host",
       roundStatus: "player_turns",
       pendingAction: null,
       pendingFlip3: null,
@@ -177,18 +177,18 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
     }),
     expectState({
       currentRoundNumber: 2,
-      activePlayer: "Host",
+      activePlayer: "Guest",
       roundStatus: "player_turns",
       players: {
         Host: {
           totalScore: 1,
-          roundStatus: "active",
+          roundStatus: "stayed",
           pointsAtRisk: 6,
           numberCards: [6],
         },
         Guest: {
           totalScore: 2,
-          roundStatus: "stayed",
+          roundStatus: "active",
           pointsAtRisk: 4,
           numberCards: [4],
         },
@@ -203,7 +203,7 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
       latestEvent: {
         type: "stay",
         payload: {},
-        playerNames: "Guest",
+        playerNames: "Host",
       },
     }),
     expectState({

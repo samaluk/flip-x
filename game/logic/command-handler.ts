@@ -320,5 +320,9 @@ export function resolvePendingAction(
     } satisfies ResolveResult;
   }
 
+  if (targetResolution === "continue_turns") {
+    advanceTurnWhenQueueClear(round, players, playerStates);
+  }
+
   return { round, playerStates, events } satisfies ResolveResult;
 }

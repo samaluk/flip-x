@@ -119,6 +119,21 @@ function ensurePlayerTurnsWhenFlip3Pending(round: RoundRuntime) {
   }
 }
 
+function focusPendingTurnOwner(round: RoundRuntime, players: OrderedPlayer[]) {
+  const targetPlayerId = round.pendingFlip3?.targetPlayerId;
+  if (!targetPlayerId) {
+    return;
+  }
+
+  const targetPlayer = players.find((player) => player.playerId === targetPlayerId);
+  if (!targetPlayer) {
+    return;
+  }
+
+  round.turnSeatIndex = targetPlayer.seatIndex;
+  round.activePlayerId = targetPlayerId;
+}
+
 function maybeAdvanceTurnIfActivePlayerInactive(
   round: RoundRuntime,
   players: OrderedPlayer[],
@@ -161,6 +176,7 @@ export function resolvePendingTargetAction(
   );
 
   ensurePlayerTurnsWhenFlip3Pending(round);
+  focusPendingTurnOwner(round, players);
   maybeAdvanceTurnIfActivePlayerInactive(round, players, playerStates);
   maybeFinishRound(round, players, playerStates);
 
@@ -200,5 +216,6 @@ export function resolveHeldTargetAction(
       targetOrPending,
       events,
     );
+    focusPendingTurnOwner(round, players);
   }
 }
