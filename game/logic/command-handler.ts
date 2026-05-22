@@ -31,6 +31,28 @@ function transitionDealingToPlayerTurns(
     firstActiveSeat === null ? null : getPlayerBySeat(players, firstActiveSeat).playerId;
 }
 
+function advanceOpeningSeat(round: RoundRuntime, players: OrderedPlayer[]) {
+  const nextOpeningSeatIndex = round.openingSeatIndex + 1;
+  const wrappedToDealer =
+    getPlayerBySeat(players, nextOpeningSeatIndex).seatIndex === round.dealerSeat;
+  round.openingSeatIndex = nextOpeningSeatIndex;
+  return wrappedToDealer;
+}
+
+function continueAfterSkippedOpeningSeat(
+  round: RoundRuntime,
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+  wrappedToDealer: boolean,
+) {
+  if (!wrappedToDealer) {
+    return true;
+  }
+
+  transitionDealingToPlayerTurns(round, players, playerStates);
+  return false;
+}
+
 function runOneDealingStep(
   round: RoundRuntime,
   players: OrderedPlayer[],
@@ -39,9 +61,14 @@ function runOneDealingStep(
 ): boolean {
   const player = getPlayerBySeat(players, round.openingSeatIndex);
   const playerState = playerStates[player.playerId];
+  const wrappedToDealer = advanceOpeningSeat(round, players);
 
   if (!playerState) {
-    return false;
+    return !wrappedToDealer;
+  }
+
+  if (playerState.status !== "waiting" && playerState.status !== "active") {
+    return continueAfterSkippedOpeningSeat(round, players, playerStates, wrappedToDealer);
   }
 
   if (playerState.status === "waiting") {
@@ -52,11 +79,6 @@ function runOneDealingStep(
   if (!card) {
     return false;
   }
-
-  const nextOpeningSeatIndex = round.openingSeatIndex + 1;
-  const wrappedToDealer =
-    getPlayerBySeat(players, nextOpeningSeatIndex).seatIndex === round.dealerSeat;
-  round.openingSeatIndex = nextOpeningSeatIndex;
 
   addEvent(events, {
     eventType: "initial_deal",
