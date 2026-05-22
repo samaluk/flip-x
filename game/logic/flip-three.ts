@@ -53,6 +53,20 @@ function discardDeferredFlip3Cards(
   }
 }
 
+function restoreFlip3SourceTurnAnchor(round: RoundRuntime, players: OrderedPlayer[]) {
+  const sourcePlayerId = round.pendingFlip3?.sourcePlayerId;
+  if (!sourcePlayerId) {
+    return;
+  }
+
+  const sourcePlayer = players.find((player) => player.playerId === sourcePlayerId);
+  if (!sourcePlayer) {
+    return;
+  }
+
+  round.turnSeatIndex = sourcePlayer.seatIndex;
+}
+
 function resolveDeferredFlip3Actions(
   round: RoundRuntime,
   players: OrderedPlayer[],
@@ -89,9 +103,11 @@ type ApplyFlip3Card = (card: Card) => void;
 
 function clearFlip3AndDiscardDeferredActions(
   round: RoundRuntime,
+  players: OrderedPlayer[],
   playerState: PlayerRoundState,
   deferredCards: ActionCard[],
 ) {
+  restoreFlip3SourceTurnAnchor(round, players);
   discardDeferredFlip3Cards(round, playerState, deferredCards);
   round.pendingFlip3 = null;
 }
@@ -109,6 +125,7 @@ function completeFlip3Sequence(
   }
 
   const deferredCards = [...flip3.deferredActionCards];
+  restoreFlip3SourceTurnAnchor(round, players);
   round.pendingFlip3 = null;
   addEvent(events, {
     eventType: "flip3_completed",
@@ -158,7 +175,7 @@ export function advanceFlip3Hit(
   applyCard(card);
 
   if (round.phase !== "player_turns" || playerState.status !== "active") {
-    clearFlip3AndDiscardDeferredActions(round, playerState, flip3.deferredActionCards);
+    clearFlip3AndDiscardDeferredActions(round, players, playerState, flip3.deferredActionCards);
     return true;
   }
 
