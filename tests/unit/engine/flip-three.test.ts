@@ -97,8 +97,28 @@ describe("flip three", () => {
     const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p1", "hit");
 
     expect(resolved.round.pendingFlip3).toBeNull();
-    expect(resolved.round.activePlayerId).toBe("p2");
+    expect(resolved.round.activePlayerId).toBe("p3");
     expect(resolved.events.some((event) => event.eventType === "flip3_completed")).toBe(true);
+  });
+
+  it("advances from the original Flip Three player after a different target draws", () => {
+    const playerStates = createActivePlayerStates();
+    const round = createTurnRound();
+    round.activePlayerId = "p3";
+    round.turnSeatIndex = 2;
+    round.pendingFlip3 = {
+      sourcePlayerId: "p1",
+      targetPlayerId: "p3",
+      cardsRemaining: 1,
+      deferredActionCards: [],
+    };
+    round.drawPile = [numberCard("n2", 2)];
+
+    const resolved = takeTurnAction(testPlayers3P, round, playerStates, "p3", "hit");
+
+    expect(resolved.round.pendingFlip3).toBeNull();
+    expect(resolved.round.activePlayerId).toBe("p2");
+    expect(resolved.round.turnSeatIndex).toBe(1);
   });
 
   it("clears Flip Three when the target busts", () => {
@@ -116,7 +136,7 @@ describe("flip three", () => {
     expect(resolved.playerStates.p1.status).toBe("busted");
     expect(resolved.round.pendingFlip3).toBeNull();
     expect(resolved.playerStates.p1.heldActionCards).toHaveLength(0);
-    expect(resolved.round.activePlayerId).toBe("p2");
+    expect(resolved.round.activePlayerId).toBe("p3");
   });
 
   it("clears Flip Three immediately when the target hits Flip 7", () => {
