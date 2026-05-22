@@ -133,6 +133,40 @@ describe("Confect matches", () => {
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 
+  it.effect("lets a new player join after the match has started", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* createTwoPlayerMatch();
+      const started = yield* client.mutation(refs.public.matches.startMatch, {
+        matchId: created.matchId,
+        sessionId: "session-host",
+        expectedVersion: created.version,
+        idempotencyKey: "matches-mid-game-join-start",
+      });
+
+      const lookup = yield* client.query(refs.public.matches.getMatchByCode, {
+        lobbyCode: created.lobbyCode,
+      });
+      assertEquals(lookup?.matchId, created.matchId);
+      assertEquals(lookup?.status, "in_progress");
+
+      const joined = yield* client.mutation(refs.public.matches.joinMatch, {
+        matchId: created.matchId,
+        playerName: "Late Guest",
+        playerColorId: "amber",
+        sessionId: "session-late-guest",
+      });
+
+      assertEquals(started.status, "in_progress");
+      assertEquals(joined.status, "in_progress");
+      assertEquals(joined.players.length, 3);
+      assertEquals(joined.players[2]?.displayName, "Late Guest");
+      assertEquals(joined.players[2]?.roundStatus, "waiting");
+      assertEquals(joined.viewerPlayerId, joined.players[2]?.playerId ?? null);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
   it.effect("lets the host update setup settings and publishes them in snapshots", () =>
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;

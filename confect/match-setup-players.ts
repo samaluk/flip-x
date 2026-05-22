@@ -59,10 +59,10 @@ function takenColorIdsExcludingViewer(
     .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
 }
 
-function assertMatchInSetup(reader: DatabaseReader, matchId: Id<"matches">) {
+function assertMatchJoinable(reader: DatabaseReader, matchId: Id<"matches">) {
   return Effect.gen(function* () {
     const match = yield* reader.table("matches").get(matchId);
-    if (!match || match.status !== "setup") {
+    if (!match || match.status === "completed") {
       return yield* matchNotFound({ matchId: String(matchId) });
     }
     return undefined;
@@ -94,7 +94,7 @@ function prepareJoinPlayersState(
   requestedColorId: string | undefined,
 ) {
   return Effect.gen(function* () {
-    yield* assertMatchInSetup(reader, matchId);
+    yield* assertMatchJoinable(reader, matchId);
     const playerName = yield* requireValidJoinPlayerName(rawPlayerName);
     const players = yield* getPlayersByMatchWithReader(reader, matchId);
     const existingViewerPlayerId = yield* getViewerPlayerIdWithReader(reader, matchId, sessionId);
