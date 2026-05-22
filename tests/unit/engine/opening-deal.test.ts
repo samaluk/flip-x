@@ -106,6 +106,26 @@ describe("opening deal", () => {
     ]);
   });
 
+  it("skips a player frozen before their opening card", () => {
+    const playerStates = createPlayerRoundStates(testPlayers3P);
+    const round = createRoundRuntime(testPlayers3P, 1, 0);
+
+    round.drawPile = [
+      actionCard("freeze-opening", "freeze"),
+      numberCard("p3-opening", 3),
+      numberCard("left-in-deck", 9),
+    ];
+
+    const paused = continueRound(testPlayers3P, round, playerStates);
+    const resumed = resolvePendingAction(testPlayers3P, paused.round, paused.playerStates, "p2");
+
+    expect(resumed.round.phase).toBe("player_turns");
+    expect(resumed.playerStates.p2.status).toBe("frozen");
+    expect(resumed.playerStates.p2.numberCards).toEqual([]);
+    expect(resumed.playerStates.p3.numberCards).toEqual([numberCard("p3-opening", 3)]);
+    expect(resumed.round.drawPile).toEqual([numberCard("left-in-deck", 9)]);
+  });
+
   it("creates pending action when first player gets freeze as their first card", () => {
     const resolved = assertThreePlayerOpeningPendingOnFirstCard(
       actionCard("freeze-first", "freeze"),
