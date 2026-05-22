@@ -54,14 +54,14 @@ export function generateUniqueLobbyCode(
   });
 }
 
-function getSetupMatchByLobbyCode(
+function getJoinableMatchByLobbyCode(
   lookupMatchByLobbyCode: (lobbyCode: string) => Effect.Effect<Doc<"matches"> | null, unknown>,
   lobbyCode: string,
 ) {
   return Effect.gen(function* () {
     const match = yield* lookupMatchByLobbyCode(lobbyCode);
 
-    if (!match || match.status !== "setup") {
+    if (!match || match.status === "completed") {
       return yield* lobbyNotFound();
     }
 
@@ -80,7 +80,7 @@ export function getMatchByCode(ctx: QueryCtx, lobbyCode: string) {
 
     const match = yield* readMatchByLobbyCode(reader, normalized);
 
-    if (!match || match.status !== "setup") {
+    if (!match || match.status === "completed") {
       return null;
     }
 
@@ -111,7 +111,7 @@ export function joinByCodeForSession(
       return yield* lobbyNotFound();
     }
 
-    const match = yield* getSetupMatchByLobbyCode(
+    const match = yield* getJoinableMatchByLobbyCode(
       (lobbyCode) => readMatchByLobbyCode(reader, lobbyCode),
       normalized,
     );

@@ -23,7 +23,7 @@ const GameSettingsPatch = Schema.Struct({
 const MatchLookupResult = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.String,
-  status: Schema.Literal("setup"),
+  status: Schema.Literal("setup", "in_progress"),
   usedColorIds: Schema.Array(Schema.String),
 });
 
