@@ -34,8 +34,8 @@ importers:
         specifier: 0.3.2
         version: 0.3.2(convex@1.39.1(react@19.2.6))(react@19.2.6)
       '@posthog/convex':
-        specifier: 1.0.0
-        version: 1.0.0(convex@1.39.1(react@19.2.6))
+        specifier: 1.0.3
+        version: 1.0.3(convex@1.39.1(react@19.2.6))
       '@posthog/next':
         specifier: 0.4.58
         version: 0.4.58(@types/react@19.2.15)(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -1878,16 +1878,16 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  '@posthog/convex@1.0.0':
-    resolution: {integrity: sha512-FSr8dWvZhC97yP2R1FEdldnDFkQ3RvO3mW9mHK8UGUWW792lkmrNNLNOqGNtyGYv46+6RYg+SedpAbDeiK4tRg==}
+  '@posthog/convex@1.0.3':
+    resolution: {integrity: sha512-aCpTCCVXNFuUo+2s8XQZ5VEZidjQTNH+wQLNJkqZIIgxDpBSm73HeI4P0sqqJYxSSDE96fbgevhdSXwkYP/GpQ==}
     peerDependencies:
       convex: ^1.31.7
 
-  '@posthog/core@1.29.5':
-    resolution: {integrity: sha512-Jm5AE95EwBRqO6J8+skDufyf5rnEcmOvjYArCKCOzD4mWdH1xGpfcRXj5TEyZII3mD04Kr7pw9aP2ZbAHQGu2A==}
-
   '@posthog/core@1.29.6':
     resolution: {integrity: sha512-qLA/4xTzxG1FabliYjsOy5pTC9XZWA225MHnpCmqGBoDVGL4sKKgLixMK2dpsHZbSo6AHpBLUfqkvTsh2YxZcQ==}
+
+  '@posthog/core@1.29.7':
+    resolution: {integrity: sha512-WcBD9/YQVGI9r/5+/IGeaPgsmTIg0YfyzaTei5TNlhmAeFOccnhs269rhtQJcAXngZFpvWSj+RTxX2ONdgxBDQ==}
 
   '@posthog/next@0.4.58':
     resolution: {integrity: sha512-cg4VULmWMYfp6mS9/jqO5xTYV7oxf+p2tVsbQ8nJgajXLikAbXE//dpaSWYXWUmE2x0GWe8DKvXA0Df0xcFnSQ==}
@@ -1910,11 +1910,11 @@ packages:
       '@types/react':
         optional: true
 
-  '@posthog/types@1.374.2':
-    resolution: {integrity: sha512-ZghQSFMi+HFJNPvPjBoyY/jWQ+q6mSQVtWQxOHMSbBidUZjsyYbxYxBFbHy2qWLNe4mEpX+Wqir2Q4I/4AVvJQ==}
-
   '@posthog/types@1.374.3':
     resolution: {integrity: sha512-AewLXVP/JR0iUTcY3wkYeDomNDAEWagX6g+39U61HyYcnWOjxzEVPsMGV2VdVjaAP2lRtkIOc00EzoIc9fIZ+Q==}
+
+  '@posthog/types@1.374.4':
+    resolution: {integrity: sha512-OHBo+gReFwPJtt/yLY6xxa1EYMp7Ti07O1C1KE9ZXXyyuLNqekRaHZxJ/SKUfEvt1LhFV/9sioz8O0xfsSffsQ==}
 
   '@protobufjs/aspromise@1.1.2':
     resolution: {integrity: sha512-j+gKExEuLmKwvz3OgROXtrJ2UG2x8Ch2YZUxahh+s1F2HZ+wAceUNLkvy6zKCPVRkU++ZWQrdxsUeQXmcg4uoQ==}
@@ -4112,8 +4112,8 @@ packages:
   posthog-js@1.374.3:
     resolution: {integrity: sha512-xJ1Cr6jUs1EMbytD9g+Kej+B44sudcyiLP31l2mfkc8UL+YxAq3lNZ12lw4FVtTkwD4+blArvyd0u4sX+dU7Jg==}
 
-  posthog-node@5.34.6:
-    resolution: {integrity: sha512-oDjagFRkmCbWJBxG1FVU3kOGC6dxNpR849q8ARrZSBK3zWz4zJox6V5EjrATKM9RXKvAmbCSFoxYaOYTzp3phA==}
+  posthog-node@5.34.8:
+    resolution: {integrity: sha512-qSHeUYcUs8oG61gYVomRie+7CEf/WFjpxHthK/K9S0vNcFx0jzzeywTtKF6ScxsRW1sLXt0wYdxNPsni7Y6Q+A==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       rxjs: ^7.0.0
@@ -4121,8 +4121,8 @@ packages:
       rxjs:
         optional: true
 
-  posthog-node@5.34.8:
-    resolution: {integrity: sha512-qSHeUYcUs8oG61gYVomRie+7CEf/WFjpxHthK/K9S0vNcFx0jzzeywTtKF6ScxsRW1sLXt0wYdxNPsni7Y6Q+A==}
+  posthog-node@5.34.9:
+    resolution: {integrity: sha512-vOH+71q/Cb68ILXj58M2fV3GcE2sHimVFn2JQJYpe2wxAdZjWyt7sGhY1NI2/87DVjJ0zisEboVCX9/WXxXlMg==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       rxjs: ^7.0.0
@@ -6219,21 +6219,21 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@posthog/convex@1.0.0(convex@1.39.1(react@19.2.6))':
+  '@posthog/convex@1.0.3(convex@1.39.1(react@19.2.6))':
     dependencies:
-      '@posthog/core': 1.29.5
+      '@posthog/core': 1.29.7
       convex: 1.39.1(react@19.2.6)
-      posthog-node: 5.34.6
+      posthog-node: 5.34.9
     transitivePeerDependencies:
       - rxjs
-
-  '@posthog/core@1.29.5':
-    dependencies:
-      '@posthog/types': 1.374.2
 
   '@posthog/core@1.29.6':
     dependencies:
       '@posthog/types': 1.374.3
+
+  '@posthog/core@1.29.7':
+    dependencies:
+      '@posthog/types': 1.374.4
 
   '@posthog/next@0.4.58(@types/react@19.2.15)(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
@@ -6256,9 +6256,9 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.15
 
-  '@posthog/types@1.374.2': {}
-
   '@posthog/types@1.374.3': {}
+
+  '@posthog/types@1.374.4': {}
 
   '@protobufjs/aspromise@1.1.2': {}
 
@@ -8506,13 +8506,13 @@ snapshots:
       query-selector-shadow-dom: 1.0.1
       web-vitals: 5.2.0
 
-  posthog-node@5.34.6:
-    dependencies:
-      '@posthog/core': 1.29.5
-
   posthog-node@5.34.8:
     dependencies:
       '@posthog/core': 1.29.6
+
+  posthog-node@5.34.9:
+    dependencies:
+      '@posthog/core': 1.29.7
 
   powershell-utils@0.1.0: {}
 
