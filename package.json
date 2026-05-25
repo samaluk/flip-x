@@ -86,9 +86,9 @@
     "@types/react-dom": "19.2.3",
     "@typescript/native-preview": "7.0.0-dev.20260521.1",
     "@vitejs/plugin-react": "6.0.2",
-    "@vitest/browser": "4.1.6",
-    "@vitest/browser-playwright": "4.1.6",
-    "@vitest/coverage-v8": "4.1.6",
+    "@vitest/browser": "4.1.7",
+    "@vitest/browser-playwright": "4.1.7",
+    "@vitest/coverage-v8": "4.1.7",
     "convex-test": "0.0.53",
     "eslint-plugin-i18next": "6.1.4",
     "fallow": "2.77.0",
@@ -100,7 +100,7 @@
     "portless": "0.13.0",
     "tailwindcss": "4.3.0",
     "typescript": "6.0.3",
-    "vitest": "4.1.6"
+    "vitest": "4.1.7"
   },
   "packageManager": "pnpm@11.1.3",
   "portless": {
