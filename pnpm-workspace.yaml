@@ -10,5 +10,5 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
 patchedDependencies:
-  "@confect/core@7.0.0": patches/@confect__core@7.0.0.patch
-  "@confect/react@7.0.0": patches/@confect__react@7.0.0.patch
+  "@confect/core@8.0.0": patches/@confect__core@8.0.0.patch
+  "@confect/react@8.0.0": patches/@confect__react@8.0.0.patch
