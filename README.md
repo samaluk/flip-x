@@ -105,6 +105,7 @@ GitHub Actions runs the fast Vitest suites, build, visual regression, backend te
 - Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`
 - PostHog frontend environment variables: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
 - PostHog Convex environment variables: `POSTHOG_API_KEY`, `POSTHOG_HOST`
+- PostHog source map upload environment variable: `POSTHOG_PROJECT_ID`; `POSTHOG_API_KEY` must be a personal API key with error tracking write access during the production build.
 - Optional Convex feature-flag local evaluation variable: `POSTHOG_PERSONAL_API_KEY`
 
 PostHog feature flag support is configured, but no feature flags are currently evaluated by the app.

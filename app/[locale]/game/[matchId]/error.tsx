@@ -2,16 +2,29 @@
 
 import { AlertCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { useParams } from "next/navigation";
 import { useEffect } from "react";
+import { usePostHog } from "@posthog/next";
 
 import { Button } from "@/shared/ui/button";
 
 export default function GamePageError({ error, reset }: { error: Error; reset: () => void }) {
   const t = useTranslations("Game");
+  const params = useParams<{ locale: string; matchId: string }>();
+  const posthog = usePostHog();
 
   useEffect(() => {
     console.error(error);
-  }, [error]);
+    if (!process.env.NEXT_PUBLIC_POSTHOG_KEY) {
+      return;
+    }
+
+    posthog.captureException(error, {
+      locale: params.locale,
+      matchId: params.matchId,
+      route: "/[locale]/game/[matchId]",
+    });
+  }, [error, params.locale, params.matchId, posthog]);
 
   return (
     <div className="flex min-h-svh flex-1 items-center justify-center px-4">
