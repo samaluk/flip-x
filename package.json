@@ -91,7 +91,7 @@
     "@vitest/coverage-v8": "4.1.7",
     "convex-test": "0.0.53",
     "eslint-plugin-i18next": "6.1.4",
-    "fallow": "2.78.1",
+    "fallow": "2.79.0",
     "jsdom": "29.1.1",
     "oxfmt": "0.51.0",
     "oxlint": "1.66.0",
