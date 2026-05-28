@@ -167,8 +167,8 @@ importers:
         specifier: 1.66.0
         version: 1.66.0(oxlint-tsgolint@0.23.0)
       oxlint-tailwindcss:
-        specifier: 0.8.0
-        version: 0.8.0(@oxlint/plugins@1.62.0)
+        specifier: 1.0.0
+        version: 1.0.0(@oxlint/plugins@1.62.0)
       oxlint-tsgolint:
         specifier: 0.23.0
         version: 0.23.0
@@ -4123,8 +4123,8 @@ packages:
       svelte:
         optional: true
 
-  oxlint-tailwindcss@0.8.0:
-    resolution: {integrity: sha512-vfWnQ9S3AZXb9oqQPxilz9UlUcFvuKKJh7mT7vHw0lyHQVpKPOx117oS5y1/FuSAGSJAZa1gUeXCFNF8Ax28jA==}
+  oxlint-tailwindcss@1.0.0:
+    resolution: {integrity: sha512-289Jw+H4+mctebNTAi+41PhPYzjmrE5qbHykcyBvoTm16w8XBYD4Vf2v4dAGibkXC2iObs+LwnUL11plmy1jjQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@oxlint/plugins': '>=1.43.0'
@@ -8714,7 +8714,7 @@ snapshots:
       '@oxfmt/binding-win32-ia32-msvc': 0.51.0
       '@oxfmt/binding-win32-x64-msvc': 0.51.0
 
-  oxlint-tailwindcss@0.8.0(@oxlint/plugins@1.62.0):
+  oxlint-tailwindcss@1.0.0(@oxlint/plugins@1.62.0):
     dependencies:
       '@oxlint/plugins': 1.62.0
       '@tailwindcss/node': 4.3.0
