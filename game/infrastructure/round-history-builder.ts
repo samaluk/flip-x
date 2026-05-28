@@ -134,9 +134,12 @@ export async function buildRoundHistory(
   const roundDocs = await getManyFrom(ctx.db, "rounds", "by_match", matchId, "matchId");
   const sortedRounds = roundDocs.toSorted((left, right) => left.roundNumber - right.roundNumber);
   const completedRounds = await Promise.all(
-    sortedRounds
-      .filter((round) => round.phase === "completed")
-      .map((round) => loadCompletedRoundSummary(ctx, round)),
+    sortedRounds.reduce<Array<Promise<CompletedRoundSummary>>>((summaries, round) => {
+      if (round.phase === "completed") {
+        summaries.push(loadCompletedRoundSummary(ctx, round));
+      }
+      return summaries;
+    }, []),
   );
 
   const latestRound = sortedRounds.at(-1) ?? null;

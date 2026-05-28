@@ -30,7 +30,10 @@ export function activePlayerIds(
   players: OrderedPlayer[],
   playerStates: Record<string, PlayerRoundState>,
 ) {
-  return orderedPlayerIds(players)
-    .filter((player) => playerStates[player.playerId]?.status === "active")
-    .map((player) => player.playerId);
+  return orderedPlayerIds(players).reduce<string[]>((playerIds, player) => {
+    if (playerStates[player.playerId]?.status === "active") {
+      playerIds.push(player.playerId);
+    }
+    return playerIds;
+  }, []);
 }
