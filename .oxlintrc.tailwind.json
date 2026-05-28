@@ -8,8 +8,7 @@
   "jsPlugins": ["oxlint-tailwindcss"],
   "settings": {
     "tailwindcss": {
-      "entryPoint": "app/globals.css",
-      "timeout": 60000
+      "entryPoint": "app/globals.css"
     }
   },
   "rules": {
@@ -34,6 +33,7 @@
     "tailwindcss/no-restricted-classes": "error",
     "tailwindcss/no-arbitrary-value": "error",
     "tailwindcss/no-hardcoded-colors": "error",
-    "tailwindcss/no-unnecessary-arbitrary-value": "error"
+    "tailwindcss/no-unnecessary-arbitrary-value": "error",
+    "tailwindcss/prefer-theme-tokens": "error"
   }
 }
