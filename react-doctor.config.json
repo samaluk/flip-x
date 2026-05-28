@@ -1,3 +1,6 @@
 {
-  "deadCode": false
+  "deadCode": false,
+  "rules": {
+    "react-doctor/require-pnpm-hardening": "off"
+  }
 }
