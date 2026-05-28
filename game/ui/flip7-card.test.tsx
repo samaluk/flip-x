@@ -6,7 +6,9 @@ import { Flip7Card } from "./flip7-card";
 import { withIntlEn } from "@/tests/test-intl";
 
 vi.mock("motion/react", () => ({
-  motion: {
+  LazyMotion: ({ children }: { children?: ReactNode }) => <>{children}</>,
+  domAnimation: {},
+  m: {
     div: ({ children, className }: { children?: ReactNode; className?: string }) => (
       <div className={className}>{children}</div>
     ),

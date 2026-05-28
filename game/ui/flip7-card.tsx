@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { LazyMotion, domAnimation, m } from "motion/react";
 import { useTranslations } from "next-intl";
 import { memo, type ReactNode } from "react";
 
@@ -127,23 +127,25 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
   }
 
   return (
-    <motion.div
-      whileHover={isCompact ? { scale: 1.03, y: -1 } : { scale: 1.04, y: -2 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-      className={shellClass}
-    >
-      {compactScaleWrap(
-        <div
-          className={cn(
-            "relative aspect-4/5 transition-transform duration-700 transform-3d",
-            props.faceDown && "rotate-y-180",
-          )}
-        >
-          {faceUp}
-          <div className="absolute inset-0 rotate-y-180 backface-hidden">{faceDown}</div>
-        </div>,
-      )}
-    </motion.div>
+    <LazyMotion features={domAnimation}>
+      <m.div
+        whileHover={isCompact ? { scale: 1.03, y: -1 } : { scale: 1.04, y: -2 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        className={shellClass}
+      >
+        {compactScaleWrap(
+          <div
+            className={cn(
+              "relative aspect-4/5 transition-transform duration-700 transform-3d",
+              props.faceDown && "rotate-y-180",
+            )}
+          >
+            {faceUp}
+            <div className="absolute inset-0 rotate-y-180 backface-hidden">{faceDown}</div>
+          </div>,
+        )}
+      </m.div>
+    </LazyMotion>
   );
 }, areFlip7CardPropsEqual);
 

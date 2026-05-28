@@ -8,10 +8,9 @@ import {
   UserRoundIcon,
   UsersIcon,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/logic/round-event-format";
@@ -82,20 +81,8 @@ export function GameTableView({
   const tCards = useTranslations("Cards");
   const tHistory = useTranslations("RoundHistory");
 
-  // Round history opens by default; breakdown opens after round is scored.
-  const [expandedSections, setExpandedSections] = useState<string[]>(
-    snapshot.roundStatus === "completed" ? ["history", "breakdown"] : ["history"],
-  );
-  const previousRoundStatus = useRef(snapshot.roundStatus);
-
-  useEffect(() => {
-    if (snapshot.roundStatus === "completed" && previousRoundStatus.current !== "completed") {
-      setExpandedSections((current) =>
-        current.includes("breakdown") ? current : [...current, "breakdown"],
-      );
-    }
-    previousRoundStatus.current = snapshot.roundStatus;
-  }, [snapshot.roundStatus]);
+  const defaultExpandedSections =
+    snapshot.roundStatus === "completed" ? ["history", "breakdown"] : ["history"];
 
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
@@ -195,8 +182,8 @@ export function GameTableView({
       ) : null}
 
       <RoundHistorySection
-        expandedSections={expandedSections}
-        onExpandedChange={setExpandedSections}
+        key={snapshot.roundStatus}
+        defaultExpandedSections={defaultExpandedSections}
         snapshot={snapshot}
         tHistory={tHistory}
       />
@@ -370,13 +357,15 @@ function GameTableOpponentsSection({
           ))}
         </div>
       ) : (
-        <motion.div variants={listStagger} initial="hidden" animate="show" className={gridClass}>
+        <LazyMotion features={domAnimation}>
+          <m.div variants={listStagger} initial="hidden" animate="show" className={gridClass}>
           {opponents.map((player) => (
-            <motion.div key={player.playerId} variants={listItem}>
+            <m.div key={player.playerId} variants={listItem}>
               {laneFor(player)}
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+          </m.div>
+        </LazyMotion>
       )}
     </section>
   );
@@ -435,22 +424,20 @@ function MatchPlayerLane({
 }
 
 type RoundHistorySectionProps = {
-  expandedSections: string[];
-  onExpandedChange: (value: string[]) => void;
+  defaultExpandedSections: string[];
   snapshot: MatchSnapshot;
   tHistory: ReturnType<typeof useTranslations<"RoundHistory">>;
 };
 
 function RoundHistorySection({
-  expandedSections,
-  onExpandedChange,
+  defaultExpandedSections,
   snapshot,
   tHistory,
 }: RoundHistorySectionProps) {
   return (
     <Card className="w-full">
       <CardContent>
-        <Accordion value={expandedSections} onValueChange={onExpandedChange}>
+        <Accordion defaultValue={defaultExpandedSections}>
           <AccordionItem value="history">
             <AccordionTrigger className="text-xl">{tHistory("title")}</AccordionTrigger>
             <AccordionContent>
