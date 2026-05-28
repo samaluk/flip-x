@@ -84,19 +84,18 @@ async function persistPlayerStates(
     .collect();
   const docMap = new Map(stateDocs.map((doc) => [String(doc.playerId), doc]));
 
-  for (const [playerId, playerState] of Object.entries(playerStates)) {
+  await Promise.all(Object.entries(playerStates).map(async ([playerId, playerState]) => {
     const existing = docMap.get(playerId);
 
     if (!existing) {
-      await ctx.db.insert(
+      return await ctx.db.insert(
         "roundPlayerStates",
         serializePlayerRoundState(roundId, playerState, playerIdMap),
       );
-      continue;
     }
 
-    await ctx.db.patch(existing._id, serializePlayerRoundStatePatch(playerState));
-  }
+    return await ctx.db.patch(existing._id, serializePlayerRoundStatePatch(playerState));
+  }));
 }
 
 async function persistEvents(
@@ -116,10 +115,10 @@ async function persistEvents(
     .collect();
   let sequence = existingEvents.length;
 
-  for (const event of events) {
+  await Promise.all(events.map(async (event) => {
     const persistedEvent = serializeRoundEvent(event, playerIdMap);
     sequence += 1;
-    await ctx.db.insert("roundEvents", {
+    return await ctx.db.insert("roundEvents", {
       roundId,
       sequence,
       eventType: persistedEvent.eventType,
@@ -128,7 +127,7 @@ async function persistEvents(
       payload: persistedEvent.payload,
       createdAt: nowMillis,
     });
-  }
+  }));
 }
 
 async function rewriteScoreBreakdowns(
@@ -142,17 +141,15 @@ async function rewriteScoreBreakdowns(
     .withIndex("by_round", (query) => query.eq("roundId", roundId))
     .collect();
 
-  for (const breakdown of existingBreakdowns) {
-    await ctx.db.delete(breakdown._id);
-  }
+  await Promise.all(existingBreakdowns.map((breakdown) => ctx.db.delete(breakdown._id)));
 
-  for (const [playerId, scoreBreakdown] of Object.entries(scoreBreakdowns)) {
-    await ctx.db.insert("scoreBreakdowns", {
+  await Promise.all(Object.entries(scoreBreakdowns).map(([playerId, scoreBreakdown]) =>
+    ctx.db.insert("scoreBreakdowns", {
       roundId,
       playerId: playerIdMap.get(playerId)!,
       ...scoreBreakdown,
-    });
-  }
+    }),
+  ));
 }
 
 async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveCommandResultInput) {
@@ -163,12 +160,12 @@ async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveComman
     return false;
   }
 
-  for (const [playerId, patch] of Object.entries(finalized.playerScorePatches)) {
-    await ctx.db.patch(playerIdMap.get(playerId)!, {
+  await Promise.all(Object.entries(finalized.playerScorePatches).map(([playerId, patch]) =>
+    ctx.db.patch(playerIdMap.get(playerId)!, {
       totalScore: patch.totalScore,
       hasWon: patch.hasWon,
-    });
-  }
+    }),
+  ));
 
   return finalized.matchCompleted;
 }
@@ -185,9 +182,11 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
   const latestPlayerStates = transition.finalized?.playerStates ?? transition.playerStates;
   const latestEvents = [...transition.events, ...(transition.finalized?.events ?? [])];
 
-  await persistPlayerStates(ctx, roundId, latestPlayerStates, playerIdMap);
-  await persistRoundRuntime(ctx, roundId, latestRound, playerIdMap, nowMillis);
-  await persistEvents(ctx, roundId, latestEvents, playerIdMap, nowMillis);
+  await Promise.all([
+    persistPlayerStates(ctx, roundId, latestPlayerStates, playerIdMap),
+    persistRoundRuntime(ctx, roundId, latestRound, playerIdMap, nowMillis),
+    persistEvents(ctx, roundId, latestEvents, playerIdMap, nowMillis),
+  ]);
 
   let matchCompleted = false;
 
