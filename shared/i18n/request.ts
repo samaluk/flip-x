@@ -1,7 +1,14 @@
 import { hasLocale } from "next-intl";
-import { getRequestConfig } from "next-intl/server";
+import { getRequestConfig, type RequestConfig } from "next-intl/server";
 
+import enMessages from "../../messages/en.json";
+import esMessages from "../../messages/es.json";
 import { routing } from "./routing";
+
+const messagesByLocale = {
+  en: enMessages,
+  es: esMessages,
+};
 
 export default getRequestConfig(async ({ requestLocale }) => {
   const requested = await requestLocale;
@@ -9,6 +16,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    messages: (await import(`../../messages/${locale}.json`)).default,
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- JSON imports widen literals, while next-intl narrows messages from the source locale.
+    messages: messagesByLocale[locale] as RequestConfig["messages"],
   };
 });
