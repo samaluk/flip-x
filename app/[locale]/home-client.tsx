@@ -4,7 +4,7 @@ import { parseAsString, useQueryState } from "nuqs";
 import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
-import { startTransition, type SubmitEvent, useEffect, useState } from "react";
+import { startTransition, type SubmitEvent, useState } from "react";
 import { toast } from "sonner";
 
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
@@ -27,6 +27,19 @@ import refs from "@/confect/_generated/refs";
 const NAME_STORAGE_KEY = "flip7_player_name";
 const COLOR_STORAGE_KEY = "flip7_player_color";
 const NO_USED_COLORS: readonly string[] = [];
+
+function loadStoredPlayerName() {
+  return typeof window === "undefined" ? "" : (localStorage.getItem(NAME_STORAGE_KEY) ?? "");
+}
+
+function loadStoredPlayerColorId(): PlayerColorId {
+  if (typeof window === "undefined") {
+    return "cyan";
+  }
+
+  const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
+  return storedColor && isPlayerColorId(storedColor) ? storedColor : "cyan";
+}
 
 type LobbyJoinMutationArgs = {
   joinByCode: (input: { lobbyCode: string }) => Promise<{ matchId: string }>;
@@ -52,10 +65,10 @@ async function performLobbyJoin(args: LobbyJoinMutationArgs) {
 }
 
 export function HomeClient() {
-  const router = useRouter();
+  const { push } = useRouter();
   const [sessionId] = useSessionId();
-  const [name, setName] = useState("");
-  const [colorId, setColorId] = useState<PlayerColorId>("cyan");
+  const [name, setName] = useState(loadStoredPlayerName);
+  const [colorId, setColorId] = useState<PlayerColorId>(loadStoredPlayerColorId);
   const [joinCode, setJoinCode] = useQueryState("code", {
     ...parseAsString,
     parse: (value) => value.toUpperCase(),
@@ -63,7 +76,6 @@ export function HomeClient() {
   });
   const [hasOpenedJoinFlow, setHasOpenedJoinFlow] = useState(!!joinCode);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasLoadedName, setHasLoadedName] = useState(false);
   const isJoinMode = Boolean(joinCode) || hasOpenedJoinFlow;
 
   const t = useTranslations("MatchSetup");
@@ -84,20 +96,6 @@ export function HomeClient() {
   const selectedColorId = usedColorIds.includes(colorId)
     ? firstAvailablePlayerColorId(usedColorIds)
     : colorId;
-
-  useEffect(() => {
-    if (hasLoadedName) return;
-
-    const stored = localStorage.getItem(NAME_STORAGE_KEY);
-    if (stored) {
-      setName(stored);
-    }
-    const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
-    if (storedColor && isPlayerColorId(storedColor)) {
-      setColorId(storedColor);
-    }
-    setHasLoadedName(true);
-  }, [hasLoadedName]);
 
   async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -122,7 +120,7 @@ export function HomeClient() {
       });
 
       startTransition(() => {
-        router.push(`/game/${match.matchId}`);
+        push(`/game/${match.matchId}`);
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";
@@ -163,7 +161,7 @@ export function HomeClient() {
         colorId: selectedColorId,
       });
       startTransition(() => {
-        router.push(`/game/${result.matchId}`);
+        push(`/game/${result.matchId}`);
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : "";

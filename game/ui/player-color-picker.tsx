@@ -13,10 +13,12 @@ type PlayerColorPickerProps = {
   label: string;
 };
 
+const NO_USED_COLOR_IDS: readonly string[] = [];
+
 export function PlayerColorPicker({
   value,
   onChange,
-  usedColorIds = [],
+  usedColorIds = NO_USED_COLOR_IDS,
   label,
 }: PlayerColorPickerProps) {
   const used = new Set(usedColorIds);
