@@ -84,18 +84,19 @@ async function persistPlayerStates(
     .collect();
   const docMap = new Map(stateDocs.map((doc) => [String(doc.playerId), doc]));
 
-  await Promise.all(Object.entries(playerStates).map(async ([playerId, playerState]) => {
+  for (const [playerId, playerState] of Object.entries(playerStates)) {
     const existing = docMap.get(playerId);
 
     if (!existing) {
-      return await ctx.db.insert(
+      await ctx.db.insert(
         "roundPlayerStates",
         serializePlayerRoundState(roundId, playerState, playerIdMap),
       );
+      continue;
     }
 
-    return await ctx.db.patch(existing._id, serializePlayerRoundStatePatch(playerState));
-  }));
+    await ctx.db.patch(existing._id, serializePlayerRoundStatePatch(playerState));
+  }
 }
 
 async function persistEvents(
@@ -142,15 +143,17 @@ async function rewriteScoreBreakdowns(
     .withIndex("by_round", (query) => query.eq("roundId", roundId))
     .collect();
 
-  await Promise.all(existingBreakdowns.map((breakdown) => ctx.db.delete(breakdown._id)));
+  for (const breakdown of existingBreakdowns) {
+    await ctx.db.delete(breakdown._id);
+  }
 
-  await Promise.all(Object.entries(scoreBreakdowns).map(([playerId, scoreBreakdown]) =>
-    ctx.db.insert("scoreBreakdowns", {
+  for (const [playerId, scoreBreakdown] of Object.entries(scoreBreakdowns)) {
+    await ctx.db.insert("scoreBreakdowns", {
       roundId,
       playerId: playerIdMap.get(playerId)!,
       ...scoreBreakdown,
-    }),
-  ));
+    });
+  }
 }
 
 async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveCommandResultInput) {
@@ -161,12 +164,12 @@ async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveComman
     return false;
   }
 
-  await Promise.all(Object.entries(finalized.playerScorePatches).map(([playerId, patch]) =>
-    ctx.db.patch(playerIdMap.get(playerId)!, {
+  for (const [playerId, patch] of Object.entries(finalized.playerScorePatches)) {
+    await ctx.db.patch(playerIdMap.get(playerId)!, {
       totalScore: patch.totalScore,
       hasWon: patch.hasWon,
-    }),
-  ));
+    });
+  }
 
   return finalized.matchCompleted;
 }
@@ -183,11 +186,9 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
   const latestPlayerStates = transition.finalized?.playerStates ?? transition.playerStates;
   const latestEvents = [...transition.events, ...(transition.finalized?.events ?? [])];
 
-  await Promise.all([
-    persistPlayerStates(ctx, roundId, latestPlayerStates, playerIdMap),
-    persistRoundRuntime(ctx, roundId, latestRound, playerIdMap, nowMillis),
-    persistEvents(ctx, roundId, latestEvents, playerIdMap, nowMillis),
-  ]);
+  await persistPlayerStates(ctx, roundId, latestPlayerStates, playerIdMap);
+  await persistRoundRuntime(ctx, roundId, latestRound, playerIdMap, nowMillis);
+  await persistEvents(ctx, roundId, latestEvents, playerIdMap, nowMillis);
 
   let matchCompleted = false;
 
