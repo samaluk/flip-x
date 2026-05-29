@@ -115,10 +115,11 @@ async function persistEvents(
     .collect();
   let sequence = existingEvents.length;
 
-  await Promise.all(events.map(async (event) => {
+  // Event sequence must be assigned sequentially; parallel inserts race on `sequence`.
+  for (const event of events) {
     const persistedEvent = serializeRoundEvent(event, playerIdMap);
     sequence += 1;
-    return await ctx.db.insert("roundEvents", {
+    await ctx.db.insert("roundEvents", {
       roundId,
       sequence,
       eventType: persistedEvent.eventType,
@@ -127,7 +128,7 @@ async function persistEvents(
       payload: persistedEvent.payload,
       createdAt: nowMillis,
     });
-  }));
+  }
 }
 
 async function rewriteScoreBreakdowns(
