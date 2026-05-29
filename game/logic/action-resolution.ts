@@ -24,13 +24,13 @@ function createPendingTargetAction(
 ) {
   const eligibleTargetIds =
     resume === "dealing"
-      ? orderedPlayerIds(players).reduce<string[]>((targetIds, player) => {
-          const status = playerStates[player.playerId]?.status;
-          if (status === "active" || status === "waiting") {
-            targetIds.push(player.playerId);
-          }
-          return targetIds;
-        }, [])
+      ? orderedPlayerIds(players)
+          .filter(
+            (player) =>
+              playerStates[player.playerId]?.status === "active" ||
+              playerStates[player.playerId]?.status === "waiting",
+          )
+          .map((player) => player.playerId)
       : activePlayerIds(players, playerStates);
 
   if (eligibleTargetIds.length === 0) {
