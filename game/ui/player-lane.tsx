@@ -1,6 +1,7 @@
 "use client";
 
 import { CrosshairIcon, RefreshCwIcon, UserIcon } from "lucide-react";
+import { LazyMotion, domAnimation } from "motion/react";
 import { useTranslations } from "next-intl";
 import {
   memo,
@@ -322,16 +323,24 @@ function PlayerLaneCardStack({
     ],
   );
 
+  const cardRow = (
+    <div
+      className={cn(
+        "flex min-w-0 flex-wrap content-start items-start",
+        compact ? "gap-1.5" : "gap-2.5 sm:gap-3",
+      )}
+    >
+      {cardElements.length > 0 ? cardElements : null}
+    </div>
+  );
+
   return (
     <div className="min-w-0 flex-1 pb-1">
-      <div
-        className={cn(
-          "flex min-w-0 flex-wrap content-start items-start",
-          compact ? "gap-1.5" : "gap-2.5 sm:gap-3",
-        )}
-      >
-        {cardElements.length > 0 ? cardElements : null}
-      </div>
+      {disableCardFlip3d ? (
+        cardRow
+      ) : (
+        <LazyMotion features={domAnimation}>{cardRow}</LazyMotion>
+      )}
     </div>
   );
 }
