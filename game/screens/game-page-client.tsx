@@ -15,11 +15,11 @@ import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
 import { StartGameButton } from "@/game/screens/start-game-button";
 import { useMatchPresence } from "@/game/hooks/use-match-presence";
+import { firstAvailablePlayerColorId, type PlayerColorId } from "@/shared/lib/player-colors";
 import {
-  firstAvailablePlayerColorId,
-  isPlayerColorId,
-  type PlayerColorId,
-} from "@/shared/lib/player-colors";
+  readStoredPlayerColorId,
+  writeStoredPlayerColorId,
+} from "@/shared/lib/player-local-prefs";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -31,23 +31,12 @@ import {
   PLAYER_NAME_ISSUE_TOAST_KEY,
 } from "@/shared/lib/player-name-validation";
 
-const COLOR_STORAGE_KEY = "flip7_player_color";
-
-function loadStoredPlayerColorId(): PlayerColorId {
-  if (typeof window === "undefined") {
-    return "cyan";
-  }
-
-  const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
-  return storedColor && isPlayerColorId(storedColor) ? storedColor : "cyan";
-}
-
 export function GamePageClient({ matchId }: { matchId: string }) {
   const matchIdConvex = matchIdFromConfectWire(matchId);
   const [sessionId] = useSessionId();
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
-  const [colorId, setColorId] = useState<PlayerColorId>(loadStoredPlayerColorId);
+  const [colorId, setColorId] = useState<PlayerColorId>(readStoredPlayerColorId);
   const [isJoining, setIsJoining] = useState(false);
   const snapshotResult = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
     matchId: matchIdConvex,
@@ -88,7 +77,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
           playerName: trimmedName,
           playerColorId: selectedColorId,
         });
-        localStorage.setItem(COLOR_STORAGE_KEY, selectedColorId);
+        writeStoredPlayerColorId(selectedColorId);
         setPlayerName("");
       } catch (error) {
         const message = error instanceof Error ? error.message : "";

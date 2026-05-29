@@ -8,11 +8,13 @@ import { startTransition, type SubmitEvent, useState } from "react";
 import { toast } from "sonner";
 
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
+import { firstAvailablePlayerColorId, type PlayerColorId } from "@/shared/lib/player-colors";
 import {
-  firstAvailablePlayerColorId,
-  isPlayerColorId,
-  type PlayerColorId,
-} from "@/shared/lib/player-colors";
+  readStoredPlayerColorId,
+  readStoredPlayerName,
+  writeStoredPlayerColorId,
+  writeStoredPlayerName,
+} from "@/shared/lib/player-local-prefs";
 import {
   getTrimmedPlayerNameIssue,
   PLAYER_NAME_ISSUE_TOAST_KEY,
@@ -24,22 +26,7 @@ import { Input } from "@/shared/ui/input";
 import { useRouter } from "@/shared/i18n/navigation";
 import refs from "@/confect/_generated/refs";
 
-const NAME_STORAGE_KEY = "flip7_player_name";
-const COLOR_STORAGE_KEY = "flip7_player_color";
 const NO_USED_COLORS: readonly string[] = [];
-
-function loadStoredPlayerName() {
-  return typeof window === "undefined" ? "" : (localStorage.getItem(NAME_STORAGE_KEY) ?? "");
-}
-
-function loadStoredPlayerColorId(): PlayerColorId {
-  if (typeof window === "undefined") {
-    return "cyan";
-  }
-
-  const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
-  return storedColor && isPlayerColorId(storedColor) ? storedColor : "cyan";
-}
 
 type LobbyJoinMutationArgs = {
   joinByCode: (input: { lobbyCode: string }) => Promise<{ matchId: string }>;
@@ -67,8 +54,8 @@ async function performLobbyJoin(args: LobbyJoinMutationArgs) {
 export function HomeClient() {
   const { push } = useRouter();
   const [sessionId] = useSessionId();
-  const [name, setName] = useState(loadStoredPlayerName);
-  const [colorId, setColorId] = useState<PlayerColorId>(loadStoredPlayerColorId);
+  const [name, setName] = useState(readStoredPlayerName);
+  const [colorId, setColorId] = useState<PlayerColorId>(readStoredPlayerColorId);
   const [joinCode, setJoinCode] = useQueryState("code", {
     ...parseAsString,
     parse: (value) => value.toUpperCase(),
@@ -102,8 +89,8 @@ export function HomeClient() {
 
     const trimmedName = name.trim();
 
-    localStorage.setItem(NAME_STORAGE_KEY, trimmedName);
-    localStorage.setItem(COLOR_STORAGE_KEY, selectedColorId);
+    writeStoredPlayerName(trimmedName);
+    writeStoredPlayerColorId(selectedColorId);
 
     const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
     if (nameIssue) {
@@ -136,8 +123,8 @@ export function HomeClient() {
     const playerName = name.trim();
     const lobbyCode = (joinCode ?? "").trim();
 
-    localStorage.setItem(NAME_STORAGE_KEY, playerName);
-    localStorage.setItem(COLOR_STORAGE_KEY, selectedColorId);
+    writeStoredPlayerName(playerName);
+    writeStoredPlayerColorId(selectedColorId);
 
     const nameIssue = getTrimmedPlayerNameIssue(playerName, sessionId);
     if (nameIssue) {
