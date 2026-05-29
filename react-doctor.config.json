@@ -12,7 +12,6 @@
       "confect/lib/store.ts",
       "confect/match-lobby.ts",
       "confect/match-settings.ts",
-      "confect/match-setup-players.ts",
       "confect/match-snapshot-for-session.ts",
       "confect/matches.impl.ts",
       "confect/migrations.impl.ts",
@@ -36,9 +35,12 @@
         "files": [
           "game/application/run-command.ts",
           "game/infrastructure/round-history-builder.ts",
+          "game/infrastructure/save-command-result.ts",
           "game/logic/game-settings.ts",
           "game/logic/card-types.ts",
           "game/logic/rng.ts",
+          "game/logic/turn-order.ts",
+          "game/logic/action-resolution.ts",
           "shared/i18n/navigation.ts",
           "shared/lib/errors/domain.ts"
         ],
