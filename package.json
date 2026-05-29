@@ -42,6 +42,7 @@
     "fallow:fix": "fallow fix",
     "doctor": "react-doctor",
     "doctor:diff": "react-doctor --diff --fail-on warning",
+    "doctor:ci": "react-doctor --diff --fail-on warning --annotations --yes",
     "doctor:staged": "react-doctor --staged --fail-on warning"
   },
   "dependencies": {
