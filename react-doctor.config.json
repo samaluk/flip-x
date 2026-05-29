@@ -1,5 +1,55 @@
 {
-  "deadCode": false,
+  "ignore": {
+    "files": [
+      "confect/_generated/**",
+      "confect/admin.impl.ts",
+      "confect/admin.ts",
+      "confect/impl.ts",
+      "confect/schema.ts",
+      "confect/spec.ts",
+      "confect/lib/cascading_deletes.ts",
+      "confect/lib/deterministic_start.ts",
+      "confect/lib/store.ts",
+      "confect/match-lobby.ts",
+      "confect/match-settings.ts",
+      "confect/match-setup-players.ts",
+      "confect/match-snapshot-for-session.ts",
+      "confect/matches.impl.ts",
+      "confect/migrations.impl.ts",
+      "confect/presence.impl.ts",
+      "confect/rounds.impl.ts",
+      "confect/rounds.ts",
+      "confect/settings.impl.ts",
+      "confect/turns.impl.ts",
+      "confect/turns.ts",
+      "convex/**",
+      "game/application/match-setup-analytics.ts",
+      "shared/lib/__mocks__/confect-hooks.ts",
+      "shared/lib/lobby-code.ts"
+    ],
+    "overrides": [
+      {
+        "files": ["package.json"],
+        "rules": ["deslop/unused-dev-dependency"]
+      },
+      {
+        "files": [
+          "game/application/run-command.ts",
+          "game/infrastructure/round-history-builder.ts",
+          "game/logic/game-settings.ts",
+          "game/logic/card-types.ts",
+          "game/logic/rng.ts",
+          "shared/i18n/navigation.ts",
+          "shared/lib/errors/domain.ts"
+        ],
+        "rules": ["deslop/unused-export"]
+      },
+      {
+        "files": ["confect/lib/rate_limiter.ts", "confect/lib/session_store.ts", "confect/matches.ts"],
+        "rules": ["deslop/unused-export"]
+      }
+    ]
+  },
   "rules": {
     "react-doctor/require-pnpm-hardening": "off"
   }
