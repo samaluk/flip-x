@@ -15,11 +15,8 @@ import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
 import { StartGameButton } from "@/game/screens/start-game-button";
 import { useMatchPresence } from "@/game/hooks/use-match-presence";
-import { firstAvailablePlayerColorId, type PlayerColorId } from "@/shared/lib/player-colors";
-import {
-  readStoredPlayerColorId,
-  writeStoredPlayerColorId,
-} from "@/shared/lib/player-local-prefs";
+import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
+import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -36,7 +33,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
   const [sessionId] = useSessionId();
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
-  const [colorId, setColorId] = useState<PlayerColorId>(readStoredPlayerColorId);
+  const { colorId, setColorId } = usePlayerLocalPrefs();
   const [isJoining, setIsJoining] = useState(false);
   const snapshotResult = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
     matchId: matchIdConvex,
@@ -55,9 +52,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
     [snapshot?.players],
   );
 
-  const selectedColorId = usedColorIds.includes(colorId)
-    ? firstAvailablePlayerColorId(usedColorIds)
-    : colorId;
+  const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
   const handleJoin = useCallback(
     async (event: SubmitEvent<HTMLFormElement>) => {
@@ -77,7 +72,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
           playerName: trimmedName,
           playerColorId: selectedColorId,
         });
-        writeStoredPlayerColorId(selectedColorId);
+        setColorId(selectedColorId);
         setPlayerName("");
       } catch (error) {
         const message = error instanceof Error ? error.message : "";
@@ -86,7 +81,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
         setIsJoining(false);
       }
     },
-    [joinMatch, matchIdConvex, playerName, selectedColorId, sessionId, t, tErrors],
+    [joinMatch, matchIdConvex, playerName, selectedColorId, sessionId, setColorId, t, tErrors],
   );
 
   const copyInviteLink = useCallback(async () => {

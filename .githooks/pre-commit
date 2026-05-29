@@ -1,20 +1,7 @@
 #!/bin/sh
 set -eu
 
-# Staged React Doctor only — full ci:local runs in CI, not on every commit.
-if [ ! -x "./node_modules/.bin/react-doctor" ]; then
-  printf '%s\n' "react-doctor: run pnpm install to enable the pre-commit scan." >&2
-  exit 1
-fi
+# Fast local gates. React Doctor runs in CI (see .github/workflows/ci.yml); optional: pnpm doctor:staged
 
-react_doctor_output=$(mktemp "${TMPDIR:-/tmp}/react-doctor-hook.XXXXXX")
-if "./node_modules/.bin/react-doctor" --staged --fail-on warning > "$react_doctor_output" 2>&1; then
-  rm -f "$react_doctor_output"
-else
-  cat "$react_doctor_output" >&2
-  rm -f "$react_doctor_output"
-  printf '%s\n' \
-    "React Doctor found staged regressions." \
-    "Run: pnpm doctor:staged" >&2
-  exit 1
-fi
+pnpm lint:core
+pnpm i18n:check

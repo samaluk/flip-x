@@ -8,13 +8,9 @@ import { startTransition, type SubmitEvent, useState } from "react";
 import { toast } from "sonner";
 
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
-import { firstAvailablePlayerColorId, type PlayerColorId } from "@/shared/lib/player-colors";
-import {
-  readStoredPlayerColorId,
-  readStoredPlayerName,
-  writeStoredPlayerColorId,
-  writeStoredPlayerName,
-} from "@/shared/lib/player-local-prefs";
+import type { PlayerColorId } from "@/shared/lib/player-colors";
+import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
+import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import {
   getTrimmedPlayerNameIssue,
   PLAYER_NAME_ISSUE_TOAST_KEY,
@@ -54,8 +50,7 @@ async function performLobbyJoin(args: LobbyJoinMutationArgs) {
 export function HomeClient() {
   const { push } = useRouter();
   const [sessionId] = useSessionId();
-  const [name, setName] = useState(readStoredPlayerName);
-  const [colorId, setColorId] = useState<PlayerColorId>(readStoredPlayerColorId);
+  const { name, setName, colorId, setColorId } = usePlayerLocalPrefs();
   const [joinCode, setJoinCode] = useQueryState("code", {
     ...parseAsString,
     parse: (value) => value.toUpperCase(),
@@ -80,17 +75,15 @@ export function HomeClient() {
     onLoading: () => NO_USED_COLORS,
     onSuccess: (lookup) => lookup?.usedColorIds ?? NO_USED_COLORS,
   });
-  const selectedColorId = usedColorIds.includes(colorId)
-    ? firstAvailablePlayerColorId(usedColorIds)
-    : colorId;
+  const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
   async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedName = name.trim();
 
-    writeStoredPlayerName(trimmedName);
-    writeStoredPlayerColorId(selectedColorId);
+    setName(trimmedName);
+    setColorId(selectedColorId);
 
     const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
     if (nameIssue) {
@@ -123,8 +116,8 @@ export function HomeClient() {
     const playerName = name.trim();
     const lobbyCode = (joinCode ?? "").trim();
 
-    writeStoredPlayerName(playerName);
-    writeStoredPlayerColorId(selectedColorId);
+    setName(playerName);
+    setColorId(selectedColorId);
 
     const nameIssue = getTrimmedPlayerNameIssue(playerName, sessionId);
     if (nameIssue) {

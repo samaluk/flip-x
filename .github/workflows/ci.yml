@@ -54,6 +54,14 @@ jobs:
       - name: Check i18n
         run: pnpm i18n:check
 
+      - name: React Doctor
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            pnpm exec react-doctor --diff "origin/${{ github.base_ref }}" --fail-on warning --annotations --yes
+          else
+            pnpm exec react-doctor --diff "origin/master" --fail-on warning --annotations --yes
+          fi
+
       - name: Fallow
         run: pnpm fallow:ci
 
