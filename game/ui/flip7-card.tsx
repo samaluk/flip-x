@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useTranslations } from "next-intl";
 import { memo, type ReactNode } from "react";
 
@@ -127,7 +127,7 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
   }
 
   return (
-    <motion.div
+    <m.div
       whileHover={isCompact ? { scale: 1.03, y: -1 } : { scale: 1.04, y: -2 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className={shellClass}
@@ -143,7 +143,7 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
           <div className="absolute inset-0 rotate-y-180 backface-hidden">{faceDown}</div>
         </div>,
       )}
-    </motion.div>
+    </m.div>
   );
 }, areFlip7CardPropsEqual);
 
@@ -155,7 +155,9 @@ function flip7CardShellPropsEqual(left: Flip7CardProps, right: Flip7CardProps): 
     left.stateAnimation === right.stateAnimation &&
     left.className === right.className &&
     left.compact === right.compact &&
-    left.disableFlip3d === right.disableFlip3d
+    left.disableFlip3d === right.disableFlip3d &&
+    left.active === right.active &&
+    left.variant === right.variant
   );
 }
 

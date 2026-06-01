@@ -47,15 +47,12 @@ export function useSessionConfectQuery<Query extends Ref.AnyPublicQuery>(
   args: SessionlessArgs<Query> | "skip",
 ) {
   const [sessionId] = useSessionId();
+  const queryArgs = args === "skip" || !sessionId ? "skip" : withSessionArgs(args, sessionId);
 
-  if (args === "skip" || !sessionId) {
-    return useConfectQuery(ref, ...(["skip"] as const));
-  }
-
-  return useConfectQuery(ref, {
-    ...(args as object),
-    sessionId,
-  } as Ref.Args<Query>);
+  return useConfectQuery(
+    ref,
+    ...(queryArgs === "skip" ? (["skip"] as const) : ([queryArgs] as const)),
+  );
 }
 
 export function useSessionConfectMutation<Mutation extends Ref.AnyPublicMutation>(ref: Mutation) {

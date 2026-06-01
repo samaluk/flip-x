@@ -51,8 +51,10 @@ async function buildSnapshotFromLoadedMatch(
   round: Doc<"rounds"> | null,
   sessionId?: SessionId,
 ): Promise<MatchSnapshot> {
-  const players = await getManyFrom(ctx.db, "players", "by_match", match._id, "matchId");
-  const playerId = await Effect.runPromise(getPlayerIdForSession(ctx, sessionId));
+  const [players, playerId] = await Promise.all([
+    getManyFrom(ctx.db, "players", "by_match", match._id, "matchId"),
+    Effect.runPromise(getPlayerIdForSession(ctx, sessionId)),
+  ]);
   const viewerPlayerId: Id<"players"> | null =
     playerId && players.some((player) => player._id === playerId) ? playerId : null;
 
@@ -60,7 +62,10 @@ async function buildSnapshotFromLoadedMatch(
   let latestEvent: RoundEvent | null = null;
 
   if (round) {
-    const roundPlayerStateDocs = await getRoundPlayerStateDocs(ctx, round._id);
+    const [roundPlayerStateDocs, latestRoundEvent] = await Promise.all([
+      getRoundPlayerStateDocs(ctx, round._id),
+      getLatestRoundEvent(ctx, round._id),
+    ]);
     playerStates = Object.fromEntries(
       roundPlayerStateDocs.map((doc) => {
         const playerState = normalizePlayerRoundState(doc);
@@ -68,7 +73,6 @@ async function buildSnapshotFromLoadedMatch(
       }),
     );
 
-    const latestRoundEvent = await getLatestRoundEvent(ctx, round._id);
     latestEvent = latestRoundEvent ? normalizeLatestRoundEvent(latestRoundEvent) : null;
   }
 
