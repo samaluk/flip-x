@@ -170,8 +170,8 @@ importers:
         specifier: 1.67.0
         version: 1.67.0(oxlint-tsgolint@0.23.0)
       oxlint-tailwindcss:
-        specifier: 1.0.0
-        version: 1.0.0(@oxlint/plugins@1.62.0)
+        specifier: 1.0.1
+        version: 1.0.1(@oxlint/plugins@1.62.0)
       oxlint-tsgolint:
         specifier: 0.23.0
         version: 0.23.0
@@ -4749,8 +4749,8 @@ packages:
     resolution: {integrity: sha512-Q4q6zcpTXU5tky2/NS1qjk5qNIiUshrCl1ycnqpiRZu0gjOyVkuoF3Z9eoHmtVHixP55hdYUn15JR7b6S0hc8A==}
     engines: {node: ^20.19.0 || >=22.12.0}
 
-  oxlint-tailwindcss@1.0.0:
-    resolution: {integrity: sha512-289Jw+H4+mctebNTAi+41PhPYzjmrE5qbHykcyBvoTm16w8XBYD4Vf2v4dAGibkXC2iObs+LwnUL11plmy1jjQ==}
+  oxlint-tailwindcss@1.0.1:
+    resolution: {integrity: sha512-58Db12Cfk+D9qZo2fBiWthWjaNGh+x4Nzvw/B+pPx1ByYjda+wcybZswLuE+xIcV70DroQvDVR2IHuierqc9YQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@oxlint/plugins': '>=1.43.0'
@@ -10045,7 +10045,7 @@ snapshots:
       eslint-visitor-keys: 5.0.1
       oxc-parser: 0.132.0
 
-  oxlint-tailwindcss@1.0.0(@oxlint/plugins@1.62.0):
+  oxlint-tailwindcss@1.0.1(@oxlint/plugins@1.62.0):
     dependencies:
       '@oxlint/plugins': 1.62.0
       '@tailwindcss/node': 4.3.0
