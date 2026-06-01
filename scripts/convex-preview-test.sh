@@ -82,6 +82,33 @@ run_local_path() {
   pnpm exec node "$ROOT/scripts/clear-convex-app-data.mjs"
 }
 
+sync_preview_posthog_env() {
+  local preview_name="$1"
+  local deployment_ref="preview/${preview_name}"
+  local project_token="${POSTHOG_PROJECT_TOKEN:-phc_preview_deploy_placeholder}"
+  local flags_polling_interval="${POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS:-300}"
+
+  pnpm exec convex env default set POSTHOG_PROJECT_TOKEN "$project_token" --type preview --force
+  pnpm exec convex env default set POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS \
+    "$flags_polling_interval" --type preview --force
+
+  if [[ -n "${POSTHOG_HOST:-}" ]]; then
+    pnpm exec convex env default set POSTHOG_HOST "$POSTHOG_HOST" --type preview --force
+  fi
+
+  pnpm exec convex env set POSTHOG_PROJECT_TOKEN "$project_token" \
+    --deployment "$deployment_ref" --force 2>/dev/null || true
+
+  pnpm exec convex env set POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS "$flags_polling_interval" \
+    --deployment "$deployment_ref" --force 2>/dev/null || true
+
+  if [[ -n "${POSTHOG_HOST:-}" ]]; then
+    pnpm exec convex env set POSTHOG_HOST "$POSTHOG_HOST" \
+      --deployment "$deployment_ref" --force 2>/dev/null || true
+  fi
+
+}
+
 run_preview_path() {
   local preview_name url_file
 
@@ -95,6 +122,8 @@ run_preview_path() {
   trap cleanup EXIT
 
   printf 'Using Convex preview deployment: %s\n' "$preview_name"
+
+  sync_preview_posthog_env "$preview_name"
 
   pnpm exec convex deploy \
     --preview-create "$preview_name" \
