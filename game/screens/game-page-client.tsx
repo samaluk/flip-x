@@ -4,7 +4,7 @@ import { QueryResult } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type SubmitEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { type SubmitEvent, useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -15,11 +15,8 @@ import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
 import { StartGameButton } from "@/game/screens/start-game-button";
 import { useMatchPresence } from "@/game/hooks/use-match-presence";
-import {
-  firstAvailablePlayerColorId,
-  isPlayerColorId,
-  type PlayerColorId,
-} from "@/shared/lib/player-colors";
+import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
+import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -31,14 +28,12 @@ import {
   PLAYER_NAME_ISSUE_TOAST_KEY,
 } from "@/shared/lib/player-name-validation";
 
-const COLOR_STORAGE_KEY = "flip7_player_color";
-
 export function GamePageClient({ matchId }: { matchId: string }) {
   const matchIdConvex = matchIdFromConfectWire(matchId);
   const [sessionId] = useSessionId();
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
-  const [colorId, setColorId] = useState<PlayerColorId>("cyan");
+  const { colorId, setColorId } = usePlayerLocalPrefs();
   const [isJoining, setIsJoining] = useState(false);
   const snapshotResult = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
     matchId: matchIdConvex,
@@ -57,18 +52,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
     [snapshot?.players],
   );
 
-  useEffect(() => {
-    const storedColor = localStorage.getItem(COLOR_STORAGE_KEY);
-    if (storedColor && isPlayerColorId(storedColor)) {
-      setColorId(storedColor);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (usedColorIds.includes(colorId)) {
-      setColorId(firstAvailablePlayerColorId(usedColorIds));
-    }
-  }, [colorId, usedColorIds]);
+  const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
   const handleJoin = useCallback(
     async (event: SubmitEvent<HTMLFormElement>) => {
@@ -86,9 +70,9 @@ export function GamePageClient({ matchId }: { matchId: string }) {
         await joinMatch({
           matchId: matchIdConvex,
           playerName: trimmedName,
-          playerColorId: colorId,
+          playerColorId: selectedColorId,
         });
-        localStorage.setItem(COLOR_STORAGE_KEY, colorId);
+        setColorId(selectedColorId);
         setPlayerName("");
       } catch (error) {
         const message = error instanceof Error ? error.message : "";
@@ -97,7 +81,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
         setIsJoining(false);
       }
     },
-    [colorId, joinMatch, matchIdConvex, playerName, sessionId, t, tErrors],
+    [joinMatch, matchIdConvex, playerName, selectedColorId, sessionId, setColorId, t, tErrors],
   );
 
   const copyInviteLink = useCallback(async () => {
@@ -225,7 +209,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
               </Button>
             </div>
             <PlayerColorPicker
-              value={colorId}
+              value={selectedColorId}
               onChange={setColorId}
               usedColorIds={usedColorIds}
               label={t("playerColor")}
