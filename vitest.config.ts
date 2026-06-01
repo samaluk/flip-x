@@ -28,7 +28,10 @@ export default defineConfig({
         test: {
           name: "infrastructure",
           environment: "node",
-          include: ["tests/unit/infrastructure/**/*.test.ts"],
+          include: [
+            "tests/unit/infrastructure/**/*.test.ts",
+            "tests/unit/shared/**/*.test.ts",
+          ],
         },
       },
       {
