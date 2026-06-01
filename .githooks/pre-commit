@@ -1,7 +1,7 @@
 #!/bin/sh
 set -eu
 
-# Fast local gates. React Doctor runs in CI (report-only until gate PR); optional: pnpm doctor:staged
+# Fast local gates. React Doctor runs in CI; optional before push: pnpm doctor:staged
 
 pnpm lint:core
 pnpm i18n:check
