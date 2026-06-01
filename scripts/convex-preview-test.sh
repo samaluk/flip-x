@@ -88,14 +88,8 @@ sync_preview_posthog_env() {
   local project_token="${POSTHOG_PROJECT_TOKEN:-phc_preview_deploy_placeholder}"
   local flags_polling_interval="${POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS:-300}"
 
-  pnpm exec convex env default set POSTHOG_PROJECT_TOKEN "$project_token" --type preview --force
-  pnpm exec convex env default set POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS \
-    "$flags_polling_interval" --type preview --force
-
-  if [[ -n "${POSTHOG_HOST:-}" ]]; then
-    pnpm exec convex env default set POSTHOG_HOST "$POSTHOG_HOST" --type preview --force
-  fi
-
+  # Patch an existing preview before deploy. New previews inherit project defaults
+  # (set once via `npx convex env default set … --type preview` in the dashboard or CLI).
   pnpm exec convex env set POSTHOG_PROJECT_TOKEN "$project_token" \
     --deployment "$deployment_ref" --force 2>/dev/null || true
 
@@ -106,7 +100,6 @@ sync_preview_posthog_env() {
     pnpm exec convex env set POSTHOG_HOST "$POSTHOG_HOST" \
       --deployment "$deployment_ref" --force 2>/dev/null || true
   fi
-
 }
 
 run_preview_path() {
@@ -122,6 +115,10 @@ run_preview_path() {
   trap cleanup EXIT
 
   printf 'Using Convex preview deployment: %s\n' "$preview_name"
+
+  if [[ -n "${GITHUB_ACTIONS:-}" && -n "${CONVEX_TEAM_ACCESS_TOKEN:-}" ]]; then
+    PREVIEW_DEPLOYMENT_NAME="$preview_name" node "$ROOT/scripts/delete-convex-preview.mjs"
+  fi
 
   sync_preview_posthog_env "$preview_name"
 

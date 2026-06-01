@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
+      CONVEX_TEAM_ACCESS_TOKEN: ${{ secrets.CONVEX_TEAM_ACCESS_TOKEN }}
       # Optional: real phc_… token for preview deploys (matches prod). Deploy succeeds without it.
       POSTHOG_PROJECT_TOKEN: ${{ secrets.POSTHOG_PROJECT_TOKEN }}
       POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS: "300"
