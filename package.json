@@ -39,7 +39,11 @@
     "fallow": "fallow",
     "fallow:baseline:update": "fallow dead-code --save-baseline fallow-baselines/dead-code.json || test $? -eq 1; fallow dupes --save-baseline fallow-baselines/dupes.json || test $? -eq 1; fallow health --save-baseline fallow-baselines/health.json || test $? -eq 1",
     "fallow:ci": "fallow audit --base origin/master --dead-code-baseline fallow-baselines/dead-code.json --health-baseline fallow-baselines/health.json --dupes-baseline fallow-baselines/dupes.json",
-    "fallow:fix": "fallow fix"
+    "fallow:fix": "fallow fix",
+    "doctor": "react-doctor",
+    "doctor:diff": "react-doctor --diff",
+    "doctor:ci": "react-doctor --diff --annotations --yes",
+    "doctor:staged": "react-doctor --staged --yes --project flip7"
   },
   "dependencies": {
     "@base-ui/react": "1.5.0",
@@ -98,6 +102,7 @@
     "oxlint-tailwindcss": "1.0.0",
     "oxlint-tsgolint": "0.23.0",
     "portless": "0.13.1",
+    "react-doctor": "^0.2.10",
     "tailwindcss": "4.3.0",
     "typescript": "6.0.3",
     "vitest": "4.1.7"
