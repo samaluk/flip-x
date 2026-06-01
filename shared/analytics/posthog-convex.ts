@@ -5,7 +5,7 @@ import { posthog } from "../../convex/posthog";
 import { AnalyticsSink } from "./service";
 
 export function makePostHogConvexAnalyticsLayer(ctx: MutationCtx): Layer.Layer<AnalyticsSink> {
-  const enabled = Boolean(process.env.POSTHOG_API_KEY);
+  const enabled = Boolean(process.env.POSTHOG_PROJECT_TOKEN);
 
   return Layer.succeed(AnalyticsSink, {
     capture: (event) =>

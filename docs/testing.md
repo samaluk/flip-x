@@ -99,6 +99,7 @@ This suite is destructive for its target deployment. The wrapper clears all app 
 
 - Runs `convex deploy --preview-name …`; uses [`scripts/write-convex-url.mjs`](scripts/write-convex-url.mjs) to capture the deployment URL.
 - Requires a preview-capable `CONVEX_DEPLOY_KEY` in the environment or `.env.local` (the Convex CLI loads `.env.local` from the project directory).
+- Requires `POSTHOG_PROJECT_TOKEN` on the preview deployment (`@posthog/convex` v2). New previews inherit [project defaults](https://docs.convex.dev/production/environment-variables#project-environment-variable-defaults) for the preview type (placeholder token unless you set GitHub secret `POSTHOG_PROJECT_TOKEN`). In GitHub Actions, the script deletes and recreates the PR preview each run so defaults apply; locally it only patches an existing preview.
 
 Preview naming:
 

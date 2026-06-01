@@ -104,8 +104,8 @@ GitHub Actions runs the fast Vitest suites, build, visual regression, backend te
 - Convex production URL: `https://valuable-peacock-13.convex.cloud`
 - Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`
 - PostHog frontend environment variables: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
-- PostHog Convex environment variables: `POSTHOG_API_KEY`, `POSTHOG_HOST`
-- PostHog source map upload environment variable: `POSTHOG_PROJECT_ID`; `POSTHOG_API_KEY` must be a personal API key with error tracking write access during the production build.
-- Optional Convex feature-flag local evaluation variable: `POSTHOG_PERSONAL_API_KEY`
+- PostHog Convex environment variables: `POSTHOG_PROJECT_TOKEN` (required), `POSTHOG_HOST`
+- PostHog source map upload environment variables: `POSTHOG_PROJECT_ID`; `POSTHOG_API_KEY` must be a personal API key with error tracking write access during the production build.
+- Optional Convex-only feature-flag variables (set with `npx convex env set`, not on Vercel): `POSTHOG_PERSONAL_API_KEY`; `POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS` (cron cadence in seconds, `300` on dev and prod)
 
 PostHog feature flag support is configured, but no feature flags are currently evaluated by the app.
