@@ -116,6 +116,7 @@ async function persistEvents(
     .collect();
   let sequence = existingEvents.length;
 
+  // Event sequence must be assigned sequentially; parallel inserts race on `sequence`.
   for (const event of events) {
     const persistedEvent = serializeRoundEvent(event, playerIdMap);
     sequence += 1;

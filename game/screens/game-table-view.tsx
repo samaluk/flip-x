@@ -8,10 +8,10 @@ import {
   UserRoundIcon,
   UsersIcon,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/logic/round-event-format";
@@ -82,21 +82,6 @@ export function GameTableView({
   const tCards = useTranslations("Cards");
   const tHistory = useTranslations("RoundHistory");
 
-  // Round history opens by default; breakdown opens after round is scored.
-  const [expandedSections, setExpandedSections] = useState<string[]>(
-    snapshot.roundStatus === "completed" ? ["history", "breakdown"] : ["history"],
-  );
-  const previousRoundStatus = useRef(snapshot.roundStatus);
-
-  useEffect(() => {
-    if (snapshot.roundStatus === "completed" && previousRoundStatus.current !== "completed") {
-      setExpandedSections((current) =>
-        current.includes("breakdown") ? current : [...current, "breakdown"],
-      );
-    }
-    previousRoundStatus.current = snapshot.roundStatus;
-  }, [snapshot.roundStatus]);
-
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
   );
@@ -146,7 +131,8 @@ export function GameTableView({
   );
 
   return (
-    <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
+    <LazyMotion features={domAnimation}>
+      <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
       <GameTableHud
         snapshot={snapshot}
         t={t}
@@ -194,12 +180,7 @@ export function GameTableView({
         </section>
       ) : null}
 
-      <RoundHistorySection
-        expandedSections={expandedSections}
-        onExpandedChange={setExpandedSections}
-        snapshot={snapshot}
-        tHistory={tHistory}
-      />
+      <RoundHistorySection snapshot={snapshot} tHistory={tHistory} />
 
       {hasTurnControls ? (
         <section
@@ -209,7 +190,8 @@ export function GameTableView({
           <div className="mx-auto max-w-5xl">{turnControls}</div>
         </section>
       ) : null}
-    </div>
+      </div>
+    </LazyMotion>
   );
 }
 
@@ -370,13 +352,13 @@ function GameTableOpponentsSection({
           ))}
         </div>
       ) : (
-        <motion.div variants={listStagger} initial="hidden" animate="show" className={gridClass}>
+        <m.div variants={listStagger} initial="hidden" animate="show" className={gridClass}>
           {opponents.map((player) => (
-            <motion.div key={player.playerId} variants={listItem}>
+            <m.div key={player.playerId} variants={listItem}>
               {laneFor(player)}
-            </motion.div>
+            </m.div>
           ))}
-        </motion.div>
+        </m.div>
       )}
     </section>
   );
@@ -435,22 +417,29 @@ function MatchPlayerLane({
 }
 
 type RoundHistorySectionProps = {
-  expandedSections: string[];
-  onExpandedChange: (value: string[]) => void;
   snapshot: MatchSnapshot;
   tHistory: ReturnType<typeof useTranslations<"RoundHistory">>;
 };
 
-function RoundHistorySection({
-  expandedSections,
-  onExpandedChange,
-  snapshot,
-  tHistory,
-}: RoundHistorySectionProps) {
+function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
+  const [expandedSections, setExpandedSections] = useState<string[]>(["history"]);
+  const hasAutoExpandedBreakdownRef = useRef(false);
+
+  if (snapshot.roundStatus === "completed") {
+    if (!hasAutoExpandedBreakdownRef.current) {
+      hasAutoExpandedBreakdownRef.current = true;
+      setExpandedSections((current) =>
+        current.includes("breakdown") ? current : [...current, "breakdown"],
+      );
+    }
+  } else {
+    hasAutoExpandedBreakdownRef.current = false;
+  }
+
   return (
     <Card className="w-full">
       <CardContent>
-        <Accordion value={expandedSections} onValueChange={onExpandedChange}>
+        <Accordion value={expandedSections} onValueChange={setExpandedSections}>
           <AccordionItem value="history">
             <AccordionTrigger className="text-xl">{tHistory("title")}</AccordionTrigger>
             <AccordionContent>

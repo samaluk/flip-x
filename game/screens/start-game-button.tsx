@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { LazyMotion, domAnimation, m } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -45,19 +45,21 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
   }
 
   return (
-    <motion.div
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    >
-      <Button
-        onClick={() => void handleStart()}
-        disabled={isSubmitting || playerCount < 2}
-        size="lg"
-        className="gap-2 rounded-full px-6"
+    <LazyMotion features={domAnimation}>
+      <m.div
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
-        <PlayIcon className="size-4" />
-        {isSubmitting ? t("starting") : t("startGame")}
-      </Button>
-    </motion.div>
+        <Button
+          onClick={() => void handleStart()}
+          disabled={isSubmitting || playerCount < 2}
+          size="lg"
+          className="gap-2 rounded-full px-6"
+        >
+          <PlayIcon className="size-4" />
+          {isSubmitting ? t("starting") : t("startGame")}
+        </Button>
+      </m.div>
+    </LazyMotion>
   );
 }

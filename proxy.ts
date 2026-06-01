@@ -14,15 +14,15 @@ export default async function proxy(request: NextRequest) {
       return new Response(null, { status: 404 });
     }
 
-    return intlMiddleware(request as never);
+    return intlMiddleware(request);
   }
 
   if (request.nextUrl.pathname.startsWith("/ingest")) {
-    return postHogMiddleware({ apiKey: posthogKey, proxy: true })(request as never);
+    return postHogMiddleware({ apiKey: posthogKey, proxy: true })(request);
   }
 
-  const response = intlMiddleware(request as never);
-  return postHogMiddleware({ apiKey: posthogKey, response: response as never })(request as never);
+  const response = intlMiddleware(request);
+  return postHogMiddleware({ apiKey: posthogKey, response })(request);
 }
 
 export const config = {

@@ -24,11 +24,11 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
           <tbody className="divide-y divide-border">
             {players.map((player) => (
               <tr key={player.playerId} className="text-sm text-foreground">
-                <td className="px-3 py-3 font-medium">{player.displayName}</td>
-                <td className="px-3 py-3 text-muted-foreground tabular-nums">
+                <td className="p-3 font-medium">{player.displayName}</td>
+                <td className="p-3 text-muted-foreground tabular-nums">
                   {player.scoreBreakdown.numberCardTotal}
                 </td>
-                <td className="px-3 py-3 text-muted-foreground">
+                <td className="p-3 text-muted-foreground">
                   {player.scoreBreakdown.multiplierApplied ? t("yes") : t("no")}
                   <span className="sr-only">
                     {player.scoreBreakdown.multiplierApplied
@@ -36,13 +36,13 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
                       : t("srMultiplierOff")}
                   </span>
                 </td>
-                <td className="px-3 py-3 text-muted-foreground tabular-nums">
+                <td className="p-3 text-muted-foreground tabular-nums">
                   {player.scoreBreakdown.additiveModifierTotal}
                 </td>
-                <td className="px-3 py-3 text-muted-foreground tabular-nums">
+                <td className="p-3 text-muted-foreground tabular-nums">
                   {player.scoreBreakdown.flip7Bonus}
                 </td>
-                <td className="px-3 py-3 text-base font-semibold text-primary tabular-nums">
+                <td className="p-3 text-base font-semibold text-primary tabular-nums">
                   {player.scoreBreakdown.finalRoundScore}
                   <span className="sr-only">
                     {t("srFinalScore", { score: String(player.scoreBreakdown.finalRoundScore) })}

@@ -322,18 +322,18 @@ function PlayerLaneCardStack({
     ],
   );
 
-  return (
-    <div className="min-w-0 flex-1 pb-1">
-      <div
-        className={cn(
-          "flex min-w-0 flex-wrap content-start items-start",
-          compact ? "gap-1.5" : "gap-2.5 sm:gap-3",
-        )}
-      >
-        {cardElements.length > 0 ? cardElements : null}
-      </div>
+  const cardRow = (
+    <div
+      className={cn(
+        "flex min-w-0 flex-wrap content-start items-start",
+        compact ? "gap-1.5" : "gap-2.5 sm:gap-3",
+      )}
+    >
+      {cardElements.length > 0 ? cardElements : null}
     </div>
   );
+
+  return <div className="min-w-0 flex-1 pb-1">{cardRow}</div>;
 }
 
 export const PlayerLane = memo(function PlayerLane({

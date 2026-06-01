@@ -2,14 +2,13 @@
 
 import { useLocale, useTranslations } from "next-intl";
 
-import { usePathname, useRouter } from "@/shared/i18n/navigation";
+import { useRouter } from "@/shared/i18n/navigation";
 import { routing } from "@/shared/i18n/routing";
 import { cn } from "@/shared/lib/utils";
 
 export function LanguageSwitcher({ className }: { className?: string }) {
   const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { replace } = useRouter();
   const t = useTranslations("LanguageSwitcher");
 
   return (
@@ -24,7 +23,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
         <button
           key={loc}
           type="button"
-          onClick={() => router.replace(pathname, { locale: loc })}
+          onClick={() => replace(window.location.pathname, { locale: loc })}
           className={cn(
             "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
             locale === loc

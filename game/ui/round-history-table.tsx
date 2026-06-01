@@ -72,7 +72,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
           <tbody>
             {orderedPlayers.map((player) => (
               <tr key={player.playerId} className="align-top">
-                <th className="sticky inset-s-0 z-10 border-b bg-background px-4 py-4">
+                <th className="sticky inset-s-0 z-10 border-b bg-background p-4">
                   <div className="text-sm font-medium text-foreground">{player.displayName}</div>
                   <div className="text-xs text-muted-foreground">
                     {t("seatLabel", { seat: String(player.seatIndex + 1) })}
@@ -98,7 +98,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                     <td
                       key={`${entry.phase}-${entry.roundNumber}-${player.playerId}`}
                       className={cn(
-                        "border-b px-4 py-4",
+                         "border-b p-4",
                         entry.phase === "projected" && "border-dashed bg-primary/5",
                         score.reachedTarget && "bg-emerald-500/10",
                       )}

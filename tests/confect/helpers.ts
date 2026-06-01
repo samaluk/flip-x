@@ -221,6 +221,7 @@ export function driveMatchUntilCompleted(
 export function readRoundState(matchId: string) {
   const RoundStateSummary = Schema.Struct({
     eventTypes: Schema.Array(Schema.String),
+    eventSequences: Schema.Array(Schema.Number),
     scoreBreakdownCount: Schema.Number,
     matchStatus: Schema.String,
     winnerPlayerId: Schema.NullOr(Schema.String),
@@ -273,6 +274,9 @@ export function readRoundState(matchId: string) {
 
         return {
           eventTypes: events.map((event) => event.eventType),
+          eventSequences: events
+            .map((event) => event.sequence)
+            .toSorted((left, right) => left - right),
           scoreBreakdownCount: scoreBreakdowns.length,
           matchStatus: match?.status ?? "missing",
           winnerPlayerId: match?.winnerPlayerId ? String(match.winnerPlayerId) : null,
