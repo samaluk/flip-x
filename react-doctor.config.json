@@ -1,0 +1,40 @@
+{
+  "ignore": {
+    "files": [
+      "confect/_generated/**",
+      "confect/**/*.impl.ts",
+      "confect/admin.impl.ts",
+      "confect/admin.ts",
+      "confect/impl.ts",
+      "confect/schema.ts",
+      "confect/spec.ts",
+      "confect/lib/**",
+      "confect/match-lobby.ts",
+      "confect/match-settings.ts",
+      "confect/match-snapshot-for-session.ts",
+      "confect/matches.impl.ts",
+      "confect/migrations.impl.ts",
+      "confect/presence.impl.ts",
+      "confect/rounds.impl.ts",
+      "confect/rounds.ts",
+      "confect/settings.impl.ts",
+      "confect/turns.impl.ts",
+      "confect/turns.ts",
+      "convex/**",
+      "game/application/**",
+      "game/infrastructure/**",
+      "game/logic/**",
+      "shared/lib/__mocks__/confect-hooks.ts",
+      "shared/lib/lobby-code.ts"
+    ],
+    "overrides": [
+      {
+        "files": ["package.json"],
+        "rules": ["deslop/unused-dev-dependency"]
+      }
+    ]
+  },
+  "rules": {
+    "react-doctor/require-pnpm-hardening": "off"
+  }
+}
