@@ -22,17 +22,17 @@ jobs:
       POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS: "300"
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.3
         with:
           fetch-depth: 0
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v6
+        uses: pnpm/action-setup@v6.0.8
         with:
           version: 11.5.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v6.4.0
         with:
           node-version: 24.16.0
           cache: pnpm
@@ -73,7 +73,7 @@ jobs:
         run: pnpm test
 
       - name: Cache Next.js
-        uses: actions/cache@v5
+        uses: actions/cache@v5.0.5
         with:
           path: .next/cache
           key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}
@@ -87,7 +87,7 @@ jobs:
         run: pnpm test:vrt
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v5
+        uses: actions/cache@v5.0.5
         with:
           path: /home/runner/.cache/ms-playwright
           key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
