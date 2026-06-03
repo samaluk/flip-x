@@ -113,8 +113,8 @@ importers:
         specifier: 1.60.0
         version: 1.60.0
       '@posthog/nextjs-config':
-        specifier: 1.9.38
-        version: 1.9.38(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(webpack@5.107.1(esbuild@0.27.7))
+        specifier: 1.9.40
+        version: 1.9.40(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(webpack@5.107.1(esbuild@0.27.7))
       '@tailwindcss/postcss':
         specifier: 4.3.0
         version: 4.3.0
@@ -2263,6 +2263,9 @@ packages:
   '@posthog/core@1.29.13':
     resolution: {integrity: sha512-7Me5zaeAue/wmA364Go8ChYbsVAfNAHbtDxXopWu3D6hq9PVScUcauRgjD1njgvP8NzN91SrIllE+pri3XvJVw==}
 
+  '@posthog/core@1.29.15':
+    resolution: {integrity: sha512-jHdTo/hcZsZu1QJMi3GSysPzhkCwVncKB6IKocheFLypmMbGZp39ZGep9ECKNb1v6zBNdtHhcPqhfV+r+iLZNw==}
+
   '@posthog/core@1.30.2':
     resolution: {integrity: sha512-d7RTpfi+/q5+SZ+4f1WhanfEtNBz9onMmUxn3BO0GDT8N5ZT4DEP3LqFisqeP+xkJTaFPWCOVA/nGyKmUX9y9g==}
 
@@ -2277,8 +2280,8 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.9.38':
-    resolution: {integrity: sha512-o6s6Yr7VDbcaOgH+ZcxNPiVqqtC+q59hijvbsaPF5a7YdfTEIkXrLbU91bDD+ppM92H142JbMCwoCgJaGmWJDw==}
+  '@posthog/nextjs-config@1.9.40':
+    resolution: {integrity: sha512-M0Mk59WdhNlf+YvjmwUfyTrc98HPoN++c2R3/sT77cxINK5lYRlWwO8dJJCL87ymm78eYQUiWv5dUtldSbWMRg==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
@@ -2299,11 +2302,14 @@ packages:
   '@posthog/types@1.376.4':
     resolution: {integrity: sha512-EoDEvA925lf6yxPpbP4wozlXgu4b9WEqxZlFBUDd4k2akP5R/RWyHpvQT8aYyfY6BtSLn8TnVwxPQOM4b90isA==}
 
+  '@posthog/types@1.376.6':
+    resolution: {integrity: sha512-iBiS+C/3rGr/AMtfmeofRhBeCaB0I14mzlrzBmyWQe2h1kbTBAkChzy4wkF9rWmDSJqxQ+UNh0Xs/ZOP0S09tg==}
+
   '@posthog/types@1.378.1':
     resolution: {integrity: sha512-bKOXVWySe5oKFjV6X9VW9jngIm14d4BvnT7l/Eb7e6DrT5uD+XclvbRdhC5f1/l5KwoIU+qswBobHRPlix2D1w==}
 
-  '@posthog/webpack-plugin@1.4.38':
-    resolution: {integrity: sha512-7n4lp+xJBcURrPpdqUPNgH/Z98iJ69HJ5661CEO7dLcl58tGmeiSHh6ujHBuzJvUQgR0m9TQjveJ8DZElDecLg==}
+  '@posthog/webpack-plugin@1.4.40':
+    resolution: {integrity: sha512-qeU9ogwsZxcRz9w9omWpm082XD2jNMGNlpzRaWysKtazkkUkJBg/M/13yQisI/VGsfBF4sLEveLOGbQT+84JTA==}
     peerDependencies:
       webpack: ^5
 
@@ -7407,6 +7413,10 @@ snapshots:
     dependencies:
       '@posthog/types': 1.376.4
 
+  '@posthog/core@1.29.15':
+    dependencies:
+      '@posthog/types': 1.376.6
+
   '@posthog/core@1.30.2':
     dependencies:
       '@posthog/types': 1.378.1
@@ -7425,11 +7435,11 @@ snapshots:
       - '@types/react'
       - rxjs
 
-  '@posthog/nextjs-config@1.9.38(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/nextjs-config@1.9.40(next@16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
       '@posthog/cli': 0.7.13
       '@posthog/plugin-utils': 1.1.1
-      '@posthog/webpack-plugin': 1.4.38(webpack@5.107.1(esbuild@0.27.7))
+      '@posthog/webpack-plugin': 1.4.40(webpack@5.107.1(esbuild@0.27.7))
       next: 16.2.6(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       semver: 7.7.4
     transitivePeerDependencies:
@@ -7448,12 +7458,14 @@ snapshots:
 
   '@posthog/types@1.376.4': {}
 
+  '@posthog/types@1.376.6': {}
+
   '@posthog/types@1.378.1': {}
 
-  '@posthog/webpack-plugin@1.4.38(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/webpack-plugin@1.4.40(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
       '@posthog/cli': 0.7.13
-      '@posthog/core': 1.29.13
+      '@posthog/core': 1.29.15
       '@posthog/plugin-utils': 1.1.1
       webpack: 5.107.1(esbuild@0.27.7)
 
