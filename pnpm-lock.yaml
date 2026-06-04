@@ -37,8 +37,8 @@ importers:
         specifier: 2.0.6
         version: 2.0.6(convex@1.39.1(react@19.2.7))
       '@posthog/next':
-        specifier: 0.4.69
-        version: 0.4.69(@types/react@19.2.16)(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.4.72
+        version: 0.4.72(@types/react@19.2.16)(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@sholajegede/convex-cascading-deletes':
         specifier: 0.1.2
         version: 0.1.2(convex@1.39.1(react@19.2.7))(react@19.2.7)
@@ -2243,14 +2243,11 @@ packages:
     peerDependencies:
       convex: ^1.39.0
 
-  '@posthog/core@1.29.15':
-    resolution: {integrity: sha512-jHdTo/hcZsZu1QJMi3GSysPzhkCwVncKB6IKocheFLypmMbGZp39ZGep9ECKNb1v6zBNdtHhcPqhfV+r+iLZNw==}
-
   '@posthog/core@1.30.2':
     resolution: {integrity: sha512-d7RTpfi+/q5+SZ+4f1WhanfEtNBz9onMmUxn3BO0GDT8N5ZT4DEP3LqFisqeP+xkJTaFPWCOVA/nGyKmUX9y9g==}
 
-  '@posthog/next@0.4.69':
-    resolution: {integrity: sha512-vYh2xWFtI+pfDh1uUSe05dVY8nmPq7DS2GdPCz9iOhY26nKFS8MVy9p0pB3UKMiWQ9nQ33NFcak3lz5lxlF0WQ==}
+  '@posthog/next@0.4.72':
+    resolution: {integrity: sha512-cq3Ihw0WwEZJzsg2QtA48EmTni12ImhWprLOJpieECnZyaMuiRUuddkO3uY7Ztg/4tR0kv3Iska4eYjrEAWeTA==}
     peerDependencies:
       '@vercel/functions': '>=1.0.0'
       next: '>=13.0.0'
@@ -2278,9 +2275,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  '@posthog/types@1.376.6':
-    resolution: {integrity: sha512-iBiS+C/3rGr/AMtfmeofRhBeCaB0I14mzlrzBmyWQe2h1kbTBAkChzy4wkF9rWmDSJqxQ+UNh0Xs/ZOP0S09tg==}
 
   '@posthog/types@1.378.1':
     resolution: {integrity: sha512-bKOXVWySe5oKFjV6X9VW9jngIm14d4BvnT7l/Eb7e6DrT5uD+XclvbRdhC5f1/l5KwoIU+qswBobHRPlix2D1w==}
@@ -4864,20 +4858,11 @@ packages:
     resolution: {integrity: sha512-SoSL4+OSEtR99LHFZQiJLkT59C5B1amGO1NzTwj7TT1qCUgUO6hxOvzkOYxD+vMrXBM3XJIKzokoERdqQq/Zmg==}
     engines: {node: ^10 || ^12 || >=14}
 
-  posthog-js@1.376.6:
-    resolution: {integrity: sha512-T40qyq6YZbLEqTOYA8YyDSCx+bxj16p8ZT48rnFTsiNilZJU4GopnXzW6Cr7YM1XIBZtd2wis8U4AW8BO15Z4A==}
+  posthog-js@1.378.1:
+    resolution: {integrity: sha512-pr9hu7J9eKCWlDxGfn5jbqcaTvaS+quRVxMKo7XRiKHPtFpXoIStOctkRTMumz8LucgD4l5NVbtsaZDi6OrrLQ==}
 
   posthog-node@5.35.11:
     resolution: {integrity: sha512-HDgHr5eRmR9AYxoNCM5pyn2T/CLF4rjuYzgAo6BVopXBFrpyTVEt5+B9DxK2lKhsrIZTzg5bJ4G0VdPA139P9A==}
-    engines: {node: ^20.20.0 || >=22.22.0}
-    peerDependencies:
-      rxjs: ^7.0.0
-    peerDependenciesMeta:
-      rxjs:
-        optional: true
-
-  posthog-node@5.35.8:
-    resolution: {integrity: sha512-Nde6dh4Xw1sCUL2sTPL+JZ1qmFvBOguks0se9fCN5Sxe0eTqZw9M8NH2Rd2/evU10apW9HEUPzBoWFwznzGRwQ==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       rxjs: ^7.0.0
@@ -7374,21 +7359,17 @@ snapshots:
     transitivePeerDependencies:
       - rxjs
 
-  '@posthog/core@1.29.15':
-    dependencies:
-      '@posthog/types': 1.376.6
-
   '@posthog/core@1.30.2':
     dependencies:
       '@posthog/types': 1.378.1
 
-  '@posthog/next@0.4.69(@types/react@19.2.16)(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@posthog/next@0.4.72(@types/react@19.2.16)(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@posthog/core': 1.29.15
-      '@posthog/react': 1.9.1(@types/react@19.2.16)(posthog-js@1.376.6)(react@19.2.7)
+      '@posthog/core': 1.30.2
+      '@posthog/react': 1.9.1(@types/react@19.2.16)(posthog-js@1.378.1)(react@19.2.7)
       next: 16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      posthog-js: 1.376.6
-      posthog-node: 5.35.8
+      posthog-js: 1.378.1
+      posthog-node: 5.35.11
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
       server-only: 0.0.1
@@ -7410,14 +7391,12 @@ snapshots:
     dependencies:
       cross-spawn: 7.0.6
 
-  '@posthog/react@1.9.1(@types/react@19.2.16)(posthog-js@1.376.6)(react@19.2.7)':
+  '@posthog/react@1.9.1(@types/react@19.2.16)(posthog-js@1.378.1)(react@19.2.7)':
     dependencies:
-      posthog-js: 1.376.6
+      posthog-js: 1.378.1
       react: 19.2.7
     optionalDependencies:
       '@types/react': 19.2.16
-
-  '@posthog/types@1.376.6': {}
 
   '@posthog/types@1.378.1': {}
 
@@ -10141,15 +10120,15 @@ snapshots:
       picocolors: 1.1.1
       source-map-js: 1.2.1
 
-  posthog-js@1.376.6:
+  posthog-js@1.378.1:
     dependencies:
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/api-logs': 0.208.0
       '@opentelemetry/exporter-logs-otlp-http': 0.208.0(@opentelemetry/api@1.9.1)
       '@opentelemetry/resources': 2.7.1(@opentelemetry/api@1.9.1)
       '@opentelemetry/sdk-logs': 0.208.0(@opentelemetry/api@1.9.1)
-      '@posthog/core': 1.29.15
-      '@posthog/types': 1.376.6
+      '@posthog/core': 1.30.2
+      '@posthog/types': 1.378.1
       core-js: 3.49.0
       dompurify: 3.4.3
       fflate: 0.4.8
@@ -10160,10 +10139,6 @@ snapshots:
   posthog-node@5.35.11:
     dependencies:
       '@posthog/core': 1.30.2
-
-  posthog-node@5.35.8:
-    dependencies:
-      '@posthog/core': 1.29.15
 
   powershell-utils@0.1.0: {}
 
