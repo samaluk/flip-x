@@ -34,8 +34,8 @@ importers:
         specifier: 0.3.2
         version: 0.3.2(convex@1.40.0(react@19.2.7))(react@19.2.7)
       '@posthog/convex':
-        specifier: 2.0.6
-        version: 2.0.6(convex@1.40.0(react@19.2.7))
+        specifier: 2.0.7
+        version: 2.0.7(convex@1.40.0(react@19.2.7))
       '@posthog/next':
         specifier: 0.4.74
         version: 0.4.74(@types/react@19.2.16)(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -2360,8 +2360,8 @@ packages:
     engines: {node: '>=14.14', npm: '>=6'}
     hasBin: true
 
-  '@posthog/convex@2.0.6':
-    resolution: {integrity: sha512-WdOmYXvkfhxujI9V5jlmjIjchtniVC/zVzQlsWN9oQNItzyr4pQHk/jAqbXi8l0f/b5FKxBr2V/4mdrz0IeeCQ==}
+  '@posthog/convex@2.0.7':
+    resolution: {integrity: sha512-TDqU8CVYgQCPI6ddmltkkxF+SD3Szpms36tvaRNO/Dwd/T/KaGu6+fVzhYFcvLbCBYNqOMrdseXiS8vKMd/UVg==}
     peerDependencies:
       convex: ^1.39.0
 
@@ -5002,15 +5002,6 @@ packages:
   posthog-js@1.379.0:
     resolution: {integrity: sha512-cSESmnPvIaY/pyhV5a6pF00q8tqmXlJBQWX9T7dbBh9TXhVM5oQVi7g77vWGD9G8wq4iNF5ZOxqeAK9dpOSOYg==}
 
-  posthog-node@5.35.11:
-    resolution: {integrity: sha512-HDgHr5eRmR9AYxoNCM5pyn2T/CLF4rjuYzgAo6BVopXBFrpyTVEt5+B9DxK2lKhsrIZTzg5bJ4G0VdPA139P9A==}
-    engines: {node: ^20.20.0 || >=22.22.0}
-    peerDependencies:
-      rxjs: ^7.0.0
-    peerDependenciesMeta:
-      rxjs:
-        optional: true
-
   posthog-node@5.35.12:
     resolution: {integrity: sha512-WLbeUdSDpERDENBgaDahMo9sqwjo8Gc1f1dnM01HciwdP8OnGlbcVs8zrqjz6Z9GvBnTnRTa0Q2bBQeXrBIeHg==}
     engines: {node: ^20.20.0 || >=22.22.0}
@@ -7558,11 +7549,11 @@ snapshots:
     dependencies:
       detect-libc: 2.1.2
 
-  '@posthog/convex@2.0.6(convex@1.40.0(react@19.2.7))':
+  '@posthog/convex@2.0.7(convex@1.40.0(react@19.2.7))':
     dependencies:
-      '@posthog/core': 1.30.2
+      '@posthog/core': 1.30.3
       convex: 1.40.0(react@19.2.7)
-      posthog-node: 5.35.11
+      posthog-node: 5.35.12
     transitivePeerDependencies:
       - rxjs
 
@@ -10371,10 +10362,6 @@ snapshots:
       preact: 10.29.2
       query-selector-shadow-dom: 1.0.1
       web-vitals: 5.2.0
-
-  posthog-node@5.35.11:
-    dependencies:
-      '@posthog/core': 1.30.2
 
   posthog-node@5.35.12:
     dependencies:
