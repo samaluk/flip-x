@@ -81,7 +81,7 @@
     "@google/design.md": "0.2.0",
     "@lingual/i18n-check": "0.9.5",
     "@playwright/test": "1.60.0",
-    "@posthog/nextjs-config": "1.9.46",
+    "@posthog/nextjs-config": "1.9.49",
     "@tailwindcss/postcss": "4.3.0",
     "@tailwindcss/vite": "4.3.0",
     "@testing-library/jest-dom": "6.9.1",
