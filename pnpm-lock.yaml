@@ -113,8 +113,8 @@ importers:
         specifier: 1.60.0
         version: 1.60.0
       '@posthog/nextjs-config':
-        specifier: 1.9.46
-        version: 1.9.46(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))
+        specifier: 1.9.49
+        version: 1.9.49(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))
       '@tailwindcss/postcss':
         specifier: 4.3.0
         version: 4.3.0
@@ -2197,6 +2197,9 @@ packages:
   '@posthog/core@1.30.6':
     resolution: {integrity: sha512-9X9IUm4Iw9M+nxWOou8LdsvUCyAhDNwzYchMZOcOUVu+CY2oq19GJHC7fZ7UERoUppKVbgWQD51NlfFMHkjGKg==}
 
+  '@posthog/core@1.30.7':
+    resolution: {integrity: sha512-dkByo0jBRTLoTcR8nVnK9fdOXAyQi9D4J7eSLVIHtF22U9KGC7WTOd0mMn7vw+lxcIaDdhO3Big4yfbQtP2hUg==}
+
   '@posthog/next@0.4.75':
     resolution: {integrity: sha512-xJFzh0QCuyChIwSAntvMqsb0il2ZElj7ueHD/w0Q0z7kfRsMrS3/zIDKdOnzygjr4EIFGU3QVvr9kNn9+2Zlxg==}
     peerDependencies:
@@ -2208,8 +2211,8 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.9.46':
-    resolution: {integrity: sha512-62th+Gw1X4Vfwa8sLnW+k1dGypGnJ1XwFnutQY/PmPYusaVljcNKRaZRIqFc3VMvsLGK5q8OKqYM9wQe4Azahw==}
+  '@posthog/nextjs-config@1.9.49':
+    resolution: {integrity: sha512-ZI3rPaKstfFpS8GkiRXc11LJWUWQDh9Gf2igM7J/oSP2tbrplB6QJ/e6XEHQbgsn7QDtK3oaf7dgnI8wc5dhlA==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
@@ -2233,8 +2236,11 @@ packages:
   '@posthog/types@1.379.3':
     resolution: {integrity: sha512-xx5GLkb/S/eSSQ0H0hnkn1BT7ZG1ZVetQ8/G/h8B5XyOM5prR96a/bgkcIbnK25GFSYyIMNx0X3syvBCYorkUA==}
 
-  '@posthog/webpack-plugin@1.5.2':
-    resolution: {integrity: sha512-hwe4P1anVqT1+UTrT6JQGYt2EUkMM5I1aspzM/5CDhmYAuaGAYU93F1Brxk87srX7oRI4KcWPt9XMfYRKpQXAg==}
+  '@posthog/types@1.380.0':
+    resolution: {integrity: sha512-sA4gCL4vD7vwH+lj3MQIxjNhQcN245wFBjeDN2IyA2e1k001NkeRXPJ9N5PbGDz5mXXPc+dmKcnU+TDEpsOpGg==}
+
+  '@posthog/webpack-plugin@1.5.5':
+    resolution: {integrity: sha512-LqrdGZ+u7oBdT2MxSGsbxYhkHPvM9LKzVnO3P5yOuXKlr8iSWDJU11fI0FMkBMssmr3FuKolrG71RX2o2S082A==}
     peerDependencies:
       webpack: ^5
 
@@ -7235,6 +7241,10 @@ snapshots:
     dependencies:
       '@posthog/types': 1.379.3
 
+  '@posthog/core@1.30.7':
+    dependencies:
+      '@posthog/types': 1.380.0
+
   '@posthog/next@0.4.75(@types/react@19.2.16)(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@posthog/core': 1.30.4
@@ -7249,11 +7259,11 @@ snapshots:
       - '@types/react'
       - rxjs
 
-  '@posthog/nextjs-config@1.9.46(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/nextjs-config@1.9.49(next@16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
       '@posthog/cli': 0.7.13
       '@posthog/plugin-utils': 1.1.1
-      '@posthog/webpack-plugin': 1.5.2(webpack@5.107.1(esbuild@0.27.7))
+      '@posthog/webpack-plugin': 1.5.5(webpack@5.107.1(esbuild@0.27.7))
       next: 16.2.7(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.60.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       semver: 7.7.4
     transitivePeerDependencies:
@@ -7274,10 +7284,12 @@ snapshots:
 
   '@posthog/types@1.379.3': {}
 
-  '@posthog/webpack-plugin@1.5.2(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/types@1.380.0': {}
+
+  '@posthog/webpack-plugin@1.5.5(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
       '@posthog/cli': 0.7.13
-      '@posthog/core': 1.30.4
+      '@posthog/core': 1.30.7
       '@posthog/plugin-utils': 1.1.1
       webpack: 5.107.1(esbuild@0.27.7)
 
@@ -8986,7 +8998,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 24.12.4
+      '@types/node': 24.13.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
