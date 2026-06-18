@@ -75,8 +75,13 @@ jobs:
         run: pnpm build
 
       - name: Visual regression (Vitest browser, Linux Docker)
+        if: runner.environment != 'self-hosted'
         env:
           SKIP_VRT_DOCKER_INSTALL: "1"
+        run: pnpm test:vrt
+
+      - name: Visual regression (Vitest browser, Linux Docker, self-hosted)
+        if: runner.environment == 'self-hosted'
         run: pnpm test:vrt
 
       - name: Cache Playwright browsers
