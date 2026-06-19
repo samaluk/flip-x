@@ -14,7 +14,7 @@ import {
 } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
-import { Flip7Card } from "@/game/ui/flip7-card";
+import { FlipXCard } from "@/game/ui/flip-x-card";
 import { Badge } from "@/shared/ui/badge";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
@@ -238,7 +238,7 @@ function PlayerLaneCardStack({
     () =>
       [
         ...player.modifierCards.map((card) => (
-          <Flip7Card
+          <FlipXCard
             key={card.id}
             kind="modifier"
             modifierValue={card.modifierValue}
@@ -250,7 +250,7 @@ function PlayerLaneCardStack({
           />
         )),
         ...player.numberCards.map((card) => (
-          <Flip7Card
+          <FlipXCard
             key={card.id}
             kind="number"
             numberValue={card.numberValue}
@@ -263,7 +263,7 @@ function PlayerLaneCardStack({
         )),
         ...(player.bustCard
           ? [
-              <Flip7Card
+              <FlipXCard
                 key={player.bustCard.id}
                 kind="number"
                 numberValue={player.bustCard.numberValue}
@@ -278,7 +278,7 @@ function PlayerLaneCardStack({
         ...player.heldActionCards.map((card) => {
           const key = `${player.playerId}-${card.actionKind}-${card.label}`;
           return (
-            <Flip7Card
+            <FlipXCard
               key={key}
               kind="action"
               actionKind={card.actionKind}
@@ -294,7 +294,7 @@ function PlayerLaneCardStack({
         ...player.receivedActionCards.map((card) => {
           const key = `${player.playerId}-received-${card.actionKind}-${card.label}`;
           return (
-            <Flip7Card
+            <FlipXCard
               key={key}
               kind="action"
               actionKind={card.actionKind}

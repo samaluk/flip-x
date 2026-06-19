@@ -1,7 +1,7 @@
 import { firstAvailablePlayerColorId, isPlayerColorId, type PlayerColorId } from "@/shared/lib/player-colors";
 
-export const PLAYER_NAME_STORAGE_KEY = "flip7_player_name";
-export const PLAYER_COLOR_STORAGE_KEY = "flip7_player_color";
+export const PLAYER_NAME_STORAGE_KEY = "flip-x_player_name";
+export const PLAYER_COLOR_STORAGE_KEY = "flip-x_player_color";
 
 export const DEFAULT_PLAYER_COLOR_ID: PlayerColorId = "cyan";
 

@@ -172,7 +172,7 @@ export function latestResolutionBodyLocator(page: Page) {
 
 /** Count of Flip7Cards for a player (modifier + number + held action + received action cards). */
 export async function countPlayerCards(page: Page): Promise<number> {
-  return page.locator(".player-lane .flip7-card").count();
+  return page.locator(".player-lane .flip-x-card").count();
 }
 
 export type ThreePlayerContext = {

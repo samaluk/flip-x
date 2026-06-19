@@ -12,7 +12,7 @@ deprecation notices.
 
 ## Project Overview
 
-Flip 7 is a shared-table web app for playing the press-your-luck card game with
+Flip-x is a shared-table web app for playing the press-your-luck card game with
 live turn tracking, action-card resolution, and automatic scoring to 200 points.
 
 - Runtime stack: TypeScript 6.0.3 (project `tsc` / Next), TypeScript 7 native
@@ -63,8 +63,8 @@ Start the Next.js dev server through portless:
 pnpm dev
 ```
 
-The app runs at `https://flip7.localhost`. In git worktrees, portless prepends
-the branch name, for example `https://<branch>.flip7.localhost`.
+The app runs at `https://flip-x.localhost`. In git worktrees, portless prepends
+the branch name, for example `https://<branch>.flip-x.localhost`.
 
 Useful development commands:
 

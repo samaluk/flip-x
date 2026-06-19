@@ -16,7 +16,7 @@ const e2ePort = process.env.E2E_PORT ?? (convexUrlFromPreviewCmd ? "3001" : "300
 
 function getPortlessPublicUrl(): string {
   try {
-    const url = execSync("pnpm exec portless get flip7", {
+    const url = execSync("pnpm exec portless get flip-x", {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "pipe"],
     }).trim();
@@ -26,7 +26,7 @@ function getPortlessPublicUrl(): string {
   } catch {
     // Proxy not installed, portless unavailable, etc.
   }
-  return "https://flip7.localhost";
+  return "https://flip-x.localhost";
 }
 
 const loopbackUrl = `http://127.0.0.1:${e2ePort}`;

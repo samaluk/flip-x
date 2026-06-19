@@ -3,7 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { withPostHogConfig } from "@posthog/nextjs-config";
 
 const nextConfig: NextConfig = {
-  allowedDevOrigins: ["127.0.0.1", "flip7.localhost", "*.flip7.localhost"],
+  allowedDevOrigins: ["127.0.0.1", "flip-x.localhost", "*.flip-x.localhost"],
 };
 
 const posthogSourceMapsEnabled = Boolean(
@@ -23,7 +23,7 @@ export default withPostHogConfig(withNextIntl(nextConfig), {
   host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   sourcemaps: {
     enabled: posthogSourceMapsEnabled,
-    releaseName: "flip7",
+    releaseName: "flip-x",
     deleteAfterUpload: true,
   },
 });

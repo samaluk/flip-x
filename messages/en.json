@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Flip 7",
-    "description": "Shared-table web app for playing Flip 7 with live scoring."
+    "title": "flip-x",
+    "description": "Shared-table web app for playing flip-x with live scoring."
   },
   "LanguageSwitcher": {
     "english": "English",
@@ -13,7 +13,7 @@
     "playerArrow": "{from} → {to}"
   },
   "Home": {
-    "heroLine1": "Flip 7, fully scored",
+    "heroLine1": "flip-x, fully scored",
     "heroLine2": "and fully shared.",
     "heroBody": "Start a shared-table match that handles dealing, action cards, score modifiers, and the race to 200 without a paper score sheet.",
     "createTitle": "Create a match",
@@ -22,7 +22,7 @@
     "joinExistingSubtitleDesktop": "Have a code? Enter it here to jump in.",
     "joinExistingSubtitleMobile": "Have a code? Enter it here.",
     "howItWorks": "How it works",
-    "step1": "Seven unique number cards ends the round with a Flip 7 bonus.",
+    "step1": "Seven unique number cards ends the round with a flip-x bonus.",
     "step2": "Freeze banks points. Flip Three forces three more cards.",
     "step3": "Second Chance discards one future duplicate instead of busting.",
     "lobbyNotFoundTitle": "Lobby not found",
@@ -36,7 +36,7 @@
     "lobbyCode": "Lobby code"
   },
   "MatchSetup": {
-    "title": "Flip 7",
+    "title": "flip-x",
     "subtitleJoin": "Enter your name and join the game",
     "subtitleCreate": "Create a game or join an existing one",
     "yourName": "Your name",
@@ -48,9 +48,9 @@
     "cancel": "Cancel",
     "joinGame": "Join Game",
     "rulesHelp": "Rules help",
-    "rulesTitle": "How this table plays Flip 7",
+    "rulesTitle": "How this table plays flip-x",
     "rulesIntro": "Hit to reveal another card, stay to bank what you have, and avoid duplicate numbers unless a Second Chance saves you.",
-    "rulesStep1": "Seven unique number cards ends the round immediately with a Flip 7 bonus.",
+    "rulesStep1": "Seven unique number cards ends the round immediately with a flip-x bonus.",
     "rulesStep2": "Freeze banks a player's current total. Flip Three forces three more cards.",
     "rulesStep3": "Second Chance discards one future duplicate instead of busting the player.",
     "footnote": "Share the match URL after setup. Each player enters their own name when joining, and refresh reconnects to the latest committed turn.",
@@ -159,7 +159,7 @@
     "deferred_action": "{action} was queued until Flip Three finished.",
     "duplicate_bust": "Drew duplicate {duplicate} — bust!",
     "number_drawn": "Revealed number {numberValue}.",
-    "flip7": "Triggered Flip 7!",
+    "flip7": "Triggered flip-x!",
     "modifier_drawn": "Player revealed modifier {modifier}.",
     "second_chance_held": "Player stored a Second Chance card.",
     "second_chance_discarded": "Extra Second Chance was discarded because no eligible recipient existed.",
@@ -240,7 +240,7 @@
     "colNumbers": "Numbers",
     "colX2": "×2",
     "colBonus": "Bonus",
-    "colFlip7": "Flip 7",
+    "colFlip7": "flip-x",
     "colRoundTotal": "Round total",
     "yes": "Yes",
     "no": "No",

@@ -4,8 +4,8 @@ import { HomeClient } from "./home-client";
 import { searchParamsCache } from "@/lib/search-params";
 
 export const metadata: Metadata = {
-  title: "Flip 7",
-  description: "Create or join a shared-table Flip 7 game.",
+  title: "flip-x",
+  description: "Create or join a shared-table flip-x game.",
 };
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ code?: string }> }) {

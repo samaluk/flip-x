@@ -50,15 +50,15 @@ typography:
     lineHeight: "1.25rem"
 ---
 
-# Flip 7
+# flip-x
 
-A modern, dark-tabletop UI for the Flip 7 card game
+A modern, dark-tabletop UI for the flip-x card game spinoff
 
 **Version**: alpha
 
 ## Overview
 
-Flip 7 is a modern, dark-tabletop user interface for the Flip 7 card game. The design system is built on a carefully calibrated dark theme with high contrast, accessible color ratios, and a refined visual hierarchy. All components use a consistent palette and spacing system, with a focus on clarity and visual feedback.
+flip-x is a modern, dark-tabletop user interface for the flip-x press-your-luck card game spinoff. The design system is built on a carefully calibrated dark theme with high contrast, accessible color ratios, and a refined visual hierarchy. All components use a consistent palette and spacing system, with a focus on clarity and visual feedback.
 
 ## Colors
 

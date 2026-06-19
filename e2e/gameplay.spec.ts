@@ -25,7 +25,7 @@ test.describe("gameplay", () => {
         const pages = [hostPage, guestAPage, guestBPage];
         const activePage = await findPageWithEnabledHitButton(pages);
 
-        const cards = activePage.locator(".flip7-card-shell");
+        const cards = activePage.locator(".flip-x-card-shell");
         const beforeHitCardCount = await cards.count();
 
         await hitControl(activePage).click();
