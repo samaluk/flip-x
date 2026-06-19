@@ -14,7 +14,6 @@ const PRESENCE_INTERVAL_MS = 10_000;
 
 export function useMatchPresence(matchId: string, playerId: Id<"players"> | undefined) {
   const [sessionId] = useSessionId();
-  const presenceUserId = playerId ?? sessionId ?? `pending:${matchId}`;
   const [presenceSessionId] = useState(() => crypto.randomUUID());
   const [roomToken, setRoomToken] = useState<string | null>(null);
   const sessionTokenRef = useRef<string | null>(null);
@@ -25,7 +24,6 @@ export function useMatchPresence(matchId: string, playerId: Id<"players"> | unde
     matchId,
     playerId,
     presenceSessionId,
-    presenceUserId,
     sessionId,
     sessionTokenRef,
     setRoomToken,
@@ -34,7 +32,7 @@ export function useMatchPresence(matchId: string, playerId: Id<"players"> | unde
   usePageHideDisconnect(sessionTokenRef);
 
   useEffect(() => {
-    if (!sessionId) {
+    if (!sessionId || !playerId) {
       return;
     }
 
@@ -57,7 +55,6 @@ type PresenceHeartbeatArgs = {
   matchId: string;
   playerId: Id<"players"> | undefined;
   presenceSessionId: string;
-  presenceUserId: string;
   sessionId: string | undefined;
   sessionTokenRef: React.RefObject<string | null>;
   setRoomToken: (roomToken: string) => void;
@@ -68,7 +65,6 @@ function usePresenceHeartbeat({
   matchId,
   playerId,
   presenceSessionId,
-  presenceUserId,
   sessionId,
   sessionTokenRef,
   setRoomToken,
@@ -77,43 +73,58 @@ function usePresenceHeartbeat({
   const heartbeat = useMutation(api.presence.heartbeat);
 
   useEffect(() => {
+    if (!playerId || !sessionId) {
+      return undefined;
+    }
+
+    const activePlayerId = playerId;
     const abortController = new AbortController();
+    let timeoutId: number | undefined;
 
     const sendHeartbeat = async () => {
-      const result = await heartbeat({
-        roomId: matchId,
-        userId: presenceUserId,
-        sessionId: presenceSessionId,
-        interval: PRESENCE_INTERVAL_MS,
-      });
+      try {
+        const result = await heartbeat({
+          roomId: matchId,
+          userId: activePlayerId,
+          sessionId: presenceSessionId,
+          interval: PRESENCE_INTERVAL_MS,
+        });
 
-      if (!abortController.signal.aborted) {
-        sessionTokenRef.current = result.sessionToken;
-        setRoomToken(result.roomToken);
+        if (!abortController.signal.aborted) {
+          sessionTokenRef.current = result.sessionToken;
+          setRoomToken(result.roomToken);
+        }
+
+        await syncPresentPlayer({
+          aborted: abortController.signal.aborted,
+          matchId,
+          playerId: activePlayerId,
+          sessionId,
+          syncPlayer,
+        });
+      } finally {
+        if (!abortController.signal.aborted) {
+          timeoutId = window.setTimeout(
+            () => void sendHeartbeat().catch(() => {}),
+            PRESENCE_INTERVAL_MS,
+          );
+        }
       }
-
-      await syncPresentPlayer({
-        aborted: abortController.signal.aborted,
-        matchId,
-        playerId,
-        sessionId,
-        syncPlayer,
-      });
     };
 
-    void sendHeartbeat();
-    const intervalId = window.setInterval(() => void sendHeartbeat(), PRESENCE_INTERVAL_MS);
+    void sendHeartbeat().catch(() => {});
 
     return () => {
       abortController.abort();
-      window.clearInterval(intervalId);
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
     };
   }, [
     heartbeat,
     matchId,
     playerId,
     presenceSessionId,
-    presenceUserId,
     sessionId,
     sessionTokenRef,
     setRoomToken,
