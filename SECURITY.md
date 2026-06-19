@@ -2,11 +2,11 @@
 
 ## Reporting a vulnerability
 
-Please report security issues through [GitHub Security Advisories](https://github.com/samaluk/flip7/security/advisories/new) for this repository. Do not open public issues for exploitable vulnerabilities.
+Please report security issues through [GitHub Security Advisories](https://github.com/samaluk/flip-x/security/advisories/new) for this repository. Do not open public issues for exploitable vulnerabilities.
 
 ## Authentication model
 
-Flip 7 does not use accounts or passwords. Players are identified by a browser session ID stored client-side (`convex-helpers` sessions). Anyone who knows a session ID can act as that player in a match. Treat this as appropriate for casual private lobbies, not for high-stakes or authenticated play.
+flip-x does not use accounts or passwords. Players are identified by a browser session ID stored client-side (`convex-helpers` sessions). Anyone who knows a session ID can act as that player in a match. Treat this as appropriate for casual private lobbies, not for high-stakes or authenticated play.
 
 ## Deployment safety
 

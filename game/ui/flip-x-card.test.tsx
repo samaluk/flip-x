@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
-import { Flip7Card } from "./flip7-card";
+import { FlipXCard } from "./flip-x-card";
 import { withIntlEn } from "@/tests/test-intl";
 
 vi.mock("motion/react", () => ({
@@ -15,9 +15,9 @@ vi.mock("motion/react", () => ({
   },
 }));
 
-describe("Flip7Card", () => {
+describe("FlipXCard", () => {
   it("renders number value and labels", () => {
-    render(withIntlEn(<Flip7Card kind="number" numberValue={7} label="A" />));
+    render(withIntlEn(<FlipXCard kind="number" numberValue={7} label="A" />));
 
     expect(screen.getAllByText("7").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/number/i)).toBeInTheDocument();
@@ -25,20 +25,20 @@ describe("Flip7Card", () => {
   });
 
   it("renders ×2 modifier label", () => {
-    render(withIntlEn(<Flip7Card kind="modifier" modifierValue="x2" label="M" />));
+    render(withIntlEn(<FlipXCard kind="modifier" modifierValue="x2" label="M" />));
 
     expect(screen.getAllByText("×2").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/bonus/i)).toBeInTheDocument();
   });
 
   it("renders numeric modifier with plus prefix", () => {
-    render(withIntlEn(<Flip7Card kind="modifier" modifierValue={4} label="M" />));
+    render(withIntlEn(<FlipXCard kind="modifier" modifierValue={4} label="M" />));
 
     expect(screen.getAllByText("+4").length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders action card title", () => {
-    render(withIntlEn(<Flip7Card kind="action" actionKind="freeze" label="F" />));
+    render(withIntlEn(<FlipXCard kind="action" actionKind="freeze" label="F" />));
 
     expect(screen.getAllByText(/freeze/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Action", { exact: true })).toBeInTheDocument();
@@ -46,7 +46,7 @@ describe("Flip7Card", () => {
 
   it("hides face value when face down", () => {
     render(
-      withIntlEn(<Flip7Card kind="number" numberValue={3} label="B" faceDown disableFlip3d />),
+      withIntlEn(<FlipXCard kind="number" numberValue={3} label="B" faceDown disableFlip3d />),
     );
 
     expect(screen.queryByText("3")).not.toBeInTheDocument();

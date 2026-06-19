@@ -63,7 +63,7 @@ function OutlinedDigit({
   const text = String(value);
 
   if (value === 0) {
-    const gid = `flip7-zero-grad-${gradientId}`;
+    const gid = `flip-x-zero-grad-${gradientId}`;
     return (
       <svg
         className={cardTw(

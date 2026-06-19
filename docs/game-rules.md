@@ -1,6 +1,9 @@
 # Game Rules
 
-Flip 7 is a press-your-luck card game where players collect face-up cards, trying to score points without drawing a duplicate number. The base deck has 94 cards: number cards from 0–12, with one 0, one 1, two 2s, three 3s, and so on up to twelve 12s; 3 Freeze cards, 3 Flip Three cards, 3 Second Chance cards; and modifier cards +2, +4, +6, +8, +10, and x2. The goal is to reach 200+ total points, but the winner is only decided at the end of a round.
+> **Note:** flip-x is an unofficial fan-made implementation. These rules describe the
+> gameplay modeled by this app, not an official rulebook.
+
+flip-x models a press-your-luck card game where players collect face-up cards, trying to score points without drawing a duplicate number. The base deck has 94 cards: number cards from 0–12, with one 0, one 1, two 2s, three 3s, and so on up to twelve 12s; 3 Freeze cards, 3 Flip Three cards, 3 Second Chance cards; and modifier cards +2, +4, +6, +8, +10, and x2. The goal is to reach 200+ total points, but the winner is only decided at the end of a round.
 
 A good implementation model is this: each player has a round state of active, stayed, frozen, or busted. Only active players can be asked “hit or stay?” and only active players can receive action cards. Stayed and frozen players are safe and will score at round end. Busted players score zero for the round.
 

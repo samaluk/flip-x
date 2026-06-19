@@ -13,7 +13,7 @@ import { cn } from "@/shared/lib/utils";
 /** Scales the default 8×10rem face to fit narrow sidebars without reflowing inner SVGs. */
 const COMPACT_CARD_SCALE = 0.46;
 
-type Flip7CardProps = {
+type FlipXCardProps = {
   label: string;
   faceDown?: boolean;
   dealing?: boolean;
@@ -33,7 +33,7 @@ type Flip7CardProps = {
   | { kind: "action"; actionKind: "freeze" | "flip_three" | "second_chance" }
 );
 
-function FaceContent(props: Flip7CardProps) {
+function FaceContent(props: FlipXCardProps) {
   const compact = props.compact === true;
   if (props.kind === "number") {
     return <NumberCardContent numberValue={props.numberValue} compact={compact} />;
@@ -44,7 +44,7 @@ function FaceContent(props: Flip7CardProps) {
   return <ActionCardContent actionKind={props.actionKind} compact={compact} />;
 }
 
-function ScreenReaderSummary(props: Flip7CardProps) {
+function ScreenReaderSummary(props: FlipXCardProps) {
   const t = useTranslations("Cards");
 
   const kindLabel =
@@ -75,17 +75,17 @@ function ScreenReaderSummary(props: Flip7CardProps) {
   );
 }
 
-export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
+export const FlipXCard = memo(function FlipXCard(props: FlipXCardProps) {
   const isCompact = props.compact === true;
 
   const shellClass = cn(
-    "flip7-card-shell shrink-0",
+    "flip-x-card-shell shrink-0",
     isCompact ? "h-19 w-15 overflow-visible" : "w-32 sm:w-48",
-    props.dealing && "flip7-card-deal",
-    props.stateAnimation === "bust" && "flip7-card-bust",
-    props.stateAnimation === "stay" && "flip7-card-stay",
-    props.active && "flip7-card-active",
-    props.variant === "received" && "flip7-card-received",
+    props.dealing && "flip-x-card-deal",
+    props.stateAnimation === "bust" && "flip-x-card-bust",
+    props.stateAnimation === "stay" && "flip-x-card-stay",
+    props.active && "flip-x-card-active",
+    props.variant === "received" && "flip-x-card-received",
     props.className,
   );
 
@@ -145,9 +145,9 @@ export const Flip7Card = memo(function Flip7Card(props: Flip7CardProps) {
       )}
     </m.div>
   );
-}, areFlip7CardPropsEqual);
+}, areFlipXCardPropsEqual);
 
-function flip7CardShellPropsEqual(left: Flip7CardProps, right: Flip7CardProps): boolean {
+function flipXCardShellPropsEqual(left: FlipXCardProps, right: FlipXCardProps): boolean {
   return (
     left.label === right.label &&
     left.faceDown === right.faceDown &&
@@ -161,7 +161,7 @@ function flip7CardShellPropsEqual(left: Flip7CardProps, right: Flip7CardProps): 
   );
 }
 
-function flip7CardKindPayloadEqual(left: Flip7CardProps, right: Flip7CardProps): boolean {
+function flipXCardKindPayloadEqual(left: FlipXCardProps, right: FlipXCardProps): boolean {
   if (left.kind !== right.kind) {
     return false;
   }
@@ -177,6 +177,6 @@ function flip7CardKindPayloadEqual(left: Flip7CardProps, right: Flip7CardProps):
   }
 }
 
-function areFlip7CardPropsEqual(left: Flip7CardProps, right: Flip7CardProps): boolean {
-  return flip7CardShellPropsEqual(left, right) && flip7CardKindPayloadEqual(left, right);
+function areFlipXCardPropsEqual(left: FlipXCardProps, right: FlipXCardProps): boolean {
+  return flipXCardShellPropsEqual(left, right) && flipXCardKindPayloadEqual(left, right);
 }

@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Flip 7",
-    "description": "Aplicación web de mesa compartida para jugar Flip 7 con puntuación en vivo."
+    "title": "flip-x",
+    "description": "Aplicación web de mesa compartida para jugar flip-x con puntuación en vivo."
   },
   "LanguageSwitcher": {
     "english": "English",
@@ -13,7 +13,7 @@
     "playerArrow": "{from} → {to}"
   },
   "Home": {
-    "heroLine1": "Flip 7, puntuación",
+    "heroLine1": "flip-x, puntuación",
     "heroLine2": "compartida al completo.",
     "heroBody": "Crea una partida en mesa compartida que reparte cartas, cartas de acción, modificadores de puntuación y la carrera a 200 sin hoja de papel.",
     "createTitle": "Crear una partida",
@@ -22,7 +22,7 @@
     "joinExistingSubtitleDesktop": "¿Tienes un código? Introdúcelo aquí para entrar.",
     "joinExistingSubtitleMobile": "¿Tienes un código? Introdúcelo aquí.",
     "howItWorks": "Cómo funciona",
-    "step1": "Siete cartas numéricas distintas cierran la ronda con bonus Flip 7.",
+    "step1": "Siete cartas numéricas distintas cierran la ronda con bonus flip-x.",
     "step2": "Congelar guarda puntos. Tres más obliga a robar tres cartas más.",
     "step3": "Segunda oportunidad descarta un duplicado futuro en lugar de eliminarte.",
     "lobbyNotFoundTitle": "Lobby no encontrado",
@@ -36,7 +36,7 @@
     "lobbyCode": "Código del lobby"
   },
   "MatchSetup": {
-    "title": "Flip 7",
+    "title": "flip-x",
     "subtitleJoin": "Escribe tu nombre y únete a la partida",
     "subtitleCreate": "Crea una partida o únete a una existente",
     "yourName": "Tu nombre",
@@ -48,9 +48,9 @@
     "cancel": "Cancelar",
     "joinGame": "Unirse a la partida",
     "rulesHelp": "Ayuda de reglas",
-    "rulesTitle": "Cómo juega esta mesa a Flip 7",
+    "rulesTitle": "Cómo juega esta mesa a flip-x",
     "rulesIntro": "Pide carta para revelar otra, planta para asegurar lo que llevas y evita números duplicados salvo que una Segunda oportunidad te salve.",
-    "rulesStep1": "Siete cartas numéricas distintas terminan la ronda al instante con bonus Flip 7.",
+    "rulesStep1": "Siete cartas numéricas distintas terminan la ronda al instante con bonus flip-x.",
     "rulesStep2": "Congelar guarda el total actual del jugador. Tres más obliga a robar tres cartas más.",
     "rulesStep3": "Segunda oportunidad descarta un duplicado futuro en lugar de eliminar al jugador.",
     "footnote": "Comparte la URL de la partida al terminar la configuración. Cada jugador pone su nombre al unirse; al recargar se reconecta al último turno confirmado.",
@@ -159,7 +159,7 @@
     "deferred_action": "{action} quedó en cola hasta terminar Tres más.",
     "duplicate_bust": "¡Duplicado {duplicate} — eliminado!",
     "number_drawn": "Número revelado: {numberValue}.",
-    "flip7": "¡Flip 7 activado!",
+    "flip7": "¡flip-x activado!",
     "modifier_drawn": "El jugador reveló el modificador {modifier}.",
     "second_chance_held": "El jugador guardó una carta Segunda oportunidad.",
     "second_chance_discarded": "La Segunda oportunidad extra se descartó porque no había receptor válido.",
@@ -240,7 +240,7 @@
     "colNumbers": "Números",
     "colX2": "×2",
     "colBonus": "Bonus",
-    "colFlip7": "Flip 7",
+    "colFlip7": "flip-x",
     "colRoundTotal": "Total ronda",
     "yes": "Sí",
     "no": "No",

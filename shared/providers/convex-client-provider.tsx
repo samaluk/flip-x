@@ -43,7 +43,7 @@ function useLocalSessionStorage(key: string, initialValue: SessionId | undefined
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
   return (
     <ConvexProvider client={convex}>
-      <SessionProvider useStorage={useLocalSessionStorage} storageKey="flip7.anonymous-session-id">
+      <SessionProvider useStorage={useLocalSessionStorage} storageKey="flip-x.anonymous-session-id">
         {children}
       </SessionProvider>
     </ConvexProvider>

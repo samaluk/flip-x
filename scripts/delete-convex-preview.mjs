@@ -11,13 +11,13 @@
  *   CONVEX_TEAM_SLUG — team slug from the Convex dashboard URL
  *
  * Optional env:
- *   CONVEX_PROJECT_SLUG — default: flip7
+ *   CONVEX_PROJECT_SLUG — default: flip-x
  *   CONVEX_API_BASE — default: https://api.convex.dev/v1
  */
 
 const API_BASE = process.env.CONVEX_API_BASE ?? "https://api.convex.dev/v1";
 const TEAM_SLUG = process.env.CONVEX_TEAM_SLUG;
-const PROJECT_SLUG = process.env.CONVEX_PROJECT_SLUG ?? "flip7";
+const PROJECT_SLUG = process.env.CONVEX_PROJECT_SLUG ?? "flip-x";
 const PREVIEW_NAME = process.env.PREVIEW_DEPLOYMENT_NAME;
 const TOKEN = process.env.CONVEX_TEAM_ACCESS_TOKEN;
 

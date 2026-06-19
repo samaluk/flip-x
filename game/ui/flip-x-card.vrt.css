@@ -1,19 +1,19 @@
 /* VRT only: freeze card motion classes at their end keyframes (matches app/globals.css). */
-[data-vrt-snapshot] .flip7-card-deal {
+[data-vrt-snapshot] .flip-x-card-deal {
   animation: none !important;
   opacity: 1 !important;
   transform: translate3d(0, 0, 0) rotate(0deg) scale(1) !important;
 }
 
 /* Freeze near the animation's low point so multi-card bust rows read clearly in screenshots. */
-[data-vrt-snapshot] .flip7-card-bust {
+[data-vrt-snapshot] .flip-x-card-bust {
   animation: none !important;
   transform: translate3d(-2px, 8px, 0) rotate(-3deg) !important;
   opacity: 0.9 !important;
   filter: saturate(0.82) brightness(0.94) !important;
 }
 
-[data-vrt-snapshot] .flip7-card-stay {
+[data-vrt-snapshot] .flip-x-card-stay {
   animation: none !important;
   transform: translate3d(0, 2px, 0) scale(1) !important;
 }

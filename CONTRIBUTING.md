@@ -7,7 +7,7 @@ Thanks for your interest in contributing.
 1. Read [`AGENTS.md`](./AGENTS.md) for architecture, tooling, and workflow expectations.
 2. Install dependencies: `pnpm install`
 3. Start Convex sync: `npx convex dev`
-4. Start the app: `pnpm dev` (opens at `https://flip7.localhost` via portless)
+4. Start the app: `pnpm dev` (opens at `https://flip-x.localhost` via portless)
 
 ## Before opening a pull request
 

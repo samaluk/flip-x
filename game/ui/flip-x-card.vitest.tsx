@@ -5,8 +5,8 @@ import { page } from "vitest/browser";
 
 import { withIntlEn } from "@/tests/test-intl";
 
-import { Flip7Card } from "./flip7-card";
-import "./flip7-card.vrt.css";
+import { FlipXCard } from "./flip-x-card";
+import "./flip-x-card.vrt.css";
 
 const REPRESENTATIVE_NUMBER_VALUES = [0, 7, 12] as const;
 const REPRESENTATIVE_MODIFIER_VALUES = [2, 10, "x2"] as const;
@@ -28,30 +28,30 @@ function cardShell(card: ReactNode, snapshotWrap?: boolean) {
   return <div className="inline-block bg-background p-4 text-foreground">{inner}</div>;
 }
 
-describe("Flip7Card VRT", () => {
+describe("FlipXCard VRT", () => {
   test.each(REPRESENTATIVE_NUMBER_VALUES)("number %i face up", async (numberValue) => {
     render(
       withIntlEn(
-        cardShell(<Flip7Card kind="number" numberValue={numberValue} label="L" disableFlip3d />),
+        cardShell(<FlipXCard kind="number" numberValue={numberValue} label="L" disableFlip3d />),
       ),
     );
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      `flip7-number-${numberValue}`,
+      `flip-x-number-${numberValue}`,
     );
   });
 
   test("number face-down (back)", async () => {
     render(
       withIntlEn(
-        cardShell(<Flip7Card kind="number" numberValue={7} label="A" faceDown disableFlip3d />),
+        cardShell(<FlipXCard kind="number" numberValue={7} label="A" faceDown disableFlip3d />),
       ),
     );
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-number-face-down",
+      "flip-x-number-face-down",
     );
   });
 
@@ -59,7 +59,7 @@ describe("Flip7Card VRT", () => {
     render(
       withIntlEn(
         cardShell(
-          <Flip7Card kind="number" numberValue={7} label="L" dealing disableFlip3d />,
+          <FlipXCard kind="number" numberValue={7} label="L" dealing disableFlip3d />,
           true,
         ),
       ),
@@ -67,7 +67,7 @@ describe("Flip7Card VRT", () => {
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-state-dealing",
+      "flip-x-state-dealing",
     );
   });
 
@@ -75,7 +75,7 @@ describe("Flip7Card VRT", () => {
     render(
       withIntlEn(
         cardShell(
-          <Flip7Card kind="number" numberValue={7} label="L" stateAnimation="bust" disableFlip3d />,
+          <FlipXCard kind="number" numberValue={7} label="L" stateAnimation="bust" disableFlip3d />,
           true,
         ),
       ),
@@ -83,7 +83,7 @@ describe("Flip7Card VRT", () => {
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-state-bust",
+      "flip-x-state-bust",
     );
   });
 
@@ -91,7 +91,7 @@ describe("Flip7Card VRT", () => {
     render(
       withIntlEn(
         cardShell(
-          <Flip7Card kind="number" numberValue={7} label="L" stateAnimation="stay" disableFlip3d />,
+          <FlipXCard kind="number" numberValue={7} label="L" stateAnimation="stay" disableFlip3d />,
           true,
         ),
       ),
@@ -99,7 +99,7 @@ describe("Flip7Card VRT", () => {
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      "flip7-state-stay",
+      "flip-x-state-stay",
     );
   });
 
@@ -109,27 +109,27 @@ describe("Flip7Card VRT", () => {
     render(
       withIntlEn(
         cardShell(
-          <Flip7Card kind="modifier" modifierValue={modifierValue} label="M" disableFlip3d />,
+          <FlipXCard kind="modifier" modifierValue={modifierValue} label="M" disableFlip3d />,
         ),
       ),
     );
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      `flip7-modifier-${slug}`,
+      `flip-x-modifier-${slug}`,
     );
   });
 
   test.each(ACTION_KINDS)("%s action", async (actionKind) => {
     render(
       withIntlEn(
-        cardShell(<Flip7Card kind="action" actionKind={actionKind} label="A" disableFlip3d />),
+        cardShell(<FlipXCard kind="action" actionKind={actionKind} label="A" disableFlip3d />),
       ),
     );
 
     await page.viewport(480, 360);
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(
-      `flip7-action-${actionKind}`,
+      `flip-x-action-${actionKind}`,
     );
   });
 });
