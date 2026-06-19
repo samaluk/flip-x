@@ -1,3 +1,3 @@
-import registeredFunctions from "../confect/_generated/registeredFunctions";
+import registeredFunctions from "../confect/_generated/registeredFunctions/rounds";
 
-export const startNextRound = registeredFunctions.rounds.startNextRound;
+export const startNextRound = registeredFunctions.startNextRound;

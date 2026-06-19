@@ -1,5 +1,5 @@
 import { FunctionSpec, GroupSpec } from "@confect/core";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 const EmptyArgs = Schema.Struct({});
 
@@ -24,53 +24,57 @@ const RateLimitKey = Schema.Literal("createMatch", "joinByCode", "joinMatch", "s
 
 const listMatchIds = FunctionSpec.internalQuery({
   name: "listMatchIds",
-  args: EmptyArgs,
-  returns: Schema.Array(Schema.String),
+  args: () => EmptyArgs,
+  returns: () => Schema.Array(Schema.String),
 });
 const listSessionIds = FunctionSpec.internalQuery({
   name: "listSessionIds",
-  args: EmptyArgs,
-  returns: Schema.Array(Schema.String),
+  args: () => EmptyArgs,
+  returns: () => Schema.Array(Schema.String),
 });
 const resolveDependents = FunctionSpec.internalQuery({
   name: "resolveDependents",
-  args: Schema.Struct({
-    sourceTable: Schema.String,
-    parentTable: Schema.String,
-    parentId: Schema.String,
-  }),
-  returns: Schema.Array(Schema.String),
+  args: () =>
+    Schema.Struct({
+      sourceTable: Schema.String,
+      parentTable: Schema.String,
+      parentId: Schema.String,
+    }),
+  returns: () => Schema.Array(Schema.String),
 });
 const deleteDocument = FunctionSpec.internalMutation({
   name: "deleteDocument",
-  args: Schema.Struct({
-    table: Schema.String,
-    id: Schema.optional(Schema.String),
-  }),
-  returns: Schema.Number,
+  args: () =>
+    Schema.Struct({
+      table: Schema.String,
+      id: Schema.optional(Schema.String),
+    }),
+  returns: () => Schema.Number,
 });
 const removePresenceRoom = FunctionSpec.internalMutation({
   name: "removePresenceRoom",
-  args: Schema.Struct({
-    matchId: Schema.String,
-  }),
-  returns: Schema.Null,
+  args: () =>
+    Schema.Struct({
+      matchId: Schema.String,
+    }),
+  returns: () => Schema.Null,
 });
 const resetRateLimit = FunctionSpec.internalMutation({
   name: "resetRateLimit",
-  args: Schema.Struct({
-    sessionId: Schema.String,
-    key: RateLimitKey,
-  }),
-  returns: Schema.Null,
+  args: () =>
+    Schema.Struct({
+      sessionId: Schema.String,
+      key: RateLimitKey,
+    }),
+  returns: () => Schema.Null,
 });
 const clearAllAppDataViaCli = FunctionSpec.publicAction({
   name: "clearAllAppDataViaCli",
-  args: EmptyArgs,
-  returns: ClearAllAppDataResult,
+  args: () => EmptyArgs,
+  returns: () => ClearAllAppDataResult,
 });
 
-export const admin = GroupSpec.make("admin")
+export default GroupSpec.make()
   .addFunction(listMatchIds)
   .addFunction(listSessionIds)
   .addFunction(resolveDependents)

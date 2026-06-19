@@ -4,12 +4,13 @@
 
 import { Ref } from "@confect/core";
 import {
-  type ConfectMutation,
-  type ConfectOptimisticLocalStore,
+  type OptimisticLocalStore,
+  type ReactMutation,
   useMutation as useConfectMutation,
   useQuery as useConfectQuery,
 } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
+import * as Option from "effect/Option";
 
 type SessionRef = Ref.AnyPublicQuery | Ref.AnyPublicMutation | Ref.AnyPublicAction;
 type SessionArgs<T extends SessionRef> = Extract<Ref.Args<T>, { sessionId: string }>;
@@ -63,7 +64,7 @@ export function useSessionConfectMutation<Mutation extends Ref.AnyPublicMutation
 }
 
 function wrapSessionConfectMutation<Mutation extends Ref.AnyPublicMutation>(
-  mutate: ConfectMutation<Mutation>,
+  mutate: ReactMutation<Mutation>,
   sessionId: string | null | undefined,
 ): SessionConfectMutation<Mutation> {
   const sessionMutation = (async (args: SessionlessArgs<Mutation>) => {
@@ -107,17 +108,22 @@ function withoutSessionArgs<T extends SessionRef>(args: Ref.Args<T>): Sessionles
 }
 
 function wrapSessionOptimisticLocalStore(
-  localStore: ConfectOptimisticLocalStore,
+  localStore: OptimisticLocalStore.OptimisticLocalStore,
   sessionId: string,
 ): SessionConfectOptimisticLocalStore {
   return {
-    getQuery: (ref, args) => localStore.getQuery(ref, withSessionArgs(args, sessionId)),
+    getQuery: (ref, args) =>
+      Option.getOrUndefined(localStore.getQuery(ref, withSessionArgs(args, sessionId))),
     getAllQueries: (ref) =>
       localStore.getAllQueries(ref).map(({ args, value }) => ({
         args: withoutSessionArgs(args),
-        value,
+        value: Option.getOrUndefined(value),
       })),
     setQuery: (ref, args, value) =>
-      localStore.setQuery(ref, withSessionArgs(args, sessionId), value),
+      localStore.setQuery(
+        ref,
+        withSessionArgs(args, sessionId),
+        value === undefined ? Option.none() : Option.some(value),
+      ),
   };
 }

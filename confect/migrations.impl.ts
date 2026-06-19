@@ -1,9 +1,13 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Layer } from "effect";
 
-import api from "./_generated/api";
+import databaseSchema from "./_generated/schema";
+import groupSpec from "./migrations.spec";
 import * as migrationFns from "./migrations";
 
-const run = FunctionImpl.make(api, "migrations", "run", migrationFns.run);
+const run = FunctionImpl.make(databaseSchema, groupSpec, "run", migrationFns.run);
 
-export const migrations = GroupImpl.make(api, "migrations").pipe(Layer.provide(run));
+export default GroupImpl.make(databaseSchema, groupSpec).pipe(
+  Layer.provide(run),
+  GroupImpl.finalize,
+);

@@ -1,7 +1,7 @@
 import { Effect, Layer } from "effect";
 
 import type { MutationCtx } from "../../convex/_generated/server";
-import { posthog } from "../../convex/posthog";
+import { posthog } from "../../confect/lib/posthog";
 import { AnalyticsSink } from "./service";
 
 export function makePostHogConvexAnalyticsLayer(ctx: MutationCtx): Layer.Layer<AnalyticsSink> {

@@ -1,12 +1,13 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Effect, Layer } from "effect";
 
-import api from "./_generated/api";
+import databaseSchema from "./_generated/schema";
+import groupSpec from "./turns.spec";
 import { MutationCtx } from "./_generated/services";
 import { matchIdFromConfectWire, playerIdFromConfectWire } from "./lib/convex-id-bridge";
 import * as turnFns from "./turns";
 
-const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
+const takeTurn = FunctionImpl.make(databaseSchema, groupSpec, "takeTurn", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* turnFns.takeTurnForSession(ctx, {
@@ -15,7 +16,7 @@ const takeTurn = FunctionImpl.make(api, "turns", "takeTurn", (args) =>
     });
   }).pipe(Effect.orDie),
 );
-const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
+const resolveAction = FunctionImpl.make(databaseSchema, groupSpec, "resolveAction", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* turnFns.resolveActionForSession(ctx, {
@@ -26,7 +27,8 @@ const resolveAction = FunctionImpl.make(api, "turns", "resolveAction", (args) =>
   }).pipe(Effect.orDie),
 );
 
-export const turns = GroupImpl.make(api, "turns").pipe(
+export default GroupImpl.make(databaseSchema, groupSpec).pipe(
   Layer.provide(takeTurn),
   Layer.provide(resolveAction),
+  GroupImpl.finalize,
 );

@@ -8,7 +8,8 @@ import type { Value } from "convex/values";
 import type { ParseResult } from "effect";
 import { Context, Effect, Layer, Schema } from "effect";
 
-import confectSchema from "../../confect/schema";
+import convexSchema from "../../confect/_generated/convexSchema";
+import confectSchema from "../../confect/_generated/schema";
 import migrationsComponentSchema from "../../node_modules/@convex-dev/migrations/dist/component/schema.js";
 import presenceComponentSchema from "../../node_modules/@convex-dev/presence/dist/component/schema.js";
 import rateLimiterComponentSchema from "../../node_modules/@convex-dev/rate-limiter/dist/component/schema.js";
@@ -206,10 +207,7 @@ function registerAppComponents(
 
 export const layer = () =>
   Layer.sync(TestConfect, () => {
-    const testConvex = convexTest(
-      confectSchema.convexSchemaDefinition,
-      appModules,
-    ) as TestConvexForDataModelAndIdentity<
+    const testConvex = convexTest(convexSchema, appModules) as TestConvexForDataModelAndIdentity<
       DataModel.ToConvex<DataModel.FromSchema<typeof confectSchema>>
     >;
 

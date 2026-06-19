@@ -4,7 +4,13 @@ import { Effect, Option } from "effect";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
-import type { DatabaseReader, DatabaseWriter } from "../_generated/services";
+import {
+  DatabaseReader as DatabaseReaderService,
+  DatabaseWriter as DatabaseWriterService,
+} from "../_generated/services";
+
+type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
+type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
 
 type Ctx = QueryCtx | MutationCtx;
 

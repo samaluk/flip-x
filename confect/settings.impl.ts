@@ -1,9 +1,10 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
 import { Config, Effect, Layer } from "effect";
 
-import api from "./_generated/api";
+import databaseSchema from "./_generated/schema";
+import groupSpec from "./settings.spec";
 
-const getRuntimeConfig = FunctionImpl.make(api, "settings", "getRuntimeConfig", () =>
+const getRuntimeConfig = FunctionImpl.make(databaseSchema, groupSpec, "getRuntimeConfig", () =>
   Config.integer("MATCH_TARGET_SCORE").pipe(
     Config.withDefault(200),
     Effect.map((matchTargetScore) => ({ matchTargetScore })),
@@ -11,4 +12,7 @@ const getRuntimeConfig = FunctionImpl.make(api, "settings", "getRuntimeConfig", 
   ),
 );
 
-export const settings = GroupImpl.make(api, "settings").pipe(Layer.provide(getRuntimeConfig));
+export default GroupImpl.make(databaseSchema, groupSpec).pipe(
+  Layer.provide(getRuntimeConfig),
+  GroupImpl.finalize,
+);
