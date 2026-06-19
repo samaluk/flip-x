@@ -80,7 +80,7 @@
     "@effect/vitest": "0.29.0",
     "@google/design.md": "0.3.0",
     "@lingual/i18n-check": "0.9.5",
-    "@playwright/test": "1.60.0",
+    "@playwright/test": "1.61.0",
     "@posthog/nextjs-config": "1.9.52",
     "@tailwindcss/postcss": "4.3.0",
     "@tailwindcss/vite": "4.3.0",
