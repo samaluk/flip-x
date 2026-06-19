@@ -1,6 +1,6 @@
 import { Presence } from "@convex-dev/presence";
 import { v } from "convex/values";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";

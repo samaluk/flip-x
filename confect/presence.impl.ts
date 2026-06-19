@@ -1,5 +1,5 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
-import { Layer } from "effect";
+import * as Layer from "effect/Layer";
 
 import databaseSchema from "./_generated/schema";
 import groupSpec from "./presence.spec";

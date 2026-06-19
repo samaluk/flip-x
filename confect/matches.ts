@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx, QueryCtx } from "../convex/_generated/server";

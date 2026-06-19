@@ -1,6 +1,7 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getOneFrom } from "convex-helpers/server/relationships";
-import { Effect, Option } from "effect";
+import * as Effect from "effect/Effect";
+import * as Option from "effect/Option";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";

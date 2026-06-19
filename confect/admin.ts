@@ -1,5 +1,5 @@
 import { Presence } from "@convex-dev/presence";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 /* eslint-disable @typescript-eslint/no-unsafe-type-assertion -- admin cleanup uses dynamic table/id wiring against Convex typed indexes */
 

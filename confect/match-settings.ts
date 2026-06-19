@@ -1,5 +1,5 @@
 import type { SessionId } from "convex-helpers/server/sessions";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import type { Doc, Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";

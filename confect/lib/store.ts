@@ -1,5 +1,5 @@
 import type { SessionId } from "convex-helpers/server/sessions";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import { DatabaseReader as DatabaseReaderService } from "../_generated/services";
