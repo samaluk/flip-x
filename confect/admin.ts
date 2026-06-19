@@ -5,7 +5,7 @@ import { Effect } from "effect";
 
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
-import type { ActionCtx } from "../convex/_generated/server";
+import type { MutationCtx } from "../convex/_generated/server";
 import { unsupportedRelationship, unsupportedTable } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 import type { DatabaseReader, DatabaseWriter } from "./_generated/services";
@@ -154,7 +154,7 @@ export function deleteDocument(
   });
 }
 
-export function removePresenceRoom(ctx: ActionCtx, args: { matchId: string }) {
+export function removePresenceRoom(ctx: MutationCtx, args: { matchId: string }) {
   return Effect.tryPromise({
     try: () => presence.removeRoom(ctx, args.matchId),
     catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
@@ -162,7 +162,7 @@ export function removePresenceRoom(ctx: ActionCtx, args: { matchId: string }) {
 }
 
 export function resetRateLimit(
-  ctx: ActionCtx,
+  ctx: MutationCtx,
   args: {
     sessionId: string;
     key: RateLimitKey;

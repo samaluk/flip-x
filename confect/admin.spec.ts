@@ -49,14 +49,14 @@ const deleteDocument = FunctionSpec.internalMutation({
   }),
   returns: Schema.Number,
 });
-const removePresenceRoom = FunctionSpec.internalAction({
+const removePresenceRoom = FunctionSpec.internalMutation({
   name: "removePresenceRoom",
   args: Schema.Struct({
     matchId: Schema.String,
   }),
   returns: Schema.Null,
 });
-const resetRateLimit = FunctionSpec.internalAction({
+const resetRateLimit = FunctionSpec.internalMutation({
   name: "resetRateLimit",
   args: Schema.Struct({
     sessionId: Schema.String,
