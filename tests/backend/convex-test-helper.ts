@@ -1,3 +1,6 @@
+import { execFileSync } from "node:child_process";
+import path from "node:path";
+
 import { ConvexTestingHelper } from "convex-helpers/testing";
 
 import { api } from "@/convex/_generated/api";
@@ -33,7 +36,10 @@ export function createTestClient() {
 }
 
 export async function resetTestClient(client: ConvexTestingHelper) {
-  await client.action(api.admin.clearAllAppDataViaCli, {});
+  execFileSync("node", [path.resolve(process.cwd(), "scripts/clear-convex-app-data.mjs")], {
+    stdio: "inherit",
+    env: process.env,
+  });
   await client.close();
 }
 

@@ -1,15 +1,13 @@
-import { ConvexHttpClient } from "convex/browser";
-import { makeFunctionReference } from "convex/server";
+import { execFileSync } from "node:child_process";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-const clearAllAppDataViaCli = makeFunctionReference("admin:clearAllAppDataViaCli");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-if (!convexUrl) {
-  throw new Error("Expected NEXT_PUBLIC_CONVEX_URL to be set before clearing app data.");
-}
+execFileSync("pnpm", ["exec", "convex", "run", "admin:clearAllAppDataViaCli", "{}"], {
+  cwd: root,
+  stdio: "inherit",
+  env: process.env,
+});
 
-const client = new ConvexHttpClient(convexUrl);
-
-await client.action(clearAllAppDataViaCli);
-
-console.log("Cleared Convex app data for the current deployment URL.");
+console.log("Cleared Convex app data for the current deployment.");
