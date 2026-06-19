@@ -154,10 +154,8 @@ Use this planning rule to shape the implementation:
 
 - Production build: `pnpm build`.
 - Production start after build: `pnpm start`.
-- GitHub repository: `https://github.com/samaluk/flip7`.
-- Vercel project: `flip7`, deployed from `master`.
-- Convex production URL: `https://valuable-peacock-13.convex.cloud`.
-- Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`.
+- Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL` (your production Convex deployment URL).
+- Convex backend env vars are managed in the Convex dashboard or via `npx convex env set`.
 
 ## Troubleshooting
 

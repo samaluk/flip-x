@@ -41,15 +41,18 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
    pnpm dev
    ```
 
-4. Open `http://localhost:3000` and create a 3-player match.
+4. Open `https://flip7.localhost` (via [portless](https://github.com/vercel/portless)) and create a 3-player match.
+
+   To use plain localhost instead: `PORTLESS=0 pnpm dev` and open `http://localhost:3000`.
 
 ## Testing
 
 - Detailed reference: `docs/testing.md`
-- `pnpm test`: fast local default. Runs the Vitest `unit`, `contract`, `integration`, and `confect` suites.
-- `pnpm test:unit`: isolated logic and lightweight UI tests in `tests/unit/**` and `game/**/*.test.tsx`.
+- `pnpm test`: fast local default. Runs Vitest `engine`, `infrastructure`, `contract`, `ui`, and `confect` projects.
+- `pnpm test:engine`: pure gameplay logic tests.
+- `pnpm test:infra`: infrastructure boundary tests.
 - `pnpm test:contract`: Vitest contract tests in `tests/contract/**`.
-- `pnpm test:integration`: Vitest integration tests in `tests/integration/**`.
+- `pnpm test:ui`: UI tests.
 - `pnpm test:confect`: Node-based Confect tests in `tests/confect/**`.
 - `pnpm test:backend`: Convex backend smoke tests in `tests/backend/**` (local backend by default; see `docs/testing.md`).
 - `pnpm test:vrt`: visual regression tests with Vitest browser in Linux Docker.
@@ -58,8 +61,8 @@ turn tracking, action-card resolution, and automatic scoring to 200 points.
 
 Tooling split:
 
-- Vitest jsdom: `pnpm test`, `pnpm test:unit`, `pnpm test:contract`, `pnpm test:integration`
-- Vitest node: `pnpm test:confect`, `pnpm test:backend`
+- Vitest node: `pnpm test`, `pnpm test:engine`, `pnpm test:infra`, `pnpm test:contract`, `pnpm test:confect`, `pnpm test:backend`
+- Vitest jsdom: `pnpm test:ui`
 - Vitest browser: `pnpm test:vrt`
 - Playwright: `pnpm test:e2e`
 
@@ -99,13 +102,12 @@ GitHub Actions runs the fast Vitest suites, build, visual regression, backend te
 
 ## Deployment
 
-- GitHub repository: `https://github.com/samaluk/flip7`
-- Vercel project: `flip7` deploying from the `master` branch
-- Convex production URL: `https://valuable-peacock-13.convex.cloud`
-- Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL`
-- PostHog frontend environment variables: `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
-- PostHog Convex environment variables: `POSTHOG_PROJECT_TOKEN` (required), `POSTHOG_HOST`
-- PostHog source map upload environment variables: `POSTHOG_PROJECT_ID`; `POSTHOG_API_KEY` must be a personal API key with error tracking write access during the production build.
-- Optional Convex-only feature-flag variables (set with `npx convex env set`, not on Vercel): `POSTHOG_PERSONAL_API_KEY`; `POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS` (cron cadence in seconds, `300` on dev and prod)
+Configure deployment in your Convex and Vercel dashboards:
+
+- **Vercel:** set `NEXT_PUBLIC_CONVEX_URL` to your production Convex deployment URL.
+- **Convex:** set backend env vars (`POSTHOG_PROJECT_TOKEN`, optional `POSTHOG_HOST`, etc.) with `npx convex env set`.
+- **PostHog frontend (Vercel):** `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST`
+- **PostHog source maps (Vercel build):** `POSTHOG_PROJECT_ID`; `POSTHOG_API_KEY` must be a personal API key with error tracking write access.
+- **Optional Convex-only feature flags:** `POSTHOG_PERSONAL_API_KEY`; `POSTHOG_FLAGS_POLLING_INTERVAL_SECONDS` (cron cadence in seconds, default `300`)
 
 PostHog feature flag support is configured, but no feature flags are currently evaluated by the app.
