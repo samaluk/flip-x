@@ -113,8 +113,8 @@ importers:
         specifier: 1.61.0
         version: 1.61.0
       '@posthog/nextjs-config':
-        specifier: 1.9.52
-        version: 1.9.52(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))
+        specifier: 1.9.67
+        version: 1.9.67(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))
       '@tailwindcss/postcss':
         specifier: 4.3.1
         version: 4.3.1
@@ -2252,8 +2252,8 @@ packages:
   '@polka/url@1.0.0-next.29':
     resolution: {integrity: sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==}
 
-  '@posthog/cli@0.7.13':
-    resolution: {integrity: sha512-uQRhJMxjw76bDzs1NN7VUhJ2uDOCl9mi8IniNB/FR+oFGYuJbBfl9vnTiwxi+qGZuHfvXTvjHjKqgLyDqzcYDQ==}
+  '@posthog/cli@0.7.28':
+    resolution: {integrity: sha512-M8K6sCym2hf+2uh1iONzZe4CtiMW8xouoK6gCbd1/O/9PGms6GTsaCQltCOPdDQs9IUuG+MsOvkywySahRXo9w==}
     engines: {node: '>=14.14', npm: '>=6'}
     hasBin: true
 
@@ -2261,9 +2261,6 @@ packages:
     resolution: {integrity: sha512-WbabYOzDflbyc1BpGoh5nR3oqdhGRvO1szxjzMBMj9f85hqn7SKmyAMXbSCEUVlNSjnT/6UzvTvH/IXZOR7n0Q==}
     peerDependencies:
       convex: ^1.39.0
-
-  '@posthog/core@1.30.10':
-    resolution: {integrity: sha512-R7Z5jDB3ugwfSujMmRd5osPPR6L6BqfcaSNcYOekzRMZ4Jklq74p05xByP09EnUvKXb5czI+RQVCITTWRWuFXw==}
 
   '@posthog/core@1.32.3':
     resolution: {integrity: sha512-vwOEMfZvGv5XxNWV7p9I52NSmvFNMhyW2IHpIoUHW5jLkgUrknzJW1H/qxVGSIrNNVQkfsoaDFzDhJdg10pgrA==}
@@ -2282,14 +2279,14 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.9.52':
-    resolution: {integrity: sha512-4qUILWiWZCmh42Fzxr2Ey2aTyJ40k8XYD6XevnamFdr/xFnAO25pKhd39uIifMLkZOtzObeo1HZI/6mPu0Uydw==}
+  '@posthog/nextjs-config@1.9.67':
+    resolution: {integrity: sha512-N5hiMhBtPLa04i+xjF6staxzMuJrQz71FS1iMl/qI3zhSYgvwXfmS2ZhBtub13qC4jHCHI/2XRRg5XABDiABlA==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
 
-  '@posthog/plugin-utils@1.1.1':
-    resolution: {integrity: sha512-vCbaFeuwf9Pc0gI5bkCGvkOn2Bxru2KbZJtOa6loTJjanCNoMsjECEPijr7X5oln1IIg+VKnGiwV4tKY2b7NuQ==}
+  '@posthog/plugin-utils@1.1.2':
+    resolution: {integrity: sha512-CS/14cMmny9NN/LHAb4QZdW3TfxhbKzsfyVYMCjsRdE0IKMTrXMr0cPRZxwczsN6VnWvVoy2Dd5wcG6RrIjlYA==}
 
   '@posthog/react@1.10.2':
     resolution: {integrity: sha512-/KXzUZiSByE9/6fHmnfDVVvld/3pvBuM6KFUuT5NkR4XwOHEAT/EwNwhUUFOOJpsyDa0PaEWWHZS6VY9r2CB3Q==}
@@ -2301,17 +2298,14 @@ packages:
       '@types/react':
         optional: true
 
-  '@posthog/types@1.382.0':
-    resolution: {integrity: sha512-iK4OcSgvtmS9FZ9EUpvwlRZmHCLXaZ3+6dbRjkE7q9LL0zHLewxJH84H6uGvCw8aGzxs5rIliZqPHgimTcQEaw==}
-
   '@posthog/types@1.386.3':
     resolution: {integrity: sha512-LqJoiQi2eyWn7rCUgnn+D+F3Efp6+04o72bjSX6kWHx0nFaYNC/nJuAIRliDTY/X7GPIUAaHAcSjbMI/9wfX1Q==}
 
   '@posthog/types@1.390.0':
     resolution: {integrity: sha512-zMjK6nrUWhAlL8ECrM4WldvgawqdoAE5B0ys7eA0lCoWuyzfFoSyh6zYtEuBSDRyN7fQLSfNCK+mQH4ngOl7Zw==}
 
-  '@posthog/webpack-plugin@1.5.8':
-    resolution: {integrity: sha512-I6Bd/xujE0atS5R8cN4fO2pQQ1zijNSYMTpVUPmsk1veI9+31xDIJFdEQAfyKIVfKroV7qqVs772LBdkCHO2rA==}
+  '@posthog/webpack-plugin@1.5.24':
+    resolution: {integrity: sha512-sdqedI8V/Iafy4+pT2g8glEMEhFSnE8PqW5rbE2qZH4TR57Xx3qfFrKFw6A9IJ29y9L0/kCdgmIWkxdTndY1+g==}
     peerDependencies:
       webpack: ^5
 
@@ -7177,7 +7171,7 @@ snapshots:
 
   '@polka/url@1.0.0-next.29': {}
 
-  '@posthog/cli@0.7.13':
+  '@posthog/cli@0.7.28':
     dependencies:
       detect-libc: 2.1.2
 
@@ -7188,10 +7182,6 @@ snapshots:
       posthog-node: 5.36.17
     transitivePeerDependencies:
       - rxjs
-
-  '@posthog/core@1.30.10':
-    dependencies:
-      '@posthog/types': 1.382.0
 
   '@posthog/core@1.32.3':
     dependencies:
@@ -7215,17 +7205,17 @@ snapshots:
       - '@types/react'
       - rxjs
 
-  '@posthog/nextjs-config@1.9.52(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/nextjs-config@1.9.67(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
-      '@posthog/cli': 0.7.13
-      '@posthog/plugin-utils': 1.1.1
-      '@posthog/webpack-plugin': 1.5.8(webpack@5.107.1(esbuild@0.27.7))
+      '@posthog/cli': 0.7.28
+      '@posthog/plugin-utils': 1.1.2
+      '@posthog/webpack-plugin': 1.5.24(webpack@5.107.1(esbuild@0.27.7))
       next: 16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       semver: 7.7.4
     transitivePeerDependencies:
       - webpack
 
-  '@posthog/plugin-utils@1.1.1':
+  '@posthog/plugin-utils@1.1.2':
     dependencies:
       cross-spawn: 7.0.6
 
@@ -7236,17 +7226,15 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.17
 
-  '@posthog/types@1.382.0': {}
-
   '@posthog/types@1.386.3': {}
 
   '@posthog/types@1.390.0': {}
 
-  '@posthog/webpack-plugin@1.5.8(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/webpack-plugin@1.5.24(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
-      '@posthog/cli': 0.7.13
-      '@posthog/core': 1.30.10
-      '@posthog/plugin-utils': 1.1.1
+      '@posthog/cli': 0.7.28
+      '@posthog/core': 1.35.2
+      '@posthog/plugin-utils': 1.1.2
       webpack: 5.107.1(esbuild@0.27.7)
 
   '@rolldown/binding-android-arm64@1.0.0-rc.15':
