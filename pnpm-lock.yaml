@@ -113,8 +113,8 @@ importers:
         specifier: 1.61.0
         version: 1.61.0
       '@posthog/nextjs-config':
-        specifier: 1.9.67
-        version: 1.9.67(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))
+        specifier: 1.9.68
+        version: 1.9.68(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))
       '@tailwindcss/postcss':
         specifier: 4.3.1
         version: 4.3.1
@@ -2279,8 +2279,8 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.9.67':
-    resolution: {integrity: sha512-N5hiMhBtPLa04i+xjF6staxzMuJrQz71FS1iMl/qI3zhSYgvwXfmS2ZhBtub13qC4jHCHI/2XRRg5XABDiABlA==}
+  '@posthog/nextjs-config@1.9.68':
+    resolution: {integrity: sha512-MmzSrompIThnnrDArCKIOBZuD/b3RErH48ZJyzAuX+WfJTiHBjjTMvGWzr+qlIn8jCyJoglSygAwYVG8lJXybg==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
@@ -7205,7 +7205,7 @@ snapshots:
       - '@types/react'
       - rxjs
 
-  '@posthog/nextjs-config@1.9.67(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))':
+  '@posthog/nextjs-config@1.9.68(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(webpack@5.107.1(esbuild@0.27.7))':
     dependencies:
       '@posthog/cli': 0.7.28
       '@posthog/plugin-utils': 1.1.2
