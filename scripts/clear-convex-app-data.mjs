@@ -4,7 +4,14 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-execFileSync("pnpm", ["exec", "convex", "run", "admin:clearAllAppDataViaCli", "{}"], {
+const convexArgs = ["exec", "convex", "run", "admin:clearAllAppDataViaCli", "{}"];
+
+const previewName = process.env.PREVIEW_DEPLOYMENT_NAME;
+if (previewName) {
+  convexArgs.push("--deployment", `preview/${previewName}`);
+}
+
+execFileSync("pnpm", convexArgs, {
   cwd: root,
   stdio: "inherit",
   env: process.env,
