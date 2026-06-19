@@ -4,10 +4,9 @@ import { Effect, Layer } from "effect";
 import api from "./_generated/api";
 import refs from "./_generated/refs";
 import {
-  ActionCtx,
-  ActionRunner,
   DatabaseReader,
   DatabaseWriter,
+  MutationCtx,
   MutationRunner,
   QueryRunner,
 } from "./_generated/services";
@@ -41,14 +40,14 @@ const deleteDocument = FunctionImpl.make(api, "admin", "deleteDocument", (args) 
 );
 const removePresenceRoom = FunctionImpl.make(api, "admin", "removePresenceRoom", (args) =>
   Effect.gen(function* () {
-    const ctx = yield* ActionCtx;
+    const ctx = yield* MutationCtx;
     yield* adminFns.removePresenceRoom(ctx, args);
     return null;
   }).pipe(Effect.orDie),
 );
 const resetRateLimit = FunctionImpl.make(api, "admin", "resetRateLimit", (args) =>
   Effect.gen(function* () {
-    const ctx = yield* ActionCtx;
+    const ctx = yield* MutationCtx;
     yield* adminFns.resetRateLimit(ctx, args);
     return null;
   }).pipe(Effect.orDie),
@@ -57,7 +56,6 @@ const clearAllAppDataViaCli = FunctionImpl.make(api, "admin", "clearAllAppDataVi
   Effect.gen(function* () {
     const runQuery = yield* QueryRunner;
     const runMutation = yield* MutationRunner;
-    const runAction = yield* ActionRunner;
 
     const result = yield* adminFns.runClearAllAppData({
       listSessionIds: runQuery(refs.internal.admin.listSessionIds, {}),
@@ -69,12 +67,12 @@ const clearAllAppDataViaCli = FunctionImpl.make(api, "admin", "clearAllAppDataVi
           ),
         ),
       removePresenceRoom: (matchId) =>
-        runAction(refs.internal.admin.removePresenceRoom, { matchId }).pipe(
+        runMutation(refs.internal.admin.removePresenceRoom, { matchId }).pipe(
           Effect.mapError((cause) => new ExternalComponentFailed({ component: "presence", cause })),
           Effect.asVoid,
         ),
       resetRateLimit: (sessionId, key) =>
-        runAction(refs.internal.admin.resetRateLimit, { sessionId, key }).pipe(
+        runMutation(refs.internal.admin.resetRateLimit, { sessionId, key }).pipe(
           Effect.mapError(
             (cause) => new ExternalComponentFailed({ component: "rateLimiter", cause }),
           ),
