@@ -5,17 +5,27 @@
  *   CONVEX_TEAM_ACCESS_TOKEN — team access token from the Convex dashboard
  *   PREVIEW_DEPLOYMENT_NAME — preview identifier (CI uses pr-<number>)
  *
- * Optional env (defaults match this repo's Convex project):
- *   CONVEX_TEAM_SLUG — default: sebastian-maluk
+ * Required env:
+ *   CONVEX_TEAM_ACCESS_TOKEN — team access token from the Convex dashboard
+ *   PREVIEW_DEPLOYMENT_NAME — preview identifier (CI uses pr-<number>)
+ *   CONVEX_TEAM_SLUG — team slug from the Convex dashboard URL
+ *
+ * Optional env:
  *   CONVEX_PROJECT_SLUG — default: flip7
  *   CONVEX_API_BASE — default: https://api.convex.dev/v1
  */
 
 const API_BASE = process.env.CONVEX_API_BASE ?? "https://api.convex.dev/v1";
-const TEAM_SLUG = process.env.CONVEX_TEAM_SLUG ?? "sebastian-maluk";
+const TEAM_SLUG = process.env.CONVEX_TEAM_SLUG;
 const PROJECT_SLUG = process.env.CONVEX_PROJECT_SLUG ?? "flip7";
 const PREVIEW_NAME = process.env.PREVIEW_DEPLOYMENT_NAME;
 const TOKEN = process.env.CONVEX_TEAM_ACCESS_TOKEN;
+
+if (!TEAM_SLUG) {
+  throw new Error(
+    "CONVEX_TEAM_SLUG is required. Use the team slug from your Convex dashboard URL.",
+  );
+}
 
 if (!TOKEN) {
   throw new Error(

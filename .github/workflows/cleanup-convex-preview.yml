@@ -17,5 +17,6 @@ jobs:
       - name: Delete Convex preview for closed PR
         env:
           CONVEX_TEAM_ACCESS_TOKEN: ${{ secrets.CONVEX_TEAM_ACCESS_TOKEN }}
+          CONVEX_TEAM_SLUG: ${{ vars.CONVEX_TEAM_SLUG }}
           PREVIEW_DEPLOYMENT_NAME: pr-${{ github.event.pull_request.number }}
         run: node scripts/delete-convex-preview.mjs

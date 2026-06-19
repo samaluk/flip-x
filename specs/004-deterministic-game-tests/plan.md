@@ -1,6 +1,6 @@
 # Implementation Plan: Deterministic Game Test Scenarios
 
-**Branch**: `[004-deterministic-game-tests]` | **Date**: 2026-04-21 | **Spec**: [/Users/smaluk/dev/personal/flip7/specs/004-deterministic-game-tests/spec.md](./spec.md)
+**Branch**: `[004-deterministic-game-tests]` | **Date**: 2026-04-21 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/004-deterministic-game-tests/spec.md`
 
 ## Summary
