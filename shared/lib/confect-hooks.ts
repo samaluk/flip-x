@@ -11,6 +11,7 @@ import {
 } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import * as Option from "effect/Option";
+import { useMemo } from "react";
 
 type SessionRef = Ref.AnyPublicQuery | Ref.AnyPublicMutation | Ref.AnyPublicAction;
 type SessionArgs<T extends SessionRef> = Extract<Ref.Args<T>, { sessionId: string }>;
@@ -60,7 +61,7 @@ export function useSessionConfectMutation<Mutation extends Ref.AnyPublicMutation
   const [sessionId] = useSessionId();
   const mutate = useConfectMutation(ref);
 
-  return wrapSessionConfectMutation(mutate, sessionId);
+  return useMemo(() => wrapSessionConfectMutation(mutate, sessionId), [mutate, sessionId]);
 }
 
 function wrapSessionConfectMutation<Mutation extends Ref.AnyPublicMutation>(
