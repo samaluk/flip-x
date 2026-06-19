@@ -117,11 +117,13 @@ One-time setup for the workflow:
 
 1. In the [Convex dashboard](https://dashboard.convex.dev), create a **team access token** for the team that owns this project.
 2. Add it to GitHub as repository secret `CONVEX_TEAM_ACCESS_TOKEN`.
+3. Add your Convex team slug as repository variable `CONVEX_TEAM_SLUG` (the segment after `/t/` in the dashboard URL).
 
 Manual cleanup (same preview name as CI):
 
 ```bash
 export CONVEX_TEAM_ACCESS_TOKEN='…'
+export CONVEX_TEAM_SLUG='your-team-slug'
 PREVIEW_DEPLOYMENT_NAME=pr-123 node scripts/delete-convex-preview.mjs
 ```
 
