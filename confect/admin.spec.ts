@@ -68,7 +68,7 @@ const resetRateLimit = FunctionSpec.internalMutation({
     }),
   returns: () => Schema.Null,
 });
-const clearAllAppDataViaCli = FunctionSpec.publicAction({
+const clearAllAppDataViaCli = FunctionSpec.internalMutation({
   name: "clearAllAppDataViaCli",
   args: () => EmptyArgs,
   returns: () => ClearAllAppDataResult,
