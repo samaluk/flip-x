@@ -1,5 +1,5 @@
 import { FunctionSpec, GroupSpec } from "@confect/core";
-import { Schema } from "effect";
+import * as Schema from "effect/Schema";
 
 import { MatchSnapshot } from "./match-snapshot-schema";
 import { SessionIdField } from "./session";
@@ -11,23 +11,25 @@ const CommandMetadata = {
 
 const takeTurn = FunctionSpec.publicMutation({
   name: "takeTurn",
-  args: Schema.Struct({
-    ...SessionIdField,
-    matchId: Schema.String,
-    ...CommandMetadata,
-    action: Schema.Literal("hit", "stay"),
-  }),
-  returns: MatchSnapshot,
+  args: () =>
+    Schema.Struct({
+      ...SessionIdField,
+      matchId: Schema.String,
+      ...CommandMetadata,
+      action: Schema.Literal("hit", "stay"),
+    }),
+  returns: () => MatchSnapshot,
 });
 const resolveAction = FunctionSpec.publicMutation({
   name: "resolveAction",
-  args: Schema.Struct({
-    ...SessionIdField,
-    matchId: Schema.String,
-    ...CommandMetadata,
-    targetPlayerId: Schema.String,
-  }),
-  returns: MatchSnapshot,
+  args: () =>
+    Schema.Struct({
+      ...SessionIdField,
+      matchId: Schema.String,
+      ...CommandMetadata,
+      targetPlayerId: Schema.String,
+    }),
+  returns: () => MatchSnapshot,
 });
 
-export const turns = GroupSpec.make("turns").addFunction(takeTurn).addFunction(resolveAction);
+export default GroupSpec.make().addFunction(takeTurn).addFunction(resolveAction);

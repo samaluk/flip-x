@@ -1,9 +1,12 @@
 import type { SessionId } from "convex-helpers/server/sessions";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import type { Doc, Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
-import { buildMatchCreatedAnalyticsEvent, buildMatchJoinedAnalyticsEvent } from "../game/application/match-setup-analytics";
+import {
+  buildMatchCreatedAnalyticsEvent,
+  buildMatchJoinedAnalyticsEvent,
+} from "../game/application/match-setup-analytics";
 import { DEFAULT_GAME_SETTINGS } from "../game/logic/game-settings";
 import { captureAnalyticsEvents } from "../shared/analytics/service";
 import {
@@ -19,7 +22,6 @@ import {
   isPlayerColorId,
   type PlayerColorId,
 } from "../shared/lib/player-colors";
-import type { DatabaseReader, DatabaseWriter } from "./_generated/services";
 import { generateUniqueLobbyCode, readMatchByLobbyCode } from "./match-lobby";
 import { snapshotForMatchSession } from "./match-snapshot-for-session";
 import { enforceRateLimit } from "./lib/rate_limiter";
@@ -30,6 +32,9 @@ import {
   DatabaseReader as DatabaseReaderService,
   DatabaseWriter as DatabaseWriterService,
 } from "./_generated/services";
+
+type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
+type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
 
 function normalizePlayerColorId(colorId: string | undefined, takenColorIds: string[]) {
   return Effect.gen(function* () {

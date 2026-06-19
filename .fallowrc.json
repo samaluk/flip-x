@@ -2,6 +2,7 @@
   "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
   "entry": [
     "app/**/{page,layout,loading,error,not-found}.{ts,tsx}",
+    "confect/tables/**/*.ts",
     "convex/**/*.ts",
     "shared/i18n/request.ts"
   ],

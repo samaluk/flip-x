@@ -1,8 +1,10 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
-import { Effect, Layer } from "effect";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
 
 import { makePostHogConvexAnalyticsLayer } from "../shared/analytics/posthog-convex";
-import api from "./_generated/api";
+import databaseSchema from "./_generated/schema";
+import groupSpec from "./matches.spec";
 import { MutationCtx, QueryCtx } from "./_generated/services";
 import { matchIdFromConfectWire } from "./lib/convex-id-bridge";
 import { cloneDeterministicStart } from "./lib/deterministic_start";
@@ -11,7 +13,7 @@ import { createMatchForSession, joinMatchForSession } from "./match-setup-player
 import { updateMatchSettingsForSession } from "./match-settings";
 import { getMatchSnapshot, startMatchForSession } from "./matches";
 
-const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
+const createMatch = FunctionImpl.make(databaseSchema, groupSpec, "createMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* createMatchForSession(ctx, args).pipe(
@@ -20,24 +22,24 @@ const createMatch = FunctionImpl.make(api, "matches", "createMatch", (args) =>
   }).pipe(Effect.orDie),
 );
 const getMatchSnapshotImpl = FunctionImpl.make(
-  api,
-  "matches",
+  databaseSchema,
+  groupSpec,
   "getMatchSnapshot",
   getMatchSnapshot,
 );
-const getMatchByCodeImpl = FunctionImpl.make(api, "matches", "getMatchByCode", (args) =>
+const getMatchByCodeImpl = FunctionImpl.make(databaseSchema, groupSpec, "getMatchByCode", (args) =>
   Effect.gen(function* () {
     const ctx = yield* QueryCtx;
     return yield* getMatchByCode(ctx, args.lobbyCode);
   }).pipe(Effect.orDie),
 );
-const joinByCode = FunctionImpl.make(api, "matches", "joinByCode", (args) =>
+const joinByCode = FunctionImpl.make(databaseSchema, groupSpec, "joinByCode", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* joinByCodeForSession(ctx, args);
   }).pipe(Effect.orDie),
 );
-const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
+const joinMatch = FunctionImpl.make(databaseSchema, groupSpec, "joinMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* joinMatchForSession(ctx, {
@@ -46,7 +48,7 @@ const joinMatch = FunctionImpl.make(api, "matches", "joinMatch", (args) =>
     }).pipe(Effect.provide(makePostHogConvexAnalyticsLayer(ctx)));
   }).pipe(Effect.orDie),
 );
-const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
+const startMatch = FunctionImpl.make(databaseSchema, groupSpec, "startMatch", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* startMatchForSession(ctx, {
@@ -56,17 +58,21 @@ const startMatch = FunctionImpl.make(api, "matches", "startMatch", (args) =>
     });
   }).pipe(Effect.orDie),
 );
-const updateMatchSettings = FunctionImpl.make(api, "matches", "updateMatchSettings", (args) =>
-  Effect.gen(function* () {
-    const ctx = yield* MutationCtx;
-    return yield* updateMatchSettingsForSession(ctx, {
-      ...args,
-      matchId: matchIdFromConfectWire(args.matchId),
-    });
-  }).pipe(Effect.orDie),
+const updateMatchSettings = FunctionImpl.make(
+  databaseSchema,
+  groupSpec,
+  "updateMatchSettings",
+  (args) =>
+    Effect.gen(function* () {
+      const ctx = yield* MutationCtx;
+      return yield* updateMatchSettingsForSession(ctx, {
+        ...args,
+        matchId: matchIdFromConfectWire(args.matchId),
+      });
+    }).pipe(Effect.orDie),
 );
 
-export const matches = GroupImpl.make(api, "matches").pipe(
+export default GroupImpl.make(databaseSchema, groupSpec).pipe(
   Layer.provide(createMatch),
   Layer.provide(getMatchSnapshotImpl),
   Layer.provide(getMatchByCodeImpl),
@@ -74,4 +80,5 @@ export const matches = GroupImpl.make(api, "matches").pipe(
   Layer.provide(joinMatch),
   Layer.provide(startMatch),
   Layer.provide(updateMatchSettings),
+  GroupImpl.finalize,
 );

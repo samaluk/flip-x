@@ -1,10 +1,17 @@
 import type { SessionId } from "convex-helpers/server/sessions";
 import { getOneFrom } from "convex-helpers/server/relationships";
-import { Effect, Option } from "effect";
+import * as Effect from "effect/Effect";
+import * as Option from "effect/Option";
 
 import type { Id } from "../../convex/_generated/dataModel";
 import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
-import type { DatabaseReader, DatabaseWriter } from "../_generated/services";
+import {
+  DatabaseReader as DatabaseReaderService,
+  DatabaseWriter as DatabaseWriterService,
+} from "../_generated/services";
+
+type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
+type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
 
 type Ctx = QueryCtx | MutationCtx;
 

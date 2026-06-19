@@ -5,8 +5,8 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  '@confect/core@8.0.0': eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256
-  '@confect/react@8.0.0': 802eeb340823090f40d448d1effca51cda31e27c3faab181eb350f4a11832395
+  '@confect/core@9.0.2': caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec
+  '@confect/react@9.0.2': 9691a78afae9397b6bfc3bdd41b025555430564208b42fa4996f8826d005c0de
 
 importers:
 
@@ -16,14 +16,14 @@ importers:
         specifier: 1.5.0
         version: 1.5.0(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@confect/core':
-        specifier: 8.0.0
-        version: 8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+        specifier: 9.0.2
+        version: 9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
       '@confect/react':
-        specifier: 8.0.0
-        version: 8.0.0(patch_hash=802eeb340823090f40d448d1effca51cda31e27c3faab181eb350f4a11832395)(@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(convex@1.41.0(react@19.2.7))(effect@3.21.3)(react@19.2.7)
+        specifier: 9.0.2
+        version: 9.0.2(patch_hash=9691a78afae9397b6bfc3bdd41b025555430564208b42fa4996f8826d005c0de)(@confect/core@9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(convex@1.41.0(react@19.2.7))(effect@3.21.3)(react@19.2.7)
       '@confect/server':
-        specifier: 8.0.0
-        version: 8.0.0(ad9f722a92da8bfea345dbd57dd921d6)
+        specifier: 9.0.2
+        version: 9.0.2(a501d98943aea6e673c581e9748206c8)
       '@convex-dev/migrations':
         specifier: 0.3.5
         version: 0.3.5(convex-helpers@0.1.119(@standard-schema/spec@1.1.0)(convex@1.41.0(react@19.2.7))(hono@4.12.12)(react@19.2.7)(typescript@6.0.3)(zod@3.25.76))(convex@1.41.0(react@19.2.7))
@@ -95,11 +95,11 @@ importers:
         version: 3.1.1(react@19.2.7)
     devDependencies:
       '@confect/cli':
-        specifier: 8.0.0
-        version: 8.0.0(@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(@effect/cluster@0.56.4(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/typeclass@0.38.0(effect@3.21.3))(effect@3.21.3)
+        specifier: 9.0.2
+        version: 9.0.2(03f0c3f27267d54205b6be4f67476e56)
       '@confect/test':
-        specifier: 8.0.0
-        version: 8.0.0(@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(@confect/server@8.0.0(ad9f722a92da8bfea345dbd57dd921d6))(convex-test@0.0.53(convex@1.41.0(react@19.2.7)))(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+        specifier: 9.0.2
+        version: 9.0.2(@confect/core@9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(@confect/server@9.0.2(a501d98943aea6e673c581e9748206c8))(convex-test@0.0.53(convex@1.41.0(react@19.2.7)))(convex@1.41.0(react@19.2.7))(effect@3.21.3)
       '@effect/vitest':
         specifier: 0.29.0
         version: 0.29.0(effect@3.21.3)(vitest@4.1.9)
@@ -386,48 +386,52 @@ packages:
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
     hasBin: true
 
-  '@confect/cli@8.0.0':
-    resolution: {integrity: sha512-JTuaktEMWNG15KuOvxvcwupsI4Fb33HViWY3DK4r7JDX2RfoOC2IhzNFRlTgon+kSN48BTOy98A66ZBU5rD0ZA==}
-    engines: {node: '>=22', pnpm: '>=10'}
+  '@confect/cli@9.0.2':
+    resolution: {integrity: sha512-3r2C62hbUWjUwQTrp1s30fwOG0riAVIUQfgfc+x6xo13GNZ9avcmregEXO4BOyeGxjd0/Zb0YDM7qJwhrYEfGA==}
+    engines: {node: '>=22'}
     hasBin: true
     peerDependencies:
-      '@confect/core': ^8.0.0
+      '@confect/core': ^9.0.2
+      '@confect/server': ^9.0.2
       effect: ^3.21.2
 
-  '@confect/core@8.0.0':
-    resolution: {integrity: sha512-OcafD3Y+cQGto1BAq+USPPsmiCzELW1Bi6u76RbCSCTio2QqaIZVPb3jcZG3XjiR45tvhJ7MKQOdW1v9sKBD7Q==}
-    engines: {node: '>=22', pnpm: '>=10'}
+  '@confect/core@9.0.2':
+    resolution: {integrity: sha512-/UGfG9Yfjhlz0w52hXYGSggUNosI2mxyTDxbdmCjL1X+FjipWFGIk76NLFsga9LizZN/90JsCXHko2eKI+ecaw==}
+    engines: {node: '>=22'}
     peerDependencies:
-      convex: ^1.30.0
+      convex: ^1.32.0
       effect: ^3.21.2
 
-  '@confect/react@8.0.0':
-    resolution: {integrity: sha512-PO9v4DfQsoFuAPSS9kQE0eKuOt+1zFqKk1ireNyEHn49awzia243ZibbRfE1synfUCCfqSyEqCMckcQggFPoAQ==}
-    engines: {node: '>=22', pnpm: '>=10'}
+  '@confect/react@9.0.2':
+    resolution: {integrity: sha512-LoQOAaasAtr/30cEWrkUjTiMnxTIZ96baJp9RRGP8IC2C+pD80ouLWlEoSsuX7/bRVyt9AnBbEgAsKQnmzVXvQ==}
+    engines: {node: '>=22'}
     peerDependencies:
-      '@confect/core': ^8.0.0
-      convex: ^1.30.0
+      '@confect/core': ^9.0.2
+      convex: ^1.32.0
       effect: ^3.21.2
       react: ^18.0.0 || ^19.0.0
 
-  '@confect/server@8.0.0':
-    resolution: {integrity: sha512-rMtSo0M4a5WKU+xEl8JwPCjDgGBfmYppeKlDZd32rt53ijdeuD6XnhJE1x2SSQYnRbQU4mNMCuej50X9+zP1Kw==}
-    engines: {node: '>=22', pnpm: '>=10'}
+  '@confect/server@9.0.2':
+    resolution: {integrity: sha512-tcixR3lV2t5n+EA9p9nN2tUjkHI/jUvsnht2T/16rp9DByOUX9NAskTtMZ/CCxCOVwMBsSwA6qUDL4gvX7+QQA==}
+    engines: {node: '>=22'}
     peerDependencies:
-      '@confect/core': ^8.0.0
+      '@confect/core': ^9.0.2
       '@effect/platform': ^0.96.1
       '@effect/platform-node': ^0.106.0
-      convex: ^1.30.0
+      convex: ^1.32.0
       effect: ^3.21.2
+    peerDependenciesMeta:
+      '@effect/platform-node':
+        optional: true
 
-  '@confect/test@8.0.0':
-    resolution: {integrity: sha512-6xsVXDrZip+LuDFmaLG5KAN7Q6gmoIGNTt7U4gl4cZ5er7XFAk5QtH7Vor6jMGyyiScMtBXELRXzVxFzSOCJ3A==}
-    engines: {node: '>=22', pnpm: '>=10'}
+  '@confect/test@9.0.2':
+    resolution: {integrity: sha512-JGCxvXkEQ5jWG3AzgGT1fYw/PlZEfJHivP9En1DqoaAnsOG0sPfLU/2q1Q7woKLyQKQTTOKR9QC0rRFM8/vedA==}
+    engines: {node: '>=22'}
     peerDependencies:
-      '@confect/core': ^8.0.0
-      '@confect/server': ^8.0.0
-      convex: ^1.30.0
-      convex-test: ^0.0.50
+      '@confect/core': ^9.0.2
+      '@confect/server': ^9.0.2
+      convex: ^1.32.0
+      convex-test: '>=0.0.50 <0.1.0'
       effect: ^3.21.2
 
   '@convex-dev/migrations@0.3.5':
@@ -3070,6 +3074,12 @@ packages:
     resolution: {integrity: sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q==}
     engines: {node: '>=18'}
 
+  bundle-require@5.1.0:
+    resolution: {integrity: sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+    peerDependencies:
+      esbuild: '>=0.18'
+
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
@@ -4156,6 +4166,10 @@ packages:
 
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
+
+  load-tsconfig@0.2.5:
+    resolution: {integrity: sha512-IXO6OCs9yg8tMKzfPZ1YmheJbZCiEsnBdcB03l0OcfK9prKnJb96siuHCr5Fl37/yo9DnKU+TLpxzTUspw9shg==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   loader-runner@4.3.2:
     resolution: {integrity: sha512-DFEqQ3ihfS9blba08cLfYf1NRAIEm+dDjic073DRDc3/JspI/8wYmtDsHwd3+4hwvdxSK7PGaElfTmm0awWJ4w==}
@@ -5536,18 +5550,6 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
-  ws@8.20.0:
-    resolution: {integrity: sha512-sAt8BhgNbzCtgGbt2OxmpuryO63ZoDk/sqaB/znQm94T4fCEsy/yV+7CdC1kJhOU9lboAEU7R3kquuycDoibVA==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: '>=5.0.2'
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-
   ws@8.20.1:
     resolution: {integrity: sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==}
     engines: {node: '>=10.0.0'}
@@ -5874,15 +5876,16 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
-  '@confect/cli@8.0.0(@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(@effect/cluster@0.56.4(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/typeclass@0.38.0(effect@3.21.3))(effect@3.21.3)':
+  '@confect/cli@9.0.2(03f0c3f27267d54205b6be4f67476e56)':
     dependencies:
-      '@confect/core': 8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+      '@confect/core': 9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+      '@confect/server': 9.0.2(a501d98943aea6e673c581e9748206c8)
       '@effect/cli': 0.75.1(@effect/platform@0.96.1(effect@3.21.3))(@effect/printer-ansi@0.49.0(@effect/typeclass@0.38.0(effect@3.21.3))(effect@3.21.3))(@effect/printer@0.49.0(@effect/typeclass@0.38.0(effect@3.21.3))(effect@3.21.3))(effect@3.21.3)
       '@effect/platform': 0.96.1(effect@3.21.3)
       '@effect/platform-node': 0.106.0(@effect/cluster@0.56.4(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3)
-      '@effect/platform-node-shared': 0.59.0(@effect/cluster@0.56.4(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3)
       '@effect/printer': 0.49.0(@effect/typeclass@0.38.0(effect@3.21.3))(effect@3.21.3)
       '@effect/printer-ansi': 0.49.0(@effect/typeclass@0.38.0(effect@3.21.3))(effect@3.21.3)
+      bundle-require: 5.1.0(esbuild@0.27.7)
       code-block-writer: 13.0.3
       effect: 3.21.3
       esbuild: 0.27.7
@@ -5894,30 +5897,31 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3)':
+  '@confect/core@9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3)':
     dependencies:
       convex: 1.41.0(react@19.2.7)
       effect: 3.21.3
 
-  '@confect/react@8.0.0(patch_hash=802eeb340823090f40d448d1effca51cda31e27c3faab181eb350f4a11832395)(@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(convex@1.41.0(react@19.2.7))(effect@3.21.3)(react@19.2.7)':
+  '@confect/react@9.0.2(patch_hash=9691a78afae9397b6bfc3bdd41b025555430564208b42fa4996f8826d005c0de)(@confect/core@9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(convex@1.41.0(react@19.2.7))(effect@3.21.3)(react@19.2.7)':
     dependencies:
-      '@confect/core': 8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+      '@confect/core': 9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
       convex: 1.41.0(react@19.2.7)
       effect: 3.21.3
       react: 19.2.7
 
-  '@confect/server@8.0.0(ad9f722a92da8bfea345dbd57dd921d6)':
+  '@confect/server@9.0.2(a501d98943aea6e673c581e9748206c8)':
     dependencies:
-      '@confect/core': 8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+      '@confect/core': 9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
       '@effect/platform': 0.96.1(effect@3.21.3)
-      '@effect/platform-node': 0.106.0(@effect/cluster@0.56.4(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3)
       convex: 1.41.0(react@19.2.7)
       effect: 3.21.3
+    optionalDependencies:
+      '@effect/platform-node': 0.106.0(@effect/cluster@0.56.4(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/workflow@0.16.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(@effect/rpc@0.73.2(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/sql@0.49.0(@effect/experimental@0.58.0(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(@effect/platform@0.96.1(effect@3.21.3))(effect@3.21.3))(effect@3.21.3)
 
-  '@confect/test@8.0.0(@confect/core@8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(@confect/server@8.0.0(ad9f722a92da8bfea345dbd57dd921d6))(convex-test@0.0.53(convex@1.41.0(react@19.2.7)))(convex@1.41.0(react@19.2.7))(effect@3.21.3)':
+  '@confect/test@9.0.2(@confect/core@9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3))(@confect/server@9.0.2(a501d98943aea6e673c581e9748206c8))(convex-test@0.0.53(convex@1.41.0(react@19.2.7)))(convex@1.41.0(react@19.2.7))(effect@3.21.3)':
     dependencies:
-      '@confect/core': 8.0.0(patch_hash=eaf8089973000a6c09844144e75f06585b17bb2d22b08255f5cda68badf81256)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
-      '@confect/server': 8.0.0(ad9f722a92da8bfea345dbd57dd921d6)
+      '@confect/core': 9.0.2(patch_hash=caa6925ae82662bb365613fc168ec37bc3df5c4c2bc21cd58c190ebf2d18a2ec)(convex@1.41.0(react@19.2.7))(effect@3.21.3)
+      '@confect/server': 9.0.2(a501d98943aea6e673c581e9748206c8)
       convex: 1.41.0(react@19.2.7)
       convex-test: 0.0.53(convex@1.41.0(react@19.2.7))
       effect: 3.21.3
@@ -6014,7 +6018,7 @@ snapshots:
       '@parcel/watcher': 2.5.6
       effect: 3.21.3
       multipasta: 0.2.7
-      ws: 8.20.0
+      ws: 8.20.1
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
@@ -7939,6 +7943,11 @@ snapshots:
     dependencies:
       run-applescript: 7.1.0
 
+  bundle-require@5.1.0(esbuild@0.27.7):
+    dependencies:
+      esbuild: 0.27.7
+      load-tsconfig: 0.2.5
+
   bytes@3.1.2: {}
 
   call-bind-apply-helpers@1.0.2:
@@ -8992,6 +9001,8 @@ snapshots:
       lightningcss-win32-x64-msvc: 1.32.0
 
   lines-and-columns@1.2.4: {}
+
+  load-tsconfig@0.2.5: {}
 
   loader-runner@4.3.2: {}
 
@@ -10678,8 +10689,6 @@ snapshots:
     optional: true
 
   wrappy@1.0.2: {}
-
-  ws@8.20.0: {}
 
   ws@8.20.1: {}
 

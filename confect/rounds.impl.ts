@@ -1,13 +1,15 @@
 import { FunctionImpl, GroupImpl } from "@confect/server";
-import { Effect, Layer } from "effect";
+import * as Effect from "effect/Effect";
+import * as Layer from "effect/Layer";
 
-import api from "./_generated/api";
+import databaseSchema from "./_generated/schema";
+import groupSpec from "./rounds.spec";
 import { MutationCtx } from "./_generated/services";
 import { matchIdFromConfectWire } from "./lib/convex-id-bridge";
 import { cloneDeterministicStart } from "./lib/deterministic_start";
 import * as roundFns from "./rounds";
 
-const startNextRound = FunctionImpl.make(api, "rounds", "startNextRound", (args) =>
+const startNextRound = FunctionImpl.make(databaseSchema, groupSpec, "startNextRound", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* roundFns.startNextRoundForSession(ctx, {
@@ -18,4 +20,7 @@ const startNextRound = FunctionImpl.make(api, "rounds", "startNextRound", (args)
   }).pipe(Effect.orDie),
 );
 
-export const rounds = GroupImpl.make(api, "rounds").pipe(Layer.provide(startNextRound));
+export default GroupImpl.make(databaseSchema, groupSpec).pipe(
+  Layer.provide(startNextRound),
+  GroupImpl.finalize,
+);

@@ -4,4 +4,4 @@ import type { run } from "./migrations";
 
 const runMigrations = FunctionSpec.convexInternalMutation<typeof run>()("run");
 
-export const migrations = GroupSpec.make("migrations").addFunction(runMigrations);
+export default GroupSpec.make().addFunction(runMigrations);

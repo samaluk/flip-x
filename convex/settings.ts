@@ -1,3 +1,3 @@
-import registeredFunctions from "../confect/_generated/registeredFunctions";
+import registeredFunctions from "../confect/_generated/registeredFunctions/settings";
 
-export const getRuntimeConfig = registeredFunctions.settings.getRuntimeConfig;
+export const getRuntimeConfig = registeredFunctions.getRuntimeConfig;

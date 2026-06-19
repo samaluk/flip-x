@@ -1,5 +1,5 @@
 import { Presence } from "@convex-dev/presence";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 /* eslint-disable @typescript-eslint/no-unsafe-type-assertion -- admin cleanup uses dynamic table/id wiring against Convex typed indexes */
 
@@ -8,11 +8,16 @@ import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
 import { unsupportedRelationship, unsupportedTable } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
-import type { DatabaseReader, DatabaseWriter } from "./_generated/services";
+import {
+  DatabaseReader as DatabaseReaderService,
+  DatabaseWriter as DatabaseWriterService,
+} from "./_generated/services";
 import { rateLimiter } from "./lib/rate_limiter";
-import schema from "./schema";
+import schema from "./_generated/schema";
 
 const presence = new Presence(components.presence);
+type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
+type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
 
 type AppTableName =
   | "matches"

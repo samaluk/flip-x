@@ -1,3 +1,3 @@
-import registeredFunctions from "../confect/_generated/registeredFunctions";
+import registeredFunctions from "../confect/_generated/registeredFunctions/migrations";
 
-export const run = registeredFunctions.migrations.run;
+export const run = registeredFunctions.run;

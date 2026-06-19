@@ -1,9 +1,11 @@
 import type { SessionId } from "convex-helpers/server/sessions";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import type { Id } from "../../convex/_generated/dataModel";
-import type { DatabaseReader } from "../_generated/services";
+import { DatabaseReader as DatabaseReaderService } from "../_generated/services";
 import { getPlayerIdForSessionWithReader } from "./session_store";
+
+type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
 
 export function getPlayersByMatchWithReader(reader: DatabaseReader, matchId: Id<"matches">) {
   return reader

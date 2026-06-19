@@ -9,7 +9,7 @@ const syncPlayerSpec = FunctionSpec.convexPublicMutation<typeof syncPlayer>()("s
 const listMatchPresenceSpec =
   FunctionSpec.convexPublicQuery<typeof listMatchPresence>()("listMatchPresence");
 
-export const presence = GroupSpec.make("presence")
+export default GroupSpec.make()
   .addFunction(heartbeatSpec)
   .addFunction(listSpec)
   .addFunction(disconnectSpec)

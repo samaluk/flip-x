@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import { describe, expect, it } from "vitest";
 
-import { CardValue } from "@/confect/schema";
+import { CardValue } from "@/confect/card-value-schema";
 
 describe("Confect schema precision", () => {
   it("decodes valid card variants", async () => {

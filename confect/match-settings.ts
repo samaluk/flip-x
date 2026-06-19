@@ -1,5 +1,5 @@
 import type { SessionId } from "convex-helpers/server/sessions";
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 
 import type { Doc, Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
@@ -15,7 +15,6 @@ import {
   notHost,
   staleGameState,
 } from "../shared/lib/errors/domain";
-import type { DatabaseReader } from "./_generated/services";
 import { snapshotForMatchSession } from "./match-snapshot-for-session";
 import { toSessionId } from "./lib/session_functions";
 import { getViewerPlayerIdWithReader } from "./lib/store";
@@ -23,6 +22,8 @@ import {
   DatabaseReader as DatabaseReaderService,
   DatabaseWriter as DatabaseWriterService,
 } from "./_generated/services";
+
+type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
 
 function requireSetupMatchForSettings(match: Doc<"matches"> | null, matchId: Id<"matches">) {
   return Effect.gen(function* () {
