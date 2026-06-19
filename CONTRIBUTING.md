@@ -25,6 +25,12 @@ For narrower iteration, see the command reference in `AGENTS.md` and [`docs/test
 - Include tests with behavior changes when practical.
 - Run `pnpm i18n:check` when changing user-facing messages.
 
+### CI on fork pull requests
+
+CI runs automatically for branches in this repository (including Dependabot). For pull
+requests opened from a fork, CI is skipped until a maintainer adds the `ci:run` label.
+Until then, run `pnpm ci:local` locally and note the results in the PR description.
+
 ## Security
 
 See [`SECURITY.md`](./SECURITY.md).
