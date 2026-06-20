@@ -11,7 +11,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6.0.3
 
-      - uses: ./.github/actions/setup-toolchain
+      # Plain Node only — delete-convex-preview.mjs has no pnpm deps. setup-toolchain
+      # enables pnpm cache on GitHub-hosted runners, which fails post-job without install.
+      - uses: actions/setup-node@v6.4.0
+        with:
+          node-version-file: package.json
 
       - name: Delete Convex preview for closed PR
         env:
