@@ -13,8 +13,7 @@ concurrency:
 
 jobs:
   ci:
-    # USE_SELF_HOSTED_RUNNERS repo variable (Settings → Actions → Variables)
-    runs-on: ${{ vars.USE_SELF_HOSTED_RUNNERS == 'true' && (vars.SELF_HOSTED_RUNNER_LABELS != '' && fromJSON(vars.SELF_HOSTED_RUNNER_LABELS) || fromJSON('["self-hosted"]')) || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     env:
       CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
       CONVEX_TEAM_ACCESS_TOKEN: ${{ secrets.CONVEX_TEAM_ACCESS_TOKEN }}
@@ -66,7 +65,6 @@ jobs:
         run: pnpm test
 
       - name: Cache Next.js
-        if: runner.environment != 'self-hosted'
         uses: actions/cache@v5.0.5
         with:
           path: .next/cache
@@ -76,17 +74,11 @@ jobs:
         run: pnpm build
 
       - name: Visual regression (Vitest browser, Linux Docker)
-        if: runner.environment != 'self-hosted'
         env:
           SKIP_VRT_DOCKER_INSTALL: "1"
         run: pnpm test:vrt
 
-      - name: Visual regression (Vitest browser, Linux Docker, self-hosted)
-        if: runner.environment == 'self-hosted'
-        run: pnpm test:vrt
-
       - name: Cache Playwright browsers
-        if: runner.environment != 'self-hosted'
         uses: actions/cache@v5.0.5
         with:
           path: /home/runner/.cache/ms-playwright
