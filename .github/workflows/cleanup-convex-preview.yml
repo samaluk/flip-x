@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.3
+        uses: actions/checkout@v7.0.0
 
       # Plain Node only — delete-convex-preview.mjs has no pnpm deps. setup-toolchain
       # enables pnpm cache on GitHub-hosted runners, which fails post-job without install.
