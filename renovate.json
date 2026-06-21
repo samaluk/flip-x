@@ -2,12 +2,5 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended", ":disableRateLimiting"],
   "rangeStrategy": "pin",
-  "minimumReleaseAge": "3 days",
-  "packageRules": [
-    {
-      "description": "TypeScript 7 RC is pinned via typescript-7 npm alias",
-      "matchPackageNames": ["@typescript/native-preview"],
-      "enabled": false
-    }
-  ]
+  "minimumReleaseAge": "3 days"
 }
