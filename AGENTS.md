@@ -15,8 +15,8 @@ deprecation notices.
 Flip-x is a shared-table web app for playing the press-your-luck card game with
 live turn tracking, action-card resolution, and automatic scoring to 200 points.
 
-- Runtime stack: TypeScript 6.0.3 (project `tsc` / Next), TypeScript 7 native
-  preview (`@typescript/native-preview`, `tsgo`) for parity with typescript-go,
+- Runtime stack: TypeScript 6.0.3 (programmatic API / Next), TypeScript 7.0 RC
+  (`typescript-7`, `tsc`) for native compiler parity with typescript-go,
   Next.js 16.2.4, React 19.2.5, Convex 1.37.0, Confect 5.0.0, Effect 3.21.2.
 - UI stack: Tailwind CSS 4, shadcn/ui, Base UI, Lucide icons, Motion.
 - Testing stack: Vitest 4.1.5, Playwright 1.59.1, convex-test.
@@ -80,11 +80,13 @@ Useful development commands:
 - `pnpm lint`: run oxlint with `oxlint-tsgolint` type-aware rules and
   `--type-check` (typescript-go compiler diagnostics). Production sources use
   [tsconfig.json](tsconfig.json); tests and `*.test.*` files are excluded from
-  that project so type-check matches `tsc` / `tsgo` on the same graph.
+  that project so type-check matches `tsc` on the same graph.
 - `pnpm lint:fix`: run oxlint autofixes with the same type-aware and type-check
   setup.
-- `pnpm exec tsgo --project tsconfig.json --noEmit`: optional native TS7 check
-  against the same `tsconfig` graph as Oxlint type-check.
+- `pnpm exec tsc --project tsconfig.json --noEmit`: optional native TS7 RC check
+  against the same `tsconfig` graph as Oxlint type-check (`typescript-7` aliases
+  `typescript@rc`; see
+  [Announcing TypeScript 7.0 RC](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0-rc/)).
 - `OXC_LOG=debug pnpm lint`: diagnose slow or memory-heavy type-aware runs.
 - `pnpm format:check`: check formatting with oxfmt.
 - `pnpm format`: write formatting changes with oxfmt.
