@@ -47,9 +47,9 @@
   },
   "dependencies": {
     "@base-ui/react": "1.6.0",
-    "@confect/core": "9.0.2",
-    "@confect/react": "9.0.2",
-    "@confect/server": "9.0.2",
+    "@confect/core": "9.1.2",
+    "@confect/react": "9.1.2",
+    "@confect/server": "9.1.2",
     "@convex-dev/migrations": "0.3.5",
     "@convex-dev/presence": "0.3.1",
     "@convex-dev/rate-limiter": "0.3.2",
@@ -75,8 +75,8 @@
     "usehooks-ts": "3.1.1"
   },
   "devDependencies": {
-    "@confect/cli": "9.0.2",
-    "@confect/test": "9.0.2",
+    "@confect/cli": "9.1.2",
+    "@confect/test": "9.1.2",
     "@effect/vitest": "0.29.0",
     "@google/design.md": "0.3.0",
     "@lingual/i18n-check": "0.9.5",

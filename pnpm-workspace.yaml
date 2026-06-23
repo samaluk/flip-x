@@ -11,6 +11,3 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
 minimumReleaseAge: 0
-patchedDependencies:
-  "@confect/core@9.0.2": patches/@confect__core@9.0.2.patch
-  "@confect/react@9.0.2": patches/@confect__react@9.0.2.patch
