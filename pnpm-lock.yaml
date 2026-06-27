@@ -33,8 +33,8 @@ importers:
         specifier: 2.0.29
         version: 2.0.29(convex@1.42.0(react@19.2.7))
       '@posthog/next':
-        specifier: 0.5.0
-        version: 0.5.0(@types/react@19.2.17)(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.6.0
+        version: 0.6.0(@types/react@19.2.17)(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@sholajegede/convex-cascading-deletes':
         specifier: 0.1.2
         version: 0.1.2(convex@1.42.0(react@19.2.7))(react@19.2.7)
@@ -2394,8 +2394,8 @@ packages:
   '@posthog/core@1.37.3':
     resolution: {integrity: sha512-Dvw4CTlRVH4K5ag/B8YIHgG4E27w43MCUsXpn1iKQHIggIMN3Shq9whG4Omm3OvXPF+VikBTmpyMKUjckPxw+g==}
 
-  '@posthog/next@0.5.0':
-    resolution: {integrity: sha512-W2pT1jqlQZ9XVK8RoFdhLF/OK3qgt8CigSdViIp+N1t9kUFZBYw0Zs0dgwFux+3OpFy1TDgKqZ34hjVHSjTaRg==}
+  '@posthog/next@0.6.0':
+    resolution: {integrity: sha512-59AaPRUq0QGXTrQJahj5Ssrmk0fSAQdB6GtvmlN4Vaf2MTAa3UUV/Pf+jDKDWGmLH/bO/ZEMHz5J3dr9FVlk/A==}
     peerDependencies:
       '@vercel/functions': '>=1.0.0'
       next: '>=13.0.0'
@@ -7473,7 +7473,7 @@ snapshots:
     dependencies:
       '@posthog/types': 1.391.1
 
-  '@posthog/next@0.5.0(@types/react@19.2.17)(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@posthog/next@0.6.0(@types/react@19.2.17)(next@16.2.9(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@posthog/core': 1.37.3
       '@posthog/react': 1.10.3(@types/react@19.2.17)(posthog-js@1.393.6)(react@19.2.7)
