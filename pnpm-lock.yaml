@@ -30,8 +30,8 @@ importers:
         specifier: 0.3.2
         version: 0.3.2(convex@1.42.1(react@19.2.7))(react@19.2.7)
       '@posthog/convex':
-        specifier: 2.0.31
-        version: 2.0.31(convex@1.42.1(react@19.2.7))
+        specifier: 2.0.32
+        version: 2.0.32(convex@1.42.1(react@19.2.7))
       '@posthog/next':
         specifier: 0.7.1
         version: 0.7.1(@types/react@19.2.17)(next@16.2.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -2383,8 +2383,8 @@ packages:
     engines: {node: '>=14.14', npm: '>=6'}
     hasBin: true
 
-  '@posthog/convex@2.0.31':
-    resolution: {integrity: sha512-fXP1FYgHNPPk/tTLGs4h8fNkEEduOKB3P4G/VBTzvl6WaRh/WkKbBNSvNKZSlBANEK+2CNDdoALAQ9Tplo69Pg==}
+  '@posthog/convex@2.0.32':
+    resolution: {integrity: sha512-diYqpk0XRDA9g3Yu2f+3VS6nsj+OR0EQglh+urC3KkbrNiL+yoDZs1sWiFRx9aEJlwjN0nbHLVJqxkaW838syg==}
     peerDependencies:
       convex: ^1.39.0
 
@@ -2423,9 +2423,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  '@posthog/types@1.392.0':
-    resolution: {integrity: sha512-nctNujXL3FC1v99FktaTMSugSD9ZOZekEpahUSafkU2TSvW+XGKNkQZbokuJtiWvPBK208dwMJva8UfBkChqpw==}
 
   '@posthog/types@1.392.1':
     resolution: {integrity: sha512-Qg6Gl7/1vlr8+gPtBi5gwnLgAgiyFoKOVmTvTtDcvya9cpTwZfna7rQmkGQ4B63CunUYNNbOlqcwiUwUDyTK6w==}
@@ -7412,7 +7409,7 @@ snapshots:
     dependencies:
       detect-libc: 2.1.2
 
-  '@posthog/convex@2.0.31(convex@1.42.1(react@19.2.7))':
+  '@posthog/convex@2.0.32(convex@1.42.1(react@19.2.7))':
     dependencies:
       '@posthog/core': 1.39.6
       convex: 1.42.1(react@19.2.7)
@@ -7422,11 +7419,11 @@ snapshots:
 
   '@posthog/core@1.35.2':
     dependencies:
-      '@posthog/types': 1.392.0
+      '@posthog/types': 1.392.1
 
   '@posthog/core@1.39.6':
     dependencies:
-      '@posthog/types': 1.392.0
+      '@posthog/types': 1.392.1
 
   '@posthog/next@0.7.1(@types/react@19.2.17)(next@16.2.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.61.1)(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -7462,8 +7459,6 @@ snapshots:
       react: 19.2.7
     optionalDependencies:
       '@types/react': 19.2.17
-
-  '@posthog/types@1.392.0': {}
 
   '@posthog/types@1.392.1': {}
 
