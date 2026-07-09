@@ -3,12 +3,12 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
+import * as Either from "effect/Either";
 import { useTranslations } from "next-intl";
 import { startTransition, type SubmitEvent, useState } from "react";
 import { toast } from "sonner";
 
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
-import type { PlayerColorId } from "@/shared/lib/player-colors";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import {
@@ -16,36 +16,13 @@ import {
   PLAYER_NAME_ISSUE_TOAST_KEY,
 } from "@/shared/lib/player-name-validation";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateConvexErrorToast } from "@/shared/lib/convex-error";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { useRouter } from "@/shared/i18n/navigation";
 import refs from "@/confect/_generated/refs";
 
 const NO_USED_COLORS: readonly string[] = [];
-
-type LobbyJoinMutationArgs = {
-  joinByCode: (input: { lobbyCode: string }) => Promise<{ matchId: string }>;
-  joinMatch: (input: {
-    matchId: string;
-    playerName: string;
-    playerColorId: PlayerColorId;
-  }) => Promise<unknown>;
-  lobbyCode: string;
-  playerName: string;
-  colorId: PlayerColorId;
-};
-
-async function performLobbyJoin(args: LobbyJoinMutationArgs) {
-  const { joinByCode, joinMatch, lobbyCode, playerName, colorId } = args;
-  const result = await joinByCode({ lobbyCode: lobbyCode.toUpperCase() });
-  await joinMatch({
-    matchId: result.matchId,
-    playerName,
-    playerColorId: colorId,
-  });
-  return result;
-}
 
 export function HomeClient() {
   const { push } = useRouter();
@@ -74,6 +51,7 @@ export function HomeClient() {
   const usedColorIds = QueryResult.match(lobbyLookupResult, {
     onLoading: () => NO_USED_COLORS,
     onSuccess: (lookup) => lookup?.usedColorIds ?? NO_USED_COLORS,
+    onFailure: () => NO_USED_COLORS,
   });
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
@@ -94,17 +72,20 @@ export function HomeClient() {
     setIsSubmitting(true);
 
     try {
-      const match = await createMatch({
+      const result = await createMatch({
         hostName: trimmedName,
         hostColorId: selectedColorId,
       });
+      if (Either.isLeft(result)) {
+        toast.error(translateAppErrorToast(result.left, tErrors));
+        return;
+      }
 
       startTransition(() => {
-        push(`/game/${match.matchId}`);
+        push(`/game/${result.right.matchId}`);
       });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastCreateFailed"));
+    } catch {
+      toast.error(t("toastCreateFailed"));
     } finally {
       setIsSubmitting(false);
     }
@@ -133,19 +114,27 @@ export function HomeClient() {
     setIsSubmitting(true);
 
     try {
-      const result = await performLobbyJoin({
-        joinByCode,
-        joinMatch,
-        lobbyCode,
+      const lookup = await joinByCode({
+        lobbyCode: lobbyCode.toUpperCase(),
+      });
+      if (Either.isLeft(lookup)) {
+        toast.error(translateAppErrorToast(lookup.left, tErrors));
+        return;
+      }
+      const joined = await joinMatch({
+        matchId: lookup.right.matchId,
         playerName,
-        colorId: selectedColorId,
+        playerColorId: selectedColorId,
       });
+      if (Either.isLeft(joined)) {
+        toast.error(translateAppErrorToast(joined.left, tErrors));
+        return;
+      }
       startTransition(() => {
-        push(`/game/${result.matchId}`);
+        push(`/game/${lookup.right.matchId}`);
       });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastJoinFailed"));
+    } catch {
+      toast.error(t("toastJoinFailed"));
     } finally {
       setIsSubmitting(false);
     }

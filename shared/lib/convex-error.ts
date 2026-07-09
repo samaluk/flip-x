@@ -1,5 +1,7 @@
 import { translateConvexError } from "./errors/app-error-wire-code";
 import {
+  type AppError,
+  appErrorWireCode,
   InsufficientPlayers,
   InvalidAction,
   InvalidConfirmation,
@@ -34,6 +36,10 @@ export function translateConvexErrorToast(message: string, tErrors: unknown): st
         message: detail,
       }),
   );
+}
+
+export function translateAppErrorToast(error: AppError, tErrors: unknown): string {
+  return translateConvexErrorToast(appErrorWireCode(error), tErrors);
 }
 
 /** AppError class constructors (used from tests via `instanceof`; kept reachable from app entry for static analysis). */

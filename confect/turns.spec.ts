@@ -1,6 +1,7 @@
 import { FunctionSpec, GroupSpec } from "@confect/core";
 import * as Schema from "effect/Schema";
 
+import { AppErrorSchema } from "../shared/lib/errors/domain";
 import { MatchSnapshot } from "./match-snapshot-schema";
 import { SessionIdField } from "./session";
 
@@ -19,6 +20,7 @@ const takeTurn = FunctionSpec.publicMutation({
       action: Schema.Literal("hit", "stay"),
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 const resolveAction = FunctionSpec.publicMutation({
   name: "resolveAction",
@@ -30,6 +32,7 @@ const resolveAction = FunctionSpec.publicMutation({
       targetPlayerId: Schema.String,
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 
 export default GroupSpec.make().addFunction(takeTurn).addFunction(resolveAction);

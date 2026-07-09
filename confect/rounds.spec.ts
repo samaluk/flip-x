@@ -1,6 +1,7 @@
 import { FunctionSpec, GroupSpec } from "@confect/core";
 import * as Schema from "effect/Schema";
 
+import { AppErrorSchema } from "../shared/lib/errors/domain";
 import { DeterministicStartOptions } from "./deterministic-schema";
 import { MatchSnapshot } from "./match-snapshot-schema";
 import { SessionIdField } from "./session";
@@ -20,6 +21,7 @@ const startNextRound = FunctionSpec.publicMutation({
       deterministicStart: Schema.optional(DeterministicStartOptions),
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 
 export default GroupSpec.make().addFunction(startNextRound);

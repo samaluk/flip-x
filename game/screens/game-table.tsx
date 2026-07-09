@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import * as Either from "effect/Either";
 import { useCallback, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -11,7 +12,8 @@ import {
   type SessionConfectOptimisticLocalStore,
   useSessionConfectMutation,
 } from "@/shared/lib/confect-hooks";
-import { translateConvexErrorToast } from "@/shared/lib/convex-error";
+import type { AppError } from "@/shared/lib/errors/domain";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type TakeTurnArgs = {
@@ -74,14 +76,17 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const tErrors = useTranslations("Errors");
 
   const runAction = useCallback(
-    (action: () => Promise<unknown>) => {
+    (action: () => Promise<Either.Either<unknown, AppError>>) => {
       startTransition(() => {
-        action().catch((error) => {
-          const message = error instanceof Error ? error.message : "";
-          toast.error(
-            message ? translateConvexErrorToast(message, tErrors) : tErrors("gameActionFailed"),
-          );
-        });
+        action()
+          .then((result) => {
+            if (Either.isLeft(result)) {
+              toast.error(translateAppErrorToast(result.left, tErrors));
+            }
+          })
+          .catch(() => {
+            toast.error(tErrors("gameActionFailed"));
+          });
       });
     },
     [tErrors],

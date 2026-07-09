@@ -2,6 +2,7 @@
 
 import { QueryResult } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
+import * as Either from "effect/Either";
 import { LinkIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type SubmitEvent, useCallback, useMemo, useState } from "react";
@@ -22,7 +23,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Skeleton } from "@/shared/ui/skeleton";
 import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
-import { translateConvexErrorToast } from "@/shared/lib/convex-error";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import {
   getTrimmedPlayerNameIssue,
   PLAYER_NAME_ISSUE_TOAST_KEY,
@@ -67,16 +68,19 @@ export function GamePageClient({ matchId }: { matchId: string }) {
 
       setIsJoining(true);
       try {
-        await joinMatch({
+        const result = await joinMatch({
           matchId: matchIdConvex,
           playerName: trimmedName,
           playerColorId: selectedColorId,
         });
+        if (Either.isLeft(result)) {
+          toast.error(translateAppErrorToast(result.left, tErrors));
+          return;
+        }
         setColorId(selectedColorId);
         setPlayerName("");
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "";
-        toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastJoinFailed"));
+      } catch {
+        toast.error(t("toastJoinFailed"));
       } finally {
         setIsJoining(false);
       }

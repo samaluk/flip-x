@@ -1,6 +1,7 @@
 import { FunctionSpec, GroupSpec } from "@confect/core";
 import * as Schema from "effect/Schema";
 
+import { AppErrorSchema } from "../shared/lib/errors/domain";
 import { DeterministicStartOptions } from "./deterministic-schema";
 import { MatchSnapshot } from "./match-snapshot-schema";
 import { getMatchSnapshot } from "./matches";
@@ -34,6 +35,7 @@ const getMatchByCode = FunctionSpec.publicQuery({
       lobbyCode: Schema.String,
     }),
   returns: () => Schema.Union(Schema.Null, MatchLookupResult),
+  error: () => AppErrorSchema,
 });
 
 const createMatch = FunctionSpec.publicMutation({
@@ -45,6 +47,7 @@ const createMatch = FunctionSpec.publicMutation({
       hostColorId: Schema.optional(Schema.String),
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 const getMatchSnapshotSpec =
   FunctionSpec.convexPublicQuery<typeof getMatchSnapshot>()("getMatchSnapshot");
@@ -60,6 +63,7 @@ const joinByCode = FunctionSpec.publicMutation({
       matchId: Schema.String,
       lobbyCode: Schema.String,
     }),
+  error: () => AppErrorSchema,
 });
 const joinMatch = FunctionSpec.publicMutation({
   name: "joinMatch",
@@ -71,6 +75,7 @@ const joinMatch = FunctionSpec.publicMutation({
       playerColorId: Schema.optional(Schema.String),
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 const startMatch = FunctionSpec.publicMutation({
   name: "startMatch",
@@ -82,6 +87,7 @@ const startMatch = FunctionSpec.publicMutation({
       deterministicStart: Schema.optional(DeterministicStartOptions),
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 const updateMatchSettings = FunctionSpec.publicMutation({
   name: "updateMatchSettings",
@@ -93,6 +99,7 @@ const updateMatchSettings = FunctionSpec.publicMutation({
       patch: GameSettingsPatch,
     }),
   returns: () => MatchSnapshot,
+  error: () => AppErrorSchema,
 });
 
 export default GroupSpec.make()

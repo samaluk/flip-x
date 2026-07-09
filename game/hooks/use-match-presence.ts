@@ -11,6 +11,9 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 
 const PRESENCE_INTERVAL_MS = 10_000;
+type SyncPlayerMutation = ReturnType<
+  typeof useSessionConfectMutation<typeof refs.public.presence.syncPlayer>
+>;
 
 export function useMatchPresence(matchId: string, playerId: Id<"players"> | undefined) {
   const [sessionId] = useSessionId();
@@ -58,7 +61,7 @@ type PresenceHeartbeatArgs = {
   sessionId: string | undefined;
   sessionTokenRef: React.RefObject<string | null>;
   setRoomToken: (roomToken: string) => void;
-  syncPlayer: ReturnType<typeof useSessionConfectMutation>;
+  syncPlayer: SyncPlayerMutation;
 };
 
 function usePresenceHeartbeat({
@@ -137,7 +140,7 @@ type SyncPresentPlayerArgs = {
   matchId: string;
   playerId: Id<"players"> | undefined;
   sessionId: string | undefined;
-  syncPlayer: ReturnType<typeof useSessionConfectMutation>;
+  syncPlayer: SyncPlayerMutation;
 };
 
 async function syncPresentPlayer({

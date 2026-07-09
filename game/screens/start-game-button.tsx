@@ -3,13 +3,14 @@
 import { LazyMotion, domAnimation, m } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import * as Either from "effect/Either";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
 import { Button } from "@/shared/ui/button";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateConvexErrorToast } from "@/shared/lib/convex-error";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 
 interface StartGameButtonProps {
   matchId: string;
@@ -27,14 +28,16 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
   async function handleStart() {
     setIsSubmitting(true);
     try {
-      await startMatch({
+      const result = await startMatch({
         matchId,
         expectedVersion: version,
         idempotencyKey: crypto.randomUUID(),
       });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastFailed"));
+      if (Either.isLeft(result)) {
+        toast.error(translateAppErrorToast(result.left, tErrors));
+      }
+    } catch {
+      toast.error(t("toastFailed"));
     } finally {
       setIsSubmitting(false);
     }
