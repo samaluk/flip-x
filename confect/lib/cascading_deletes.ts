@@ -1,6 +1,6 @@
 import { CascadingDeletes } from "@sholajegede/convex-cascading-deletes";
 
-import { components } from "../../convex/_generated/api";
+import { components } from "../_generated/components";
 
 void new CascadingDeletes(components.convexCascadingDeletes, {
   relationships: [

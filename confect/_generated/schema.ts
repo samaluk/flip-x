@@ -9,7 +9,16 @@ import roundPlayerStates from "./tables/roundPlayerStates";
 import rounds from "./tables/rounds";
 import scoreBreakdowns from "./tables/scoreBreakdowns";
 
-export default $DatabaseSchema.make({
+const databaseSchema: $DatabaseSchema.DatabaseSchema<
+  typeof idempotencyKeys |
+  typeof matches |
+  typeof playerSessions |
+  typeof players |
+  typeof roundEvents |
+  typeof roundPlayerStates |
+  typeof rounds |
+  typeof scoreBreakdowns
+> = $DatabaseSchema.make({
   idempotencyKeys,
   matches,
   playerSessions,
@@ -19,3 +28,5 @@ export default $DatabaseSchema.make({
   rounds,
   scoreBreakdowns,
 });
+
+export default databaseSchema;

@@ -1,7 +1,7 @@
 import { HOUR, MINUTE, RateLimiter } from "@convex-dev/rate-limiter";
 import * as Effect from "effect/Effect";
 
-import { components } from "../../convex/_generated/api";
+import { components } from "../_generated/components";
 import { rateLimited } from "../../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../../shared/lib/errors/infrastructure";
 
