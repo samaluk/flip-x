@@ -54,6 +54,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
       });
       if (Either.isLeft(result)) {
         toast.error(translateAppErrorToast(result.left, tErrors));
+        return;
       }
     } catch {
       toast.error(t("toastUpdateFailed"));

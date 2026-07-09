@@ -159,29 +159,6 @@ export class InvalidConfirmation extends Schema.TaggedError<InvalidConfirmation>
 export const invalidConfirmation = (): InvalidConfirmation =>
   new InvalidConfirmation({ message: W.InvalidConfirmation });
 
-export type AppError =
-  | MatchNotFound
-  | InvalidTurn
-  | InvalidAction
-  | InvalidTarget
-  | InvalidHostName
-  | InvalidGameSettings
-  | LobbyCodeUnavailable
-  | LobbyNotFound
-  | InvalidPlayerName
-  | NameAlreadyTaken
-  | InvalidPlayerColor
-  | PlayerColorAlreadyTaken
-  | NotHost
-  | InsufficientPlayers
-  | PlayerNotJoined
-  | RateLimited
-  | InvalidMatchState
-  | StaleGameState
-  | UnsupportedRelationship
-  | UnsupportedTable
-  | InvalidConfirmation;
-
 export const AppErrorSchema = Schema.Union(
   MatchNotFound,
   InvalidTurn,
@@ -205,6 +182,8 @@ export const AppErrorSchema = Schema.Union(
   UnsupportedTable,
   InvalidConfirmation,
 );
+
+export type AppError = Schema.Schema.Type<typeof AppErrorSchema>;
 
 const isAppError = Schema.is(AppErrorSchema);
 

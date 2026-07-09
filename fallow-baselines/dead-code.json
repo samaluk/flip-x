@@ -51,7 +51,6 @@
     "tests/test-intl.tsx:@/messages/en.json",
     "tests/unit/infrastructure/match-setup-analytics.test.ts:@/convex/_generated/dataModel",
     "tests/unit/infrastructure/run-command-program.test.ts:@/convex/_generated/dataModel",
-    "tests/unit/infrastructure/serializers.test.ts:@/convex/_generated/dataModel",
     "tests/unit/infrastructure/serializers.test.ts:@/convex/_generated/dataModel"
   ],
   "unlisted_dependencies": [],
