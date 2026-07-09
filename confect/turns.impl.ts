@@ -2,6 +2,7 @@ import { FunctionImpl, GroupImpl } from "@confect/server";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 
+import { retainAppErrors } from "../shared/lib/errors/domain";
 import databaseSchema from "./_generated/schema";
 import groupSpec from "./turns.spec";
 import { MutationCtx } from "./_generated/services";
@@ -15,7 +16,7 @@ const takeTurn = FunctionImpl.make(databaseSchema, groupSpec, "takeTurn", (args)
       ...args,
       matchId: matchIdFromConfectWire(args.matchId),
     });
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 const resolveAction = FunctionImpl.make(databaseSchema, groupSpec, "resolveAction", (args) =>
   Effect.gen(function* () {
@@ -25,7 +26,7 @@ const resolveAction = FunctionImpl.make(databaseSchema, groupSpec, "resolveActio
       matchId: matchIdFromConfectWire(args.matchId),
       targetPlayerId: playerIdFromConfectWire(args.targetPlayerId),
     });
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 
 export default GroupImpl.make(databaseSchema, groupSpec).pipe(

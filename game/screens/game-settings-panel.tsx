@@ -2,6 +2,7 @@
 
 import { Settings2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
+import * as Either from "effect/Either";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -16,7 +17,7 @@ import {
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 import { toLooseTranslate } from "@/shared/lib/loose-translate";
-import { translateConvexErrorToast } from "@/shared/lib/convex-error";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import {
   Accordion,
@@ -46,14 +47,17 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   async function updateSettings(patch: { targetScore?: number; maxNumberCardValue?: number }) {
     setIsUpdating(true);
     try {
-      await updateMatchSettings({
+      const result = await updateMatchSettings({
         matchId: snapshot.matchId,
         expectedVersion: snapshot.version,
         patch,
       });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "";
-      toast.error(message ? translateConvexErrorToast(message, tErrors) : t("toastUpdateFailed"));
+      if (Either.isLeft(result)) {
+        toast.error(translateAppErrorToast(result.left, tErrors));
+        return;
+      }
+    } catch {
+      toast.error(t("toastUpdateFailed"));
     } finally {
       setIsUpdating(false);
     }

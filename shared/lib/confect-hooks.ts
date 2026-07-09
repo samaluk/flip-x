@@ -5,6 +5,7 @@
 import { Ref } from "@confect/core";
 import {
   type OptimisticLocalStore,
+  type InvokeReturn,
   type ReactMutation,
   useMutation as useConfectMutation,
   useQuery as useConfectQuery,
@@ -35,7 +36,7 @@ export type SessionConfectOptimisticLocalStore = {
 };
 type SessionConfectMutation<Mutation extends Ref.AnyPublicMutation> = ((
   args: SessionlessArgs<Mutation>,
-) => Promise<Ref.Returns<Mutation>>) & {
+) => InvokeReturn<Mutation>) & {
   withOptimisticUpdate(
     optimisticUpdate: (
       localStore: SessionConfectOptimisticLocalStore,

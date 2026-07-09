@@ -1,14 +1,14 @@
 {
   "finding_counts": {
     "app/[locale]/home-client.tsx": {
+      "complexity_critical": {
+        "count": 1
+      },
       "crap_critical": {
         "count": 1
       },
       "crap_high": {
         "count": 1
-      },
-      "crap_moderate": {
-        "count": 2
       }
     },
     "game/cards/action-content.tsx": {
@@ -27,12 +27,20 @@
       },
       "crap_critical": {
         "count": 1
-      },
-      "crap_moderate": {
+      }
+    },
+    "game/screens/game-table-view.tsx": {
+      "complexity_moderate": {
         "count": 1
       }
     },
     "game/ui/player-lane.tsx": {
+      "complexity_high": {
+        "count": 1
+      },
+      "complexity_moderate": {
+        "count": 1
+      },
       "crap_moderate": {
         "count": 1
       }
@@ -54,5 +62,7 @@
     }
   },
   "runtime_coverage_findings": [],
-  "target_keys": []
+  "target_keys": [
+    "game/ui/player-lane.tsx:complexity"
+  ]
 }

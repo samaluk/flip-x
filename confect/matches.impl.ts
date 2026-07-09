@@ -3,6 +3,7 @@ import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 
 import { makePostHogConvexAnalyticsLayer } from "../shared/analytics/posthog-convex";
+import { retainAppErrors } from "../shared/lib/errors/domain";
 import databaseSchema from "./_generated/schema";
 import groupSpec from "./matches.spec";
 import { MutationCtx, QueryCtx } from "./_generated/services";
@@ -19,7 +20,7 @@ const createMatch = FunctionImpl.make(databaseSchema, groupSpec, "createMatch", 
     return yield* createMatchForSession(ctx, args).pipe(
       Effect.provide(makePostHogConvexAnalyticsLayer(ctx)),
     );
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 const getMatchSnapshotImpl = FunctionImpl.make(
   databaseSchema,
@@ -31,13 +32,13 @@ const getMatchByCodeImpl = FunctionImpl.make(databaseSchema, groupSpec, "getMatc
   Effect.gen(function* () {
     const ctx = yield* QueryCtx;
     return yield* getMatchByCode(ctx, args.lobbyCode);
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 const joinByCode = FunctionImpl.make(databaseSchema, groupSpec, "joinByCode", (args) =>
   Effect.gen(function* () {
     const ctx = yield* MutationCtx;
     return yield* joinByCodeForSession(ctx, args);
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 const joinMatch = FunctionImpl.make(databaseSchema, groupSpec, "joinMatch", (args) =>
   Effect.gen(function* () {
@@ -46,7 +47,7 @@ const joinMatch = FunctionImpl.make(databaseSchema, groupSpec, "joinMatch", (arg
       ...args,
       matchId: matchIdFromConfectWire(args.matchId),
     }).pipe(Effect.provide(makePostHogConvexAnalyticsLayer(ctx)));
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 const startMatch = FunctionImpl.make(databaseSchema, groupSpec, "startMatch", (args) =>
   Effect.gen(function* () {
@@ -56,7 +57,7 @@ const startMatch = FunctionImpl.make(databaseSchema, groupSpec, "startMatch", (a
       matchId: matchIdFromConfectWire(args.matchId),
       deterministicStart: cloneDeterministicStart(args.deterministicStart),
     });
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 const updateMatchSettings = FunctionImpl.make(
   databaseSchema,
@@ -69,7 +70,7 @@ const updateMatchSettings = FunctionImpl.make(
         ...args,
         matchId: matchIdFromConfectWire(args.matchId),
       });
-    }).pipe(Effect.orDie),
+    }).pipe(retainAppErrors),
 );
 
 export default GroupImpl.make(databaseSchema, groupSpec).pipe(

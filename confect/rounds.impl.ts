@@ -2,6 +2,7 @@ import { FunctionImpl, GroupImpl } from "@confect/server";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
 
+import { retainAppErrors } from "../shared/lib/errors/domain";
 import databaseSchema from "./_generated/schema";
 import groupSpec from "./rounds.spec";
 import { MutationCtx } from "./_generated/services";
@@ -17,7 +18,7 @@ const startNextRound = FunctionImpl.make(databaseSchema, groupSpec, "startNextRo
       matchId: matchIdFromConfectWire(args.matchId),
       deterministicStart: cloneDeterministicStart(args.deterministicStart),
     });
-  }).pipe(Effect.orDie),
+  }).pipe(retainAppErrors),
 );
 
 export default GroupImpl.make(databaseSchema, groupSpec).pipe(

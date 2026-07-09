@@ -1,5 +1,7 @@
 import { translateConvexError } from "./errors/app-error-wire-code";
 import {
+  type AppError,
+  appErrorWireCode,
   InsufficientPlayers,
   InvalidAction,
   InvalidConfirmation,
@@ -23,7 +25,7 @@ import {
   UnsupportedTable,
 } from "./errors/domain";
 
-export function translateConvexErrorToast(message: string, tErrors: unknown): string {
+function translateConvexErrorToast(message: string, tErrors: unknown): string {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- next-intl translator from useTranslations("Errors")
   const t = tErrors as (key: string, values?: { message: string }) => string;
   return translateConvexError(
@@ -34,6 +36,10 @@ export function translateConvexErrorToast(message: string, tErrors: unknown): st
         message: detail,
       }),
   );
+}
+
+export function translateAppErrorToast(error: AppError, tErrors: unknown): string {
+  return translateConvexErrorToast(appErrorWireCode(error), tErrors);
 }
 
 /** AppError class constructors (used from tests via `instanceof`; kept reachable from app entry for static analysis). */

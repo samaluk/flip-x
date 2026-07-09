@@ -2,7 +2,7 @@ import { Presence } from "@convex-dev/presence";
 import { v } from "convex/values";
 import * as Effect from "effect/Effect";
 
-import { components } from "../convex/_generated/api";
+import { components } from "./_generated/components";
 import type { Id } from "../convex/_generated/dataModel";
 import { mutation, query } from "../convex/_generated/server";
 import { playerIdFromConfectWire } from "./lib/convex-id-bridge";
