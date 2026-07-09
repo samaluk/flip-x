@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import * as Effect from "effect/Effect";
 import type { SessionId } from "convex-helpers/server/sessions";
 
 import type { Doc, Id } from "../../convex/_generated/dataModel";
