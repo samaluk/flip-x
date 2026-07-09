@@ -206,7 +206,7 @@ export const AppErrorSchema = Schema.Union(
   InvalidConfirmation,
 );
 
-export const isAppError = Schema.is(AppErrorSchema);
+const isAppError = Schema.is(AppErrorSchema);
 
 export function retainAppErrors<A, E, R>(
   effect: Effect.Effect<A, E, R>,
