@@ -24,8 +24,8 @@ importers:
         specifier: 0.3.5
         version: 0.3.5(convex-helpers@0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.1(react@19.2.7))(hono@4.12.12)(react@19.2.7)(typescript@6.0.3)(zod@3.25.76))(convex@1.42.1(react@19.2.7))
       '@convex-dev/presence':
-        specifier: 0.3.1
-        version: 0.3.1(convex@1.42.1(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.3.2
+        version: 0.3.2(convex@1.42.1(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@convex-dev/rate-limiter':
         specifier: 0.3.2
         version: 0.3.2(convex@1.42.1(react@19.2.7))(react@19.2.7)
@@ -436,8 +436,8 @@ packages:
       convex: ^1.35.0
       convex-helpers: ^0.1.115
 
-  '@convex-dev/presence@0.3.1':
-    resolution: {integrity: sha512-dDjMCGtbxkLlZJI+z5CHAT7qg2+Nww1I/SUVeK9ZZxDkg7e7WAbxzaUUx9HxtXW5vzXXIduyVLqJ54eC1YW3UA==}
+  '@convex-dev/presence@0.3.2':
+    resolution: {integrity: sha512-3Q4LOHW4hSDFWG8XZZv/xYya8WGbpFNEkyvxBYM6NLXTWSxc2ifw/8URRQziIhRx97v1VnSjrExntgXMGn4vLg==}
     peerDependencies:
       convex: ^1.24.8
       expo-crypto: '>=14.1.0'
@@ -6085,7 +6085,7 @@ snapshots:
       convex: 1.42.1(react@19.2.7)
       convex-helpers: 0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.1(react@19.2.7))(hono@4.12.12)(react@19.2.7)(typescript@6.0.3)(zod@3.25.76)
 
-  '@convex-dev/presence@0.3.1(convex@1.42.1(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@convex-dev/presence@0.3.2(convex@1.42.1(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       convex: 1.42.1(react@19.2.7)
       react: 19.2.7
