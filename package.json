@@ -77,7 +77,7 @@
   "devDependencies": {
     "@confect/cli": "9.2.3",
     "@confect/test": "9.2.3",
-    "@effect/vitest": "0.29.0",
+    "@effect/vitest": "0.30.0",
     "@google/design.md": "0.3.0",
     "@lingual/i18n-check": "0.9.5",
     "@playwright/test": "1.61.1",
