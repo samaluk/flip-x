@@ -169,8 +169,8 @@ importers:
         specifier: 0.24.0
         version: 0.24.0
       portless:
-        specifier: 0.15.1
-        version: 0.15.1
+        specifier: 0.15.2
+        version: 0.15.2
       react-doctor:
         specifier: 0.7.6
         version: 0.7.6(eslint@10.4.1(jiti@2.7.0))(oxlint-tsgolint@0.24.0)
@@ -4791,8 +4791,8 @@ packages:
   po-parser@2.1.1:
     resolution: {integrity: sha512-ECF4zHLbUItpUgE3OTtLKlPjeBN+fKEczj2zYjDfCGOzicNs0GK3Vg2IoAYwx7LH/XYw43fZQP6xnZ4TkNxSLQ==}
 
-  portless@0.15.1:
-    resolution: {integrity: sha512-MQTt405HrcIa3m9OSKpH6WjJDbfNP4oFMNg0VzAoUO4B19l1eFJBFcSWfQY8KYMhzZVfa+Gea2OUrlDm8+/M4A==}
+  portless@0.15.2:
+    resolution: {integrity: sha512-jyTXeRUfYgVerW/YMP1bexm79da0+55K0HgHQukHEJMmpp9AsXKVLywF4F+NnutSO1yV91AX2IK7DWAH+i2pKg==}
     engines: {node: '>=24'}
     os: [darwin, linux, win32]
     hasBin: true
@@ -9905,7 +9905,7 @@ snapshots:
 
   po-parser@2.1.1: {}
 
-  portless@0.15.1: {}
+  portless@0.15.2: {}
 
   postcss-selector-parser@7.1.1:
     dependencies:
