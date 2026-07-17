@@ -13,7 +13,7 @@ jobs:
 
       # Plain Node only — delete-convex-preview.mjs has no pnpm deps. setup-toolchain
       # enables pnpm cache on GitHub-hosted runners, which fails post-job without install.
-      - uses: actions/setup-node@v6.4.0
+      - uses: actions/setup-node@v6.5.0
         with:
           node-version-file: package.json
 
