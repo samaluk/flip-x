@@ -51,7 +51,7 @@
     "@confect/react": "9.2.3",
     "@confect/server": "9.2.3",
     "@convex-dev/migrations": "0.3.5",
-    "@convex-dev/presence": "0.3.2",
+    "@convex-dev/presence": "0.4.0",
     "@convex-dev/rate-limiter": "0.3.2",
     "@posthog/convex": "2.0.32",
     "@posthog/next": "0.8.0",
