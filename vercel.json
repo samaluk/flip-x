@@ -1,4 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm exec convex deploy --cmd 'pnpm build'"
+  "buildCommand": "pnpm exec convex deploy --cmd 'pnpm build'",
+  "git": {
+    "deploymentEnabled": {
+      "master": true,
+      "*": false
+    }
+  }
 }
