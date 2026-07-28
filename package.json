@@ -104,8 +104,7 @@
     "portless": "0.15.4",
     "react-doctor": "0.9.1",
     "tailwindcss": "4.3.3",
-    "typescript": "6.0.3",
-    "typescript-7": "npm:typescript@7.0.2",
+    "typescript": "7.0.2",
     "vitest": "4.1.10"
   },
   "engines": {
