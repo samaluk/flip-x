@@ -17,7 +17,8 @@ live turn tracking, action-card resolution, and automatic scoring to 200 points.
 
 - Runtime stack: TypeScript 6.0.3 (programmatic API / Next), TypeScript 7.0 RC
   (`typescript-7`, `tsc`) for native compiler parity with typescript-go,
-  Next.js 16.2.4, React 19.2.5, Convex 1.37.0, Confect 5.0.0, Effect 3.21.2.
+  Next.js 16.3.0-preview.9, React 19.2.5, Convex 1.37.0, Confect 5.0.0,
+  Effect 3.21.2.
 - UI stack: Tailwind CSS 4, shadcn/ui, Base UI, Lucide icons, Motion.
 - Testing stack: Vitest 4.1.5, Playwright 1.59.1, convex-test.
 - Package manager: `pnpm@11.13.1`.
