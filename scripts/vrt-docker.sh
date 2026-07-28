@@ -11,8 +11,14 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-# Keep in sync with @playwright/test / Docker tag (https://playwright.dev/docs/docker)
-IMAGE="mcr.microsoft.com/playwright:v1.61.0-noble"
+# Derive from package.json so Renovate Playwright bumps stay in sync with the Docker tag.
+# https://playwright.dev/docs/docker
+PLAYWRIGHT_VERSION="$(node -p "require('${ROOT}/package.json').devDependencies['@playwright/test']")"
+if [[ -z "${PLAYWRIGHT_VERSION}" || "${PLAYWRIGHT_VERSION}" == "undefined" ]]; then
+  echo "error: @playwright/test version missing from package.json" >&2
+  exit 1
+fi
+IMAGE="mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble"
 
 EXTRA=()
 if [[ "${1:-}" == "--update" ]]; then
