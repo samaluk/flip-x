@@ -114,7 +114,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     disabled={isUpdating}
                     onClick={() => void updateSettings(preset.settings)}
                     className={cn(
-                      "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-left whitespace-normal",
+                      "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-start whitespace-normal",
                       isRecommended && !isActive ? "border-primary/70" : "",
                     )}
                   >

@@ -39,7 +39,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
         data-testid="round-history-scroll"
         className="overflow-x-auto rounded-2xl border border-dashed"
       >
-        <table className="w-full min-w-2xl border-separate border-spacing-0 text-left">
+        <table className="w-full min-w-2xl border-separate border-spacing-0 text-start">
           <thead>
             <tr className="bg-muted/35">
               <th className="sticky inset-s-0 z-20 min-w-40 border-b bg-background px-4 py-3 text-xs font-medium tracking-wide uppercase">
