@@ -156,7 +156,7 @@ function PlayerLaneSidebar({
           ) : null}
         </Avatar>
 
-        <div className="min-w-0 flex-1 text-left">
+        <div className="min-w-0 flex-1 text-start">
           <h3 className="truncate font-heading text-sm leading-5 font-medium tracking-tight text-foreground">
             {player.displayName}
           </h3>

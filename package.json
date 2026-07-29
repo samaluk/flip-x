@@ -99,7 +99,7 @@
     "jsdom": "29.1.1",
     "oxfmt": "0.60.0",
     "oxlint": "1.75.0",
-    "oxlint-tailwindcss": "1.4.0",
+    "oxlint-tailwindcss": "1.5.0",
     "oxlint-tsgolint": "7.0.2001",
     "portless": "0.15.4",
     "react-doctor": "0.9.1",
