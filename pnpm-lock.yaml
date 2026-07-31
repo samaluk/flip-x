@@ -21,8 +21,8 @@ importers:
         specifier: 9.2.5
         version: 9.2.5(83b0332410a04eb9e725c97b24a5d421)
       '@convex-dev/migrations':
-        specifier: 0.3.5
-        version: 0.3.5(convex-helpers@0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.3(react@19.2.8))(hono@4.12.12)(react@19.2.8)(typescript@7.0.2)(zod@3.25.76))(convex@1.42.3(react@19.2.8))
+        specifier: 0.3.6
+        version: 0.3.6(convex-helpers@0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.3(react@19.2.8))(hono@4.12.12)(react@19.2.8)(typescript@7.0.2)(zod@3.25.76))(convex@1.42.3(react@19.2.8))
       '@convex-dev/presence':
         specifier: 0.4.0
         version: 0.4.0(convex@1.42.3(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -430,10 +430,10 @@ packages:
       convex: ^1.36.1
       react: ^18.3.1 || ^19.0.0
 
-  '@convex-dev/migrations@0.3.5':
-    resolution: {integrity: sha512-vj5qjY5XB8laX9WvvxeIFZe8sNW8DGvJ5cPo1zvpjJzYnPLqs5C+VG9HP6sSkEW2QGhsfYOZv56FUNkHiLe1wA==}
+  '@convex-dev/migrations@0.3.6':
+    resolution: {integrity: sha512-cURYG4uy323MDi55QWNF5HAGemS4QspSgJ4uP+gGPAJdBLBbk2KFO7toFlKhacc1NinJQiG6+D/YEFyFyBS1/A==}
     peerDependencies:
-      convex: ^1.35.0
+      convex: ^1.42.0
       convex-helpers: ^0.1.115
 
   '@convex-dev/presence@0.4.0':
@@ -5406,10 +5406,6 @@ packages:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
     engines: {node: '>=6'}
 
-  tough-cookie@6.0.1:
-    resolution: {integrity: sha512-LktZQb3IeoUWB9lqR5EWTHgW/VTITCXg4D21M+lvybRVdylLrRMnqaIONLVb5mav8vM19m44HIcGq4qASeu2Qw==}
-    engines: {node: '>=16'}
-
   tough-cookie@6.0.2:
     resolution: {integrity: sha512-exgYmnmL/sJpR3upZfXG5PoatXQii55xAiXGXzY+sROLZ/Y+SLcp9PgJNI9Vz37HpQ74WvDcLT8eqm+kV3FzrA==}
     engines: {node: '>=16'}
@@ -6126,7 +6122,7 @@ snapshots:
       convex: 1.42.3(react@19.2.8)
       react: 19.2.8
 
-  '@convex-dev/migrations@0.3.5(convex-helpers@0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.3(react@19.2.8))(hono@4.12.12)(react@19.2.8)(typescript@7.0.2)(zod@3.25.76))(convex@1.42.3(react@19.2.8))':
+  '@convex-dev/migrations@0.3.6(convex-helpers@0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.3(react@19.2.8))(hono@4.12.12)(react@19.2.8)(typescript@7.0.2)(zod@3.25.76))(convex@1.42.3(react@19.2.8))':
     dependencies:
       convex: 1.42.3(react@19.2.8)
       convex-helpers: 0.1.120(@standard-schema/spec@1.1.0)(convex@1.42.3(react@19.2.8))(hono@4.12.12)(react@19.2.8)(typescript@7.0.2)(zod@3.25.76)
@@ -9764,7 +9760,7 @@ snapshots:
       rettime: 0.10.1
       statuses: 2.0.2
       strict-event-emitter: 0.5.1
-      tough-cookie: 6.0.1
+      tough-cookie: 6.0.2
       type-fest: 5.5.0
       until-async: 3.0.2
       yargs: 17.7.2
@@ -10732,11 +10728,6 @@ snapshots:
   toml@3.0.0: {}
 
   totalist@3.0.1: {}
-
-  tough-cookie@6.0.1:
-    dependencies:
-      tldts: 7.0.28
-    optional: true
 
   tough-cookie@6.0.2:
     dependencies:

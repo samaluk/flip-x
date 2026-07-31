@@ -50,7 +50,7 @@
     "@confect/core": "9.2.5",
     "@confect/react": "9.2.5",
     "@confect/server": "9.2.5",
-    "@convex-dev/migrations": "0.3.5",
+    "@convex-dev/migrations": "0.3.6",
     "@convex-dev/presence": "0.4.0",
     "@convex-dev/rate-limiter": "0.3.2",
     "@posthog/convex": "2.0.33",
