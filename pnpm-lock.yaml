@@ -100,8 +100,8 @@ importers:
         specifier: 0.30.0
         version: 0.30.0(effect@3.22.0)(vitest@4.1.10)
       '@google/design.md':
-        specifier: 0.3.0
-        version: 0.3.0(supports-color@8.1.1)
+        specifier: 0.4.0
+        version: 0.4.0(supports-color@8.1.1)
       '@lingual/i18n-check':
         specifier: 0.9.5
         version: 0.9.5
@@ -1113,8 +1113,9 @@ packages:
       ts-jest:
         optional: true
 
-  '@google/design.md@0.3.0':
-    resolution: {integrity: sha512-/mhxpEkR4iWNuHRN3xEOlvP0nR6rlZ/CONADzh3TbqsaTPYxXJojH4GjW3G9/U9uF2fuOdBUdRB72GTbWLRbRg==}
+  '@google/design.md@0.4.0':
+    resolution: {integrity: sha512-7aNIv6hslxIZ9igXq1abbVu+ue/ft/oFMUrAuhzpVFijGr9v+l0CkkCBQsHozucNiZHIBS43XC6l8gYDZRys9Q==}
+    engines: {node: '>=18.0.0'}
     hasBin: true
 
   '@hono/node-server@1.19.13':
@@ -6633,7 +6634,7 @@ snapshots:
       json-stable-stringify: 1.3.0
       typescript: 6.0.3
 
-  '@google/design.md@0.3.0(supports-color@8.1.1)':
+  '@google/design.md@0.4.0(supports-color@8.1.1)':
     dependencies:
       citty: 0.1.6
       remark-frontmatter: 5.0.0(supports-color@8.1.1)

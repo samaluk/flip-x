@@ -78,7 +78,7 @@
     "@confect/cli": "9.2.5",
     "@confect/test": "9.2.5",
     "@effect/vitest": "0.30.0",
-    "@google/design.md": "0.3.0",
+    "@google/design.md": "0.4.0",
     "@lingual/i18n-check": "0.9.5",
     "@playwright/test": "1.62.0",
     "@posthog/nextjs-config": "1.9.68",
