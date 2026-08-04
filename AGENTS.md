@@ -179,6 +179,15 @@ Use this planning rule to shape the implementation:
 
 ## Agent skills
 
+Engineering workflow skills from [mattpocock/skills](https://github.com/mattpocock/skills)
+are installed project-locally under `.agents/skills/` via the
+[skills CLI](https://github.com/vercel-labs/skills) and pinned in
+[`skills-lock.json`](skills-lock.json). Prefer `/ask-matt` to route; the
+main build path is `/grill-with-docs` → `/to-spec` → `/to-tickets` →
+`/implement` (with `/tdd` + `/code-review`). On-ramps include `/triage`,
+`/diagnosing-bugs`, and `/wayfinder`. Restore with
+`npx skills experimental_install` when needed.
+
 ### Issue tracker
 
 Issues and PRDs for this repo live in GitHub Issues, managed with `gh`. See `docs/agents/issue-tracker.md`.
