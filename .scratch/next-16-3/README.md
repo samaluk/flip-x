@@ -8,6 +8,7 @@
 - `typescript@7.0.2`, `experimental.useTypeScriptCli: true` — see #480 (closed)
 - `next@16.3.0` stable — see #479 (closed)
 - Turbopack filesystem build cache in CI — see #481 (closed)
+- Zero-config 16.3 wins + immutable static assets — see #482 (closed)
 
 ## Local tickets → GitHub
 
