@@ -4,19 +4,30 @@
 **Ticket:** https://github.com/samaluk/flip-x/issues/481  
 **Local spec:** `.scratch/next-16-3/issues/02-turbopack-build-cache-ci.md`
 
-## Prompt (paste into a fresh agent thread)
+## Spawn next thread
 
+Requires `CURSOR_API_KEY` ([Cursor integrations](https://cursor.com/dashboard/integrations)).
+
+```bash
+export CURSOR_API_KEY="cursor_..."
+
+pnpm --dir ~/dev/personal/cursor-thread-spawn cursor:spawn -- "Implement GitHub issue #481 for flip-x (Next.js 16.3 adoption epic #478).
+
+Repo: /Users/smaluk/dev/personal/flip-x on branch next-16-3-preview-to-stable (next@16.3.0 stable, #479 done).
+
+Read: .scratch/next-16-3/issues/02-turbopack-build-cache-ci.md, .scratch/next-16-3/spec.md, node_modules/next/dist/docs/ for turbopackFileSystemCache.
+
+Tune CI for Turbopack filesystem build cache: review .github/workflows/ci.yml against Next 16.3 defaults; align cache paths/keys; document in AGENTS.md.
+
+Acceptance: turbopackFileSystemCache documented; CI cache step updated; pnpm lint && pnpm build pass.
+
+When done: commit, close #481 (gh), update README.md and this QUEUE.md for #482, spawn #482 the same way (see /spawn-cursor-thread skill)."
 ```
-Implement GitHub issue #481 for flip-x (Next.js 16.3 adoption epic #478).
 
-Read:
-- .scratch/next-16-3/issues/02-turbopack-build-cache-ci.md
-- .scratch/next-16-3/spec.md
-- node_modules/next/dist/docs/ for turbopackFileSystemCache
+Block until completion:
 
-Tune CI for Turbopack filesystem build cache: review `.github/workflows/ci.yml` cache step against Next 16.3 defaults, document behavior, confirm cache hits on repeat builds.
-
-When done: close #481, commit on a branch, and enqueue the next frontier ticket (#482 zero-config wins) the same way — write `.scratch/next-16-3/QUEUE.md` and open the automation handoff.
+```bash
+pnpm --dir ~/dev/personal/cursor-thread-spawn cursor:spawn -- --wait "<same task>"
 ```
 
 ## Frontier after #481
