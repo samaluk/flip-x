@@ -1,5 +1,7 @@
 # Testing
 
+Testing style and test-construction guidance: [`testing-principles.md`](testing-principles.md).
+
 The repo is optimized for fast local PR signal first. Pure engine, infrastructure, contract, UI, and Confect-backed tests are the default confidence layer. Backend smoke, VRT, and E2E suites are narrower and should only cover runtime wiring or user-visible regressions.
 
 ## Fast Local Default
