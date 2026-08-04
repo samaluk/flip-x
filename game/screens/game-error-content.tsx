@@ -2,15 +2,20 @@
 
 import { AlertCircleIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { usePostHog } from "@posthog/next";
 
 import { Button } from "@/shared/ui/button";
 
-export default function GamePageError({ error, reset }: { error: Error; reset: () => void }) {
+export type GameErrorContentProps = {
+  error: Error;
+  retry: () => void;
+  locale: string;
+  matchId: string;
+};
+
+export function GameErrorContent({ error, retry, locale, matchId }: GameErrorContentProps) {
   const t = useTranslations("Game");
-  const params = useParams<{ locale: string; matchId: string }>();
   const posthog = usePostHog();
 
   useEffect(() => {
@@ -20,11 +25,11 @@ export default function GamePageError({ error, reset }: { error: Error; reset: (
     }
 
     posthog.captureException(error, {
-      locale: params.locale,
-      matchId: params.matchId,
+      locale,
+      matchId,
       route: "/[locale]/game/[matchId]",
     });
-  }, [error, params.locale, params.matchId, posthog]);
+  }, [error, locale, matchId, posthog]);
 
   return (
     <div className="flex min-h-svh flex-1 items-center justify-center px-4">
@@ -38,7 +43,7 @@ export default function GamePageError({ error, reset }: { error: Error; reset: (
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">{error.message}</p>
         </div>
-        <Button variant="outline" onClick={reset} className="mx-auto">
+        <Button variant="outline" onClick={() => retry()} className="mx-auto">
           {t("tryAgain")}
         </Button>
       </div>
