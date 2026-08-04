@@ -4,7 +4,9 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { GameErrorContent } from "./game-error-content";
 import { withIntlEn } from "@/tests/test-intl";
 
-const captureException = vi.fn();
+const { captureException } = vi.hoisted(() => ({
+  captureException: vi.fn(),
+}));
 
 vi.mock("@posthog/next", () => ({
   usePostHog: () => ({
@@ -21,6 +23,11 @@ describe("GameErrorContent", () => {
   });
 
   afterEach(() => {
+    if (originalPostHogKey === undefined) {
+      delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
+      return;
+    }
+
     process.env.NEXT_PUBLIC_POSTHOG_KEY = originalPostHogKey;
   });
 
