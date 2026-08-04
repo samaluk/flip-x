@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
-import { GameErrorContent } from "./game-error-boundary";
+import { GameErrorContent } from "./game-error-content";
 import { withIntlEn } from "@/tests/test-intl";
 
 const captureException = vi.fn();
