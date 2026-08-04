@@ -190,3 +190,8 @@ Use the default canonical labels: `needs-triage`, `needs-info`, `ready-for-agent
 ### Domain docs
 
 Single-context layout: root `CONTEXT.md` plus `docs/adr/`; read relevant docs when exploring. See `docs/agents/domain.md`.
+
+### Agent learning loop
+
+- Before substantial work, run `pnpx frog list`; log unresolved development friction with `pnpx frog log`.
+- Keep only verified durable discoveries in temporary [`LESSONS.md`](LESSONS.md), then promote them with [the shared learning-loop skill](.agents/skills/lessons-to-config/SKILL.md) and remove them from the inbox. See [`docs/agents/learning-loop.md`](docs/agents/learning-loop.md).
