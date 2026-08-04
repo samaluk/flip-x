@@ -2,11 +2,11 @@
 
 <!-- BEGIN:nextjs-agent-rules -->
 
-## Next.js Version Warning
+# This is NOT the Next.js you know
 
-This is not the Next.js version you may know from training data. Before changing
-Next.js code, read the relevant guide in `node_modules/next/dist/docs/` and heed
-deprecation notices.
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
 
@@ -16,7 +16,7 @@ Flip-x is a shared-table web app for playing the press-your-luck card game with
 live turn tracking, action-card resolution, and automatic scoring to 200 points.
 
 - Runtime stack: TypeScript 7.0.2 (Next `experimental.useTypeScriptCli`),
-  Next.js 16.3 preview, React 19.2.8, Convex, Confect, Effect.
+  Next.js 16.3, React 19.2.8, Convex, Confect, Effect.
 - UI stack: Tailwind CSS 4, shadcn/ui, Base UI, Lucide icons, Motion.
 - Testing stack: Vitest 4.1.5, Playwright 1.59.1, convex-test.
 - Package manager: `pnpm@11.13.1`.
@@ -154,6 +154,14 @@ Use this planning rule to shape the implementation:
 
 - Production build: `pnpm build`.
 - Production start after build: `pnpm start`.
+- **Turbopack filesystem cache (Next 16.3):** `turbopackFileSystemCacheForBuild`
+  and `turbopackFileSystemCacheForDev` default to `true`; no `next.config.ts`
+  flags are required. Build output is stored under `.next/cache/turbopack` (dev
+  uses `.next/dev/cache/turbopack`). Warm builds reuse prior compilation work
+  when `.next/cache` is preserved. CI caches `.next/cache` in
+  `.github/workflows/ci.yml` with a lockfile + source hash key and a lockfile
+  restore key so repeat PR builds get partial hits after source-only changes.
+  See `node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/turbopackFileSystemCache.md`.
 - Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL` (your production Convex deployment URL).
 - Convex backend env vars are managed in the Convex dashboard or via `npx convex env set`.
 
