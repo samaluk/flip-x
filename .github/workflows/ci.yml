@@ -64,11 +64,15 @@ jobs:
       - name: Run fast Vitest suites
         run: pnpm test
 
-      - name: Cache Next.js
+      # Next 16.3 enables turbopackFileSystemCacheForBuild by default; Turbopack
+      # writes to .next/cache/turbopack. Cache the whole .next/cache tree.
+      - name: Cache Next.js build
         uses: actions/cache@v6.1.0
         with:
           path: .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('**/*.{js,jsx,ts,tsx,mjs,cjs}') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
 
       - name: Build
         run: pnpm build

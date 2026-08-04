@@ -154,6 +154,14 @@ Use this planning rule to shape the implementation:
 
 - Production build: `pnpm build`.
 - Production start after build: `pnpm start`.
+- **Turbopack filesystem cache (Next 16.3):** `turbopackFileSystemCacheForBuild`
+  and `turbopackFileSystemCacheForDev` default to `true`; no `next.config.ts`
+  flags are required. Build output is stored under `.next/cache/turbopack` (dev
+  uses `.next/dev/cache/turbopack`). Warm builds reuse prior compilation work
+  when `.next/cache` is preserved. CI caches `.next/cache` in
+  `.github/workflows/ci.yml` with a lockfile + source hash key and a lockfile
+  restore key so repeat PR builds get partial hits after source-only changes.
+  See `node_modules/next/dist/docs/01-app/03-api-reference/05-config/01-next-config-js/turbopackFileSystemCache.md`.
 - Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL` (your production Convex deployment URL).
 - Convex backend env vars are managed in the Convex dashboard or via `npx convex env set`.
 

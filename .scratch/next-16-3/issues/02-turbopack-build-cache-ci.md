@@ -4,9 +4,9 @@
 
 **Blocked by:** 01 — Move from 16.3 preview to 16.3 stable
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] `turbopackFileSystemCache` (or post-upgrade default) understood and documented for this repo
-- [ ] `.github/workflows/ci.yml` cache step reviewed — keep, extend, or replace the existing `actions/cache` on `.next/cache`
-- [ ] At least one CI build log confirms cache hits on a no-op follow-up build (or documented why not applicable)
-- [ ] No regression in build reliability on clean cache
+- [x] `turbopackFileSystemCache` (or post-upgrade default) understood and documented for this repo
+- [x] `.github/workflows/ci.yml` cache step reviewed — keep, extend, or replace the existing `actions/cache` on `.next/cache`
+- [x] At least one CI build log confirms cache hits on a no-op follow-up build (or documented why not applicable)
+- [x] No regression in build reliability on clean cache
