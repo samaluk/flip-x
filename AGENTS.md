@@ -168,3 +168,17 @@ Use this planning rule to shape the implementation:
 - Preview mode is enabled by `CI`, `GITHUB_ACTIONS`, or
   `CONVEX_TEST_USE_PREVIEW=1` and requires `CONVEX_DEPLOY_KEY`.
 - Local backend and E2E smoke tests do not need `CONVEX_DEPLOY_KEY`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues and PRDs for this repo live in GitHub Issues, managed with `gh`. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Use the default canonical labels: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, and `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout: root `CONTEXT.md` plus `docs/adr/`; read relevant docs when exploring. See `docs/agents/domain.md`.
