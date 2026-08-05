@@ -1,10 +1,13 @@
 {
   "analysis_identity": {
-    "mode": "syntactic",
-    "semantic_schema_version": 1,
-    "capabilities": [],
-    "project_config_hash": "",
-    "backend_family": "",
+    "mode": "type-aware",
+    "semantic_schema_version": 2,
+    "capabilities": [
+      "symbol-use",
+      "api-surface"
+    ],
+    "project_config_hash": "deferred:no-semantic-queries",
+    "backend_family": "typescript-go",
     "completeness": "complete"
   },
   "unused_files": [
