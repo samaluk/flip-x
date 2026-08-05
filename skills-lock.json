@@ -262,11 +262,6 @@
       "skillPath": "fallow/skills/fallow/SKILL.md",
       "computedHash": "ffa35a9c71ae6a8929d49413e629e17fe897478c7b1e27465a5dd102cb384da1"
     },
-    "find-skills": {
-      "source": "vercel-labs/skills",
-      "sourceType": "github",
-      "computedHash": "9e1c8b3103f92fa8092568a44fe64858de7c5c9dc65ce4bea8f168080e889cfd"
-    },
     "grill-me": {
       "source": "mattpocock/skills",
       "sourceType": "github",
