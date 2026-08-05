@@ -11,3 +11,5 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
 minimumReleaseAge: 0
+overrides:
+  fallow-type-aware: "3.11.0"

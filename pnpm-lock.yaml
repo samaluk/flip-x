@@ -4,6 +4,9 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+overrides:
+  fallow-type-aware: 3.11.0
+
 importers:
 
   .:
@@ -151,6 +154,9 @@ importers:
         specifier: 6.1.5
         version: 6.1.5
       fallow:
+        specifier: 3.11.0
+        version: 3.11.0
+      fallow-type-aware:
         specifier: 3.11.0
         version: 3.11.0
       jsdom:
@@ -3605,8 +3611,8 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
-  fallow-type-aware@3.10.0:
-    resolution: {integrity: sha512-cKvAYeDybtQKDA5cMX+EfTv4aP5U9qH7eVus2zXbZdZzfQNwetBwZaa9XqLcU1XxAklFm9jS7JWhAhbl1tbNKA==}
+  fallow-type-aware@3.11.0:
+    resolution: {integrity: sha512-DmANv0CT9MkU3LpKHQEAQdPYj4OfW4ZeZYsjr2QGk0FpQQrujIR+EfuE7CYjvZrAB5riE/lg2mSziM0sosUt8Q==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -8581,10 +8587,9 @@ snapshots:
 
   extend@3.0.2: {}
 
-  fallow-type-aware@3.10.0:
+  fallow-type-aware@3.11.0:
     dependencies:
       typescript: 7.0.2
-    optional: true
 
   fallow@3.11.0:
     dependencies:
@@ -8598,7 +8603,7 @@ snapshots:
       '@fallow-cli/linux-x64-musl': 3.11.0
       '@fallow-cli/win32-arm64-msvc': 3.11.0
       '@fallow-cli/win32-x64-msvc': 3.11.0
-      fallow-type-aware: 3.10.0
+      fallow-type-aware: 3.11.0
 
   fast-check@3.23.2:
     dependencies:

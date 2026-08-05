@@ -96,6 +96,7 @@
     "convex-test": "0.0.54",
     "eslint-plugin-i18next": "6.1.5",
     "fallow": "3.11.0",
+    "fallow-type-aware": "3.11.0",
     "jsdom": "30.0.1",
     "oxfmt": "0.61.0",
     "oxlint": "1.76.0",
