@@ -1,6 +1,7 @@
 ---
 title: 'Frog skills sync writes agent-tool symlink dirs outside .agents/skills'
 severity: 'minor'
+issue: 'samaluk/flip-x#512'
 ---
 
 ## Expected Behavior
