@@ -54,10 +54,10 @@ Write a friction entry.
 
 ```sh
 # Log friction in this repository
-frog log `pnpm test -- <files>` ignores file filters
+frog log 'pnpm test -- <files> ignores file filters'
 
 # Log friction in an upstream library
-frog log `getBalance` rejects a checksummed address --severity major --target viem
+frog log 'getBalance rejects a checksummed address' --severity major --target viem
 ```
 
 > Run `frog list` first: this friction may already be recorded.

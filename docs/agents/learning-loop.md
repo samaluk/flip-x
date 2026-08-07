@@ -12,7 +12,7 @@ Use the repository's Action-only setup. It uses the repository `GITHUB_TOKEN`, h
 
 Before substantial work, run `pnpx frog list`. When unresolved development friction is hit, record it with `pnpx frog log` in the same turn and commit the entry with the work that exposed it. Do not use Frog for game defects, feature requests, secrets, or global/system friction. The workflow owns the recurring `frog/sync` pull request; do not hand-edit that generated branch.
 
-Frog ships project-local agent skills under `.agents/skills/frog-*` for `init`, `list`, `log`, `publish`, `sync`, and `targets`. They are synced with `pnpx frog skills add --no-global` and are not tracked by `skills-lock.json`, so restore them with that command rather than the skills CLI lockfile.
+Frog ships project-local agent skills under `.agents/skills/frog-*` for `init`, `list`, `log`, `publish`, `sync`, and `targets`. They are synced with the pinned `pnpx frog@1.0.15 skills add --no-global` and are not tracked by `skills-lock.json`, so restore them with that command rather than the skills CLI lockfile. The sync also writes symlink dirs for other agent tools, such as `.claude/skills` and `.continue/skills`; remove those generated dirs after syncing so the working tree stays clean.
 
 ## LESSONS.md
 

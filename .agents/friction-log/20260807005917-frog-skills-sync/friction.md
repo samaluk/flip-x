@@ -3,7 +3,7 @@ title: 'Frog skills sync writes agent-tool symlink dirs outside .agents/skills'
 severity: 'minor'
 ---
 
-### Expected Behavior
+## Expected Behavior
 
 `pnpx frog skills add --no-global` adds Frog skills under `.agents/skills/` without touching other agent-tool directories.
 

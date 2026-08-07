@@ -203,5 +203,5 @@ Single-context layout: root `CONTEXT.md` plus `docs/adr/`; read relevant docs wh
 ### Agent learning loop
 
 - Before substantial work, run `pnpx frog list`. When tooling, docs, APIs, tests, or conventions cost you time, run `pnpx frog log` before finishing the turn and commit the entry with the work that exposed it.
-- Frog's project-local `frog-*` skills live under `.agents/skills/`; restore them with `pnpx frog skills add --no-global` and keep Frog out of `package.json`.
+- Frog's project-local `frog-*` skills live under `.agents/skills/`; restore them with `pnpx frog@1.0.15 skills add --no-global`, keep Frog out of `package.json`, and remove generated symlink dirs such as `.claude/skills` and `.continue/skills` after syncing.
 - Keep only verified durable discoveries in temporary [`LESSONS.md`](LESSONS.md), then promote them with [the shared learning-loop skill](.agents/skills/lessons-to-config/SKILL.md) and remove them from the inbox. See [`docs/agents/learning-loop.md`](docs/agents/learning-loop.md).
