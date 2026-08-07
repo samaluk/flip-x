@@ -10,4 +10,4 @@ allowBuilds:
   protobufjs: true
   sharp: false
   unrs-resolver: false
-minimumReleaseAge: 0
+minimumReleaseAgeStrict: true
