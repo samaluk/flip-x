@@ -18,7 +18,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
 
   return {
     locale,
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- JSON imports widen literals, while next-intl narrows messages from the source locale.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion,typescript/no-unnecessary-type-assertion -- JSON imports widen literals, while next-intl narrows messages from the source locale. React Doctor's type graph lacks the generated per-locale declarations and so flags the cast as unnecessary, but it is required. Pinning the base in CI reproduces this when typegen hasn't run first.
     messages: messagesByLocale[locale] as RequestConfig["messages"],
   };
 });
