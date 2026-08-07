@@ -324,5 +324,10 @@
     "startGame": "Empezar partida",
     "starting": "Iniciando...",
     "toastFailed": "No se pudo empezar la partida."
+  },
+  "NotFoundPage": {
+    "title": "404 – Página no encontrada",
+    "description": "La página que buscas no existe.",
+    "home": "Ir al inicio"
   }
 }
