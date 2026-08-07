@@ -1,4 +1,5 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
@@ -15,6 +16,15 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations({ locale: routing.defaultLocale, namespace: "NotFoundPage" });
+
+  return {
+    title: t("title"),
+    description: t("description"),
+  };
+}
 
 export default async function GlobalNotFound() {
   const t = await getTranslations({ locale: routing.defaultLocale, namespace: "NotFoundPage" });
