@@ -101,7 +101,7 @@
     "@vitest/browser": "4.1.10",
     "@vitest/browser-playwright": "4.1.10",
     "@vitest/coverage-v8": "4.1.10",
-    "convex-test": "0.0.54",
+    "convex-test": "0.0.55",
     "eslint-plugin-i18next": "6.1.5",
     "fallow": "3.14.0",
     "jsdom": "30.0.1",
