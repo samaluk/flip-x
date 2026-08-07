@@ -54,7 +54,7 @@
     "doctor:staged": "react-doctor --staged --fail-on warning --yes --project flip-x"
   },
   "dependencies": {
-    "@base-ui/react": "1.6.0",
+    "@base-ui/react": "1.7.0",
     "@confect/core": "9.3.0",
     "@confect/react": "9.3.0",
     "@confect/server": "9.3.0",
