@@ -74,7 +74,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('pnpm-lock.yaml') }}-
 
+      # Since the root layout migrated to static per-locale rendering, `pnpm build`
+      # now prerenders /en and /es, which evaluates the module-scope Convex client.
+      # The construction only rejects a missing/non-absolute URL; a placeholder passes
+      # and never connects at build time. CI's output is discarded (Vercel rebuilds with
+      # the real URL), so this keeps the build green without baking a real URL in.
       - name: Build
+        env:
+          NEXT_PUBLIC_CONVEX_URL: https://placeholder.convex.cloud
         run: pnpm build
 
       - name: Visual regression (Vitest browser, Linux Docker)
