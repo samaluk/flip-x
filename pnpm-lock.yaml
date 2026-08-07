@@ -95,7 +95,7 @@ importers:
         version: 9.2.5(@confect/core@9.2.5(convex@1.43.0(react@19.2.8))(effect@3.22.1))(@confect/server@9.2.5(5ac290f8e44134e3abff490d62888bb8))(@effect/cluster@0.58.2(@effect/platform@0.96.1(effect@3.22.1))(@effect/rpc@0.75.1(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/sql@0.51.1(@effect/experimental@0.60.0(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/workflow@0.18.2(@effect/experimental@0.60.0(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(@effect/rpc@0.75.1(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(effect@3.22.1))(effect@3.22.1))(@effect/rpc@0.75.1(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/sql@0.51.1(@effect/experimental@0.60.0(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/typeclass@0.40.0(effect@3.22.1))(effect@3.22.1)
       '@confect/test':
         specifier: 9.2.5
-        version: 9.2.5(@confect/core@9.2.5(convex@1.43.0(react@19.2.8))(effect@3.22.1))(@confect/server@9.2.5(5ac290f8e44134e3abff490d62888bb8))(convex-test@0.0.54(convex@1.43.0(react@19.2.8)))(convex@1.43.0(react@19.2.8))(effect@3.22.1)
+        version: 9.2.5(@confect/core@9.2.5(convex@1.43.0(react@19.2.8))(effect@3.22.1))(@confect/server@9.2.5(5ac290f8e44134e3abff490d62888bb8))(convex-test@0.0.55(convex@1.43.0(react@19.2.8)))(convex@1.43.0(react@19.2.8))(effect@3.22.1)
       '@effect/vitest':
         specifier: 0.30.0
         version: 0.30.0(effect@3.22.1)(vitest@4.1.10)
@@ -145,8 +145,8 @@ importers:
         specifier: 4.1.10
         version: 4.1.10(@vitest/browser@4.1.10)(vitest@4.1.10)
       convex-test:
-        specifier: 0.0.54
-        version: 0.0.54(convex@1.43.0(react@19.2.8))
+        specifier: 0.0.55
+        version: 0.0.55(convex@1.43.0(react@19.2.8))
       eslint-plugin-i18next:
         specifier: 6.1.5
         version: 6.1.5
@@ -3344,10 +3344,10 @@ packages:
       zod:
         optional: true
 
-  convex-test@0.0.54:
-    resolution: {integrity: sha512-C0v2SQcuxrELAJRNzE6fQ686XDPor7UFoC22jcoJXeCRqhLo8ZIMZ4jyUHoo1UdAL2enCb0AbiprCVpLDN8u9Q==}
+  convex-test@0.0.55:
+    resolution: {integrity: sha512-ablJ6vR3WUpyTaYrrRQf8yxInGrhHyqBEQsCFzloda3G0MDEu2RMKNGUkvlBXYWPiiEP0UIKPS7gZuLbqGnvQw==}
     peerDependencies:
-      convex: ^1.32.0
+      convex: ^1.43.0
 
   convex@1.43.0:
     resolution: {integrity: sha512-huZWEUZQYxIRG104o22ZI99HkviSEVltwezZRDi+pQDPrQbc5EoCPa4Y7pJDqUBQw9dc/iEEXj2/rLZg1j7Dww==}
@@ -6199,12 +6199,12 @@ snapshots:
     optionalDependencies:
       '@effect/platform-node': 0.106.0(@effect/cluster@0.58.2(@effect/platform@0.96.1(effect@3.22.1))(@effect/rpc@0.75.1(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/sql@0.51.1(@effect/experimental@0.60.0(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/workflow@0.18.2(@effect/experimental@0.60.0(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(@effect/rpc@0.75.1(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(@effect/rpc@0.75.1(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/sql@0.51.1(@effect/experimental@0.60.0(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(@effect/platform@0.96.1(effect@3.22.1))(effect@3.22.1))(effect@3.22.1)
 
-  '@confect/test@9.2.5(@confect/core@9.2.5(convex@1.43.0(react@19.2.8))(effect@3.22.1))(@confect/server@9.2.5(5ac290f8e44134e3abff490d62888bb8))(convex-test@0.0.54(convex@1.43.0(react@19.2.8)))(convex@1.43.0(react@19.2.8))(effect@3.22.1)':
+  '@confect/test@9.2.5(@confect/core@9.2.5(convex@1.43.0(react@19.2.8))(effect@3.22.1))(@confect/server@9.2.5(5ac290f8e44134e3abff490d62888bb8))(convex-test@0.0.55(convex@1.43.0(react@19.2.8)))(convex@1.43.0(react@19.2.8))(effect@3.22.1)':
     dependencies:
       '@confect/core': 9.2.5(convex@1.43.0(react@19.2.8))(effect@3.22.1)
       '@confect/server': 9.2.5(5ac290f8e44134e3abff490d62888bb8)
       convex: 1.43.0(react@19.2.8)
-      convex-test: 0.0.54(convex@1.43.0(react@19.2.8))
+      convex-test: 0.0.55(convex@1.43.0(react@19.2.8))
       effect: 3.22.1
 
   '@convex-dev/batch-worker@0.2.0(convex@1.43.0(react@19.2.8))(react@19.2.8)':
@@ -8423,7 +8423,7 @@ snapshots:
       typescript: 7.0.2
       zod: 3.25.76
 
-  convex-test@0.0.54(convex@1.43.0(react@19.2.8)):
+  convex-test@0.0.55(convex@1.43.0(react@19.2.8)):
     dependencies:
       convex: 1.43.0(react@19.2.8)
 
@@ -11047,7 +11047,7 @@ snapshots:
 
   vite@8.0.8(@types/node@24.13.3)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0):
     dependencies:
-      lightningcss: 1.32.0
+      lightningcss: 1.33.0
       picomatch: 4.0.4
       postcss: 8.5.23
       rolldown: 1.0.0-rc.15
