@@ -8,9 +8,11 @@ Flip-x uses three distinct homes for development knowledge:
 
 ## Frog
 
-Use the repository's Action-only setup. It uses the repository `GITHUB_TOKEN`, has inbound reporting disabled, does not report across repositories, and has no `pull_request` or `pull_request_target` trigger. Do not install the Frog App or add Frog to project dependencies.
+Use the repository's Action-only setup. It uses the repository `GITHUB_TOKEN`, has inbound reporting disabled, does not report across repositories, and has no `pull_request` or `pull_request_target` trigger. Do not install the Frog App or add Frog to project dependencies; `pnpx` serves interactive agents, and the Action installs its own pinned copy in the runner.
 
-Before substantial work, run `pnpx frog list`. When unresolved development friction is found, record it with `pnpx frog log` and commit the entry with the work that exposed it. Do not use Frog for game defects, feature requests, secrets, or global/system friction. The workflow owns the recurring `frog/sync` pull request; do not hand-edit that generated branch.
+Before substantial work, run `pnpx frog list`. When unresolved development friction is hit, record it with `pnpx frog log` in the same turn and commit the entry with the work that exposed it. Do not use Frog for game defects, feature requests, secrets, or global/system friction. The workflow owns the recurring `frog/sync` pull request; do not hand-edit that generated branch.
+
+Frog ships project-local agent skills under `.agents/skills/frog-*` for `init`, `list`, `log`, `publish`, `sync`, and `targets`. They are synced with `pnpx frog skills add --no-global` and are not tracked by `skills-lock.json`, so restore them with that command rather than the skills CLI lockfile.
 
 ## LESSONS.md
 
