@@ -3,8 +3,6 @@
 **Branch**: `001-flip7-webapp` | **Date**: 2026-04-10 | **Spec**: [`spec.md`](./spec.md)
 **Input**: Feature specification from `/specs/001-flip7-webapp/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
-
 ## Summary
 
 Build a real-time web app for playing Flip 7 that supports full round flow, multi-round

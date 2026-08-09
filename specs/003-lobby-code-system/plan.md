@@ -3,8 +3,6 @@
 **Branch**: `003-lobby-code-system` | **Date**: 2026-04-11 | **Spec**: [spec.md](./spec.md)
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
-
 ## Summary
 
 Refactor the lobby creation flow to use a lobby code system with two homepage options (Create Game / Join Lobby). Hosts explicitly start the game from the lobby after players join.
