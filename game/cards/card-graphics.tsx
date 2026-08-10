@@ -19,6 +19,7 @@ export function ModifierShellFan({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden
+      // oxlint-disable-next-line typescript/consistent-type-assertions, typescript/no-unnecessary-type-assertion
       style={{ transform: flip ? "rotate(180deg)" : undefined } as CSSProperties}
     >
       <path

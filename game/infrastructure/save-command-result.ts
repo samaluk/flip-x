@@ -150,6 +150,7 @@ async function rewriteScoreBreakdowns(
   for (const [playerId, scoreBreakdown] of Object.entries(scoreBreakdowns)) {
     await ctx.db.insert("scoreBreakdowns", {
       roundId,
+      // oxlint-disable-next-line typescript/no-non-null-assertion
       playerId: playerIdMap.get(playerId)!,
       ...scoreBreakdown,
     });
@@ -165,6 +166,7 @@ async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveComman
   }
 
   for (const [playerId, patch] of Object.entries(finalized.playerScorePatches)) {
+    // oxlint-disable-next-line typescript/no-non-null-assertion
     await ctx.db.patch(playerIdMap.get(playerId)!, {
       totalScore: patch.totalScore,
       hasWon: patch.hasWon,
@@ -218,6 +220,7 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
     patch.dealerSeat = nextDealerSeat;
   }
   if (matchPatch?.winnerPlayerId) {
+    // oxlint-disable-next-line typescript/no-non-null-assertion
     patch.winnerPlayerId = playerIdMap.get(matchPatch.winnerPlayerId)!;
   }
 

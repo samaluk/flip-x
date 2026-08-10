@@ -46,6 +46,7 @@ lookupUrl.searchParams.set("reference", reference);
 const headers = { Authorization: `Bearer ${TOKEN}` };
 
 const lookupResponse = await fetch(lookupUrl, { headers });
+// oxlint-disable-next-line typescript/no-unsafe-assignment
 const lookupBody = await readJson(lookupResponse);
 
 if (lookupResponse.status === 404) {
@@ -59,15 +60,18 @@ if (!lookupResponse.ok) {
   throw apiError("lookup preview deployment", lookupResponse.status, lookupBody);
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-assignment, typescript/no-unsafe-member-access
 const deploymentName = lookupBody.name;
 if (!deploymentName) {
   throw new Error(`Lookup succeeded but response had no deployment name.`);
 }
 
+// oxlint-disable-next-line typescript/no-unsafe-argument
 const deleteUrl = `${API_BASE}/deployments/${encodeURIComponent(deploymentName)}/delete`;
 const deleteResponse = await fetch(deleteUrl, { method: "POST", headers });
 
 if (!deleteResponse.ok) {
+  // oxlint-disable-next-line typescript/no-unsafe-assignment
   const deleteBody = await readJson(deleteResponse);
   throw apiError("delete preview deployment", deleteResponse.status, deleteBody);
 }
@@ -77,14 +81,17 @@ console.log(
 );
 
 async function readJson(response) {
+  // oxlint-disable-next-line typescript/no-unsafe-assignment, typescript/no-unsafe-call, typescript/no-unsafe-member-access
   const text = await response.text();
   if (!text) {
     return null;
   }
 
   try {
+    // oxlint-disable-next-line typescript/no-unsafe-return, typescript/no-unsafe-argument
     return JSON.parse(text);
   } catch {
+    // oxlint-disable-next-line typescript/no-unsafe-return
     return text;
   }
 }

@@ -5,6 +5,7 @@ import type { SessionId } from "convex-helpers/server/sessions";
 import { SessionProvider } from "convex-helpers/react/sessions";
 import { useState, type ReactNode } from "react";
 
+// oxlint-disable-next-line typescript/no-non-null-assertion
 const convex = new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!);
 
 function useLocalSessionStorage(key: string, initialValue: SessionId | undefined) {
@@ -15,7 +16,7 @@ function useLocalSessionStorage(key: string, initialValue: SessionId | undefined
 
     const existing = window.localStorage.getItem(key);
     if (existing) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion -- SessionId is a string brand; value comes from our own localStorage key
+      // oxlint-disable-next-line typescript/consistent-type-assertions, typescript/no-unsafe-type-assertion -- SessionId is a string brand; value comes from our own localStorage key
       return existing as SessionId;
     }
 

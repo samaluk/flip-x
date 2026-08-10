@@ -495,6 +495,7 @@ function partitionPlayers(snapshot: MatchSnapshot) {
   const viewerId = snapshot.viewerPlayerId;
   if (!viewerId) {
     return {
+      // oxlint-disable-next-line typescript/consistent-type-assertions
       viewer: null as MatchSnapshot["players"][number] | null,
       opponents: bySeat,
     };

@@ -236,6 +236,7 @@ function PlayerLaneCardStack({
 }: PlayerLaneCardStackProps) {
   const cardElements = useMemo(
     () =>
+      // oxlint-disable-next-line typescript/consistent-type-assertions
       [
         ...player.modifierCards.map((card) => (
           <FlipXCard

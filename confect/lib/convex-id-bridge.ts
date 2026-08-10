@@ -6,9 +6,11 @@
 import type { Id } from "../../convex/_generated/dataModel";
 
 export function matchIdFromConfectWire(raw: string): Id<"matches"> {
+  // oxlint-disable-next-line typescript/consistent-type-assertions
   return raw as Id<"matches">;
 }
 
 export function playerIdFromConfectWire(raw: string): Id<"players"> {
+  // oxlint-disable-next-line typescript/consistent-type-assertions
   return raw as Id<"players">;
 }

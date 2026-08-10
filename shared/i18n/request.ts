@@ -12,13 +12,15 @@ const messagesByLocale = {
 };
 
 export default getRequestConfig(async ({ requestLocale }) => {
+  // oxlint-disable-next-line typescript/no-unsafe-assignment, typescript/no-unsafe-call
   const paramValue = await rootLocale();
+  // oxlint-disable-next-line typescript/no-unsafe-assignment
   const requested = paramValue ?? (await requestLocale);
   const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
 
   return {
     locale,
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion,typescript/no-unnecessary-type-assertion -- JSON imports widen literals, while next-intl narrows messages from the source locale. React Doctor's type graph lacks the generated per-locale declarations and so flags the cast as unnecessary, but it is required. Pinning the base in CI reproduces this when typegen hasn't run first.
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion,typescript/no-unnecessary-type-assertion,typescript/consistent-type-assertions -- JSON imports widen literals, while next-intl narrows messages from the source locale. React Doctor's type graph lacks the generated per-locale declarations and so flags the cast as unnecessary, but it is required. Pinning the base in CI reproduces this when typegen hasn't run first.
     messages: messagesByLocale[locale] as RequestConfig["messages"],
   };
 });

@@ -24,6 +24,7 @@ const EXACT_BASELINE_FILES = [
 ];
 
 function runFallow(args, { allowIssueExit = false } = {}) {
+  // oxlint-disable-next-line typescript/no-unsafe-assignment
   const result = spawnSync("pnpm", ["exec", "fallow", ...args, "--quiet"], {
     stdio: "inherit",
     env: process.env,
@@ -46,6 +47,7 @@ function runFallow(args, { allowIssueExit = false } = {}) {
 }
 
 function canonicalJson(text) {
+  // oxlint-disable-next-line typescript/no-unsafe-argument
   return JSON.stringify(JSON.parse(text));
 }
 
@@ -98,9 +100,11 @@ try {
   }
 
   const committedRegression = JSON.stringify(
+    // oxlint-disable-next-line typescript/no-unsafe-member-access
     JSON.parse(readFileSync(".fallowrc.json", "utf8")).regression ?? null,
   );
   const generatedRegression = JSON.stringify(
+    // oxlint-disable-next-line typescript/no-unsafe-member-access
     JSON.parse(readFileSync(tempConfigPath, "utf8")).regression ?? null,
   );
 

@@ -1,7 +1,7 @@
 import { Presence } from "@convex-dev/presence";
 import * as Effect from "effect/Effect";
 
-/* eslint-disable @typescript-eslint/no-unsafe-type-assertion -- admin cleanup uses dynamic table/id wiring against Convex typed indexes */
+/* oxlint-disable typescript/no-unsafe-type-assertion -- admin cleanup uses dynamic table/id wiring against Convex typed indexes */
 
 import { components } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
@@ -82,19 +82,25 @@ function collectDependentIdsByMatch(
   table: "players" | "rounds",
   matchId: string,
 ) {
-  return reader
-    .table(table)
-    .index("by_match", (query) => query.eq("matchId", matchId as Id<"matches">))
-    .collect()
-    .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
+  return (
+    reader
+      .table(table)
+      // oxlint-disable-next-line typescript/consistent-type-assertions
+      .index("by_match", (query) => query.eq("matchId", matchId as Id<"matches">))
+      .collect()
+      .pipe(Effect.map((rows) => rows.map((row) => String(row._id))))
+  );
 }
 
 function collectPlayerSessionIdsByPlayer(reader: DatabaseReader, playerId: string) {
-  return reader
-    .table("playerSessions")
-    .index("by_player_id", (query) => query.eq("playerId", playerId as Id<"players">))
-    .collect()
-    .pipe(Effect.map((rows) => rows.map((row) => String(row._id))));
+  return (
+    reader
+      .table("playerSessions")
+      // oxlint-disable-next-line typescript/consistent-type-assertions
+      .index("by_player_id", (query) => query.eq("playerId", playerId as Id<"players">))
+      .collect()
+      .pipe(Effect.map((rows) => rows.map((row) => String(row._id))))
+  );
 }
 
 export function listMatchIds(reader: DatabaseReader): Effect.Effect<readonly string[], unknown> {
@@ -154,6 +160,7 @@ export function deleteDocument(
     }
 
     console.log(`Removing document from table ${args.table} with id ${args.id}`);
+    // oxlint-disable-next-line typescript/consistent-type-assertions
     yield* writer.table(args.table).delete(args.id as Id<typeof args.table>);
     return 1;
   });
@@ -216,6 +223,7 @@ function removePresenceRooms(deps: AdminCleanupDeps, matchIds: readonly string[]
 
 function deleteAppTables(deps: AdminCleanupDeps, deleted: CleanupDeleted) {
   return Effect.gen(function* () {
+    // oxlint-disable-next-line typescript/consistent-type-assertions
     for (const table of Object.keys(schema.tables) as AppTableName[]) {
       console.log(`Removing document from table ${table}`);
       const count = yield* deps.deleteAllFromTable(table);
@@ -278,9 +286,12 @@ const dependentResolvers: Record<
   "rounds:matches": (reader, parentId) => collectDependentIdsByMatch(reader, "rounds", parentId),
   "playerSessions:players": collectPlayerSessionIdsByPlayer,
   "roundPlayerStates:rounds": (reader, parentId) =>
+    // oxlint-disable-next-line typescript/consistent-type-assertions
     collectDependentIdsByRound(reader, "roundPlayerStates", parentId as Id<"rounds">),
   "roundEvents:rounds": (reader, parentId) =>
+    // oxlint-disable-next-line typescript/consistent-type-assertions
     collectDependentIdsByRound(reader, "roundEvents", parentId as Id<"rounds">),
   "scoreBreakdowns:rounds": (reader, parentId) =>
+    // oxlint-disable-next-line typescript/consistent-type-assertions
     collectDependentIdsByRound(reader, "scoreBreakdowns", parentId as Id<"rounds">),
 };
