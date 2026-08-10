@@ -4,6 +4,7 @@ coverage/**
 dist/**
 build/**
 convex/_generated/**
+confect/_generated/**
 public/**
 shared/ui/**
 tests/**

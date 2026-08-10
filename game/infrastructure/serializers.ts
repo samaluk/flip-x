@@ -17,9 +17,11 @@ export function serializeRoundRuntime(round: RoundRuntime, playerIdMap: PlayerId
     endedBy: round.endedBy,
     pendingAction: round.pendingAction
       ? {
+          // oxlint-disable-next-line typescript/no-non-null-assertion
           sourcePlayerId: playerIdMap.get(round.pendingAction.sourcePlayerId)!,
           actionKind: round.pendingAction.actionKind,
           eligibleTargetIds: round.pendingAction.eligibleTargetIds.map(
+            // oxlint-disable-next-line typescript/no-non-null-assertion
             (playerId) => playerIdMap.get(playerId)!,
           ),
           resume: round.pendingAction.resume,
@@ -27,7 +29,9 @@ export function serializeRoundRuntime(round: RoundRuntime, playerIdMap: PlayerId
       : undefined,
     pendingFlip3: round.pendingFlip3
       ? {
+          // oxlint-disable-next-line typescript/no-non-null-assertion
           sourcePlayerId: playerIdMap.get(round.pendingFlip3.sourcePlayerId)!,
+          // oxlint-disable-next-line typescript/no-non-null-assertion
           targetPlayerId: playerIdMap.get(round.pendingFlip3.targetPlayerId)!,
           cardsRemaining: round.pendingFlip3.cardsRemaining,
           deferredActionCards: round.pendingFlip3.deferredActionCards,
@@ -42,7 +46,9 @@ export function deserializeRoundRuntime(doc: Doc<"rounds">): RoundRuntime {
     roundNumber: doc.roundNumber,
     dealerSeat: doc.dealerSeat,
     activePlayerId: doc.activePlayerId ? String(doc.activePlayerId) : null,
+    // oxlint-disable-next-line typescript/consistent-type-assertions, typescript/no-unnecessary-type-assertion
     drawPile: doc.drawPile as Card[],
+    // oxlint-disable-next-line typescript/consistent-type-assertions, typescript/no-unnecessary-type-assertion
     discardPile: doc.discardPile as Card[],
     openingSeatIndex: doc.openingSeatIndex,
     turnSeatIndex: doc.turnSeatIndex,
@@ -74,6 +80,7 @@ export function serializePlayerRoundState(
   const { playerId, bustCard, ...rest } = playerState;
   return {
     roundId,
+    // oxlint-disable-next-line typescript/no-non-null-assertion
     playerId: playerIdMap.get(playerId)!,
     ...rest,
     ...(bustCard ? { bustCard } : {}),

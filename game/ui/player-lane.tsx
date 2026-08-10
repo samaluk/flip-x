@@ -234,79 +234,78 @@ function PlayerLaneCardStack({
   disableCardFlip3d,
   actionSourcePending,
 }: PlayerLaneCardStackProps) {
-  const cardElements = useMemo(
-    () =>
-      [
-        ...player.modifierCards.map((card) => (
-          <FlipXCard
-            key={card.id}
-            kind="modifier"
-            modifierValue={card.modifierValue}
-            label={card.label}
-            dealing={dealingIdSet.has(card.id)}
-            stateAnimation={cardStateAnimation}
-            compact={compact}
-            disableFlip3d={disableCardFlip3d}
-          />
-        )),
-        ...player.numberCards.map((card) => (
-          <FlipXCard
-            key={card.id}
-            kind="number"
-            numberValue={card.numberValue}
-            label={card.label}
-            dealing={dealingIdSet.has(card.id)}
-            stateAnimation={cardStateAnimation}
-            compact={compact}
-            disableFlip3d={disableCardFlip3d}
-          />
-        )),
-        ...(player.bustCard
-          ? [
-              <FlipXCard
-                key={player.bustCard.id}
-                kind="number"
-                numberValue={player.bustCard.numberValue}
-                label={player.bustCard.label}
-                dealing={dealingIdSet.has(player.bustCard.id)}
-                stateAnimation={cardStateAnimation}
-                compact={compact}
-                disableFlip3d={disableCardFlip3d}
-              />,
-            ]
-          : []),
-        ...player.heldActionCards.map((card) => {
-          const key = `${player.playerId}-${card.actionKind}-${card.label}`;
-          return (
+  const cardElements = useMemo<ReactElement[]>(
+    () => [
+      ...player.modifierCards.map((card) => (
+        <FlipXCard
+          key={card.id}
+          kind="modifier"
+          modifierValue={card.modifierValue}
+          label={card.label}
+          dealing={dealingIdSet.has(card.id)}
+          stateAnimation={cardStateAnimation}
+          compact={compact}
+          disableFlip3d={disableCardFlip3d}
+        />
+      )),
+      ...player.numberCards.map((card) => (
+        <FlipXCard
+          key={card.id}
+          kind="number"
+          numberValue={card.numberValue}
+          label={card.label}
+          dealing={dealingIdSet.has(card.id)}
+          stateAnimation={cardStateAnimation}
+          compact={compact}
+          disableFlip3d={disableCardFlip3d}
+        />
+      )),
+      ...(player.bustCard
+        ? [
             <FlipXCard
-              key={key}
-              kind="action"
-              actionKind={card.actionKind}
-              label={card.label}
-              dealing={dealingIdSet.has(key)}
+              key={player.bustCard.id}
+              kind="number"
+              numberValue={player.bustCard.numberValue}
+              label={player.bustCard.label}
+              dealing={dealingIdSet.has(player.bustCard.id)}
               stateAnimation={cardStateAnimation}
               compact={compact}
               disableFlip3d={disableCardFlip3d}
-              active={actionSourcePending}
-            />
-          );
-        }),
-        ...player.receivedActionCards.map((card) => {
-          const key = `${player.playerId}-received-${card.actionKind}-${card.label}`;
-          return (
-            <FlipXCard
-              key={key}
-              kind="action"
-              actionKind={card.actionKind}
-              label={card.label}
-              stateAnimation={cardStateAnimation}
-              compact={compact}
-              disableFlip3d={disableCardFlip3d}
-              variant="received"
-            />
-          );
-        }),
-      ] as ReactElement[],
+            />,
+          ]
+        : []),
+      ...player.heldActionCards.map((card) => {
+        const key = `${player.playerId}-${card.actionKind}-${card.label}`;
+        return (
+          <FlipXCard
+            key={key}
+            kind="action"
+            actionKind={card.actionKind}
+            label={card.label}
+            dealing={dealingIdSet.has(key)}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
+            active={actionSourcePending}
+          />
+        );
+      }),
+      ...player.receivedActionCards.map((card) => {
+        const key = `${player.playerId}-received-${card.actionKind}-${card.label}`;
+        return (
+          <FlipXCard
+            key={key}
+            kind="action"
+            actionKind={card.actionKind}
+            label={card.label}
+            stateAnimation={cardStateAnimation}
+            compact={compact}
+            disableFlip3d={disableCardFlip3d}
+            variant="received"
+          />
+        );
+      }),
+    ],
     [
       actionSourcePending,
       cardStateAnimation,
@@ -434,22 +433,23 @@ export const PlayerLane = memo(function PlayerLane({
 
   const selectTarget = onSelectTarget;
   const canSelectAsTarget = Boolean(selectTarget && targetingActive);
-  const targetSelectionProps = canSelectAsTarget && selectTarget
-    ? {
-        role: "button" as const,
-        tabIndex: 0 as const,
-        "aria-label": t("selectTargetLabel", { name: player.displayName }),
-        onClick: () => {
-          selectTarget(player.playerId);
-        },
-        onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
-          if (event.key === "Enter" || event.key === " ") {
-            event.preventDefault();
+  const targetSelectionProps =
+    canSelectAsTarget && selectTarget
+      ? {
+          role: "button" as const,
+          tabIndex: 0 as const,
+          "aria-label": t("selectTargetLabel", { name: player.displayName }),
+          onClick: () => {
             selectTarget(player.playerId);
-          }
-        },
-      }
-    : {};
+          },
+          onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+            if (event.key === "Enter" || event.key === " ") {
+              event.preventDefault();
+              selectTarget(player.playerId);
+            }
+          },
+        }
+      : {};
 
   return (
     <section

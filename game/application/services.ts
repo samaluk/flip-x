@@ -107,6 +107,7 @@ export function makeProductionCommandLayer(ctx: MutationCtx): Layer.Layer<RunGam
           return null;
         }
 
+        // oxlint-disable-next-line typescript/no-unsafe-return
         return existing.commandResult;
       }),
     put: ({ matchId, command, snapshot }, nowMillis) =>

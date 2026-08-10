@@ -1,6 +1,6 @@
 "use client";
 
-/* eslint-disable @typescript-eslint/no-unsafe-type-assertion -- merges SessionlessArgs with sessionId into Confect Ref.Args; types are validated by Ref at codegen */
+/* oxlint-disable typescript/no-unsafe-type-assertion -- merges SessionlessArgs with sessionId into Confect Ref.Args; types are validated by Ref at codegen */
 
 import { Ref } from "@confect/core";
 import {
@@ -69,12 +69,15 @@ function wrapSessionConfectMutation<Mutation extends Ref.AnyPublicMutation>(
   mutate: ReactMutation<Mutation>,
   sessionId: string | null | undefined,
 ): SessionConfectMutation<Mutation> {
+  // oxlint-disable-next-line typescript/consistent-type-assertions
   const sessionMutation = (async (args: SessionlessArgs<Mutation>) => {
     if (!sessionId) {
       throw new Error("Session unavailable");
     }
 
+    // oxlint-disable-next-line typescript/no-unsafe-return, typescript/consistent-type-assertions
     return await mutate({
+      // oxlint-disable-next-line typescript/consistent-type-assertions
       ...(args as object),
       sessionId,
     } as Ref.Args<Mutation>);
@@ -84,6 +87,7 @@ function wrapSessionConfectMutation<Mutation extends Ref.AnyPublicMutation>(
     wrapSessionConfectMutation(
       mutate.withOptimisticUpdate((localStore, args) => {
         optimisticUpdate(
+          // oxlint-disable-next-line typescript/no-unsafe-argument, typescript/consistent-type-assertions
           wrapSessionOptimisticLocalStore(localStore, (args as SessionArgs<Mutation>).sessionId),
           withoutSessionArgs(args),
         );
@@ -98,14 +102,18 @@ function withSessionArgs<T extends SessionRef>(
   args: SessionlessArgs<T>,
   sessionId: string,
 ): Ref.Args<T> {
+  // oxlint-disable-next-line typescript/no-unsafe-return, typescript/consistent-type-assertions
   return {
+    // oxlint-disable-next-line typescript/consistent-type-assertions
     ...(args as object),
     sessionId,
   } as Ref.Args<T>;
 }
 
 function withoutSessionArgs<T extends SessionRef>(args: Ref.Args<T>): SessionlessArgs<T> {
+  // oxlint-disable-next-line typescript/consistent-type-assertions
   const { sessionId: _sessionId, ...sessionlessArgs } = args as SessionArgs<T>;
+  // oxlint-disable-next-line typescript/consistent-type-assertions, typescript/no-unnecessary-type-assertion
   return sessionlessArgs as SessionlessArgs<T>;
 }
 
@@ -115,6 +123,7 @@ function wrapSessionOptimisticLocalStore(
 ): SessionConfectOptimisticLocalStore {
   return {
     getQuery: (ref, args) =>
+      // oxlint-disable-next-line typescript/no-unsafe-return
       Option.getOrUndefined(localStore.getQuery(ref, withSessionArgs(args, sessionId))),
     getAllQueries: (ref) =>
       localStore.getAllQueries(ref).map(({ args, value }) => ({
