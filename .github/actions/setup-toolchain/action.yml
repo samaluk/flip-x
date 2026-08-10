@@ -9,9 +9,7 @@ runs:
       with:
         node-version-file: package.json
 
-    # Composite actions do not pass setup-node's PATH to nested JS actions; standalone
-    # installs @pnpm/exe without using the runner's default Node 20.
-    - uses: pnpm/action-setup@v6.0.10
+    - uses: pnpm/setup@v2.0.2
       with:
-        standalone: true
         cache: true
+        install: false
