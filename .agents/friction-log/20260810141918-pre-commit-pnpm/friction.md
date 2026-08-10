@@ -1,6 +1,7 @@
 ---
 title: 'Pre-commit pnpm reinstall aborts without a TTY'
 severity: 'minor'
+issue: 'samaluk/flip-x#538'
 ---
 
 ## Expected Behavior
