@@ -20,12 +20,20 @@ See [`AGENTS.md`](./AGENTS.md) for architecture and development workflow.
 ## Local development
 
 ```bash
+mise install       # installs the pinned hk version and Git hooks
 pnpm install
 npx convex dev   # separate terminal
 pnpm dev         # https://flip-x.localhost via portless
 ```
 
 Use `PORTLESS=0 pnpm dev` for plain `http://localhost:3000`.
+
+The `hk` pre-commit hook formats staged files and runs the fast lint, i18n, and
+React Doctor checks. Pre-push adds the broader lint, Fallow, test, and design gates.
+Run either hook directly with `mise run pre-commit` or `mise run pre-push`. If `hk`
+is installed globally, `mise install` reuses that setup instead of installing a
+duplicate repository hook. See [`docs/git-hooks.md`](./docs/git-hooks.md) for setup,
+behavior, and migration details.
 
 ## Testing
 

@@ -1,0 +1,16 @@
+[tools]
+hk = "1.54.1"
+
+[env]
+HK_MISE = "1"
+
+[hooks]
+postinstall = "hk install --mise"
+
+[tasks.pre-commit]
+description = "Run the same checks as the pre-commit hook"
+run = "hk run pre-commit"
+
+[tasks.pre-push]
+description = "Run the same checks as the pre-push hook"
+run = "hk run pre-push"

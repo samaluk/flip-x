@@ -1,0 +1,66 @@
+/// Git lifecycle checks for flip-x.
+amends "package://github.com/jdx/hk/releases/download/v1.54.1/hk@1.54.1#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.54.1/hk@1.54.1#/Builtins.pkl"
+
+min_hk_version = "1.54.1"
+fail_fast = false
+
+local format = (Builtins.oxfmt) {
+  prefix = "pnpm exec"
+  batch = true
+  check_list_files = null
+}
+
+local commit_checks = new Mapping<String, Step> {
+  ["format"] = format
+  ["lint"] {
+    check = "pnpm lint:core"
+  }
+  ["i18n"] {
+    check = "pnpm i18n:check"
+  }
+}
+
+local push_checks = new Mapping<String, Step> {
+  ["format"] = format
+  ["lint"] {
+    check = "pnpm lint"
+  }
+  ["i18n"] {
+    check = "pnpm i18n:check"
+  }
+  ["fallow"] {
+    check = "pnpm fallow:ci"
+  }
+  ["test"] {
+    check = "pnpm test"
+  }
+  ["design"] {
+    glob = "DESIGN.md"
+    check = "pnpm design:lint"
+  }
+}
+
+hooks {
+  ["pre-commit"] {
+    fix = true
+    stash = "git"
+    steps {
+      ...commit_checks
+      ["react-doctor"] {
+        types = List("javascript", "typescript")
+        check = "pnpm doctor:staged"
+      }
+    }
+  }
+  ["pre-push"] {
+    steps = push_checks
+  }
+  ["check"] {
+    steps = commit_checks
+  }
+  ["fix"] {
+    fix = true
+    steps = commit_checks
+  }
+}

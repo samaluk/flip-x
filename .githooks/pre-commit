@@ -1,9 +1,0 @@
-#!/bin/sh
-set -eu
-
-# Fast local gates. lint:core and i18n:check scan the working tree; doctor:staged
-# scans only staged React files. CI additionally runs react-doctor --diff.
-
-pnpm lint:core
-pnpm i18n:check
-pnpm doctor:staged
