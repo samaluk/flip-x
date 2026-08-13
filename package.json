@@ -105,7 +105,7 @@
     "eslint-plugin-i18next": "6.1.5",
     "fallow": "3.14.0",
     "jsdom": "30.0.1",
-    "oxfmt": "0.62.0",
+    "oxfmt": "0.63.0",
     "oxlint": "1.78.0",
     "oxlint-tailwindcss": "1.7.1",
     "oxlint-tsgolint": "7.0.2001",
