@@ -13,7 +13,8 @@ concurrency:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    # USE_SELF_HOSTED_RUNNERS repo variable (Settings → Actions → Variables)
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || (vars.USE_SELF_HOSTED_RUNNERS == 'true' && (vars.SELF_HOSTED_RUNNER_LABELS != '' && fromJSON(vars.SELF_HOSTED_RUNNER_LABELS) || fromJSON('["self-hosted"]')) || 'ubuntu-latest') }}
     env:
       CONVEX_DEPLOY_KEY: ${{ secrets.CONVEX_DEPLOY_KEY }}
       CONVEX_TEAM_ACCESS_TOKEN: ${{ secrets.CONVEX_TEAM_ACCESS_TOKEN }}
