@@ -11,12 +11,10 @@ const messagesByLocale = {
   es: esMessages,
 };
 
-export default getRequestConfig(async ({ requestLocale }) => {
+export default getRequestConfig(async () => {
   // oxlint-disable-next-line typescript/no-unsafe-assignment, typescript/no-unsafe-call
   const paramValue = await rootLocale();
-  // oxlint-disable-next-line typescript/no-unsafe-assignment
-  const requested = paramValue ?? (await requestLocale);
-  const locale = hasLocale(routing.locales, requested) ? requested : routing.defaultLocale;
+  const locale = hasLocale(routing.locales, paramValue) ? paramValue : routing.defaultLocale;
 
   return {
     locale,
