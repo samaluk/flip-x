@@ -14,6 +14,10 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json"],
+    },
     projects: [
       {
         extends: true,
@@ -28,10 +32,7 @@ export default defineConfig({
         test: {
           name: "infrastructure",
           environment: "node",
-          include: [
-            "tests/unit/infrastructure/**/*.test.ts",
-            "tests/unit/shared/**/*.test.ts",
-          ],
+          include: ["tests/unit/infrastructure/**/*.test.ts", "tests/unit/shared/**/*.test.ts"],
         },
       },
       {

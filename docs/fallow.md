@@ -1,69 +1,56 @@
-# Fallow quality gate
+# Fallow quality gates
 
-Flip-x uses [Fallow](https://docs.fallow.tools) with two complementary gates, both running type-aware:
+Flip-x pins Fallow 3.16.0 and uses the fleet-standard, zero-tolerance quality ratchet. Existing findings are committed as identity baselines; new findings, count regressions, stale baselines, incomplete semantic evidence, uncovered architecture files, and boundary violations fail CI.
 
-- **`pnpm fallow:audit`** — `fallow audit` against the merge-base with the remote default branch. Fails (`gate: new-only`) only on findings the current changeset **introduces**; pre-existing findings in touched files are inherited context, not verdict blockers.
-- **`pnpm fallow:regression`** — full-repo type-aware run (`fallow dead-code --fail-on-regression`) against the embedded `regression.baseline` in `.fallowrc.json`. Fails only when the total issue count grows beyond the baseline.
+## Gates
 
-Existing technical debt is baselined; new debt is rejected.
+- `pnpm fallow:audit`: fast changed-code audit, `gate: new-only`, type-aware, with the same Istanbul coverage used by full scans and audit base snapshots.
+- `pnpm fallow:dead-code`, `fallow:dupes`, and `fallow:health`: full-repo exact identity gates. A finding cannot be exchanged for a different finding while preserving the count.
+- `pnpm fallow:regression`: zero-tolerance dead-code count ratchet plus a zero-abstention semantic guard.
+- `pnpm fallow:baseline:check`: regenerates all baselines in a temporary directory and compares canonical JSON without modifying the worktree.
+- `pnpm fallow:ci`: authoritative version, semantic status, exact identity, freshness, and regression gate used by pre-push, local CI, and GitHub CI.
 
-## Why no baseline files
+Run `pnpm test:coverage` before local Fallow commands. Vitest writes `coverage/coverage-final.json`; health baseline generation, health checks, HEAD audit, audit base-snapshot analysis, local CI, and GitHub CI all receive that same Istanbul file and checkout root.
 
-The audit gate runs type-aware (`audit.typeAware: true` in `.fallowrc.json`). Fallow's audit dead-code analysis requests the `type-coupling` semantic capability, which never matches the identity of baselines saved by `fallow dead-code --type-aware --save-baseline` (capabilities mismatch, exit 2). The audit therefore runs without `audit.*Baseline` files and relies on its base-snapshot attribution pass to separate introduced from inherited findings. The full-repo ratchet instead lives in `regression.baseline` in `.fallowrc.json`, written and compared by the dead-code command itself, so its type-aware identity always matches.
+## Policy
 
-## Commands
+- Type-aware analysis requires `complete`. All app, test, and Convex tsconfigs are selected. The migration proof reported completeness `complete`, zero abstentions, and zero unresolved semantic queries.
+- Duplication uses semantic and near-miss detection, eight lines, 60 tokens, three occurrences, and excludes import wiring. Existing clone groups are baselined.
+- Health uses the fleet ceilings: cyclomatic 20, cognitive 15, CRAP 30, and unit size 60. Existing health debt is baselined rather than hidden or assigned weaker thresholds.
+- Architecture uses explicit generated, logic, application, infrastructure, backend, shared, adapter, UI, and test zones. Rules encode their allowed dependency directions; `requireAllFiles` prevents new source files from escaping the model.
+- `private-type-leaks` and missing suppression reasons are errors. Existing private type leaks are identity-baselined; no source suppressions were added by this migration.
 
-```bash
-pnpm fallow:audit                # Changed-files review (new-only, type-aware); what CI runs
-pnpm fallow:regression           # Full-repo type-aware ratchet (embedded baseline); what CI runs
-pnpm fallow:regression:update    # Regenerate regression.baseline after genuine fixes
-```
+## Baseline maintenance
 
-`fallow:regression:update` writes the current type-aware counts into `regression.baseline` in `.fallowrc.json` and tolerates exit 1 (findings still present — that is the point of baselining them), failing only on real errors.
-
-## Inspecting findings
-
-```bash
-# Why is an export flagged?
-pnpm exec fallow dead-code --trace shared/i18n/navigation.ts:usePathname
-
-# Exact TypeScript consumers
-pnpm exec fallow dead-code --type-aware --symbol-impact game/logic/round-state.ts:RoundRuntime
-
-# Duplication fingerprint
-pnpm exec fallow dupes --trace dup:c77b3abb6f87acd9
-
-# Health hotspots and targets
-pnpm exec fallow health --hotspots --targets --ownership
-
-# Explain an issue type
-pnpm exec fallow explain private-type-leak
-```
-
-## Updating the baseline after improvements
-
-When you remove findings legitimately:
+After a genuine fix:
 
 ```bash
-pnpm fallow:regression:update
-git add .fallowrc.json
+pnpm test:coverage
+pnpm fallow:baseline:update
+pnpm fallow:baseline:check
+git add .fallowrc.json fallow-baselines/
 ```
 
-## Configuration exclusions
+Never regenerate baselines to accept new debt. Freshness fails when debt improves but the committed identities/counts were not updated; exact and regression gates fail when debt grows.
 
-| Pattern | Reason |
-|---------|--------|
-| `ignoreFindings: convex/_generated/**`, `confect/_generated/**` | Hide dead-code noise; files stay in graph for import resolution |
-| `ignoreExports: shared/ui/*.tsx` | shadcn re-exports full component API |
-| `ignoreExports: shared/i18n/navigation.ts:usePathname` | next-intl `createNavigation` destructuring breaks type-aware completeness |
-| `ignoreUnresolvedImports: @/messages/**` | JSON locale imports resolved at build time |
-| `ignoreDependencies: tailwindcss, shadcn, …` | Tooling/CSS deps not imported as modules |
+## Hooks and GitHub
 
-## CI behavior
+Pre-commit runs the changed-code audit. Pre-push runs `pnpm fallow:ci`. The main CI job runs coverage and the full ratchet. Pull requests also use the official Fallow action pinned to its 3.16.0 commit for annotations, a sticky comment, checks, and SARIF.
 
-On pull requests, `.github/workflows/ci.yml` runs `pnpm fallow:audit && pnpm fallow:regression`:
+The version-matched skill is vendored at `.agents/skills/fallow/` from `node_modules/fallow/skills/fallow`; it is the agent source of truth. `.mcp.json` registers `pnpm exec fallow-mcp` for clients that support the common MCP configuration file. The single wrapper, `scripts/fallow.mjs`, owns only cross-platform orchestration for update, temp regeneration/diff, version/completeness/regression checks, and the authoritative composite gate.
 
-1. `fallow audit` resolves the base as the merge-base against the upstream remote default branch, runs type-aware dead-code, health, and duplication analysis on changed files, and fails only on **introduced** error-severity findings (base-snapshot attribution, no baseline files).
-2. `fallow regression` re-runs type-aware dead-code across the whole repository and fails if the total count exceeds the embedded `regression.baseline`.
+Useful diagnostics:
 
-The same two gates run in the `hk.pkl` pre-push hook and `pnpm ci:local`.
+```bash
+pnpm fallow:config
+pnpm fallow:status
+pnpm exec fallow list --boundaries
+pnpm exec fallow guard game/application/run-command.ts
+pnpm exec fallow dead-code --type-aware --trace game/logic/round-state.ts:RoundRuntime
+pnpm exec fallow dupes --trace dup:c77b3abb6f87acd9-1
+pnpm exec fallow health --coverage coverage/coverage-final.json --hotspots --targets --ownership
+pnpm fallow:suppressions
+pnpm fallow:security
+```
+
+Fallow audit baselines are intentionally not configured: in 3.16.0 the audit requests the `type-coupling` semantic capability while a dead-code identity baseline cannot, so exact capability matching rejects the baseline. The audit instead uses its native new-only base-snapshot attribution. The separate full-repo identity gates provide exact identity enforcement.

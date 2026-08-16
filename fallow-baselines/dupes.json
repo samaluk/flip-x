@@ -1,0 +1,29 @@
+{
+  "clone_groups": [
+    "shared/lib/errors/domain.ts:67-79|shared/lib/errors/domain.ts:83-93|shared/lib/errors/domain.ts:95-106",
+    "shared/ui/alert.tsx:41-68|shared/ui/card.tsx:14-45|shared/ui/card.tsx:53-78",
+    "game/cards/action-content.tsx:164-190|game/cards/action-content.tsx:249-275|game/cards/action-content.tsx:276-304",
+    "game/ui/flip-x-card.vitest.tsx:44-56|game/ui/flip-x-card.vitest.tsx:57-70|game/ui/flip-x-card.vitest.tsx:71-84",
+    "confect/matches.impl.ts:40-48|confect/matches.impl.ts:49-57|confect/matches.impl.ts:59-71",
+    "confect/presence.ts:21-28|confect/presence.ts:35-42|confect/presence.ts:49-56",
+    "confect/admin.impl.ts:100-109|confect/matches.impl.ts:73-82|confect/presence.impl.ts:26-35"
+  ],
+  "clone_fingerprints": [
+    "dup:ea823e2c:3",
+    "dup:4114920f:3",
+    "dup:223eb16e:3",
+    "dup:c65604f6:3",
+    "dup:bcbb7e05:3",
+    "dup:759ed8b2:3",
+    "dup:27ee4a6c:3"
+  ],
+  "normalized_clone_fingerprints": [
+    "dup:c77b3abb6f87acd9-1:3",
+    "dup:c77b3abb6f87acd9-5:3",
+    "dup:c77b3abb6f87acd9-4:3",
+    "dup:c77b3abb6f87acd9-2:3",
+    "dup:c77b3abb6f87acd9-6:3",
+    "dup:c3592818:3",
+    "dup:c77b3abb6f87acd9-3:3"
+  ]
+}
