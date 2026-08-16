@@ -127,6 +127,7 @@ jobs:
       - name: Test with coverage
         run: pnpm test:coverage
       - name: Fallow changed-code audit
+        id: fallow
         uses: fallow-rs/fallow@45fd28766199acb1f939f6862274a37aad12770b # v3.16.0
         with:
           version: 3.16.0
@@ -137,4 +138,18 @@ jobs:
           coverage-root: ${{ github.workspace }}
           annotations: true
           comment: true
-          sarif: true
+          # The action's own SARIF upload cannot handle its two-run audit
+          # report (both runs share a category, which upload-sarif v4 rejects).
+          # Generate the file here and upload it ourselves with per-run
+          # automationDetails.id set below.
+          sarif: false
+      - name: Assign per-run SARIF categories
+        if: always()
+        run: node scripts/fallow-sarif.mjs "${{ steps.fallow.outputs.sarif }}"
+      - name: Upload SARIF
+        if: always() && steps.fallow.outputs.sarif != ''
+        uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4
+        with:
+          sarif_file: ${{ steps.fallow.outputs.sarif }}
+          category: fallow
+          token: ${{ github.token }}
