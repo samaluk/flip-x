@@ -1,8 +1,8 @@
 /// Git lifecycle checks for flip-x.
-amends "package://github.com/jdx/hk/releases/download/v1.54.1/hk@1.54.1#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.54.1/hk@1.54.1#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v1.55.0/hk@1.55.0#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v1.55.0/hk@1.55.0#/Builtins.pkl"
 
-min_hk_version = "1.54.1"
+min_hk_version = "1.55.0"
 fail_fast = false
 
 local format = (Builtins.oxfmt) {
@@ -19,6 +19,10 @@ local commit_checks = new Mapping<String, Step> {
   ["i18n"] {
     check = "pnpm i18n:check"
   }
+}
+
+local secrets = new Mapping<String, Step> {
+  ["secrets"] = Builtins.kingfisher
 }
 
 local push_checks = new Mapping<String, Step> {
@@ -47,6 +51,7 @@ hooks {
     stash = "git"
     steps {
       ...commit_checks
+      ...secrets
       ["react-doctor"] {
         types = List("javascript", "typescript")
         check = "pnpm doctor:staged"
@@ -57,7 +62,10 @@ hooks {
     steps = push_checks
   }
   ["check"] {
-    steps = commit_checks
+    steps {
+      ...commit_checks
+      ...secrets
+    }
   }
   ["fix"] {
     fix = true
