@@ -47,7 +47,7 @@ local push_checks = new Mapping<String, Step> {
   }
   ["fallow"] {
     check = new CommandSpec {
-      command = "pnpm fallow:audit"
+      command = "pnpm fallow:audit && pnpm fallow:regression"
       effect = "write"
     }
   }
