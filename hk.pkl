@@ -14,10 +14,16 @@ local format = (Builtins.oxfmt) {
 local commit_checks = new Mapping<String, Step> {
   ["format"] = format
   ["lint"] {
-    check = "pnpm lint:core"
+    check = new CommandSpec {
+      command = "pnpm lint:core"
+      effect = "read"
+    }
   }
   ["i18n"] {
-    check = "pnpm i18n:check"
+    check = new CommandSpec {
+      command = "pnpm i18n:check"
+      effect = "read"
+    }
   }
 }
 
@@ -28,20 +34,35 @@ local secrets = new Mapping<String, Step> {
 local push_checks = new Mapping<String, Step> {
   ["format"] = format
   ["lint"] {
-    check = "pnpm lint"
+    check = new CommandSpec {
+      command = "pnpm lint"
+      effect = "read"
+    }
   }
   ["i18n"] {
-    check = "pnpm i18n:check"
+    check = new CommandSpec {
+      command = "pnpm i18n:check"
+      effect = "read"
+    }
   }
   ["fallow"] {
-    check = "pnpm fallow:ci"
+    check = new CommandSpec {
+      command = "pnpm fallow:ci"
+      effect = "write"
+    }
   }
   ["test"] {
-    check = "pnpm test"
+    check = new CommandSpec {
+      command = "pnpm test"
+      effect = "write"
+    }
   }
   ["design"] {
     glob = "DESIGN.md"
-    check = "pnpm design:lint"
+    check = new CommandSpec {
+      command = "pnpm design:lint"
+      effect = "read"
+    }
   }
 }
 
@@ -54,7 +75,10 @@ hooks {
       ...secrets
       ["react-doctor"] {
         types = List("javascript", "typescript")
-        check = "pnpm doctor:staged"
+        check = new CommandSpec {
+          command = "pnpm doctor:staged"
+          effect = "read"
+        }
       }
     }
   }
