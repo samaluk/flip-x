@@ -1,18 +1,13 @@
 {
   "analysis_identity": {
-    "mode": "type-aware",
-    "semantic_schema_version": 2,
-    "capabilities": [
-      "symbol-use",
-      "api-surface"
-    ],
-    "project_config_hash": "deferred:no-semantic-queries",
-    "backend_family": "typescript-go",
+    "mode": "syntactic",
+    "semantic_schema_version": 1,
+    "capabilities": [],
+    "project_config_hash": "",
+    "backend_family": "",
     "completeness": "complete"
   },
-  "unused_files": [
-    "shared/lib/__mocks__/confect-hooks.ts"
-  ],
+  "unused_files": ["shared/lib/__mocks__/confect-hooks.ts"],
   "unused_exports": [],
   "unused_types": [],
   "private_type_leaks": [

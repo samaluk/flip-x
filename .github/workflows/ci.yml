@@ -58,8 +58,8 @@ jobs:
             pnpm exec react-doctor --diff "origin/master" --fail-on warning --annotations --yes
           fi
 
-      - name: Fallow
-        run: pnpm fallow:ci
+      - name: Fallow audit
+        run: pnpm fallow:audit
 
       - name: Run fast Vitest suites
         run: pnpm test
