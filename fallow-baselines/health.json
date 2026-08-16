@@ -133,7 +133,5 @@
     }
   },
   "runtime_coverage_findings": [],
-  "target_keys": [
-    "game/ui/player-lane.tsx:complexity"
-  ]
+  "target_keys": ["game/ui/player-lane.tsx:complexity"]
 }

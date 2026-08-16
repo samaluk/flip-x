@@ -1,80 +1,40 @@
-# Fallow quality ratchet
+# Fallow quality gate
 
-Flip-x uses [Fallow](https://docs.fallow.tools) 3.14 with type-aware TypeScript analysis as a strict quality ratchet. Existing technical debt is baselined; new debt is rejected.
+Flip-x uses [Fallow](https://docs.fallow.tools) with a changed-files quality gate:
 
-## Two baseline layers
+- **`pnpm fallow:audit`** — `fallow audit` against the merge-base with the remote default branch. Fails (`--gate new-only`) only on findings the current changeset **introduces**; pre-existing findings in touched files are inherited context, not verdict blockers.
+- **`pnpm fallow:baseline`** — regenerates the committed baselines after you legitimately remove findings.
 
-### Exact baselines (`fallow-baselines/*.json`)
+Existing technical debt is baselined; new debt is rejected.
 
-Identity-based snapshots of current findings:
+## Baselines
 
-| File | Analysis | Matching mode |
-|------|----------|---------------|
-| `dead-code.json` | Unused code, deps, private type leaks | Per finding identity |
-| `dupes.json` | Semantic clone groups (`minOccurrences: 3`) | Per clone fingerprint |
-| `health.json` | Complexity, CRAP, unit size | Per function identity |
+`fallow-baselines/*.json` are identity snapshots of current findings, declared in `.fallowrc.json` under `audit.*Baseline`:
 
-**Gate A** fails when a finding appears that is not in the committed baseline — even if total count stays the same. Example: remove one unused export and add a different one → CI fails.
+| File | Analysis | Saved with |
+|------|----------|------------|
+| `dead-code.json` | Unused code, deps, private type leaks | `fallow dead-code --no-type-aware --save-baseline` |
+| `health.json` | Complexity, CRAP, unit size | `fallow health --no-type-aware --baseline-mode identity --save-baseline` |
+| `dupes.json` | Semantic clone groups | `fallow dupes --save-baseline` |
 
-### Regression baseline (embedded in `.fallowrc.json`)
+Baselines are saved **syntactically** (`--no-type-aware`) because the audit gate runs with `audit.typeAware: false` in `.fallowrc.json`: fallow's audit dead-code analysis requests the `type-coupling` semantic capability (via its health-shared parse), so type-aware baselines saved by `fallow dead-code --type-aware --save-baseline` never match the audit's analysis identity (`capabilities` mismatch, exit 2). Keeping both sides syntactic keeps the gate version-resilient — no hardcoded version pin, no baseline identity churn across fallow upgrades.
 
-The `regression.baseline` block stores issue **counts** from a known-good state. It is written by:
-
-```bash
-pnpm exec fallow dead-code --save-regression-baseline
-```
-
-with no path argument (updates `.fallowrc.json` in place).
-
-**Gate B** fails when total dead-code issue count increases beyond tolerance (zero):
+Type-aware analysis remains available ad-hoc for local cleanup work:
 
 ```bash
-pnpm fallow:regression
-# runs scripts/fallow-regression-check.mjs, which reads regression.baseline from .fallowrc.json
+pnpm exec fallow dead-code --type-aware --trace <file>:<export>   # exact consumers
+pnpm exec fallow fix --type-aware --dry-run                      # preview safe fixes
+pnpm exec fallow health --type-aware --type-coupling             # signature coupling
 ```
-
-Fallow exits 1 whenever issues exist; the wrapper parses JSON and fails only when `regression.exceeded` is true.
-
-Regenerating a worse baseline to silence CI is not acceptable — fix the code or justify narrow config changes.
-
-## Type-aware analysis
-
-Enabled in `.fallowrc.json` via `typeAware.enabled: true` with `require: complete`. Projects:
-
-- `tsconfig.json` — production sources
-- `tsconfig.tests.json` — Vitest and integration tests
-- `convex/tsconfig.json` — Convex functions
-
-Type-aware analysis refines symbol-use evidence (unused exports, class members, private type leaks). It does **not** replace `tsc` or Oxlint.
-
-Check companion status:
-
-```bash
-pnpm fallow:status
-```
-
-## Enabled analyses
-
-**Dead code:** unused files/exports/types/deps, enum/class members, server actions, unresolved imports, circular deps, re-export cycles, stale suppressions, private type leaks (warn).
-
-**Duplication:** semantic mode, `minLines: 8`, `minTokens: 60`, `minOccurrences: 3`, import wiring excluded. Focuses on meaningful copy-paste, not shadcn or test boilerplate.
-
-**Health:** cyclomatic (20), cognitive (15), CRAP (30), unit size (60). Identity baseline tracks per-function hotspots. Use `--hotspots`, `--targets`, `--ownership`, `--type-coupling` for inspection.
 
 ## Commands
 
 ```bash
-pnpm fallow:dead-code      # Gate A: dead-code exact baseline
-pnpm fallow:dupes          # Gate A: duplication exact baseline
-pnpm fallow:health         # Gate A: health identity baseline
-pnpm fallow:regression     # Gate B: embedded count regression
-pnpm fallow:audit          # Changed-files review (new-only gate)
-pnpm fallow:ci             # Full CI gate (freshness + A + B on full repo)
-pnpm fallow:baseline:update   # Regenerate all baselines after genuine fixes
-pnpm fallow:baseline:check    # Fail if committed baselines are stale
-pnpm fallow:fix:preview    # Type-aware dry-run fixes
-pnpm fallow:fix            # Apply safe fixes (not run in CI)
+pnpm fallow:audit       # Changed-files review (new-only gate); what CI runs
+pnpm fallow:baseline    # Regenerate all baselines after genuine fixes
 ```
+
+`fallow:baseline` tolerates exit 1 (findings still present — that is the point of baselining them) and fails only on real errors.
 
 ## Inspecting findings
 
@@ -86,7 +46,7 @@ pnpm exec fallow dead-code --trace shared/i18n/navigation.ts:usePathname
 pnpm exec fallow dead-code --type-aware --symbol-impact game/logic/round-state.ts:RoundRuntime
 
 # Duplication fingerprint
-pnpm exec fallow dupes --trace dup:223eb16e
+pnpm exec fallow dupes --trace dup:c77b3abb6f87acd9
 
 # Health hotspots and targets
 pnpm exec fallow health --hotspots --targets --ownership
@@ -100,14 +60,9 @@ pnpm exec fallow explain private-type-leak
 When you remove findings legitimately:
 
 ```bash
-pnpm fallow:baseline:update
-pnpm fallow:baseline:check
+pnpm fallow:baseline
 git add .fallowrc.json fallow-baselines/
 ```
-
-`baseline:update` writes exact baselines to `fallow-baselines/` and embeds regression counts in `.fallowrc.json`.
-
-CI also expects improved baselines to be committed — `fallow:baseline:check` regenerates into a temp workspace and diffs.
 
 ## Configuration exclusions
 
@@ -121,11 +76,10 @@ CI also expects improved baselines to be committed — `fallow:baseline:check` r
 
 ## CI behavior
 
-On pull requests, `pnpm fallow:ci`:
+On pull requests, `pnpm fallow:audit` (`.github/workflows/ci.yml`):
 
-1. Verifies Fallow 3.14.0 and type-aware companion
-2. Runs `fallow:baseline:check` so committed exact + regression baselines are not stale
-3. Runs Gate A (exact baselines on the full repo)
-4. Runs Gate B via `scripts/fallow-regression-check.mjs` (parses JSON; fails only when `regression.exceeded` is true)
+1. Resolves the base as the merge-base against the upstream remote default branch
+2. Runs dead-code, health, and duplication analysis on changed files
+3. Compares against `fallow-baselines/*` and fails only on **introduced** error-severity findings
 
-`pnpm fallow:audit` remains available for local changed-file review. It is not in CI today because type-aware baselines currently fail audit identity checks (`capabilities` mismatch in Fallow 3.14.0).
+Baselines are committed; update them with `pnpm fallow:baseline` when a finding is genuinely fixed.
