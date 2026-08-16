@@ -3,7 +3,7 @@
     "shared/lib/errors/domain.ts:67-79|shared/lib/errors/domain.ts:83-93|shared/lib/errors/domain.ts:95-106",
     "shared/ui/alert.tsx:41-68|shared/ui/card.tsx:14-45|shared/ui/card.tsx:53-78",
     "game/cards/action-content.tsx:164-190|game/cards/action-content.tsx:249-275|game/cards/action-content.tsx:276-304",
-    "game/ui/flip-x-card.vitest.tsx:44-56|game/ui/flip-x-card.vitest.tsx:57-70|game/ui/flip-x-card.vitest.tsx:71-84",
+    "game/ui/flip-x-card.vitest.tsx:48-62|game/ui/flip-x-card.vitest.tsx:63-78|game/ui/flip-x-card.vitest.tsx:79-94",
     "confect/matches.impl.ts:40-48|confect/matches.impl.ts:49-57|confect/matches.impl.ts:59-71",
     "confect/presence.ts:21-28|confect/presence.ts:35-42|confect/presence.ts:49-56",
     "confect/admin.impl.ts:100-109|confect/matches.impl.ts:73-82|confect/presence.impl.ts:26-35"
@@ -12,7 +12,7 @@
     "dup:ea823e2c:3",
     "dup:4114920f:3",
     "dup:223eb16e:3",
-    "dup:c65604f6:3",
+    "dup:81df7c9d:3",
     "dup:bcbb7e05:3",
     "dup:759ed8b2:3",
     "dup:27ee4a6c:3"
