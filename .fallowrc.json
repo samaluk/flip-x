@@ -37,10 +37,12 @@
     "projects": ["tsconfig.json", "tsconfig.tests.json", "convex/tsconfig.json"]
   },
   "rules": {
-    "private-type-leaks": "warn"
+    "private-type-leaks": "error",
+    "require-suppression-reason": "error"
   },
   "duplicates": {
     "mode": "semantic",
+    "near": true,
     "minLines": 8,
     "minTokens": 60,
     "minOccurrences": 3,
@@ -50,7 +52,73 @@
     "maxCyclomatic": 20,
     "maxCognitive": 15,
     "maxCrap": 30,
-    "maxUnitSize": 60
+    "maxUnitSize": 60,
+    "coverage": "coverage/coverage-final.json"
+  },
+  "boundaries": {
+    "zones": [
+      { "name": "generated", "patterns": ["convex/_generated/**", "confect/_generated/**"] },
+      { "name": "tests", "patterns": ["tests/**", "game/**/*.test.tsx", "game/**/*.vitest.tsx"] },
+      {
+        "name": "adapters",
+        "patterns": ["shared/analytics/posthog-convex.ts", "shared/lib/loose-translate.ts"]
+      },
+      { "name": "logic", "patterns": ["game/logic/**"] },
+      { "name": "application", "patterns": ["game/application/**"] },
+      { "name": "infrastructure", "patterns": ["game/infrastructure/**"] },
+      { "name": "backend", "patterns": ["convex/**", "confect/**"] },
+      { "name": "shared", "patterns": ["shared/**"] },
+      {
+        "name": "ui",
+        "patterns": [
+          "app/**",
+          "game/cards/**",
+          "game/hooks/**",
+          "game/screens/**",
+          "game/ui/**",
+          "lib/**",
+          "proxy.ts"
+        ]
+      }
+    ],
+    "rules": [
+      { "from": "logic", "allow": ["shared", "generated"] },
+      {
+        "from": "application",
+        "allow": ["logic", "infrastructure", "shared", "adapters", "generated"]
+      },
+      {
+        "from": "infrastructure",
+        "allow": ["logic", "application", "backend", "shared", "generated"]
+      },
+      {
+        "from": "backend",
+        "allow": ["logic", "application", "infrastructure", "shared", "adapters", "generated"]
+      },
+      { "from": "shared", "allow": ["generated"] },
+      { "from": "adapters", "allow": ["logic", "backend", "shared", "generated"] },
+      {
+        "from": "ui",
+        "allow": ["logic", "application", "backend", "shared", "adapters", "generated"]
+      },
+      {
+        "from": "tests",
+        "allow": [
+          "logic",
+          "application",
+          "infrastructure",
+          "backend",
+          "shared",
+          "adapters",
+          "ui",
+          "generated"
+        ]
+      }
+    ],
+    "coverage": {
+      "requireAllFiles": true,
+      "allowUnmatched": ["*.config.ts", "*.config.mjs", "global.d.ts", "scripts/**", "e2e/**"]
+    }
   },
   "audit": {
     "typeAware": true,

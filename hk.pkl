@@ -25,6 +25,12 @@ local commit_checks = new Mapping<String, Step> {
       effect = "read"
     }
   }
+  ["fallow-audit"] {
+    check = new CommandSpec {
+      command = "pnpm fallow:audit"
+      effect = "write"
+    }
+  }
 }
 
 local secrets = new Mapping<String, Step> {
@@ -47,7 +53,7 @@ local push_checks = new Mapping<String, Step> {
   }
   ["fallow"] {
     check = new CommandSpec {
-      command = "pnpm fallow:audit && pnpm fallow:regression"
+      command = "pnpm fallow:ci"
       effect = "write"
     }
   }
