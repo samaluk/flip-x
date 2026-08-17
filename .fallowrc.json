@@ -9,28 +9,9 @@
   "ignorePatterns": [".next/**", "e2e/**", "scripts/**"],
   "ignoreFindings": ["convex/_generated/**", "confect/_generated/**"],
   "dynamicallyLoaded": ["confect/**/*.impl.ts", "confect/impl.ts", "confect/spec.ts"],
-  "ignoreExports": [
-    {
-      "file": "shared/ui/*.tsx",
-      "exports": ["*"]
-    },
-    {
-      "file": "shared/i18n/navigation.ts",
-      "exports": ["usePathname"]
-    }
-  ],
+  "ignoreExports": [{ "file": "shared/i18n/navigation.ts", "exports": ["usePathname"] }],
   "ignoreUnresolvedImports": ["@/messages/**"],
-  "ignoreDependencies": [
-    "@base-ui/react",
-    "class-variance-authority",
-    "shadcn",
-    "tw-animate-css",
-    "tailwindcss",
-    "@confect/test",
-    "@effect/vitest",
-    "convex-test",
-    "eslint-plugin-i18next"
-  ],
+  "ignoreDependencies": ["@confect/test", "tailwindcss"],
   "typeAware": {
     "enabled": true,
     "require": "complete",
@@ -38,14 +19,15 @@
   },
   "rules": {
     "private-type-leaks": "error",
-    "require-suppression-reason": "error"
+    "require-suppression-reason": "error",
+    "stale-suppressions": "error"
   },
   "duplicates": {
     "mode": "semantic",
     "near": true,
     "minLines": 8,
     "minTokens": 60,
-    "minOccurrences": 3,
+    "minOccurrences": 2,
     "ignoreImports": true
   },
   "health": {
