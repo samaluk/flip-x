@@ -11,3 +11,5 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
 minimumReleaseAgeStrict: true
+minimumReleaseAgeExclude:
+  - fallow@3.17.0
