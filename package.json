@@ -118,6 +118,13 @@
     "typescript": "7.0.2",
     "vitest": "4.1.10"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.19.0",
+      "onFail": "download"
+    }
+  },
   "engines": {
     "node": "24.19.0"
   },

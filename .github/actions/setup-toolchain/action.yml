@@ -1,15 +1,15 @@
 name: Setup Node and pnpm
-description: Install Node and pnpm versions from the root package.json
+description: Install Node and pnpm, then install dependencies, from the root package.json
 
 runs:
   using: composite
   steps:
-    # Node must be installed before pnpm 11.x (requires Node >=22.13).
-    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-      with:
-        node-version-file: package.json
-
+    # Unified setup: reads the Node version from `devEngines.runtime` in
+    # package.json and the pnpm version from `packageManager`, then runs
+    # `pnpm install` (the action's default). No separate setup-node or install
+    # step is needed. `--no-runtime` is appended automatically because a
+    # runtime is set, so the Node managed here is never shadowed.
     - uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
       with:
+        runtime: node
         cache: true
-        install: false
