@@ -64,6 +64,10 @@ cleanup work, not permanent acceptance.
   application, infrastructure, backend, shared, and UI zones with explicit
   dependency direction and `requireAllFiles`. The full scan currently reports
   no boundary violations.
+- Entry-file exports remain externally credited by default. Enabling
+  `includeEntryExports` was re-tested against the Next, Convex, and Confect
+  surfaces and produced framework-managed false positives plus unresolved
+  symbols, so it is not an accurate blocking signal for this repository yet.
 - `private-type-leaks`, `stale-suppressions`, and suppression-reason checks are
   errors. Existing private-type leaks remain visible for later cleanup.
 
