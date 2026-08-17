@@ -37,10 +37,7 @@ export default async function GlobalNotFound() {
       <body className="flex min-h-full flex-col items-center justify-center gap-4 bg-background text-foreground">
         <p className="text-6xl font-semibold">404</p>
         <p className="text-muted-foreground">{t("description")}</p>
-        <Link
-          href="/"
-          className="text-primary underline underline-offset-4 hover:text-primary/80"
-        >
+        <Link href="/" className="text-primary underline underline-offset-4 hover:text-primary/80">
           {t("home")}
         </Link>
       </body>

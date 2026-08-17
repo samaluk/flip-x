@@ -36,12 +36,7 @@ describe("GameErrorContent", () => {
 
     render(
       withIntlEn(
-        <GameErrorContent
-          error={error}
-          retry={vi.fn()}
-          locale="en"
-          matchId="match-123"
-        />,
+        <GameErrorContent error={error} retry={vi.fn()} locale="en" matchId="match-123" />,
       ),
     );
 
@@ -55,9 +50,7 @@ describe("GameErrorContent", () => {
     const error = new Error("Transient failure");
 
     render(
-      withIntlEn(
-        <GameErrorContent error={error} retry={retry} locale="en" matchId="match-123" />,
-      ),
+      withIntlEn(<GameErrorContent error={error} retry={retry} locale="en" matchId="match-123" />),
     );
 
     fireEvent.click(screen.getByRole("button", { name: /try again/i }));

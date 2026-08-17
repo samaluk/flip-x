@@ -98,7 +98,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                     <td
                       key={`${entry.phase}-${entry.roundNumber}-${player.playerId}`}
                       className={cn(
-                         "border-b p-4",
+                        "border-b p-4",
                         entry.phase === "projected" && "border-dashed bg-primary/5",
                         score.reachedTarget && "bg-emerald-500/10",
                       )}

@@ -38,8 +38,8 @@ function snapshotFromExpectedFacts(state: ReplayExpectedState): MatchSnapshot {
       ? {
           actionKind: state.pendingAction.actionKind,
           sourcePlayerId: playerIds.get(state.pendingAction.sourcePlayer)!,
-          eligibleTargetIds: state.pendingAction.eligibleTargets.map(
-            (target) => playerIds.get(target)!,
+          eligibleTargetIds: state.pendingAction.eligibleTargets.map((target) =>
+            playerIds.get(target)!,
           ),
           resume: state.pendingAction.resume,
         }
