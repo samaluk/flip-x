@@ -1,56 +1,93 @@
-# Fallow quality gates
+# Fallow adoption gate
 
-Flip-x pins Fallow 3.16.0 and uses the fleet-standard, zero-tolerance quality ratchet. Existing findings are committed as identity baselines; new findings, count regressions, stale baselines, incomplete semantic evidence, uncovered architecture files, and boundary violations fail CI.
+Flip-x is in the Fallow 3.17 adoption state. The repository deliberately keeps
+its existing findings visible while blocking newly introduced debt with native
+`audit --gate new-only`. This is a migration guard, not the zero-debt
+architecture; the later transition is tracked in [issue #580](https://github.com/samaluk/flip-x/issues/580), with [fintual-api #405](https://github.com/samaluk/fintual-api/pull/405) as the steady-state reference.
 
-## Gates
+## Blocking migration gate
 
-- `pnpm fallow:audit`: fast changed-code audit, `gate: new-only`, type-aware, with the same Istanbul coverage used by full scans and audit base snapshots.
-- `pnpm fallow:dead-code`, `fallow:dupes`, and `fallow:health`: full-repo exact identity gates. A finding cannot be exchanged for a different finding while preserving the count.
-- `pnpm fallow:regression`: zero-tolerance dead-code count ratchet plus a zero-abstention semantic guard.
-- `pnpm fallow:baseline:check`: regenerates all baselines in a temporary directory and compares canonical JSON without modifying the worktree.
-- `pnpm fallow:ci`: authoritative version, semantic status, exact identity, freshness, and regression gate used by pre-push, local CI, and GitHub CI.
-
-Run `pnpm test:coverage` before local Fallow commands. Vitest writes `coverage/coverage-final.json`; health baseline generation, health checks, HEAD audit, audit base-snapshot analysis, local CI, and GitHub CI all receive that same Istanbul file and checkout root.
-
-## Policy
-
-- Type-aware analysis requires `complete`. All app, test, and Convex tsconfigs are selected. The migration proof reported completeness `complete`, zero abstentions, and zero unresolved semantic queries.
-- Duplication uses semantic and near-miss detection, eight lines, 60 tokens, three occurrences, and excludes import wiring. Existing clone groups are baselined.
-- Health uses the fleet ceilings: cyclomatic 20, cognitive 15, CRAP 30, and unit size 60. Existing health debt is baselined rather than hidden or assigned weaker thresholds.
-- Architecture uses explicit generated, logic, application, infrastructure, backend, shared, adapter, UI, and test zones. Rules encode their allowed dependency directions; `requireAllFiles` prevents new source files from escaping the model.
-- `private-type-leaks` and missing suppression reasons are errors. Existing private type leaks are identity-baselined; no source suppressions were added by this migration.
-
-## Baseline maintenance
-
-After a genuine fix:
+Run coverage first, then the changed-code gate:
 
 ```bash
 pnpm test:coverage
-pnpm fallow:baseline:update
-pnpm fallow:baseline:check
-git add .fallowrc.json fallow-baselines/
+pnpm fallow:audit
 ```
 
-Never regenerate baselines to accept new debt. Freshness fails when debt improves but the committed identities/counts were not updated; exact and regression gates fail when debt grows.
+`pnpm fallow:audit` is `fallow audit --gate new-only --type-aware` with the
+Istanbul coverage file and repository root. Existing findings are inherited
+and mergeable; new error-severity dead-code, duplication, complexity, styling,
+or boundary findings fail the audit. `pnpm fallow:ci` is an alias for this same
+migration gate. Hooks and the authoritative CI job use this command, never a
+full-repository `--fail-on-issues` command.
 
-## Hooks and GitHub
+Pull requests use one immutable Fallow 3.17.0 Action analysis. It renders the
+compact sticky summary, Check Run, inline review comments, and review guidance
+directly. The former manual SARIF generation, HEAD/base splitting, duplicate
+SARIF uploads, and `security-events` permission are intentionally removed.
 
-Pre-commit runs the changed-code audit. Pre-push runs `pnpm fallow:ci`. The main CI job runs coverage and the full ratchet. Pull requests also use the official Fallow action pinned to its 3.16.0 commit for annotations, a sticky comment, checks, and SARIF.
+## Full-repository inspection
 
-The version-matched skill is vendored at `.agents/skills/fallow/` from `node_modules/fallow/skills/fallow`; it is the agent source of truth. `.mcp.json` registers `pnpm exec fallow-mcp` for clients that support the common MCP configuration file. The single wrapper, `scripts/fallow.mjs`, owns only cross-platform orchestration for update, temp regeneration/diff, version/completeness/regression checks, and the authoritative composite gate.
-
-Useful diagnostics:
+These commands measure the backlog and are not expected to return zero during
+the adoption phase:
 
 ```bash
-pnpm fallow:config
-pnpm fallow:status
-pnpm exec fallow list --boundaries
-pnpm exec fallow guard game/application/run-command.ts
-pnpm exec fallow dead-code --type-aware --trace game/logic/round-state.ts:RoundRuntime
-pnpm exec fallow dupes --trace dup:c77b3abb6f87acd9-1
-pnpm exec fallow health --coverage coverage/coverage-final.json --hotspots --targets --ownership
-pnpm fallow:suppressions
+pnpm fallow:dead-code
+pnpm fallow:dupes
+pnpm fallow:health
 pnpm fallow:security
+pnpm fallow:suppressions
+pnpm fallow:recommend
+pnpm fallow:status
+pnpm fallow:boundaries
 ```
 
-Fallow audit baselines are intentionally not configured: in 3.16.0 the audit requests the `type-coupling` semantic capability while a dead-code identity baseline cannot, so exact capability matching rejects the baseline. The audit instead uses its native new-only base-snapshot attribution. The separate full-repo identity gates provide exact identity enforcement.
+The migration snapshot is 91 dead-code findings (1 unused file, 11 unused
+exports, and 79 private-type leaks), 54 semantic/near clone groups across 31
+families, 16 health findings (2 critical, 6 high, and 8 moderate), six
+advisory security candidates, and zero active suppressions. These are future
+cleanup work, not permanent acceptance.
+
+## Analysis configuration
+
+- Type-aware analysis is required and complete across `tsconfig.json`,
+  `tsconfig.tests.json`, and `convex/tsconfig.json` (TypeScript-Go protocol 7,
+  zero abstentions and unresolved queries).
+- Duplication uses semantic mode, near detection, eight-line/60-token floors,
+  pair-level `minOccurrences: 2`, and import wiring ignored. No existing clones
+  are hidden in `ignoredClones`.
+- Vitest produces real V8 Istanbul coverage. Fallow consumes it for audit and
+  health/CRAP scoring. Structural coverage gaps were evaluated but remain
+  advisory/off because the current 61-file/140-export signal is too noisy for
+  a blocking adoption rule.
+- Architecture boundaries model generated, test, adapter, logic,
+  application, infrastructure, backend, shared, and UI zones with explicit
+  dependency direction and `requireAllFiles`. The full scan currently reports
+  no boundary violations.
+- Entry-file exports remain externally credited by default. Enabling
+  `includeEntryExports` was re-tested against the Next, Convex, and Confect
+  surfaces and produced framework-managed false positives plus unresolved
+  symbols, so it is not an accurate blocking signal for this repository yet.
+- `private-type-leaks`, `stale-suppressions`, and suppression-reason checks are
+  errors. Existing private-type leaks remain visible for later cleanup.
+
+Only narrow, re-tested exceptions remain: generated Convex/Confect surfaces,
+the `@/messages/**` JSON alias, `@confect/test`, `tailwindcss`, and the
+next-intl `usePathname` export. Each covers runtime or build-time usage that
+Fallow cannot infer from the static graph alone.
+
+## Hooks
+
+`hk` remains the only hook manager. Pre-commit formats/lints staged changes
+and runs the changed-code Fallow audit. Pre-push runs coverage and then the
+same `new-only` gate alongside the normal project checks. No baseline,
+regression, freshness, or custom Fallow wrapper is involved.
+
+## New-only proof
+
+Temporary probes for an unused export, unused file, unused production
+dependency, boundary crossing, and semantic duplication were introduced and
+then removed. With the probes present, native audit returned `fail` and
+reported introduced findings separately from inherited findings; after
+restoration, the audit returned `pass`. This is the migration safety rail
+until issue #580 reaches the strict zero-debt criteria.

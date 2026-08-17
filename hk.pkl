@@ -53,13 +53,7 @@ local push_checks = new Mapping<String, Step> {
   }
   ["fallow"] {
     check = new CommandSpec {
-      command = "pnpm fallow:ci"
-      effect = "write"
-    }
-  }
-  ["test"] {
-    check = new CommandSpec {
-      command = "pnpm test"
+      command = "pnpm test:coverage && pnpm fallow:ci"
       effect = "write"
     }
   }
