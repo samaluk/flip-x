@@ -133,63 +133,63 @@ export function GameTableView({
   return (
     <LazyMotion features={domAnimation}>
       <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
-      <GameTableHud
-        snapshot={snapshot}
-        t={t}
-        isPending={isPending || !!snapshot.optimisticTurn}
-        callText={callText}
-        latestBody={latestBody}
-        activePlayer={activePlayer}
-        viewerPlayer={viewerPlayer}
-      />
+        <GameTableHud
+          snapshot={snapshot}
+          t={t}
+          isPending={isPending || !!snapshot.optimisticTurn}
+          callText={callText}
+          latestBody={latestBody}
+          activePlayer={activePlayer}
+          viewerPlayer={viewerPlayer}
+        />
 
-      <GameTableOpponentsSection
-        opponents={opponents}
-        opponentsGridClass={opponentsGridClass}
-        freezeLaneLayout={freezeLaneLayout}
-        t={t}
-        snapshot={snapshot}
-        viewerIsSource={viewerIsSource}
-        viewerCanTargetSelf={viewerCanTargetSelf}
-        onResolveAction={onResolveAction}
-        disableCardFlip3d={disableCardFlip3d}
-      />
+        <GameTableOpponentsSection
+          opponents={opponents}
+          opponentsGridClass={opponentsGridClass}
+          freezeLaneLayout={freezeLaneLayout}
+          t={t}
+          snapshot={snapshot}
+          viewerIsSource={viewerIsSource}
+          viewerCanTargetSelf={viewerCanTargetSelf}
+          onResolveAction={onResolveAction}
+          disableCardFlip3d={disableCardFlip3d}
+        />
 
-      {viewer ? (
-        <section aria-label={t("yourHand")} className="space-y-2">
-          <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {t("yourHand")}
-          </div>
-          <MatchPlayerLane
-            snapshot={snapshot}
-            player={viewer}
-            viewerIsSource={viewerIsSource}
-            viewerCanTargetSelf={viewerCanTargetSelf}
-            onResolveAction={onResolveAction}
-            disableCardFlip3d={disableCardFlip3d}
-          />
-        </section>
-      ) : null}
+        {viewer ? (
+          <section aria-label={t("yourHand")} className="space-y-2">
+            <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              {t("yourHand")}
+            </div>
+            <MatchPlayerLane
+              snapshot={snapshot}
+              player={viewer}
+              viewerIsSource={viewerIsSource}
+              viewerCanTargetSelf={viewerCanTargetSelf}
+              onResolveAction={onResolveAction}
+              disableCardFlip3d={disableCardFlip3d}
+            />
+          </section>
+        ) : null}
 
-      {hasTurnControls ? (
-        <section
-          aria-label={t("turnActions")}
-          className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
-        >
-          {turnControls}
-        </section>
-      ) : null}
+        {hasTurnControls ? (
+          <section
+            aria-label={t("turnActions")}
+            className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
+          >
+            {turnControls}
+          </section>
+        ) : null}
 
-      <RoundHistorySection snapshot={snapshot} tHistory={tHistory} />
+        <RoundHistorySection snapshot={snapshot} tHistory={tHistory} />
 
-      {hasTurnControls ? (
-        <section
-          aria-label={t("turnActions")}
-          className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
-        >
-          <div className="mx-auto max-w-5xl">{turnControls}</div>
-        </section>
-      ) : null}
+        {hasTurnControls ? (
+          <section
+            aria-label={t("turnActions")}
+            className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
+          >
+            <div className="mx-auto max-w-5xl">{turnControls}</div>
+          </section>
+        ) : null}
       </div>
     </LazyMotion>
   );

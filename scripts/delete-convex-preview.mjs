@@ -97,7 +97,6 @@ async function readJson(response) {
 }
 
 function apiError(action, status, body) {
-  const detail =
-    typeof body === "string" ? body : JSON.stringify(body, null, 2);
+  const detail = typeof body === "string" ? body : JSON.stringify(body, null, 2);
   return new Error(`Failed to ${action} (${status}): ${detail}`);
 }
