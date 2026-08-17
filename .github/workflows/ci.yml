@@ -21,7 +21,7 @@ jobs:
   # must pass for a merge. setup-toolchain installs Node, pnpm, and dependencies,
   # so checkout + setup is all each job needs.
   static:
-    name: Lint, typecheck, i18n & design
+    name: Lint, typecheck, format, i18n & design
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -39,6 +39,9 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Format check
+        run: pnpm format:check
 
       - name: Check i18n
         run: pnpm i18n:check
