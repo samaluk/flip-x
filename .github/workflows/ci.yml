@@ -61,7 +61,7 @@ jobs:
       - name: Test with coverage
         run: pnpm test:coverage
 
-      - name: Fallow full-repo ratchet
+      - name: Fallow migration gate
         run: pnpm fallow:ci
 
       - name: Run fast Vitest suites
