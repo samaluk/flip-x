@@ -1,0 +1,9 @@
+{
+  "mirrors": [
+    {
+      "issue": "samaluk/flip-x#570",
+      "path": ".agents/friction-log/20260816152721-format-check-fails/friction.md"
+    }
+  ],
+  "version": 1
+}
