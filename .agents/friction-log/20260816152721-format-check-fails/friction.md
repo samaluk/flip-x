@@ -1,6 +1,7 @@
 ---
 title: 'format:check fails on unchanged master files'
 severity: 'minor'
+issue: 'samaluk/flip-x#570'
 ---
 
 ### Expected Behavior
