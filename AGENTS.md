@@ -165,6 +165,30 @@ Use this planning rule to shape the implementation:
 - Required Vercel environment variable: `NEXT_PUBLIC_CONVEX_URL` (your production Convex deployment URL).
 - Convex backend env vars are managed in the Convex dashboard or via `npx convex env set`.
 
+### React Compiler Evaluation (#489)
+
+Next.js 16.3's native Rust React Compiler is enabled with `reactCompiler: true`
+and `experimental.turbopackRustReactCompiler: true` in `next.config.ts`.
+Turbopack remains the only supported bundler for this option, and the project
+does not install or configure `babel-plugin-react-compiler`.
+
+Measured locally on 2026-08-18 with Node 24.19.0 after clearing `.next/dev`
+for the cold run. Each value is one run; readiness is the first successful
+request to `/en` from a local server started with `PORT=4311 pnpm dev:app`.
+
+- Dev server ready: 911 ms cold / 264 ms warm with Rust compiler.
+- Dev server ready: 546 ms cold / 326 ms warm baseline.
+- `pnpm build` compile phase: 5.4 s with Rust compiler / 4.6 s baseline.
+
+`PORTLESS=0 pnpm dev` also reached Ready successfully; the proxy-bypassed
+command was used for direct local verification because the timing harness does
+not require the portless proxy.
+
+Decision: keep the experimental flag. It increases the first cold dev start and
+the measured production compile phase, but improves warm dev startup and passes
+the production build without compiler errors. Re-evaluate when Next.js makes
+the option stable or its performance changes materially.
+
 ## Troubleshooting
 
 - `pnpm-workspace.yaml` lists `sharp` and `unrs-resolver` under
