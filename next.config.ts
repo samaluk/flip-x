@@ -3,6 +3,7 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { withPostHogConfig } from "@posthog/nextjs-config";
 
 const nextConfig: NextConfig = {
+  reactCompiler: true,
   allowedDevOrigins: ["127.0.0.1", "flip-x.localhost", "*.flip-x.localhost"],
   experimental: {
     // The root layout lives under a top-level dynamic segment (`[locale]`), so
@@ -12,6 +13,9 @@ const nextConfig: NextConfig = {
     // TypeScript 7 has no JS compiler API; use the project-local tsc CLI.
     // https://nextjs.org/docs/app/api-reference/config/typescript#using-typescript-7
     useTypeScriptCli: true,
+    // Use the native Rust React Compiler implementation in Turbopack.
+    // https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopackRustReactCompiler
+    turbopackRustReactCompiler: true,
   },
 };
 
