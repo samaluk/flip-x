@@ -1,0 +1,56 @@
+name: React Doctor
+
+# Dedicated strict React Doctor v2 gate. This replaces the old CLI-inside-general-CI
+# setup (which ran `react-doctor --diff ... --fail-on warning --annotations` as a
+# sub-step of the `static` job) with the official `millionco/react-doctor` Action:
+#   - PRs: scans only the code changed relative to the merge base (`scope: changed`)
+#     and blocks the workflow on ANY new warning or error (`blocking: warning`),
+#     posting a sticky PR summary comment, inline review comments, and a commit status.
+#   - master (default branch): records the project health score on each push, with no
+#     comment and no failure, so the branch never goes red over pre-existing findings.
+# The Action checks out the repo itself and needs no dependency install, build, cache
+# population, or Convex preview, so it stays independent from the general CI workflow.
+# The React project lives at the repo root, so no `directory` override is needed.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: read # checkout and read code (required)
+  pull-requests: write # inline review comments
+  issues: write # sticky PR summary comment
+  statuses: write # commit status (score + error/warning counts)
+
+# Cancel any in-flight scan for the same PR (or branch, on push) the moment a new
+# commit arrives, so reviewers only ever see the latest run.
+concurrency:
+  group: react-doctor-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  react-doctor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The Action diffs the PR against its merge base to find introduced
+          # issues, so it needs the full history to locate where the branch split.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Scan changed code for new findings
+        # Immutable pin for the current v2 release (v2.2.8 is what the `v2` tag
+        # points to). The Action uses the installed project config at the root.
+        uses: millionco/react-doctor@01820bb4fd4d0a4aebcd8df2b2a143a098649cb2 # v2.2.8
+        with:
+          # Fail the check on any new error OR warning introduced by the change.
+          blocking: warning
+          # Report only issues introduced relative to the merge base (PR-scoped).
+          scope: changed
