@@ -18,8 +18,24 @@ pnpm fallow:audit
 Istanbul coverage file and repository root. Existing findings are inherited
 and mergeable; new error-severity dead-code, duplication, complexity, styling,
 or boundary findings fail the audit. `pnpm fallow:ci` is an alias for this same
-migration gate. Hooks and the authoritative CI job use this command, never a
-full-repository `--fail-on-issues` command.
+migration gate. Hooks and the authoritative CI gate job use this command, never
+a full-repository `--fail-on-issues` command.
+
+`.github/workflows/ci.yml` is split into parallel jobs so a pull request goes
+green as fast as possible (the layout follows the parallelization first applied
+to [fintual-api PR #407](https://github.com/samaluk/fintual-api/pull/407)):
+
+- **`Test with coverage`** — runs `pnpm test:coverage` once and uploads
+  `coverage/coverage-final.json` as a short-lived artifact.
+- **`Fallow gate`** — downloads that artifact and runs `pnpm fallow:ci` (the
+  authoritative changed-file `new-only` migration gate) against it.
+- **`Fallow PR review`** — the version-pinned native Action (below), which also
+  consumes the shared coverage artifact.
+
+Both Fallow jobs download the coverage artifact instead of reinstalling and
+re-running the test suite, so a PR no longer pays for a second full
+install + test run. Each job is its own required status check on the `master`
+branch ruleset.
 
 Pull requests use one immutable Fallow 3.17.0 Action analysis. It renders the
 compact sticky summary, Check Run, inline review comments, and review guidance
