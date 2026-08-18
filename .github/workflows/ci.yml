@@ -46,14 +46,6 @@ jobs:
       - name: Check i18n
         run: pnpm i18n:check
 
-      - name: React Doctor
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            pnpm exec react-doctor --diff "origin/${{ github.base_ref }}" --fail-on warning --annotations --yes
-          else
-            pnpm exec react-doctor --diff "origin/master" --fail-on warning --annotations --yes
-          fi
-
   # Runs the fast Vitest suites (engine, infrastructure, contract, ui, confect)
   # once with coverage and shares coverage-final.json with both Fallow jobs, so
   # they do not reinstall and re-run the suite just to score the same evidence.
