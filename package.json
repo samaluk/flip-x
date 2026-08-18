@@ -52,9 +52,8 @@
     "fallow:fix:preview": "fallow fix --type-aware --dry-run",
     "fallow:fix": "fallow fix --type-aware --yes",
     "doctor": "react-doctor",
-    "doctor:diff": "react-doctor --diff --fail-on warning",
-    "doctor:ci": "react-doctor --diff --fail-on warning --annotations --yes",
-    "doctor:staged": "react-doctor --staged --fail-on warning --yes --project flip-x"
+    "doctor:diff": "react-doctor --scope changed --blocking warning",
+    "doctor:staged": "react-doctor --staged --blocking warning --yes --project flip-x"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
