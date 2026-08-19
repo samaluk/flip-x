@@ -1,0 +1,86 @@
+"use client";
+
+import { QueryResult } from "@confect/react";
+import { useTranslations } from "next-intl";
+import { useCallback } from "react";
+import { toast } from "sonner";
+
+import refs from "@/confect/_generated/refs";
+import { matchIdFromConfectWire } from "@/confect/lib/convex-id-bridge";
+import { useGamePageJoin } from "@/game/hooks/use-game-page-join";
+import { useMatchPresence } from "@/game/hooks/use-match-presence";
+import type { MatchSnapshot } from "@/game/logic/view-models";
+import type { PlayerColorId } from "@/shared/lib/player-colors";
+import { useSessionConfectQuery } from "@/shared/lib/confect-hooks";
+
+export type GamePageState = {
+  matchId: string;
+  snapshot: MatchSnapshot | undefined;
+  isLoading: boolean;
+  isFailure: boolean;
+  onlinePlayerIds: string[] | undefined;
+  playerName: string;
+  selectedColorId: PlayerColorId;
+  usedColorIds: string[];
+  isJoining: boolean;
+  onJoin: (event: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
+  onPlayerNameChange: (value: string) => void;
+  onColorChange: (colorId: PlayerColorId) => void;
+  onCopyInvite: () => void;
+  failureTitle: string;
+  matchNotFoundTitle: string;
+  matchNotFoundBody: string;
+};
+
+// fallow-ignore-next-line complexity -- Convex query and session hooks are intentionally composed at this screen boundary; behavior is covered by the page integration flow.
+export function useGamePageState(matchId: string): GamePageState {
+  const matchIdConvex = matchIdFromConfectWire(matchId);
+  const snapshotResult = useSessionConfectQuery(refs.public.matches.getMatchSnapshot, {
+    matchId: matchIdConvex,
+  });
+  const snapshot = QueryResult.isSuccess(snapshotResult) ? snapshotResult.value : undefined;
+  const t = useTranslations("Game");
+  const tErrors = useTranslations("Errors");
+  const viewerPlayerId = snapshot?.viewerPlayerId;
+  const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId ?? undefined);
+  const {
+    handleJoin,
+    isJoining,
+    playerName,
+    selectedColorId,
+    setColorId,
+    setPlayerName,
+    usedColorIds,
+  } = useGamePageJoin(matchId, snapshot?.players);
+
+  const onCopyInvite = useCallback(async () => {
+    try {
+      const url = snapshot?.lobbyCode
+        ? `${window.location.origin}?code=${snapshot.lobbyCode}`
+        : window.location.href;
+      await navigator.clipboard.writeText(url);
+      toast.success(t("toastInviteCopied"));
+    } catch {
+      toast.error(t("toastInviteCopyFailed"));
+    }
+  }, [snapshot?.lobbyCode, t]);
+
+  return {
+    matchId,
+    snapshot: snapshot ?? undefined,
+    isLoading: QueryResult.isLoading(snapshotResult),
+    isFailure: QueryResult.isFailure(snapshotResult),
+    onlinePlayerIds,
+    playerName,
+    selectedColorId,
+    usedColorIds,
+    isJoining,
+    onJoin: handleJoin,
+    onPlayerNameChange: setPlayerName,
+    onColorChange: setColorId,
+    onCopyInvite: () => void onCopyInvite(),
+    failureTitle: tErrors("MATCH_NOT_FOUND"),
+    matchNotFoundTitle: t("matchNotFoundTitle"),
+    matchNotFoundBody: t("matchNotFoundBody"),
+  };
+}
