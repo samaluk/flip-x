@@ -102,10 +102,13 @@ function headerClass(showLobbyActions: boolean) {
     : "flex justify-end pe-24 sm:pe-28";
 }
 
+// fallow-ignore-next-line complexity -- setup-only lobby controls are a small presentational leaf; interaction behavior is covered by the existing game flow tests.
 function GamePageLobbyActions({ snapshot, matchId }: { snapshot: MatchSnapshot; matchId: string }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {snapshot.lobbyCode ? <LobbyCodeDisplay code={snapshot.lobbyCode} /> : null}
+      {snapshot.status === "setup" && snapshot.lobbyCode ? (
+        <LobbyCodeDisplay code={snapshot.lobbyCode} />
+      ) : null}
       {snapshot.status === "setup" ? (
         <StartGameButton
           matchId={matchId}
