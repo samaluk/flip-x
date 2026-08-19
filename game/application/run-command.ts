@@ -24,7 +24,8 @@ import {
   takeTurnAction,
 } from "../logic/command-handler";
 import type { MatchAggregate } from "../infrastructure/load-match-aggregate";
-import type { RoundRuntime } from "../logic/round-state";
+import type { RoundEvent } from "../logic/events";
+import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "./game-command";
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameTransition } from "./game-transition";
@@ -119,19 +120,32 @@ type CommandHandlerContext = Pick<
   match: Doc<"matches">;
 };
 
+function requireJoinedViewer(ctx: CommandHandlerContext): Effect.Effect<Id<"players">, AppError> {
+  if (!ctx.viewerPlayerId) {
+    return playerNotJoined();
+  }
+  return Effect.succeed(ctx.viewerPlayerId);
+}
+
+function requireMatchStatus(
+  match: Doc<"matches">,
+  expectedStatus: Doc<"matches">["status"],
+): Effect.Effect<void, AppError> {
+  if (match.status !== expectedStatus) {
+    return invalidMatchState();
+  }
+  return Effect.void;
+}
+
 function handleStartMatchCommand(
   ctx: CommandHandlerContext,
   command: Extract<GameCommand, { type: "START_MATCH" }>,
   nowMillis: number,
 ): Effect.Effect<GameTransition, AppError> {
   return Effect.gen(function* () {
-    if (ctx.match.status !== "setup") {
-      return yield* invalidMatchState();
-    }
-    if (!ctx.viewerPlayerId) {
-      return yield* playerNotJoined();
-    }
-    if (ctx.match.hostPlayerId !== ctx.viewerPlayerId) {
+    yield* requireMatchStatus(ctx.match, "setup");
+    const viewerPlayerId = yield* requireJoinedViewer(ctx);
+    if (ctx.match.hostPlayerId !== viewerPlayerId) {
       return yield* notHost();
     }
     if (ctx.players.length < 2) {
@@ -163,12 +177,8 @@ function handleStartNextRoundCommand(
   nowMillis: number,
 ): Effect.Effect<GameTransition, AppError> {
   return Effect.gen(function* () {
-    if (ctx.match.status !== "in_progress") {
-      return yield* invalidMatchState();
-    }
-    if (!ctx.viewerPlayerId) {
-      return yield* playerNotJoined();
-    }
+    yield* requireMatchStatus(ctx.match, "in_progress");
+    yield* requireJoinedViewer(ctx);
 
     const nextDealerSeat = (ctx.match.dealerSeat + 1) % ctx.players.length;
     return buildStartRoundTransition(
@@ -204,14 +214,37 @@ function requireActiveRoundAndViewer(
     if (!ctx.latestRound || !ctx.roundRuntime) {
       return yield* matchNotFound({ matchId: String(matchId) });
     }
-    if (!ctx.viewerPlayerId) {
-      return yield* playerNotJoined();
-    }
+    const viewerPlayerId = yield* requireJoinedViewer(ctx);
     return {
       latestRound: ctx.latestRound,
       roundRuntime: ctx.roundRuntime,
-      viewerPlayerId: ctx.viewerPlayerId,
+      viewerPlayerId,
     };
+  });
+}
+
+type CommandResolution = {
+  round: RoundRuntime;
+  playerStates: Record<string, PlayerRoundState>;
+  events: RoundEvent[];
+};
+
+function buildRoundUpdateTransition(
+  ctx: CommandHandlerContext,
+  roundId: Id<"rounds">,
+  commandType: GameCommand["type"],
+  resolved: CommandResolution,
+): GameTransition {
+  return finalizeIfNeeded(ctx, {
+    command: commandType,
+    roundWrite: {
+      kind: "update",
+      roundId,
+      round: resolved.round,
+    },
+    playerStates: resolved.playerStates,
+    events: resolved.events,
+    matchUpdateContext: {},
   });
 }
 
@@ -236,17 +269,7 @@ function handleTakeTurnCommand(
       String(viewerPlayerId),
       command.action,
     );
-    return finalizeIfNeeded(ctx, {
-      command: command.type,
-      roundWrite: {
-        kind: "update",
-        roundId: latestRound._id,
-        round: resolved.round,
-      },
-      playerStates: resolved.playerStates,
-      events: resolved.events,
-      matchUpdateContext: {},
-    });
+    return buildRoundUpdateTransition(ctx, latestRound._id, command.type, resolved);
   });
 }
 
@@ -273,17 +296,7 @@ function handleResolveActionCommand(
       ctx.playerStates,
       command.targetPlayerId,
     );
-    return finalizeIfNeeded(ctx, {
-      command: command.type,
-      roundWrite: {
-        kind: "update",
-        roundId: latestRound._id,
-        round: resolved.round,
-      },
-      playerStates: resolved.playerStates,
-      events: resolved.events,
-      matchUpdateContext: {},
-    });
+    return buildRoundUpdateTransition(ctx, latestRound._id, command.type, resolved);
   });
 }
 

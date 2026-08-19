@@ -17,12 +17,6 @@ import {
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameCommand } from "./game-command";
 
-type IdempotencyInput = {
-  matchId: Id<"matches">;
-  command: GameCommand;
-  snapshot: MatchSnapshot;
-};
-
 export class MatchAggregateStore extends Context.Tag("MatchAggregateStore")<
   MatchAggregateStore,
   {
@@ -55,7 +49,14 @@ export class IdempotencyStore extends Context.Tag("IdempotencyStore")<
       idempotencyKey: string,
       nowMillis: number,
     ) => Effect.Effect<MatchSnapshot | null, AppError>;
-    put: (input: IdempotencyInput, nowMillis: number) => Effect.Effect<void, AppError>;
+    put: (
+      input: {
+        matchId: Id<"matches">;
+        command: GameCommand;
+        snapshot: MatchSnapshot;
+      },
+      nowMillis: number,
+    ) => Effect.Effect<void, AppError>;
   }
 >() {}
 
