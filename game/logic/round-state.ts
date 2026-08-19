@@ -36,6 +36,21 @@ export type PlayerRoundState = {
   bustCard: NumberCard | null;
 };
 
+export function createDefaultPlayerRoundState(playerId: string): PlayerRoundState {
+  return {
+    playerId,
+    status: "waiting",
+    numberCards: [],
+    modifierCards: [],
+    heldActionCards: [],
+    receivedActionCards: [],
+    roundScore: 0,
+    pointsAtRisk: 0,
+    hasFlip7: false,
+    bustCard: null,
+  };
+}
+
 export type RoundRuntime = {
   phase: RoundPhase;
   roundNumber: number;

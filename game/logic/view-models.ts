@@ -1,7 +1,14 @@
 import type { Id } from "../../convex/_generated/dataModel";
 import type { ActionKind, ModifierCard, NumberCard } from "./card-types";
-import { scoreRound } from "./scoring";
-import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
+import { computeScoreBreakdown, type ScoreBreakdown } from "./scoring";
+import {
+  createDefaultPlayerRoundState,
+  type OrderedPlayer,
+  type PendingAction,
+  type PlayerRoundState,
+  type RoundRuntime,
+} from "./round-state";
+import { orderedPlayerIds } from "./turn-order";
 import type { RoundEvent } from "./events";
 import {
   buildGameSettingsSnapshot,
@@ -58,7 +65,7 @@ export type MatchSnapshot = {
     modifierCards: ModifierCard[];
     heldActionCards: Array<{ label: string; actionKind: ActionKind }>;
     receivedActionCards: Array<{ label: string; actionKind: ActionKind }>;
-    scoreBreakdown: ReturnType<typeof scoreRound>;
+    scoreBreakdown: ScoreBreakdown;
     bustCard: NumberCard | null;
   }>;
   latestEvent: LatestRoundEvent | null;
@@ -96,49 +103,33 @@ export function buildMatchSnapshot(args: {
   const settings = buildGameSettingsSnapshot(
     args.settings ?? settingsFromMatch({ targetScore: args.targetScore }),
   );
-  const players = [...args.players]
-    .toSorted((left, right) => left.seatIndex - right.seatIndex)
-    .map((player) => {
-      const playerState = args.playerStates[player.playerId] ?? {
-        playerId: player.playerId,
-        status: "waiting",
-        numberCards: [],
-        modifierCards: [],
-        heldActionCards: [],
-        receivedActionCards: [],
-        roundScore: 0,
-        pointsAtRisk: 0,
-        hasFlip7: false,
-        bustCard: null,
-      };
+  const players = orderedPlayerIds(args.players).map((player) => {
+    const playerState =
+      args.playerStates[player.playerId] ?? createDefaultPlayerRoundState(player.playerId);
 
-      return {
-        playerId: player.playerId,
-        displayName: player.displayName,
-        colorId: player.colorId,
-        seatIndex: player.seatIndex,
-        totalScore: player.totalScore,
-        isOnline: player.isOnline,
-        roundStatus: playerState.status,
-        pointsAtRisk: playerState.pointsAtRisk,
-        numberCards: playerState.numberCards,
-        modifierCards: playerState.modifierCards,
-        heldActionCards: playerState.heldActionCards.map((card) => ({
-          label: card.label,
-          actionKind: card.actionKind,
-        })),
-        receivedActionCards: playerState.receivedActionCards.map((card) => ({
-          label: card.label,
-          actionKind: card.actionKind,
-        })),
-        scoreBreakdown: scoreRound(
-          playerState.numberCards,
-          playerState.modifierCards,
-          playerState.hasFlip7,
-        ),
-        bustCard: playerState.bustCard ?? null,
-      };
-    });
+    return {
+      playerId: player.playerId,
+      displayName: player.displayName,
+      colorId: player.colorId,
+      seatIndex: player.seatIndex,
+      totalScore: player.totalScore,
+      isOnline: player.isOnline,
+      roundStatus: playerState.status,
+      pointsAtRisk: playerState.pointsAtRisk,
+      numberCards: playerState.numberCards,
+      modifierCards: playerState.modifierCards,
+      heldActionCards: playerState.heldActionCards.map((card) => ({
+        label: card.label,
+        actionKind: card.actionKind,
+      })),
+      receivedActionCards: playerState.receivedActionCards.map((card) => ({
+        label: card.label,
+        actionKind: card.actionKind,
+      })),
+      scoreBreakdown: computeScoreBreakdown(playerState),
+      bustCard: playerState.bustCard ?? null,
+    };
+  });
 
   const latestEvent = args.latestEvent
     ? (() => {
@@ -196,10 +187,8 @@ export function buildMatchSnapshot(args: {
 }
 
 export function toOrderedPlayers(players: Array<{ playerId: string; seatIndex: number }>) {
-  return [...players]
-    .toSorted((left, right) => left.seatIndex - right.seatIndex)
-    .map((player) => ({
-      playerId: player.playerId,
-      seatIndex: player.seatIndex,
-    })) satisfies OrderedPlayer[];
+  return orderedPlayerIds(players).map((player) => ({
+    playerId: player.playerId,
+    seatIndex: player.seatIndex,
+  })) satisfies OrderedPlayer[];
 }

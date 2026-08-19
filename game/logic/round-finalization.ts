@@ -1,4 +1,4 @@
-import { scoreRound } from "./scoring";
+import { computeScoreBreakdown } from "./scoring";
 import { addEvent, type RoundEvent } from "./events";
 import {
   clonePlayerStates,
@@ -7,6 +7,12 @@ import {
   type RoundRuntime,
 } from "./round-state";
 import { activePlayerIds } from "./turn-order";
+
+export function finishRoundAsAllInactive(round: RoundRuntime) {
+  round.phase = "scoring";
+  round.endedBy = "all_inactive";
+  round.activePlayerId = null;
+}
 
 export function maybeFinishRound(
   round: RoundRuntime,
@@ -33,9 +39,7 @@ export function maybeFinishRound(
   }
 
   if (activePlayerIds(players, playerStates).length === 0) {
-    round.phase = "scoring";
-    round.endedBy = "all_inactive";
-    round.activePlayerId = null;
+    finishRoundAsAllInactive(round);
   }
 }
 
@@ -62,11 +66,7 @@ export function finalizeRound(
       continue;
     }
 
-    const breakdown = scoreRound(
-      playerState.numberCards,
-      playerState.modifierCards,
-      playerState.hasFlip7,
-    );
+    const breakdown = computeScoreBreakdown(playerState);
 
     playerState.roundScore = breakdown.finalRoundScore;
     playerState.pointsAtRisk = breakdown.finalRoundScore;

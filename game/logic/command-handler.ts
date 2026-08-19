@@ -6,17 +6,18 @@ import { addEvent, cardEventPayload, type RoundEvent } from "./events";
 import { drawCard } from "./draw";
 import { advanceFlip3Hit, isFlip3ActiveForPlayer } from "./flip-three";
 import type { RngService } from "./rng";
-import { maybeFinishRound } from "./round-finalization";
+import { finishRoundAsAllInactive, maybeFinishRound } from "./round-finalization";
 import {
   clonePendingFlip3,
   clonePlayerStates,
   cloneRoundRuntime,
+  createDefaultPlayerRoundState,
   type OrderedPlayer,
   type PendingAction,
   type PlayerRoundState,
   type RoundRuntime,
 } from "./round-state";
-import { getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
+import { advanceToNextActiveSeat, getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
 
 export type CreateRoundRuntimeOptions = {
   drawPile?: Card[];
@@ -135,9 +136,7 @@ function finalizeDealingIfStuck(
   }
   const anyActive = Object.values(playerStates).some((s) => s.status === "active");
   if (!anyActive) {
-    round.phase = "scoring";
-    round.endedBy = "all_inactive";
-    round.activePlayerId = null;
+    finishRoundAsAllInactive(round);
   } else {
     transitionDealingToPlayerTurns(round, players, playerStates);
   }
@@ -145,21 +144,7 @@ function finalizeDealingIfStuck(
 
 export function createPlayerRoundStates(players: OrderedPlayer[]) {
   return Object.fromEntries(
-    players.map((player) => [
-      player.playerId,
-      {
-        playerId: player.playerId,
-        status: "waiting",
-        numberCards: [],
-        modifierCards: [],
-        heldActionCards: [],
-        receivedActionCards: [],
-        roundScore: 0,
-        pointsAtRisk: 0,
-        hasFlip7: false,
-        bustCard: null,
-      } satisfies PlayerRoundState,
-    ]),
+    players.map((player) => [player.playerId, createDefaultPlayerRoundState(player.playerId)]),
   );
 }
 
@@ -289,9 +274,7 @@ function advanceTurnWhenQueueClear(
   playerStates: Record<string, PlayerRoundState>,
 ) {
   if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
-    const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
-    round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
-    round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
+    advanceToNextActiveSeat(round, players, playerStates);
     maybeFinishRound(round, players, playerStates);
   }
 }

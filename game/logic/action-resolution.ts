@@ -6,12 +6,12 @@ import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import {
   activePlayerIds,
-  getPlayerBySeat,
-  nextActiveSeatIndex,
+  advanceToNextActiveSeat,
+  getPlayerById,
   orderedPlayerIds,
 } from "./turn-order";
 
-type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
+export type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
 
 function createPendingTargetAction(
   round: RoundRuntime,
@@ -125,7 +125,7 @@ function focusPendingTurnOwner(round: RoundRuntime, players: OrderedPlayer[]) {
     return;
   }
 
-  const targetPlayer = players.find((player) => player.playerId === targetPlayerId);
+  const targetPlayer = getPlayerById(players, targetPlayerId);
   if (!targetPlayer) {
     return;
   }
@@ -146,9 +146,7 @@ function maybeAdvanceTurnIfActivePlayerInactive(
   if (currentPlayerState?.status === "active") {
     return;
   }
-  const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
-  round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
-  round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
+  advanceToNextActiveSeat(round, players, playerStates);
 }
 
 export function resolvePendingTargetAction(

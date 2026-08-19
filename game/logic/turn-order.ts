@@ -1,13 +1,23 @@
 import type { OrderedPlayer, PlayerRoundState } from "./round-state";
 
-export function orderedPlayerIds(players: OrderedPlayer[]) {
+export function orderedPlayerIds<T extends OrderedPlayer>(players: readonly T[]): T[] {
   return [...players].toSorted((left, right) => left.seatIndex - right.seatIndex);
 }
 
-export function getPlayerBySeat(players: OrderedPlayer[], seatIndex: number) {
+export function getPlayerBySeat<T extends OrderedPlayer>(
+  players: readonly T[],
+  seatIndex: number,
+): T {
   const total = players.length;
   const normalized = ((seatIndex % total) + total) % total;
   return orderedPlayerIds(players)[normalized];
+}
+
+export function getPlayerById<T extends OrderedPlayer>(
+  players: readonly T[],
+  playerId: string,
+): T | undefined {
+  return players.find((player) => player.playerId === playerId);
 }
 
 export function nextActiveSeatIndex(
@@ -24,6 +34,16 @@ export function nextActiveSeatIndex(
   }
 
   return null;
+}
+
+export function advanceToNextActiveSeat(
+  round: { turnSeatIndex: number; activePlayerId: string | null },
+  players: OrderedPlayer[],
+  playerStates: Record<string, PlayerRoundState>,
+) {
+  const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
+  round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
+  round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
 }
 
 export function activePlayerIds(
