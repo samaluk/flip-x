@@ -13,6 +13,20 @@ import { cn } from "@/shared/lib/utils";
 /** Scales the default 8×10rem face to fit narrow sidebars without reflowing inner SVGs. */
 const COMPACT_CARD_SCALE = 0.46;
 
+/**
+ * Shared shape of the FlipXCard memo comparison: both cards only depend on
+ * their label and their kind-specific payload, which the lane card stack
+ * feeds from the same snapshot card fields. Exporting this type lets the
+ * player-lane comparators type their card-pair predicates without reaching
+ * into component-private types.
+ */
+export type FlipXCardComparable = {
+  label: string;
+  numberValue?: number;
+  modifierValue?: number | "x2";
+  actionKind?: string;
+};
+
 type FlipXCardProps = {
   label: string;
   faceDown?: boolean;
