@@ -7,10 +7,12 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { MatchSnapshot } from "@/confect/match-snapshot-schema";
 import { MutationCtx } from "@/confect/_generated/services";
 import { runGameCommand, type RunGameCommandInput } from "@/game/application/run-command";
+import { createIdempotencyCounter } from "@/tests/builders/idempotency";
 import {
   classifyRoundBoundaryAdvanceStepOrThrow,
   describeReplayResult,
   requireActiveSessionForSnapshot,
+  requireSourceSessionForPendingAction,
   type DeterministicStartOptions,
   type ReplayResult,
 } from "@/tests/fixtures/deterministic";
@@ -18,15 +20,7 @@ import {
 import { TestConfect } from "./TestConfect";
 
 export type Snapshot = Ref.Returns<typeof refs.public.matches.getMatchSnapshot>;
-let idempotencySequence = 0;
-
-function commandMetadata(expectedVersion: number) {
-  idempotencySequence += 1;
-  return {
-    expectedVersion,
-    idempotencyKey: `confect-test-${idempotencySequence}`,
-  };
-}
+const commandMetadata = createIdempotencyCounter("confect-test");
 
 export type SessionRecord = {
   name: string;
@@ -171,14 +165,11 @@ export function driveMatchUntilCompleted(
       }
 
       if (finalSnapshot.pendingAction) {
-        const sourceSession = sessions.find(
-          (session) =>
-            finalSnapshot.pendingAction?.sourcePlayerId ===
-            finalSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
+        const sourceSession = requireSourceSessionForPendingAction(
+          finalSnapshot,
+          sessions,
+          "Expected a source session while completing the round",
         );
-        if (!sourceSession) {
-          throw new Error("Expected a source session while completing the round");
-        }
 
         finalSnapshot = yield* runCommand(matchId, sourceSession.sessionId, {
           type: "RESOLVE_ACTION",
@@ -189,14 +180,11 @@ export function driveMatchUntilCompleted(
         continue;
       }
 
-      const activeSession = sessions.find(
-        (session) =>
-          finalSnapshot.activePlayerId ===
-          finalSnapshot.players.find((player) => player.displayName === session.name)?.playerId,
+      const activeSession = requireActiveSessionForSnapshot(
+        finalSnapshot,
+        sessions,
+        "Expected an active session while completing the round",
       );
-      if (!activeSession) {
-        break;
-      }
 
       const flip3 = finalSnapshot.pendingFlip3;
       const mustHitFlip3 =

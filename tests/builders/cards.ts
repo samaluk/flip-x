@@ -13,7 +13,7 @@ export function modifierCard(id: string, value: ModifierCard["modifierValue"]): 
   return {
     id,
     type: "modifier",
-    label: String(value),
+    label: value === "x2" ? "x2" : `+${value}`,
     modifierValue: value,
   };
 }

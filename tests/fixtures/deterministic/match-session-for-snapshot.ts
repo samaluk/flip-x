@@ -49,6 +49,24 @@ export function requireSourceSessionForPendingAction<
   return sourceSession;
 }
 
+/** Resolves the session owning the given player row; throws if no player or session matches. */
+export function requireSessionForPlayerId<S extends { name: string; sessionId: unknown }>(
+  snapshot: { players: readonly MatchPlayersRow[] },
+  sessions: S[],
+  playerId: string,
+  errorMessage: string,
+): S {
+  const player = snapshot.players.find((candidate) => candidate.playerId === playerId);
+  if (!player) {
+    throw new Error(errorMessage);
+  }
+  const session = sessions.find((candidate) => candidate.name === player.displayName);
+  if (!session) {
+    throw new Error(errorMessage);
+  }
+  return session;
+}
+
 /** Minimal slice for advance-until-round-boundary loops; satisfied by Confect `MatchSnapshot`. */
 export type SnapshotForRoundBoundaryAdvance = SnapshotWithActivePlayer & {
   roundStatus: string | null;

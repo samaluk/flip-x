@@ -1,5 +1,6 @@
 import type { DeterministicSetupScenario } from "./scenario-types";
-import { actionCard, modifierCard, numberCard, withSetupFillerCards } from "./card-builders";
+import { actionCard, modifierCard, numberCard } from "@/tests/builders/cards";
+import { withSetupFillerCards } from "./fillers";
 import { cloneDeterministicStartOptions } from "./scenario-runner";
 
 export const BASIC_DETERMINISTIC_SETUP_SCENARIO: DeterministicSetupScenario = {

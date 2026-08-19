@@ -9,7 +9,7 @@ import {
 import type { ReplayHarness } from "./scenario-runner";
 import type { DeterministicStartOptions } from "./scenario-types";
 
-type TestClient = {
+export type TestClient = {
   mutation: <MutationRef extends Ref.AnyMutation>(
     mutationRef: MutationRef,
     args: Ref.Args<MutationRef>,

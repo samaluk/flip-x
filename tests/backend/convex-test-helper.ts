@@ -5,25 +5,19 @@ import { ConvexTestingHelper } from "convex-helpers/testing";
 
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { createIdempotencyCounter } from "@/tests/builders/idempotency";
 import {
   describeReplayResult,
+  requireSessionForPlayerId,
   type DeterministicStartOptions,
   type ReplayResult,
 } from "@/tests/fixtures/deterministic";
 import type { SessionId } from "convex-helpers/server/sessions";
 
 const DEFAULT_GAMEPLAY_GUARD_LIMIT = 150;
-let idempotencySequence = 0;
+export const commandMetadata = createIdempotencyCounter("backend-test");
 
-export function commandMetadata(expectedVersion: number) {
-  idempotencySequence += 1;
-  return {
-    expectedVersion,
-    idempotencyKey: `backend-test-${idempotencySequence}`,
-  };
-}
-
-type TestSession = { name: string; sessionId: SessionId };
+export type TestSession = { name: string; sessionId: SessionId };
 
 export function asSessionId(value: string) {
   return value as SessionId;
@@ -116,7 +110,7 @@ export async function getSnapshotForAnySession(
   return null;
 }
 
-type BackendSnapshot = NonNullable<Awaited<ReturnType<typeof getSnapshotForAnySession>>>;
+export type BackendSnapshot = NonNullable<Awaited<ReturnType<typeof getSnapshotForAnySession>>>;
 
 function asBackendSnapshot(snapshot: unknown) {
   return snapshot as BackendSnapshot;
@@ -127,12 +121,12 @@ function getSessionForPlayerId(
   sessions: TestSession[],
   playerId: string,
 ) {
-  const player = snapshot.players.find((candidate) => candidate.playerId === playerId);
-  if (!player) {
-    return null;
-  }
-
-  return sessions.find((session) => session.name === player.displayName) ?? null;
+  return requireSessionForPlayerId(
+    snapshot,
+    sessions,
+    playerId,
+    `Expected a session for player ${playerId}`,
+  );
 }
 
 export async function advanceOneGameplayStep(
@@ -151,12 +145,6 @@ export async function advanceOneGameplayStep(
       snapshot.pendingAction.sourcePlayerId,
     );
 
-    if (!sourceSession) {
-      throw new Error(
-        `Expected a source session for pending action owned by ${snapshot.pendingAction.sourcePlayerId}`,
-      );
-    }
-
     return asBackendSnapshot(
       await client.mutation(api.turns.resolveAction, {
         matchId,
@@ -172,10 +160,6 @@ export async function advanceOneGameplayStep(
   }
 
   const activeSession = getSessionForPlayerId(snapshot, sessions, snapshot.activePlayerId);
-
-  if (!activeSession) {
-    throw new Error(`Expected an active session for player ${snapshot.activePlayerId}`);
-  }
 
   return asBackendSnapshot(
     await client.mutation(api.turns.takeTurn, {
