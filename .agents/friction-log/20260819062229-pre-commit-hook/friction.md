@@ -16,7 +16,7 @@ Document or provide a staged-worktree refresh step in the hook workflow after a 
 1. Stage a partial refactor.
 2. Run a commit and let a staged quality hook fail.
 3. Edit the files to fix the reported issue.
-4. Rerun No staged source files found. without restaging every affected file.
+4. Rerun `pnpm doctor:staged` without restaging every affected file.
 
 ## Context
-Encountered while implementing flip-x#600. The code was correct in the worktree, but React Doctor continued reporting findings from the older staged version until  was rerun.
+Encountered while implementing flip-x#600. The code was correct in the worktree, but React Doctor continued reporting findings from the older staged version until `git add` was rerun.
