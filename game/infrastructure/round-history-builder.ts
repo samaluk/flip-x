@@ -1,28 +1,41 @@
 import { getManyFrom } from "convex-helpers/server/relationships";
 
 import type { Doc, Id } from "../../convex/_generated/dataModel";
-import type { MutationCtx, QueryCtx } from "../../convex/_generated/server";
 import type { RoundHistoryEntry } from "../logic/view-models";
+import type { Ctx } from "./snapshot-store";
 
-type Ctx = QueryCtx | MutationCtx;
+export type MatchStatus = "setup" | "in_progress" | "completed";
 
-type MatchStatus = "setup" | "in_progress" | "completed";
-
-type PlayerScoreSummary = {
+export type PlayerScoreSummary = {
   playerId: string;
   totalScore: number;
   seatIndex: number;
 };
 
-type CompletedRoundSummary = {
+export type CompletedRoundSummary = {
   roundNumber: number;
   scoreByPlayerId: Map<string, number>;
 };
 
-type ProjectedRoundSummary = {
+export type ProjectedRoundSummary = {
   roundNumber: number;
   pointsAtRiskByPlayerId: Map<string, number>;
 };
+
+function buildPlayerRoundScoreEntry(
+  playerId: string,
+  roundScore: number,
+  totalScore: number,
+  targetScore: number,
+) {
+  return {
+    playerId,
+    roundScore,
+    totalScore,
+    pointsToTarget: Math.max(targetScore - totalScore, 0),
+    reachedTarget: totalScore >= targetScore,
+  };
+}
 
 export function calculateRoundHistory(args: {
   targetScore: number;
@@ -48,13 +61,12 @@ export function calculateRoundHistory(args: {
         const totalScore = (runningTotals.get(player.playerId) ?? 0) + roundScore;
         runningTotals.set(player.playerId, totalScore);
 
-        return {
-          playerId: player.playerId,
+        return buildPlayerRoundScoreEntry(
+          player.playerId,
           roundScore,
           totalScore,
-          pointsToTarget: Math.max(args.targetScore - totalScore, 0),
-          reachedTarget: totalScore >= args.targetScore,
-        };
+          args.targetScore,
+        );
       }),
     }));
 
@@ -70,13 +82,7 @@ export function calculateRoundHistory(args: {
       const roundScore = args.projectedRound?.pointsAtRiskByPlayerId.get(player.playerId) ?? 0;
       const totalScore = player.totalScore + roundScore;
 
-      return {
-        playerId: player.playerId,
-        roundScore,
-        totalScore,
-        pointsToTarget: Math.max(args.targetScore - totalScore, 0),
-        reachedTarget: totalScore >= args.targetScore,
-      };
+      return buildPlayerRoundScoreEntry(player.playerId, roundScore, totalScore, args.targetScore);
     }),
   });
 
@@ -103,6 +109,18 @@ async function loadCompletedRoundSummary(
   };
 }
 
+function buildProjectedRoundSummaryFromDocs(
+  roundNumber: number,
+  stateDocs: Doc<"roundPlayerStates">[],
+): ProjectedRoundSummary {
+  return {
+    roundNumber,
+    pointsAtRiskByPlayerId: new Map(
+      stateDocs.map((playerState) => [String(playerState.playerId), playerState.pointsAtRisk]),
+    ),
+  };
+}
+
 async function loadProjectedRoundSummary(
   ctx: Ctx,
   round: Doc<"rounds">,
@@ -115,12 +133,7 @@ async function loadProjectedRoundSummary(
     "roundId",
   );
 
-  return {
-    roundNumber: round.roundNumber,
-    pointsAtRiskByPlayerId: new Map(
-      stateDocs.map((playerState) => [String(playerState.playerId), playerState.pointsAtRisk]),
-    ),
-  };
+  return buildProjectedRoundSummaryFromDocs(round.roundNumber, stateDocs);
 }
 
 export async function buildRoundHistory(
@@ -130,6 +143,7 @@ export async function buildRoundHistory(
   currentRoundNumber: number,
   matchStatus: MatchStatus,
   players: PlayerScoreSummary[],
+  roundPlayerStateDocs?: Doc<"roundPlayerStates">[],
 ): Promise<RoundHistoryEntry[]> {
   const roundDocs = await getManyFrom(ctx.db, "rounds", "by_match", matchId, "matchId");
   const sortedRounds = roundDocs.toSorted((left, right) => left.roundNumber - right.roundNumber);
@@ -140,10 +154,14 @@ export async function buildRoundHistory(
   );
 
   const latestRound = sortedRounds.at(-1) ?? null;
-  const projectedRound =
-    latestRound && latestRound.phase !== "completed" && matchStatus !== "completed"
-      ? await loadProjectedRoundSummary(ctx, latestRound)
-      : null;
+  let projectedRound: ProjectedRoundSummary | null = null;
+
+  if (latestRound && latestRound.phase !== "completed" && matchStatus !== "completed") {
+    projectedRound =
+      roundPlayerStateDocs && roundPlayerStateDocs.length > 0
+        ? buildProjectedRoundSummaryFromDocs(latestRound.roundNumber, roundPlayerStateDocs)
+        : await loadProjectedRoundSummary(ctx, latestRound);
+  }
 
   return calculateRoundHistory({
     targetScore,
