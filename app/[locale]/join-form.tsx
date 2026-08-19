@@ -1,4 +1,4 @@
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
@@ -6,7 +6,7 @@ import { Input } from "@/shared/ui/input";
 export interface JoinFormProps {
   joinCode: string;
   onJoinCodeChange: (code: string) => void;
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
   onCancel: () => void;
   disabled: boolean;
   lobbyCodeLabel: string;

@@ -2,7 +2,7 @@ import { parseAsString, useQueryState } from "nuqs";
 import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import { useTranslations } from "next-intl";
-import { type FormEvent, startTransition, useState } from "react";
+import { type SubmitEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -70,7 +70,7 @@ export function useHomeMatchSetup() {
     });
   };
 
-  async function handleCreate(event: FormEvent<HTMLFormElement>) {
+  async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     await executeMatchSubmission({
@@ -92,7 +92,7 @@ export function useHomeMatchSetup() {
     });
   }
 
-  async function handleJoin(event: FormEvent<HTMLFormElement>) {
+  async function handleJoin(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const lobbyCode = (joinCode ?? "").trim();

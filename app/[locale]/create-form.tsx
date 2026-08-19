@@ -1,9 +1,9 @@
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 
 import { Button } from "@/shared/ui/button";
 
 export interface CreateFormProps {
-  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
   onOpenJoinFlow: () => void;
   disabled: boolean;
   createButtonLabel: string;
