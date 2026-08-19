@@ -7,6 +7,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 import { MatchSnapshot } from "@/confect/match-snapshot-schema";
 import { MutationCtx } from "@/confect/_generated/services";
 import { runGameCommand, type RunGameCommandInput } from "@/game/application/run-command";
+import { createIdempotencyCounter } from "@/tests/builders/idempotency";
 import {
   classifyRoundBoundaryAdvanceStepOrThrow,
   describeReplayResult,
@@ -18,15 +19,7 @@ import {
 import { TestConfect } from "./TestConfect";
 
 export type Snapshot = Ref.Returns<typeof refs.public.matches.getMatchSnapshot>;
-let idempotencySequence = 0;
-
-function commandMetadata(expectedVersion: number) {
-  idempotencySequence += 1;
-  return {
-    expectedVersion,
-    idempotencyKey: `confect-test-${idempotencySequence}`,
-  };
-}
+const commandMetadata = createIdempotencyCounter("confect-test");
 
 export type SessionRecord = {
   name: string;

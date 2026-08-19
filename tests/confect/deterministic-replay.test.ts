@@ -2,6 +2,7 @@ import { describe, it } from "@effect/vitest";
 import { assertEquals } from "@effect/vitest/utils";
 import { Effect } from "effect";
 
+import { createIdempotencyCounter } from "@/tests/builders/idempotency";
 import {
   MATCH_REPLAY_SCENARIO,
   ROUND_REPLAY_SCENARIO,
@@ -12,15 +13,7 @@ import {
 
 import * as TestConfect from "./TestConfect";
 
-let idempotencySequence = 0;
-
-function commandMetadata(expectedVersion: number) {
-  idempotencySequence += 1;
-  return {
-    expectedVersion,
-    idempotencyKey: `confect-replay-${idempotencySequence}`,
-  };
-}
+const commandMetadata = createIdempotencyCounter("confect-replay");
 
 describe("Confect deterministic replay", () => {
   it.effect("replays a deterministic full match step-by-step", () =>

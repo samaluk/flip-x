@@ -2,6 +2,7 @@ import { describe, it } from "@effect/vitest";
 import { assertEquals } from "@effect/vitest/utils";
 import { Effect } from "effect";
 
+import { createIdempotencyCounter } from "@/tests/builders/idempotency";
 import {
   DIVERGED_REPLAY_SCENARIO,
   EXTRA_STEP_REPLAY_SCENARIO,
@@ -14,15 +15,7 @@ import {
 import * as TestConfect from "./TestConfect";
 import { describeConfectReplayResult } from "./helpers";
 
-let idempotencySequence = 0;
-
-function commandMetadata(expectedVersion: number) {
-  idempotencySequence += 1;
-  return {
-    expectedVersion,
-    idempotencyKey: `confect-divergence-${idempotencySequence}`,
-  };
-}
+const commandMetadata = createIdempotencyCounter("confect-divergence");
 
 describe("Confect deterministic divergence", () => {
   it.effect("stops at the first mismatched replay step", () =>

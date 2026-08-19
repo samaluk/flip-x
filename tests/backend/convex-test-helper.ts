@@ -5,6 +5,7 @@ import { ConvexTestingHelper } from "convex-helpers/testing";
 
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
+import { createIdempotencyCounter } from "@/tests/builders/idempotency";
 import {
   describeReplayResult,
   type DeterministicStartOptions,
@@ -13,15 +14,7 @@ import {
 import type { SessionId } from "convex-helpers/server/sessions";
 
 const DEFAULT_GAMEPLAY_GUARD_LIMIT = 150;
-let idempotencySequence = 0;
-
-export function commandMetadata(expectedVersion: number) {
-  idempotencySequence += 1;
-  return {
-    expectedVersion,
-    idempotencyKey: `backend-test-${idempotencySequence}`,
-  };
-}
+export const commandMetadata = createIdempotencyCounter("backend-test");
 
 type TestSession = { name: string; sessionId: SessionId };
 
