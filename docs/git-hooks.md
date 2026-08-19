@@ -52,6 +52,35 @@ hk run pre-push --plan
 For a one-off bypass, use `HK=0 git commit` or `HK=0 git push`. Prefer fixing a
 failed gate; the escape hatch is intended for diagnosing hook infrastructure.
 
+## Dependency sync and `verifyDepsBeforeRun`
+
+`pnpm-workspace.yaml` sets `verifyDepsBeforeRun: error` so every `pnpm run` /
+`pnpm exec` step (which is every `hk` step via `pnpm exec` / `pnpm run`) fails
+fast when `node_modules` is out of sync with `pnpm-lock.yaml` or
+`pnpm-workspace.yaml`. This avoids the non-interactive auto-install path that
+would otherwise abort with `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY` when a
+store/layout change requires purging `node_modules` and there is no TTY to
+confirm.
+
+When a hook fails with `ERR_PNPM_VERIFY_DEPS_BEFORE_RUN` (or, on an older
+checkout without this setting, with `ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY`),
+recover with an explicit install outside the hook:
+
+```bash
+pnpm install
+```
+
+If that install itself needs to purge an incompatible `node_modules` (for example
+after pulling a `packageManager` pnpm bump) and you are in a non-interactive
+agent shell with no TTY, re-run it non-interactively:
+
+```bash
+CI=1 pnpm install
+```
+
+Then re-run the commit. See `pnpm`'s [`verifyDepsBeforeRun`](https://pnpm.io/settings/build#verifydepsbeforerun) and the
+`confirmModulesPurge` / `CI` handling in `validateModules`.
+
 The configuration pins both the executable and Pkl imports because they are
 separate compatibility boundaries. `min_hk_version` makes an older executable
 fail clearly instead of interpreting a newer config. See `hk`'s official
