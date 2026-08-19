@@ -8,7 +8,7 @@ import {
   type PlayerRoundState,
   type RoundRuntime,
 } from "./round-state";
-import { orderedPlayerIds } from "./turn-order";
+import { orderedPlayers } from "./turn-order";
 import type { RoundEvent } from "./events";
 import {
   buildGameSettingsSnapshot,
@@ -103,7 +103,7 @@ export function buildMatchSnapshot(args: {
   const settings = buildGameSettingsSnapshot(
     args.settings ?? settingsFromMatch({ targetScore: args.targetScore }),
   );
-  const players = orderedPlayerIds(args.players).map((player) => {
+  const players = orderedPlayers(args.players).map((player) => {
     const playerState =
       args.playerStates[player.playerId] ?? createDefaultPlayerRoundState(player.playerId);
 
@@ -187,7 +187,7 @@ export function buildMatchSnapshot(args: {
 }
 
 export function toOrderedPlayers(players: Array<{ playerId: string; seatIndex: number }>) {
-  return orderedPlayerIds(players).map((player) => ({
+  return orderedPlayers(players).map((player) => ({
     playerId: player.playerId,
     seatIndex: player.seatIndex,
   })) satisfies OrderedPlayer[];

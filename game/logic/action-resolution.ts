@@ -8,7 +8,7 @@ import {
   activePlayerIds,
   advanceToNextActiveSeat,
   getPlayerById,
-  orderedPlayerIds,
+  orderedPlayers,
 } from "./turn-order";
 
 export type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
@@ -24,7 +24,7 @@ function createPendingTargetAction(
 ) {
   const eligibleTargetIds =
     resume === "dealing"
-      ? orderedPlayerIds(players)
+      ? orderedPlayers(players)
           .filter(
             (player) =>
               playerStates[player.playerId]?.status === "active" ||

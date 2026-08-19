@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
-import { formatLatestRoundEventBody } from "./round-event-format";
+import { formatLatestRoundEventBody } from "@/game/ui/round-event-format";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { PlayerLane } from "@/game/ui/player-lane";
 import { RoundHistoryTable } from "@/game/ui/round-history-table";
