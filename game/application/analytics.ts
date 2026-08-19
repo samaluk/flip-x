@@ -4,11 +4,11 @@ import { ANALYTICS_EVENTS } from "../../shared/analytics/events";
 import type { AnalyticsEvent, AnalyticsProperties } from "../../shared/analytics/types";
 import { assertNever } from "../../shared/lib/utils";
 import type { MatchAggregate } from "../infrastructure/load-match-aggregate";
-import type { GameTransition } from "../infrastructure/save-command-result";
+import type { GameTransition } from "./game-transition";
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameCommand } from "./game-command";
 
-type BuildGameCommandAnalyticsEventsInput = {
+export type BuildGameCommandAnalyticsEventsInput = {
   command: GameCommand;
   sessionId: SessionId;
   aggregate: Pick<MatchAggregate, "viewerPlayerId" | "players">;

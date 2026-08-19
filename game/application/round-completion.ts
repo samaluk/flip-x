@@ -4,9 +4,9 @@ import { finalizeRound } from "../logic/round-finalization";
 import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 
-type MatchCompletionPlayer = Pick<Doc<"players">, "_id" | "totalScore">;
-type MatchCompletionMatch = Pick<Doc<"matches">, "targetScore">;
-type MatchUpdateContext = {
+export type MatchCompletionPlayer = Pick<Doc<"players">, "_id" | "totalScore">;
+export type MatchCompletionMatch = Pick<Doc<"matches">, "targetScore">;
+export type MatchUpdateContext = {
   nextMatchStatus?: "in_progress" | "completed";
   nextCurrentRoundNumber?: number;
   nextDealerSeat?: number;

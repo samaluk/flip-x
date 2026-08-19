@@ -4,7 +4,7 @@ import type { Id } from "../../convex/_generated/dataModel";
 import { ANALYTICS_EVENTS } from "../../shared/analytics/events";
 import type { AnalyticsEvent } from "../../shared/analytics/types";
 
-type BuildMatchCreatedAnalyticsEventInput = {
+export type BuildMatchCreatedAnalyticsEventInput = {
   sessionId: SessionId;
   matchId: Id<"matches">;
   hostPlayerId: Id<"players">;
@@ -12,7 +12,7 @@ type BuildMatchCreatedAnalyticsEventInput = {
   maxNumberCardValue: number;
 };
 
-type BuildMatchJoinedAnalyticsEventInput = {
+export type BuildMatchJoinedAnalyticsEventInput = {
   sessionId: SessionId;
   matchId: Id<"matches">;
   playerId: Id<"players">;

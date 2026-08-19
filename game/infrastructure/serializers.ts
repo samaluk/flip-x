@@ -3,7 +3,7 @@ import { isActionCard, isModifierCard, isNumberCard, type Card } from "../logic/
 import { decodeRoundEvent, encodeRoundEvent, type RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
 
-type PlayerIdMap = Map<string, Id<"players">>;
+export type PlayerIdMap = Map<string, Id<"players">>;
 
 export function serializeRoundRuntime(round: RoundRuntime, playerIdMap: PlayerIdMap) {
   return {

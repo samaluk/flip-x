@@ -17,7 +17,7 @@ import {
   deserializeRoundRuntime,
 } from "./serializers";
 
-type Ctx = QueryCtx | MutationCtx;
+export type Ctx = QueryCtx | MutationCtx;
 
 export function normalizePlayerRoundState(doc: Doc<"roundPlayerStates">): PlayerRoundState {
   return deserializePlayerRoundState(doc);
@@ -60,14 +60,16 @@ async function buildSnapshotFromLoadedMatch(
 
   let playerStates: Record<string, PlayerRoundState> = {};
   let latestEvent: RoundEvent | null = null;
+  let roundPlayerStateDocs: Doc<"roundPlayerStates">[] | undefined;
 
   if (round) {
-    const [roundPlayerStateDocs, latestRoundEvent] = await Promise.all([
+    const [fetchedStateDocs, latestRoundEvent] = await Promise.all([
       getRoundPlayerStateDocs(ctx, round._id),
       getLatestRoundEvent(ctx, round._id),
     ]);
+    roundPlayerStateDocs = fetchedStateDocs;
     playerStates = Object.fromEntries(
-      roundPlayerStateDocs.map((doc) => {
+      fetchedStateDocs.map((doc) => {
         const playerState = normalizePlayerRoundState(doc);
         return [playerState.playerId, playerState];
       }),
@@ -87,6 +89,7 @@ async function buildSnapshotFromLoadedMatch(
       totalScore: p.totalScore,
       seatIndex: p.seatIndex,
     })),
+    roundPlayerStateDocs,
   );
 
   return buildMatchSnapshot({
