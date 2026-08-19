@@ -2,7 +2,6 @@
 
 import { QueryResult } from "@confect/react";
 import { useTranslations } from "next-intl";
-import { useCallback } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -53,7 +52,7 @@ export function useGamePageState(matchId: string): GamePageState {
     usedColorIds,
   } = useGamePageJoin(matchId, snapshot?.players);
 
-  const onCopyInvite = useCallback(async () => {
+  const onCopyInvite = async () => {
     try {
       const url = snapshot?.lobbyCode
         ? `${window.location.origin}?code=${snapshot.lobbyCode}`
@@ -63,7 +62,7 @@ export function useGamePageState(matchId: string): GamePageState {
     } catch {
       toast.error(t("toastInviteCopyFailed"));
     }
-  }, [snapshot?.lobbyCode, t]);
+  };
 
   return {
     matchId,
