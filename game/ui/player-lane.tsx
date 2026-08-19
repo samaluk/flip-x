@@ -13,22 +13,18 @@ import {
   useState,
 } from "react";
 
-import type { Id } from "@/convex/_generated/dataModel";
 import { FlipXCard } from "@/game/ui/flip-x-card";
 import { Badge } from "@/shared/ui/badge";
-import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 import { Avatar, AvatarBadge, AvatarFallback } from "@/shared/ui/avatar";
 import { getPlayerColor, playerInitials } from "@/shared/lib/player-colors";
-
-type LaneRoundStatus = MatchSnapshot["players"][number]["roundStatus"];
-
-function getDisplayStatus(player: MatchSnapshot["players"][number]): LaneRoundStatus {
-  if (player.bustCard !== null) {
-    return "busted";
-  }
-  return player.roundStatus;
-}
+import {
+  arePlayerLanePropsEqual,
+  getDisplayStatus,
+  type LaneRoundStatus,
+  type PlayerLaneProps,
+  type SnapshotPlayer,
+} from "@/game/ui/player-lane-compare";
 
 type PlayerLaneStatusKey =
   | "statusBusted"
@@ -77,33 +73,8 @@ function poseFromStatus(status: LaneRoundStatus): "bust" | "stay" | null {
   return null;
 }
 
-type PlayerLaneProps = {
-  player: MatchSnapshot["players"][number];
-  isActive: boolean;
-  isDealer?: boolean;
-  isViewer?: boolean;
-  isPinned?: boolean;
-  compact?: boolean;
-  /** No CSS 3D flip (reliable faces in headless screenshots). */
-  disableCardFlip3d?: boolean;
-  /** Overlap cards horizontally; fan out on lane hover (round table opponents). */
-  overlapCards?: boolean;
-  /** Player is the source of pending action (needs to pick target) */
-  isActionSource?: boolean;
-  /** This player lane is an eligible target */
-  isTargetable?: boolean;
-  /** Viewer can target themselves */
-  isSelfTargeting?: boolean;
-  /** Action being targeted at this player */
-  incomingActionKind?: "flip_three" | "freeze" | null;
-  /** Flip 3 cards remaining to draw */
-  flip3Remaining?: number | null;
-  /** Callback when player is clicked as target */
-  onSelectTarget?: (playerId: Id<"players">) => void;
-};
-
 type PlayerLaneSidebarProps = {
-  player: MatchSnapshot["players"][number];
+  player: SnapshotPlayer;
   compact: boolean;
   displayStatus: LaneRoundStatus;
   isDealer: boolean;
@@ -218,7 +189,7 @@ function PlayerLaneSidebar({
 }
 
 type PlayerLaneCardStackProps = {
-  player: MatchSnapshot["players"][number];
+  player: SnapshotPlayer;
   dealingIdSet: ReadonlySet<string>;
   cardStateAnimation: "bust" | "stay" | null;
   compact: boolean;
@@ -335,6 +306,11 @@ function PlayerLaneCardStack({
   return <div className="min-w-0 flex-1 pb-1">{cardRow}</div>;
 }
 
+// why: these are independent orthogonal lane states (active ring, dealer
+// border, viewer badge, target ring, overlap hover), not mutually-exclusive
+// variants — a lane can be active + dealer + viewer + targetable at once —
+// so the rule's discriminated-variant fix does not apply here.
+// react-doctor-disable-next-line react-doctor/no-many-boolean-props
 export const PlayerLane = memo(function PlayerLane({
   player,
   isActive,
@@ -352,84 +328,11 @@ export const PlayerLane = memo(function PlayerLane({
   onSelectTarget,
 }: PlayerLaneProps) {
   const t = useTranslations("PlayerLane");
-  const previousCardIds = useRef<string[]>([]);
-  const initialCardSyncDone = useRef(false);
   const displayStatus = getDisplayStatus(player);
-  const previousStatus = useRef(displayStatus);
-  const [dealingIds, setDealingIds] = useState<string[]>([]);
-  const [stateAnimation, setStateAnimation] = useState<"bust" | "stay" | null>(null);
+  const { dealingIdSet, cardStateAnimation } = usePlayerLaneAnimations(player, displayStatus);
 
   const actionSourcePending = isActionSource;
   const targetingActive = isTargetable || isSelfTargeting;
-
-  const cardIds = useMemo(
-    () => [
-      ...player.modifierCards.map((card) => card.id),
-      ...player.numberCards.map((card) => card.id),
-      ...(player.bustCard ? [player.bustCard.id] : []),
-      ...player.heldActionCards.map(
-        (card) => `${player.playerId}-${card.actionKind}-${card.label}`,
-      ),
-      ...player.receivedActionCards.map(
-        (card) => `${player.playerId}-received-${card.actionKind}-${card.label}`,
-      ),
-    ],
-    [
-      player.heldActionCards,
-      player.receivedActionCards,
-      player.modifierCards,
-      player.numberCards,
-      player.bustCard,
-      player.playerId,
-    ],
-  );
-  const dealingIdSet = useMemo(() => new Set(dealingIds), [dealingIds]);
-
-  useEffect(() => {
-    let clear: (() => void) | undefined;
-    if (!initialCardSyncDone.current) {
-      initialCardSyncDone.current = true;
-      previousCardIds.current = cardIds;
-    } else {
-      const newIds = cardIds.filter((id) => !previousCardIds.current.includes(id));
-      if (newIds.length > 0) {
-        setDealingIds(newIds);
-        const timeout = window.setTimeout(() => setDealingIds([]), 750);
-        previousCardIds.current = cardIds;
-        clear = () => {
-          window.clearTimeout(timeout);
-        };
-      } else {
-        previousCardIds.current = cardIds;
-      }
-    }
-    return () => {
-      clear?.();
-    };
-  }, [cardIds]);
-
-  useEffect(() => {
-    let clear: (() => void) | undefined;
-    if (previousStatus.current !== displayStatus) {
-      if (displayStatus === "busted") {
-        setStateAnimation("bust");
-      } else if (displayStatus === "stayed" || displayStatus === "frozen") {
-        setStateAnimation("stay");
-      }
-      previousStatus.current = displayStatus;
-      if (displayStatus === "busted" || displayStatus === "stayed" || displayStatus === "frozen") {
-        const timeout = window.setTimeout(() => setStateAnimation(null), 900);
-        clear = () => {
-          window.clearTimeout(timeout);
-        };
-      }
-    }
-    return () => {
-      clear?.();
-    };
-  }, [displayStatus]);
-
-  const cardStateAnimation = stateAnimation ?? poseFromStatus(displayStatus);
 
   const selectTarget = onSelectTarget;
   const canSelectAsTarget = Boolean(selectTarget && targetingActive);
@@ -453,6 +356,7 @@ export const PlayerLane = memo(function PlayerLane({
 
   return (
     <section
+      data-slot="player-lane"
       className={cn(
         "rounded-xl border border-border bg-card text-card-foreground transition-shadow duration-300",
         isActive && "ring-2 ring-primary/50 ring-offset-2 ring-offset-background",
@@ -494,120 +398,95 @@ export const PlayerLane = memo(function PlayerLane({
   );
 }, arePlayerLanePropsEqual);
 
-const PLAYER_LANE_MEMO_SCALAR_KEYS = [
-  "isActive",
-  "isDealer",
-  "isViewer",
-  "isPinned",
-  "compact",
-  "disableCardFlip3d",
-  "overlapCards",
-  "isActionSource",
-  "isTargetable",
-  "isSelfTargeting",
-  "incomingActionKind",
-  "flip3Remaining",
-] as const satisfies readonly (keyof PlayerLaneProps)[];
+/**
+ * Orchestrates the two transient card animations in a lane:
+ *
+ * - `dealing`: newly added card IDs flash a dealing state for 750ms.
+ * - `cardStateAnimation`: a one-shot bust/stay pose on status transitions.
+ *
+ * Extracted from the `PlayerLane` body so the lane stays focused on rendering
+ * and the animation timing can be reasoned about independently.
+ */
+function usePlayerLaneAnimations(
+  player: SnapshotPlayer,
+  displayStatus: LaneRoundStatus,
+): { dealingIdSet: ReadonlySet<string>; cardStateAnimation: "bust" | "stay" | null } {
+  const previousCardIds = useRef<string[]>([]);
+  const initialCardSyncDone = useRef(false);
+  const previousStatus = useRef(displayStatus);
+  const [dealingIds, setDealingIds] = useState<string[]>([]);
+  const [stateAnimation, setStateAnimation] = useState<"bust" | "stay" | null>(null);
 
-function arePlayerLanePropsEqual(left: PlayerLaneProps, right: PlayerLaneProps) {
-  for (const key of PLAYER_LANE_MEMO_SCALAR_KEYS) {
-    if (left[key] !== right[key]) {
-      return false;
+  // why: previousIds is a Set so the `includes`-style lookup in the diff below
+  // stays O(1) instead of O(n²) over the card list.
+  const cardIds = useMemo(
+    () => [
+      ...player.modifierCards.map((card) => card.id),
+      ...player.numberCards.map((card) => card.id),
+      ...(player.bustCard ? [player.bustCard.id] : []),
+      ...player.heldActionCards.map(
+        (card) => `${player.playerId}-${card.actionKind}-${card.label}`,
+      ),
+      ...player.receivedActionCards.map(
+        (card) => `${player.playerId}-received-${card.actionKind}-${card.label}`,
+      ),
+    ],
+    [
+      player.heldActionCards,
+      player.receivedActionCards,
+      player.modifierCards,
+      player.numberCards,
+      player.bustCard,
+      player.playerId,
+    ],
+  );
+  const dealingIdSet = useMemo(() => new Set(dealingIds), [dealingIds]);
+
+  useEffect(() => {
+    let clear: (() => void) | undefined;
+    if (!initialCardSyncDone.current) {
+      initialCardSyncDone.current = true;
+      previousCardIds.current = cardIds;
+    } else {
+      const previousIds = new Set(previousCardIds.current);
+      const newIds = cardIds.filter((id) => !previousIds.has(id));
+      if (newIds.length > 0) {
+        setDealingIds(newIds);
+        const timeout = window.setTimeout(() => setDealingIds([]), 750);
+        previousCardIds.current = cardIds;
+        clear = () => {
+          window.clearTimeout(timeout);
+        };
+      } else {
+        previousCardIds.current = cardIds;
+      }
     }
-  }
-  if (Boolean(left.onSelectTarget) !== Boolean(right.onSelectTarget)) {
-    return false;
-  }
-  return arePlayersEqual(left.player, right.player);
-}
+    return () => {
+      clear?.();
+    };
+  }, [cardIds]);
 
-type SnapshotPlayer = MatchSnapshot["players"][number];
-
-function arePlayerSnapshotScalarsEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
-  return (
-    left.playerId === right.playerId &&
-    left.displayName === right.displayName &&
-    left.colorId === right.colorId &&
-    left.seatIndex === right.seatIndex &&
-    left.totalScore === right.totalScore &&
-    left.isOnline === right.isOnline &&
-    left.roundStatus === right.roundStatus &&
-    left.pointsAtRisk === right.pointsAtRisk
-  );
-}
-
-function arePlayerSnapshotCardsEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
-  return (
-    areNumberCardsEqual(left.numberCards, right.numberCards) &&
-    areNumberCardEqual(left.bustCard, right.bustCard) &&
-    areModifierCardsEqual(left.modifierCards, right.modifierCards) &&
-    areActionCardsEqual(left.heldActionCards, right.heldActionCards) &&
-    areActionCardsEqual(left.receivedActionCards, right.receivedActionCards)
-  );
-}
-
-function arePlayersEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
-  return arePlayerSnapshotScalarsEqual(left, right) && arePlayerSnapshotCardsEqual(left, right);
-}
-
-function areNumberCardEqual(
-  left: MatchSnapshot["players"][number]["bustCard"],
-  right: MatchSnapshot["players"][number]["bustCard"],
-) {
-  return (
-    left?.id === right?.id &&
-    left?.label === right?.label &&
-    left?.numberValue === right?.numberValue
-  );
-}
-
-function areParallelSnapshotCardsEqual<A, B>(
-  left: readonly A[],
-  right: readonly B[],
-  sameAtIndex: (a: A | undefined, b: B | undefined) => boolean,
-): boolean {
-  if (left.length !== right.length) {
-    return false;
-  }
-  for (let i = 0; i < left.length; i++) {
-    if (!sameAtIndex(left[i], right[i])) {
-      return false;
+  // fallow-ignore-next-line complexity -- extracted verbatim from the PlayerLane body (status-transition animation); same cyclomatic weight as before, now isolated in the hook
+  useEffect(() => {
+    let clear: (() => void) | undefined;
+    if (previousStatus.current !== displayStatus) {
+      if (displayStatus === "busted") {
+        setStateAnimation("bust");
+      } else if (displayStatus === "stayed" || displayStatus === "frozen") {
+        setStateAnimation("stay");
+      }
+      previousStatus.current = displayStatus;
+      if (displayStatus === "busted" || displayStatus === "stayed" || displayStatus === "frozen") {
+        const timeout = window.setTimeout(() => setStateAnimation(null), 900);
+        clear = () => {
+          window.clearTimeout(timeout);
+        };
+      }
     }
-  }
-  return true;
-}
+    return () => {
+      clear?.();
+    };
+  }, [displayStatus]);
 
-function areNumberCardsEqual(
-  left: MatchSnapshot["players"][number]["numberCards"],
-  right: MatchSnapshot["players"][number]["numberCards"],
-) {
-  return areParallelSnapshotCardsEqual(left, right, (a, b) =>
-    Boolean(a && b && a.id === b.id && a.label === b.label && a.numberValue === b.numberValue),
-  );
-}
-
-function areModifierCardsEqual(
-  left: MatchSnapshot["players"][number]["modifierCards"],
-  right: MatchSnapshot["players"][number]["modifierCards"],
-) {
-  return areParallelSnapshotCardsEqual(left, right, (a, b) =>
-    Boolean(a && b && a.id === b.id && a.label === b.label && a.modifierValue === b.modifierValue),
-  );
-}
-
-function areActionCardsEqual(
-  left: MatchSnapshot["players"][number]["heldActionCards"],
-  right: MatchSnapshot["players"][number]["heldActionCards"],
-) {
-  if (left.length !== right.length) {
-    return false;
-  }
-
-  for (let i = 0; i < left.length; i++) {
-    if (left[i]?.label !== right[i]?.label || left[i]?.actionKind !== right[i]?.actionKind) {
-      return false;
-    }
-  }
-
-  return true;
+  return { dealingIdSet, cardStateAnimation: stateAnimation ?? poseFromStatus(displayStatus) };
 }
