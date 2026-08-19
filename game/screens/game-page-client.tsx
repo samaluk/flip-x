@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import refs from "@/confect/_generated/refs";
 import { matchIdFromConfectWire } from "@/confect/lib/convex-id-bridge";
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
+import { GamePageLoading } from "@/game/screens/game-page-loading";
 import { GameTable } from "@/game/screens/game-table";
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
 import { LobbyCodeDisplay } from "@/game/screens/lobby-code-display";
@@ -21,7 +22,6 @@ import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import { Alert, AlertDescription, AlertTitle } from "@/shared/ui/alert";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { Skeleton } from "@/shared/ui/skeleton";
 import { useSessionConfectMutation, useSessionConfectQuery } from "@/shared/lib/confect-hooks";
 import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import {
@@ -101,25 +101,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
   }, [snapshot?.lobbyCode, t]);
 
   if (QueryResult.isLoading(snapshotResult)) {
-    return (
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-12 w-36 rounded-xl" />
-            <Skeleton className="h-10 w-28 rounded-lg" />
-          </div>
-          <Skeleton className="h-9 w-36 rounded-lg" />
-        </div>
-        <Skeleton className="h-48 w-full rounded-2xl" />
-        <div className="grid gap-4 lg:grid-cols-3">
-          <div className="space-y-3 lg:col-span-2">
-            <Skeleton className="h-32 w-full rounded-2xl" />
-            <Skeleton className="h-32 w-full rounded-2xl" />
-          </div>
-          <Skeleton className="h-48 w-full rounded-2xl" />
-        </div>
-      </div>
-    );
+    return <GamePageLoading />;
   }
 
   if (QueryResult.isFailure(snapshotResult)) {
@@ -144,11 +126,12 @@ export function GamePageClient({ matchId }: { matchId: string }) {
     );
   }
 
+  const onlinePlayerIdSet = new Set(onlinePlayerIds);
   const snapshotWithPresence = {
     ...snapshot,
     players: snapshot.players.map((player) => ({
       ...player,
-      isOnline: onlinePlayerIds?.includes(player.playerId) ?? false,
+      isOnline: onlinePlayerIdSet.has(player.playerId),
     })),
   };
 
