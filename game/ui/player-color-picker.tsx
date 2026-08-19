@@ -6,7 +6,7 @@ import { PLAYER_COLORS, type PlayerColorId } from "@/shared/lib/player-colors";
 import { cn } from "@/shared/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 
-type PlayerColorPickerProps = {
+export type PlayerColorPickerProps = {
   value: PlayerColorId;
   onChange: (colorId: PlayerColorId) => void;
   usedColorIds?: readonly string[];

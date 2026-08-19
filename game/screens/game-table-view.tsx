@@ -11,7 +11,7 @@ import {
 import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/ui/round-event-format";
@@ -20,6 +20,7 @@ import { PlayerLane } from "@/game/ui/player-lane";
 import { RoundHistoryTable } from "@/game/ui/round-history-table";
 import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
+import { resolveTurnControlsPhase } from "@/game/ui/turn-controls-phase";
 import { cn } from "@/shared/lib/utils";
 import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import {
@@ -112,86 +113,196 @@ export function GameTableView({
 
   const opponentsGridClass = opponentsGridCols(opponents.length);
 
-  // Mirrors the render conditions inside TurnControls so we can skip the sticky dock
-  // (and avoid reserving bottom padding) when no action UI would appear.
-  const hasTurnControls =
-    snapshot.status !== "completed" &&
-    (snapshot.roundStatus === "completed" ||
-      snapshot.pendingAction !== null ||
-      (activePlayer !== undefined && snapshot.roundStatus === "player_turns"));
+  const hasTurnControls = resolveTurnControlsPhase(snapshot).kind !== "none";
 
   const turnControls = (
     <TurnControls
       snapshot={snapshot}
       onHit={onHit}
       onStay={onStay}
-      onResolveAction={onResolveAction}
       onStartNextRound={onStartNextRound}
     />
   );
+  const controlsPending = isPending || !!snapshot.optimisticTurn;
 
+  return (
+    <GameTableLayout
+      snapshot={snapshot}
+      t={t}
+      tHistory={tHistory}
+      isPending={controlsPending}
+      callText={callText}
+      latestBody={latestBody}
+      activePlayer={activePlayer}
+      viewerPlayer={viewerPlayer}
+      viewer={viewer}
+      opponents={opponents}
+      opponentsGridClass={opponentsGridClass}
+      freezeLaneLayout={freezeLaneLayout}
+      viewerIsSource={viewerIsSource}
+      viewerCanTargetSelf={viewerCanTargetSelf}
+      onResolveAction={onResolveAction}
+      disableCardFlip3d={disableCardFlip3d}
+      hasTurnControls={hasTurnControls}
+      turnControls={turnControls}
+    />
+  );
+}
+
+type GameTableLayoutProps = {
+  snapshot: MatchSnapshot;
+  t: ReturnType<typeof useTranslations<"GameTable">>;
+  tHistory: ReturnType<typeof useTranslations<"RoundHistory">>;
+  isPending: boolean;
+  callText: string;
+  latestBody: string;
+  activePlayer: MatchSnapshot["players"][number] | undefined;
+  viewerPlayer: MatchSnapshot["players"][number] | undefined;
+  viewer: MatchSnapshot["players"][number] | null;
+  opponents: MatchSnapshot["players"];
+  opponentsGridClass: string;
+  freezeLaneLayout: boolean;
+  viewerIsSource: boolean;
+  viewerCanTargetSelf: boolean;
+  onResolveAction: (targetPlayerId: Id<"players">) => void;
+  disableCardFlip3d: boolean;
+  hasTurnControls: boolean;
+  turnControls: ReactNode;
+};
+
+function GameTableLayout({
+  snapshot,
+  t,
+  tHistory,
+  isPending,
+  callText,
+  latestBody,
+  activePlayer,
+  viewerPlayer,
+  viewer,
+  opponents,
+  opponentsGridClass,
+  freezeLaneLayout,
+  viewerIsSource,
+  viewerCanTargetSelf,
+  onResolveAction,
+  disableCardFlip3d,
+  hasTurnControls,
+  turnControls,
+}: GameTableLayoutProps) {
   return (
     <LazyMotion features={domAnimation}>
       <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
         <GameTableHud
           snapshot={snapshot}
           t={t}
-          isPending={isPending || !!snapshot.optimisticTurn}
+          isPending={isPending}
           callText={callText}
           latestBody={latestBody}
           activePlayer={activePlayer}
           viewerPlayer={viewerPlayer}
         />
-
-        <GameTableOpponentsSection
+        <GameTablePlayers
+          snapshot={snapshot}
+          viewer={viewer}
           opponents={opponents}
           opponentsGridClass={opponentsGridClass}
           freezeLaneLayout={freezeLaneLayout}
           t={t}
-          snapshot={snapshot}
           viewerIsSource={viewerIsSource}
           viewerCanTargetSelf={viewerCanTargetSelf}
           onResolveAction={onResolveAction}
           disableCardFlip3d={disableCardFlip3d}
         />
-
-        {viewer ? (
-          <section aria-label={t("yourHand")} className="space-y-2">
-            <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              {t("yourHand")}
-            </div>
-            <MatchPlayerLane
-              snapshot={snapshot}
-              player={viewer}
-              viewerIsSource={viewerIsSource}
-              viewerCanTargetSelf={viewerCanTargetSelf}
-              onResolveAction={onResolveAction}
-              disableCardFlip3d={disableCardFlip3d}
-            />
-          </section>
-        ) : null}
-
-        {hasTurnControls ? (
-          <section
-            aria-label={t("turnActions")}
-            className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
-          >
-            {turnControls}
-          </section>
-        ) : null}
-
         <RoundHistorySection snapshot={snapshot} tHistory={tHistory} />
-
-        {hasTurnControls ? (
-          <section
-            aria-label={t("turnActions")}
-            className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
-          >
-            <div className="mx-auto max-w-5xl">{turnControls}</div>
-          </section>
-        ) : null}
+        <GameTableTurnControls hasTurnControls={hasTurnControls} t={t} controls={turnControls} />
       </div>
     </LazyMotion>
+  );
+}
+
+function GameTableTurnControls({
+  hasTurnControls,
+  t,
+  controls,
+}: {
+  hasTurnControls: boolean;
+  t: ReturnType<typeof useTranslations<"GameTable">>;
+  controls: ReactNode;
+}) {
+  if (!hasTurnControls) {
+    return null;
+  }
+  return (
+    <>
+      <TurnControlsDesktop t={t} controls={controls} />
+      <TurnControlsMobile t={t} controls={controls} />
+    </>
+  );
+}
+
+type GameTablePlayersProps = Omit<GameTableOpponentsSectionProps, "opponents"> & {
+  viewer: MatchSnapshot["players"][number] | null;
+  opponents: MatchSnapshot["players"];
+  opponentsGridClass: string;
+};
+
+function GameTablePlayers({
+  viewer,
+  opponents,
+  opponentsGridClass,
+  ...opponentProps
+}: GameTablePlayersProps) {
+  return (
+    <>
+      <GameTableOpponentsSection
+        opponents={opponents}
+        opponentsGridClass={opponentsGridClass}
+        {...opponentProps}
+      />
+      {viewer ? (
+        <section aria-label={opponentProps.t("yourHand")} className="space-y-2">
+          <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            {opponentProps.t("yourHand")}
+          </div>
+          <MatchPlayerLane
+            snapshot={opponentProps.snapshot}
+            player={viewer}
+            viewerIsSource={opponentProps.viewerIsSource}
+            viewerCanTargetSelf={opponentProps.viewerCanTargetSelf}
+            onResolveAction={opponentProps.onResolveAction}
+            disableCardFlip3d={opponentProps.disableCardFlip3d}
+          />
+        </section>
+      ) : null}
+    </>
+  );
+}
+
+type TurnControlsDockProps = {
+  t: ReturnType<typeof useTranslations<"GameTable">>;
+  controls: ReactNode;
+};
+
+function TurnControlsDesktop({ t, controls }: TurnControlsDockProps) {
+  return (
+    <section
+      aria-label={t("turnActions")}
+      className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
+    >
+      {controls}
+    </section>
+  );
+}
+
+function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
+  return (
+    <section
+      aria-label={t("turnActions")}
+      className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
+    >
+      <div className="mx-auto max-w-5xl">{controls}</div>
+    </section>
   );
 }
 

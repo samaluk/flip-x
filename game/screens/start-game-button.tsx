@@ -12,7 +12,7 @@ import { Button } from "@/shared/ui/button";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateAppErrorToast } from "@/shared/lib/convex-error";
 
-interface StartGameButtonProps {
+export interface StartGameButtonProps {
   matchId: string;
   version: number;
   isHost: boolean;

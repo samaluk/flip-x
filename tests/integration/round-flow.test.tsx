@@ -58,13 +58,7 @@ function snapshot(): MatchSnapshot {
 function renderTurnControls(match: MatchSnapshot) {
   return render(
     withIntlEn(
-      <TurnControls
-        snapshot={match}
-        onHit={vi.fn()}
-        onStay={vi.fn()}
-        onResolveAction={vi.fn()}
-        onStartNextRound={vi.fn()}
-      />,
+      <TurnControls snapshot={match} onHit={vi.fn()} onStay={vi.fn()} onStartNextRound={vi.fn()} />,
     ),
   );
 }

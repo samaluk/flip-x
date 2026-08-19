@@ -27,7 +27,7 @@ export type ActionCard = {
 
 export type Card = NumberCard | ModifierCard | ActionCard;
 
-type BuildDeckOptions = {
+export type BuildDeckOptions = {
   maxNumberCardValue?: number;
 };
 
