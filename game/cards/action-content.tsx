@@ -3,11 +3,21 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 
+import { ActionBannerStack } from "@/game/cards/action-banner";
+import {
+  FLIP_THREE_BANNER_BOTTOM,
+  FLIP_THREE_BANNER_TOP,
+  FREEZE_BANNER,
+  SECOND_CHANCE_BANNER_BOTTOM,
+  SECOND_CHANCE_BANNER_TOP,
+} from "@/game/cards/action-banner-styles";
+import type { ActionBannerStyle } from "@/game/cards/action-banner-styles";
 import { CardFrame } from "@/game/cards/card-frame";
 import { FannedCardsIcon, HeartIcon, LightningBolt, PadlockIcon } from "@/game/cards/card-graphics";
+import type { ActionCardPalette } from "@/game/cards/card-palettes";
 import { ACTION_CARD_PALETTES } from "@/game/cards/card-palettes";
-import type { ActionKind } from "@/game/logic/card-types";
 import { cardTw } from "@/game/cards/card-responsive";
+import type { ActionKind } from "@/game/logic/card-types";
 
 function InstantActionBlock({
   lightningFill,
@@ -72,6 +82,265 @@ function SkewedHelperText({
   );
 }
 
+/**
+ * Mirrored corner row shared by every action card: the icon side sits on
+ * the leading edge at the top and on the trailing edge (rotated 180°)
+ * at the bottom, with the instant-action block in the opposite corner.
+ */
+function ActionIconRow({
+  icon,
+  children,
+  flip = false,
+  compact = false,
+}: {
+  /** Leading (top) or trailing rotated (bottom) icon; a spacer for second-chance cards */
+  icon: ReactNode;
+  children?: ReactNode;
+  flip?: boolean;
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={cardTw(
+        compact,
+        flip
+          ? "flex shrink-0 items-end justify-between gap-1 px-0.5 pb-0.5"
+          : "flex shrink-0 items-start justify-between gap-1 px-0.5 pt-0.5",
+        "sm:px-1",
+      )}
+    >
+      {flip ? (
+        <>
+          {children}
+          {icon}
+        </>
+      ) : (
+        <>
+          {icon}
+          {children}
+        </>
+      )}
+    </div>
+  );
+}
+
+type ActionFaceProps = {
+  palette: ActionCardPalette;
+  compact: boolean;
+};
+
+type InstantActionFaceProps = ActionFaceProps & {
+  instant: string;
+  action: string;
+  icon: ReactNode;
+  flippedIcon: ReactNode;
+  lightningStroke: string;
+  bannerTopStyle: ActionBannerStyle;
+  bannerTopTitle: ReactNode;
+  bannerBottomStyle?: ActionBannerStyle;
+  bannerBottomTitle?: ReactNode;
+};
+
+function InstantActionFace({
+  palette,
+  compact,
+  instant,
+  action,
+  icon,
+  flippedIcon,
+  lightningStroke,
+  bannerTopStyle,
+  bannerTopTitle,
+  bannerBottomStyle,
+  bannerBottomTitle,
+}: InstantActionFaceProps) {
+  const t = useTranslations("Cards");
+  const actionBlock = (
+    <InstantActionBlock
+      lightningFill={palette.lightningFill}
+      lightningStroke={lightningStroke}
+      labelColor={palette.smallText}
+      instant={instant}
+      action={action}
+      compact={compact}
+    />
+  );
+  return (
+    <>
+      <ActionIconRow compact={compact} icon={icon}>
+        {actionBlock}
+      </ActionIconRow>
+      <SkewedHelperText color={palette.smallText} compact={compact}>
+        {t("actionHelper.playOnActive")}
+      </SkewedHelperText>
+      <ActionBannerStack
+        palette={palette}
+        compact={compact}
+        topStyle={bannerTopStyle}
+        topTitle={bannerTopTitle}
+        bottomStyle={bannerBottomStyle}
+        bottomTitle={bannerBottomTitle}
+      />
+      <SkewedHelperText color={palette.smallText} compact={compact}>
+        {t("actionHelper.playOnActive")}
+      </SkewedHelperText>
+      <ActionIconRow flip compact={compact} icon={flippedIcon}>
+        {actionBlock}
+      </ActionIconRow>
+    </>
+  );
+}
+
+function SecondChanceFace({ palette, compact }: ActionFaceProps) {
+  const t = useTranslations("Cards");
+  const spacer = <div className={cardTw(compact, "h-8 w-full", "sm:h-9")} />;
+  return (
+    <>
+      <HeartIcon
+        fill={palette.heartFill}
+        stroke={palette.border}
+        className={cardTw(
+          compact,
+          "absolute left-1 top-0 h-5 w-6 -rotate-12 opacity-95",
+          "sm:left-2 sm:top-1 sm:h-6 sm:w-7",
+        )}
+      />
+      <ActionIconRow compact={compact} icon={spacer} />
+      <SkewedHelperText color={palette.smallText} compact={compact}>
+        {t("actionHelper.saveUntilNeeded")}
+      </SkewedHelperText>
+      <ActionBannerStack
+        palette={palette}
+        compact={compact}
+        topStyle={SECOND_CHANCE_BANNER_TOP}
+        topTitle={t("actionTitle.second_chance_line1")}
+        bottomStyle={SECOND_CHANCE_BANNER_BOTTOM}
+        bottomTitle={t("actionTitle.second_chance_line2")}
+      />
+      <SkewedHelperText color={palette.smallText} compact={compact}>
+        {t("actionHelper.saveUntilNeeded")}
+      </SkewedHelperText>
+      <ActionIconRow flip compact={compact} icon={spacer} />
+      <HeartIcon
+        fill={palette.heartFill}
+        stroke={palette.border}
+        className={cardTw(
+          compact,
+          "absolute bottom-0 right-1 h-5 w-6 rotate-12 opacity-95",
+          "sm:bottom-1 sm:right-2 sm:h-6 sm:w-7",
+        )}
+      />
+    </>
+  );
+}
+
+type InstantActionFaceContentProps = ActionFaceProps & {
+  instant: string;
+  action: string;
+  bannerTopTitle: ReactNode;
+  bannerBottomTitle?: ReactNode;
+};
+
+function FlipThreeActionFace({
+  palette,
+  compact,
+  instant,
+  action,
+  bannerTopTitle,
+  bannerBottomTitle,
+}: InstantActionFaceContentProps) {
+  return (
+    <InstantActionFace
+      palette={palette}
+      compact={compact}
+      instant={instant}
+      action={action}
+      lightningStroke={palette.border}
+      icon={<FannedCardsIcon className={cardTw(compact, "h-8 w-10 shrink-0", "sm:h-10 sm:w-12")} />}
+      flippedIcon={
+        <FannedCardsIcon
+          className={cardTw(compact, "h-8 w-10 shrink-0 rotate-180", "sm:h-10 sm:w-12")}
+        />
+      }
+      bannerTopStyle={FLIP_THREE_BANNER_TOP}
+      bannerTopTitle={bannerTopTitle}
+      bannerBottomStyle={FLIP_THREE_BANNER_BOTTOM}
+      bannerBottomTitle={bannerBottomTitle}
+    />
+  );
+}
+
+function FreezeActionFace({
+  palette,
+  compact,
+  instant,
+  action,
+  bannerTopTitle,
+}: InstantActionFaceContentProps) {
+  return (
+    <InstantActionFace
+      palette={palette}
+      compact={compact}
+      instant={instant}
+      action={action}
+      lightningStroke={palette.orange}
+      icon={
+        <PadlockIcon
+          bodyFill={palette.lockBody}
+          shackleFill={palette.lockShackle}
+          stroke={palette.border}
+          className={cardTw(compact, "h-8 w-7 shrink-0", "sm:h-9 sm:w-8")}
+        />
+      }
+      flippedIcon={
+        <PadlockIcon
+          bodyFill={palette.lockBody}
+          shackleFill={palette.lockShackle}
+          stroke={palette.border}
+          className={cardTw(compact, "h-8 w-7 shrink-0 rotate-180", "sm:h-9 sm:w-8")}
+        />
+      }
+      bannerTopStyle={FREEZE_BANNER}
+      bannerTopTitle={bannerTopTitle}
+    />
+  );
+}
+
+function ActionCardFace({
+  actionKind,
+  palette,
+  compact,
+}: {
+  actionKind: ActionKind;
+  palette: ActionCardPalette;
+  compact: boolean;
+}) {
+  const t = useTranslations("Cards");
+  const instant = t("actionHelper.instant");
+  const actionWord = t("actionHelper.action");
+
+  return actionKind === "flip_three" ? (
+    <FlipThreeActionFace
+      palette={palette}
+      compact={compact}
+      instant={instant}
+      action={actionWord}
+      bannerTopTitle={t("actionTitle.flip_three_line1")}
+      bannerBottomTitle={t("actionTitle.flip_three_line2")}
+    />
+  ) : actionKind === "freeze" ? (
+    <FreezeActionFace
+      palette={palette}
+      compact={compact}
+      instant={instant}
+      action={actionWord}
+      bannerTopTitle={t("actionTitle.freeze")}
+    />
+  ) : (
+    <SecondChanceFace palette={palette} compact={compact} />
+  );
+}
+
 export function ActionCardContent({
   actionKind,
   compact = false,
@@ -79,291 +348,17 @@ export function ActionCardContent({
   actionKind: ActionKind;
   compact?: boolean;
 }) {
-  const t = useTranslations("Cards");
-  const p = ACTION_CARD_PALETTES[actionKind];
-  const instant = t("actionHelper.instant");
-  const actionWord = t("actionHelper.action");
-  const lightningStroke = actionKind === "freeze" ? p.orange : p.border;
-
+  const palette = ACTION_CARD_PALETTES[actionKind];
   return (
     <CardFrame
-      borderColor={p.border}
-      backgroundColor={p.bg}
-      backgroundOverlay={p.bgGradient}
+      borderColor={palette.border}
+      backgroundColor={palette.bg}
+      backgroundOverlay={palette.bgGradient}
       className="h-full"
       compact={compact}
     >
       <div className="relative flex min-h-0 flex-1 flex-col justify-between gap-1">
-        {actionKind === "second_chance" ? (
-          <HeartIcon
-            fill={p.heartFill}
-            stroke={p.border}
-            className={cardTw(
-              compact,
-              "absolute left-1 top-0 h-5 w-6 -rotate-12 opacity-95",
-              "sm:left-2 sm:top-1 sm:h-6 sm:w-7",
-            )}
-          />
-        ) : null}
-
-        {/* Top row */}
-        <div
-          className={cardTw(
-            compact,
-            "flex shrink-0 items-start justify-between gap-1 px-0.5 pt-0.5",
-            "sm:px-1",
-          )}
-        >
-          {actionKind === "flip_three" ? (
-            <>
-              <FannedCardsIcon
-                className={cardTw(compact, "h-8 w-10 shrink-0", "sm:h-10 sm:w-12")}
-              />
-              <InstantActionBlock
-                lightningFill={p.lightningFill}
-                lightningStroke={lightningStroke}
-                labelColor={p.smallText}
-                instant={instant}
-                action={actionWord}
-                compact={compact}
-              />
-            </>
-          ) : actionKind === "freeze" ? (
-            <>
-              <PadlockIcon
-                bodyFill={p.lockBody}
-                shackleFill={p.lockShackle}
-                stroke={p.border}
-                className={cardTw(compact, "h-8 w-7 shrink-0", "sm:h-9 sm:w-8")}
-              />
-              <InstantActionBlock
-                lightningFill={p.lightningFill}
-                lightningStroke={lightningStroke}
-                labelColor={p.smallText}
-                instant={instant}
-                action={actionWord}
-                compact={compact}
-              />
-            </>
-          ) : (
-            <div className={cardTw(compact, "h-8 w-full", "sm:h-9")} />
-          )}
-        </div>
-
-        <SkewedHelperText color={p.smallText} compact={compact}>
-          {actionKind === "flip_three" || actionKind === "freeze"
-            ? t("actionHelper.playOnActive")
-            : t("actionHelper.saveUntilNeeded")}
-        </SkewedHelperText>
-
-        {/* Center banners */}
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 py-1">
-          {actionKind === "flip_three" ? (
-            <>
-              <div
-                className={cardTw(
-                  compact,
-                  "relative z-[2] -mb-2 w-[min(100%,10.5rem)] rounded-sm border-2 px-2 py-1 shadow-[2px_3px_0_rgba(55,75,153,0.25)]",
-                  "sm:w-[min(100%,12rem)] sm:px-3 sm:py-1.5",
-                )}
-                style={{
-                  backgroundColor: p.bannerFill,
-                  borderColor: p.bannerStroke,
-                  transform: "skewX(-10deg) rotate(-2deg)",
-                }}
-              >
-                <div
-                  className={cardTw(
-                    compact,
-                    "text-center font-heading text-xl font-black uppercase tracking-wide",
-                    "sm:text-3xl",
-                  )}
-                  style={{
-                    color: p.titleFill,
-                    WebkitTextStroke: `1.5px ${p.titleStroke}`,
-                    paintOrder: "stroke fill",
-                  }}
-                >
-                  {t("actionTitle.flip_three_line1")}
-                </div>
-              </div>
-              <div
-                className={cardTw(
-                  compact,
-                  "relative z-[1] w-[min(100%,10.5rem)] rounded-sm border-2 px-2 py-1 shadow-[2px_3px_0_rgba(55,75,153,0.25)]",
-                  "sm:w-[min(100%,12rem)] sm:px-3 sm:py-1.5",
-                )}
-                style={{
-                  backgroundColor: p.bannerFill,
-                  borderColor: p.bannerStroke,
-                  transform: "skewX(-10deg) rotate(-2deg)",
-                }}
-              >
-                <div
-                  className={cardTw(
-                    compact,
-                    "text-center font-heading text-xl font-black uppercase tracking-wide",
-                    "sm:text-3xl",
-                  )}
-                  style={{
-                    color: p.titleFill,
-                    WebkitTextStroke: `1.5px ${p.titleStroke}`,
-                    paintOrder: "stroke fill",
-                  }}
-                >
-                  {t("actionTitle.flip_three_line2")}
-                </div>
-              </div>
-            </>
-          ) : actionKind === "freeze" ? (
-            <div
-              className={cardTw(
-                compact,
-                "w-[min(100%,11rem)] rounded-sm border-2 px-2 py-2 shadow-[2px_3px_0_rgba(46,64,149,0.2)]",
-                "sm:w-[min(100%,12.5rem)] sm:px-4 sm:py-2.5",
-              )}
-              style={{
-                backgroundColor: p.bannerFill,
-                borderColor: p.bannerStroke,
-                transform: "skewX(-6deg)",
-              }}
-            >
-              <div
-                className={cardTw(
-                  compact,
-                  "text-center font-heading text-lg font-black uppercase tracking-[0.2em]",
-                  "sm:text-2xl",
-                )}
-                style={{
-                  color: p.titleFill,
-                  WebkitTextStroke: `1px ${p.titleStroke}`,
-                  paintOrder: "stroke fill",
-                }}
-              >
-                {t("actionTitle.freeze")}
-              </div>
-            </div>
-          ) : (
-            <>
-              <div
-                className={cardTw(
-                  compact,
-                  "relative z-[2] -mb-1.5 w-[min(100%,10.5rem)] rounded-sm border-2 px-2 py-1 shadow-[2px_3px_0_rgba(61,75,142,0.3)]",
-                  "sm:w-[min(100%,12rem)]",
-                )}
-                style={{
-                  backgroundColor: p.bannerFill,
-                  borderColor: p.bannerStroke,
-                  transform: "skewX(-7deg)",
-                }}
-              >
-                <div
-                  className={cardTw(
-                    compact,
-                    "text-center font-heading text-lg font-black uppercase tracking-wide",
-                    "sm:text-2xl",
-                  )}
-                  style={{
-                    color: p.titleFill,
-                    WebkitTextStroke: `1.5px ${p.titleStroke}`,
-                    paintOrder: "stroke fill",
-                  }}
-                >
-                  {t("actionTitle.second_chance_line1")}
-                </div>
-              </div>
-              <div
-                className={cardTw(
-                  compact,
-                  "w-[min(100%,10.5rem)] rounded-sm border-2 px-2 py-1 shadow-[2px_3px_0_rgba(61,75,142,0.3)]",
-                  "sm:w-[min(100%,12rem)]",
-                )}
-                style={{
-                  backgroundColor: p.bannerFill,
-                  borderColor: p.bannerStroke,
-                  transform: "skewX(-7deg)",
-                }}
-              >
-                <div
-                  className={cardTw(
-                    compact,
-                    "text-center font-heading text-lg font-black uppercase tracking-wide",
-                    "sm:text-2xl",
-                  )}
-                  style={{
-                    color: p.titleFill,
-                    WebkitTextStroke: `1.5px ${p.titleStroke}`,
-                    paintOrder: "stroke fill",
-                  }}
-                >
-                  {t("actionTitle.second_chance_line2")}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        <SkewedHelperText color={p.smallText} compact={compact}>
-          {actionKind === "flip_three" || actionKind === "freeze"
-            ? t("actionHelper.playOnActive")
-            : t("actionHelper.saveUntilNeeded")}
-        </SkewedHelperText>
-
-        {/* Bottom row (180° layout) */}
-        <div
-          className={cardTw(
-            compact,
-            "flex shrink-0 items-end justify-between gap-1 px-0.5 pb-0.5",
-            "sm:px-1",
-          )}
-        >
-          {actionKind === "flip_three" ? (
-            <>
-              <InstantActionBlock
-                lightningFill={p.lightningFill}
-                lightningStroke={lightningStroke}
-                labelColor={p.smallText}
-                instant={instant}
-                action={actionWord}
-                compact={compact}
-              />
-              <FannedCardsIcon
-                className={cardTw(compact, "h-8 w-10 shrink-0 rotate-180", "sm:h-10 sm:w-12")}
-              />
-            </>
-          ) : actionKind === "freeze" ? (
-            <>
-              <InstantActionBlock
-                lightningFill={p.lightningFill}
-                lightningStroke={lightningStroke}
-                labelColor={p.smallText}
-                instant={instant}
-                action={actionWord}
-                compact={compact}
-              />
-              <PadlockIcon
-                bodyFill={p.lockBody}
-                shackleFill={p.lockShackle}
-                stroke={p.border}
-                className={cardTw(compact, "h-8 w-7 shrink-0 rotate-180", "sm:h-9 sm:w-8")}
-              />
-            </>
-          ) : (
-            <div className={cardTw(compact, "h-8 w-full", "sm:h-9")} />
-          )}
-        </div>
-
-        {actionKind === "second_chance" ? (
-          <HeartIcon
-            fill={p.heartFill}
-            stroke={p.border}
-            className={cardTw(
-              compact,
-              "absolute bottom-0 right-1 h-5 w-6 rotate-12 opacity-95",
-              "sm:bottom-1 sm:right-2 sm:h-6 sm:w-7",
-            )}
-          />
-        ) : null}
+        <ActionCardFace actionKind={actionKind} palette={palette} compact={compact} />
       </div>
     </CardFrame>
   );

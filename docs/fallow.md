@@ -81,8 +81,11 @@ cleanup work, not permanent acceptance.
   primitive wrappers forward standard component slots/props; and
   cascading-delete/player-color matches are semantic-normalization false
   positives. Presence component error handling is shared in authored code
-  instead of fingerprinted. `dup:6f87acd9:2` is the changed-file audit
-  fingerprint for the same reviewed session-store/lobby indexed-read pair.
+   instead of fingerprinted. The card SVG icon components keep their
+   geometry-specific viewBoxes and paths instead of forcing unrelated icons
+   through a generic SVG wrapper, so `dup:c77b3abb6f87acd9-8:2` is a narrow
+   reviewed fingerprint. `dup:6f87acd9:2` is the changed-file audit
+   fingerprint for the same reviewed session-store/lobby indexed-read pair.
 - Vitest produces real V8 Istanbul coverage. Fallow consumes it for audit and
   health/CRAP scoring. Structural coverage gaps were evaluated but remain
   advisory/off because the current 61-file/140-export signal is too noisy for
