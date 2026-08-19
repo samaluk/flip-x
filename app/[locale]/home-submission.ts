@@ -71,3 +71,39 @@ export async function executeMatchSubmission<T extends { matchId: string }>({
     setIsSubmitting(false);
   }
 }
+
+export async function performHomeJoinByCode({
+  joinByCode,
+  joinMatch,
+  lobbyCode,
+  playerName,
+  playerColorId,
+}: {
+  joinByCode: (args: {
+    lobbyCode: string;
+  }) => Promise<Either.Either<{ matchId: string }, AppError>>;
+  joinMatch: (args: {
+    matchId: string;
+    playerName: string;
+    playerColorId: PlayerColorId;
+  }) => Promise<Either.Either<{ matchId: string }, AppError>>;
+  lobbyCode: string;
+  playerName: string;
+  playerColorId: PlayerColorId;
+}): Promise<Either.Either<{ matchId: string }, AppError>> {
+  const lookup = await joinByCode({
+    lobbyCode: lobbyCode.toUpperCase(),
+  });
+  if (Either.isLeft(lookup)) {
+    return lookup;
+  }
+  const joined = await joinMatch({
+    matchId: lookup.right.matchId,
+    playerName,
+    playerColorId,
+  });
+  if (Either.isLeft(joined)) {
+    return joined;
+  }
+  return Either.right({ matchId: lookup.right.matchId });
+}
