@@ -70,8 +70,15 @@ cleanup work, not permanent acceptance.
   `tsconfig.tests.json`, and `convex/tsconfig.json` (TypeScript-Go protocol 7,
   zero abstentions and unresolved queries).
 - Duplication uses semantic mode, near detection, eight-line/60-token floors,
-  pair-level `minOccurrences: 2`, and import wiring ignored. No existing clones
-  are hidden in `ignoredClones`.
+  pair-level `minOccurrences: 2`, and import wiring ignored. Reviewed Confect
+  clones are fingerprinted narrowly: generated service declarations and
+  `GroupImpl`/`FunctionImpl` registration symmetry are framework-owned;
+  turn-command wrappers preserve distinct command contracts; indexed reads
+  preserve table-specific inference; and the cascading-delete/player-color
+  matches are semantic-normalization false positives. Presence component error
+  handling is shared in authored code instead of fingerprinted. Ten fingerprints
+  apply to the full scan; `dup:6f87acd9:2` is the changed-file audit fingerprint
+  for the same reviewed session-store/lobby indexed-read pair.
 - Vitest produces real V8 Istanbul coverage. Fallow consumes it for audit and
   health/CRAP scoring. Structural coverage gaps were evaluated but remain
   advisory/off because the current 61-file/140-export signal is too noisy for

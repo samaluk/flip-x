@@ -8,17 +8,11 @@ import type { Id } from "../convex/_generated/dataModel";
 import type { MutationCtx } from "../convex/_generated/server";
 import { unsupportedRelationship, unsupportedTable } from "../shared/lib/errors/domain";
 import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
-import {
-  DatabaseReader as DatabaseReaderService,
-  DatabaseWriter as DatabaseWriterService,
-} from "./_generated/services";
-import { rateLimiter } from "./lib/rate_limiter";
+import { rateLimiter, type AppRateLimitName } from "./lib/rate_limiter";
+import type { DatabaseReader, DatabaseWriter } from "./lib/types";
 import schema from "./_generated/schema";
 
 const presence = new Presence(components.presence);
-type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
-type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
-
 type AppTableName =
   | "matches"
   | "players"
@@ -29,7 +23,6 @@ type AppTableName =
   | "scoreBreakdowns"
   | "idempotencyKeys";
 
-type RateLimitKey = "createMatch" | "joinByCode" | "joinMatch" | "startMatch";
 type CleanupDeleted = {
   idempotencyKeys: number;
   scoreBreakdowns: number;
@@ -54,7 +47,7 @@ const cleanupTableCounters: Partial<Record<AppTableName, keyof CleanupDeleted>> 
   players: "players",
   matches: "matches",
 };
-const rateLimitKeys: readonly RateLimitKey[] = [
+const rateLimitKeys: readonly AppRateLimitName[] = [
   "createMatch",
   "joinByCode",
   "joinMatch",
@@ -177,7 +170,7 @@ export function resetRateLimit(
   ctx: MutationCtx,
   args: {
     sessionId: string;
-    key: RateLimitKey;
+    key: AppRateLimitName;
   },
 ) {
   return Effect.tryPromise({
@@ -186,14 +179,14 @@ export function resetRateLimit(
   });
 }
 
-interface AdminCleanupDeps {
+export interface AdminCleanupDeps {
   readonly listSessionIds: Effect.Effect<readonly string[], unknown>;
   readonly listMatchIds: Effect.Effect<readonly string[], unknown>;
   readonly deleteAllFromTable: (table: string) => Effect.Effect<number, ExternalComponentFailed>;
   readonly removePresenceRoom: (matchId: string) => Effect.Effect<void, ExternalComponentFailed>;
   readonly resetRateLimit: (
     sessionId: string,
-    key: RateLimitKey,
+    key: AppRateLimitName,
   ) => Effect.Effect<void, ExternalComponentFailed>;
 }
 

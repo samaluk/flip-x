@@ -28,7 +28,20 @@
     "minLines": 8,
     "minTokens": 60,
     "minOccurrences": 2,
-    "ignoreImports": true
+    "ignoreImports": true,
+    "ignoredClones": [
+      "dup:c77b3abb6f87acd9-33:2",
+      "dup:c77b3abb6f87acd9-32:3",
+      "dup:c77b3abb6f87acd9-15:3",
+      "dup:146daa20:2",
+      "dup:ec5a72c6:2",
+      "dup:c77b3abb6f87acd9-20:2",
+      "dup:c77b3abb6f87acd9-40:2",
+      "dup:c77b3abb6f87acd9-8:2",
+      "dup:c77b3abb6f87acd9-25:2",
+      "dup:c77b3abb6f87acd9-22:2",
+      "dup:6f87acd9:2"
+    ]
   },
   "health": {
     "maxCyclomatic": 20,

@@ -11,6 +11,13 @@ import { ExternalComponentFailed } from "../shared/lib/errors/infrastructure";
 
 const presence = new Presence(components.presence);
 
+function presenceOperation<A>(operation: () => Promise<A>) {
+  return Effect.tryPromise({
+    try: operation,
+    catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
+  });
+}
+
 export const heartbeat = mutation({
   args: {
     roomId: v.string(),
@@ -20,10 +27,9 @@ export const heartbeat = mutation({
   },
   handler: async (ctx, args) => {
     return await Effect.runPromise(
-      Effect.tryPromise({
-        try: () => presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval),
-        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-      }),
+      presenceOperation(() =>
+        presence.heartbeat(ctx, args.roomId, args.userId, args.sessionId, args.interval),
+      ),
     );
   },
 });
@@ -33,12 +39,7 @@ export const list = query({
     roomToken: v.string(),
   },
   handler: async (ctx, args) => {
-    return await Effect.runPromise(
-      Effect.tryPromise({
-        try: () => presence.list(ctx, args.roomToken),
-        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-      }),
-    );
+    return await Effect.runPromise(presenceOperation(() => presence.list(ctx, args.roomToken)));
   },
 });
 
@@ -48,10 +49,7 @@ export const disconnect = mutation({
   },
   handler: async (ctx, args) => {
     return await Effect.runPromise(
-      Effect.tryPromise({
-        try: () => presence.disconnect(ctx, args.sessionToken),
-        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-      }),
+      presenceOperation(() => presence.disconnect(ctx, args.sessionToken)),
     );
   },
 });
@@ -63,16 +61,14 @@ export const syncPlayer = mutationWithSession({
   },
   handler: async (ctx, args) => {
     return await Effect.runPromise(
-      Effect.tryPromise({
-        try: () =>
-          presence.updateRoomUser(
-            ctx,
-            String(args.matchId),
-            args.playerId ?? args.sessionId,
-            args.playerId,
-          ),
-        catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-      }),
+      presenceOperation(() =>
+        presence.updateRoomUser(
+          ctx,
+          String(args.matchId),
+          args.playerId ?? args.sessionId,
+          args.playerId,
+        ),
+      ),
     );
   },
 });
@@ -84,10 +80,7 @@ export const listMatchPresence = query({
   handler: async (ctx, args): Promise<Array<{ playerId: Id<"players">; online: boolean }>> => {
     return await Effect.runPromise(
       Effect.gen(function* () {
-        const states = yield* Effect.tryPromise({
-          try: () => presence.list(ctx, args.roomToken),
-          catch: (cause) => new ExternalComponentFailed({ component: "presence", cause }),
-        });
+        const states = yield* presenceOperation(() => presence.list(ctx, args.roomToken));
 
         return states.flatMap((state) => {
           if (!state.online || typeof state.data !== "string") {
