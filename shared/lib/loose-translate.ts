@@ -1,4 +1,4 @@
-import type { Translate } from "@/game/logic/round-event-format";
+export type Translate = (key: string, values?: Record<string, string | number>) => string;
 
 /**
  * next-intl `useTranslations` returns strict key types; some UI uses composed keys.

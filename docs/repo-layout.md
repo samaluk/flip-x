@@ -4,7 +4,7 @@ This app follows a domain-first layout inspired by [The Vertical Codebase](https
 
 ## `game/` — flip-x product vertical
 
-- `game/logic/` — Pure gameplay core shared by the UI and backend (scoring, turn resolution, card types, view models, round event copy).
+- `game/logic/` — Pure gameplay core shared by the UI and backend (scoring, turn resolution, card types, view models).
 - `game/application/` — Command orchestration for gameplay mutations. `run-command.ts` is the single execution path for `START_MATCH`, `START_NEXT_ROUND`, `TAKE_TURN`, and `RESOLVE_ACTION`.
 - `game/infrastructure/` — Backend-facing persistence helpers for loading aggregates, saving command results, and building snapshots from Convex documents.
 - `game/cards/` — Card rendering (frames, palettes, per-type content).

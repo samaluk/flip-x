@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 
 import { CardFrame } from "@/game/cards/card-frame";
-import { cardTw } from "@/game/logic/card-responsive";
+import { cardTw } from "@/game/cards/card-responsive";
 import { ModifierShellFan } from "@/game/cards/card-graphics";
 import { MODIFIER_CARD_PALETTE } from "@/game/cards/card-palettes";
 import type { ModifierValue } from "@/game/logic/card-types";

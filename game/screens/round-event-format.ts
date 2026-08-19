@@ -1,8 +1,9 @@
 import type { MatchSnapshot } from "@/game/logic/view-models";
-import type { ActionKind, ModifierCard } from "./card-types";
-import type { CardEventPayload } from "./events";
+import type { ActionKind, ModifierCard } from "@/game/logic/card-types";
+import type { CardEventPayload } from "@/game/logic/events";
+import type { Translate } from "@/shared/lib/loose-translate";
 
-export type Translate = (key: string, values?: Record<string, string | number>) => string;
+export type { Translate };
 
 function actionKindLabel(actionKind: ActionKind, tCards: Translate): string {
   return tCards(`action.${actionKind}`);

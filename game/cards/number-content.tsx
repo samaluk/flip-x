@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useId } from "react";
 
 import { CardFrame } from "@/game/cards/card-frame";
-import { cardTw } from "@/game/logic/card-responsive";
+import { cardTw } from "@/game/cards/card-responsive";
 import { CARD_NAVY, NUMBER_CARD_PALETTES } from "@/game/cards/card-palettes";
 const NUMBER_FRAME: Readonly<{ border: string; background: string }> = {
   border: CARD_NAVY,

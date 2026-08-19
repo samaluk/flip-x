@@ -11,10 +11,10 @@ import {
 import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
-import { formatLatestRoundEventBody } from "@/game/logic/round-event-format";
+import { formatLatestRoundEventBody } from "./round-event-format";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { PlayerLane } from "@/game/ui/player-lane";
 import { RoundHistoryTable } from "@/game/ui/round-history-table";
@@ -48,7 +48,7 @@ const listItem: Variants = {
   },
 };
 
-type GameTableViewProps = {
+export type GameTableViewProps = {
   snapshot: MatchSnapshot;
   isPending?: boolean;
   onHit: () => void;
@@ -423,18 +423,14 @@ type RoundHistorySectionProps = {
 
 function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
   const [expandedSections, setExpandedSections] = useState<string[]>(["history"]);
-  const hasAutoExpandedBreakdownRef = useRef(false);
 
-  if (snapshot.roundStatus === "completed") {
-    if (!hasAutoExpandedBreakdownRef.current) {
-      hasAutoExpandedBreakdownRef.current = true;
+  useEffect(() => {
+    if (snapshot.roundStatus === "completed") {
       setExpandedSections((current) =>
         current.includes("breakdown") ? current : [...current, "breakdown"],
       );
     }
-  } else {
-    hasAutoExpandedBreakdownRef.current = false;
-  }
+  }, [snapshot.roundStatus]);
 
   return (
     <Card className="w-full">
