@@ -466,7 +466,9 @@ function usePlayerLaneAnimations(
     };
   }, [cardIds]);
 
-  // fallow-ignore-next-line complexity -- extracted verbatim from the PlayerLane body (status-transition animation); same cyclomatic weight as before, now isolated in the hook
+  // why: transient one-shot bust/stay pose — must trigger synchronously when `displayStatus` transitions (derived from external snapshot, not a local event) and auto-clear after 900ms. Deriving during render would require `setState` in render; deferring to timeout would miss the frame.
+  // oxlint-disable react/set-state-in-effect -- intentional status-transition animation; see comment above
+  // fallow-ignore-next-line complexity -- transient bust/stay pose animation; same cyclomatic weight as before, now isolated in the hook
   useEffect(() => {
     let clear: (() => void) | undefined;
     if (previousStatus.current !== displayStatus) {
@@ -487,6 +489,7 @@ function usePlayerLaneAnimations(
       clear?.();
     };
   }, [displayStatus]);
+  // oxlint-enable react/set-state-in-effect
 
   return { dealingIdSet, cardStateAnimation: stateAnimation ?? poseFromStatus(displayStatus) };
 }
