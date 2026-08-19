@@ -1,6 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { api } from "@/convex/_generated/api";
+import {
+  requireActiveSessionForSnapshot,
+  requireSessionForPlayerId,
+} from "@/tests/fixtures/deterministic";
 
 import {
   commandMetadata,
@@ -41,18 +45,16 @@ describe("Convex preview smoke: turns", () => {
       throw new Error("expected snapshot");
     }
 
-    const activeSession = sessions.find(
-      (session) =>
-        snapshot.activePlayerId ===
-        snapshot.players.find((player) => player.displayName === session.name)?.playerId,
+    const activeSession = requireActiveSessionForSnapshot(
+      snapshot,
+      sessions,
+      "Expected an active session for the happy path",
     );
-
-    expect(activeSession).toBeDefined();
 
     const updated = await client.mutation(api.turns.takeTurn, {
       matchId,
       action: "hit",
-      sessionId: activeSession!.sessionId,
+      sessionId: activeSession.sessionId,
       ...commandMetadata(snapshot.version),
     });
 
@@ -62,11 +64,13 @@ describe("Convex preview smoke: turns", () => {
 
   it("rejects non-active player taking turn", async () => {
     const { matchId, sessions, started } = await createStartedMatch(client, ["Host", "Guest"]);
-    const inactiveSession = sessions.find(
-      (session) =>
-        started.activePlayerId !==
-        started.players.find((player) => player.displayName === session.name)?.playerId,
+    const activeSession = requireSessionForPlayerId(
+      started,
+      sessions,
+      started.activePlayerId!,
+      "Expected the active session for the rejection test",
     );
+    const inactiveSession = sessions.find((session) => session.name !== activeSession.name);
 
     expect(inactiveSession).toBeDefined();
 
