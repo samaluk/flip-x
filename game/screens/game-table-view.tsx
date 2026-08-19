@@ -423,7 +423,9 @@ type RoundHistorySectionProps = {
 
 function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
   const [prevRoundStatus, setPrevRoundStatus] = useState(snapshot.roundStatus);
-  const [expandedSections, setExpandedSections] = useState<string[]>(["history"]);
+  const [expandedSections, setExpandedSections] = useState<string[]>(() =>
+    snapshot.roundStatus === "completed" ? ["history", "breakdown"] : ["history"],
+  );
 
   if (snapshot.roundStatus !== prevRoundStatus) {
     setPrevRoundStatus(snapshot.roundStatus);
@@ -431,8 +433,6 @@ function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
       setExpandedSections((current) =>
         current.includes("breakdown") ? current : [...current, "breakdown"],
       );
-    } else {
-      setExpandedSections((current) => current.filter((s) => s !== "breakdown"));
     }
   }
 
