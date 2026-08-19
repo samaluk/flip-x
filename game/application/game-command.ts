@@ -1,6 +1,6 @@
 import type { Card } from "../logic/card-types";
 
-type CommandMetadata = {
+export type CommandMetadata = {
   expectedVersion: number;
   idempotencyKey: string;
 };

@@ -27,7 +27,7 @@ import type { MatchAggregate } from "../infrastructure/load-match-aggregate";
 import type { RoundRuntime } from "../logic/round-state";
 import type { GameCommand } from "./game-command";
 import type { MatchSnapshot } from "../logic/view-models";
-import type { GameTransition } from "../infrastructure/save-command-result";
+import type { GameTransition } from "./game-transition";
 import { buildRoundCompletionOutcome } from "./round-completion";
 import {
   AppClock,
@@ -100,7 +100,7 @@ function buildStartRoundTransition(
   });
 }
 
-type RunGameCommandInput = {
+export type RunGameCommandInput = {
   matchId: Id<"matches">;
   sessionId: SessionId;
   command: GameCommand;

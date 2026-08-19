@@ -3,18 +3,16 @@ import { getManyFrom } from "convex-helpers/server/relationships";
 import * as Effect from "effect/Effect";
 
 import type { Doc, Id } from "../../convex/_generated/dataModel";
-import type { QueryCtx, MutationCtx } from "../../convex/_generated/server";
 import { getPlayerIdForSession } from "../../confect/lib/session_store";
 import type { OrderedPlayer, PlayerRoundState, RoundRuntime } from "../logic/round-state";
 import { toOrderedPlayers } from "../logic/view-models";
 import {
+  type Ctx,
   getLatestRound,
   getRoundPlayerStateDocs,
   normalizePlayerRoundState,
   normalizeRoundRuntime,
 } from "./snapshot-store";
-
-type Ctx = QueryCtx | MutationCtx;
 
 export type MatchAggregate = {
   match: Doc<"matches"> | null;
