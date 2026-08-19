@@ -20,7 +20,7 @@ export type PlayerColorId =
   | "stone"
   | "red";
 
-type PlayerColor = {
+export type PlayerColor = {
   id: PlayerColorId;
   label: string;
   background: string;

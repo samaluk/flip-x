@@ -6,7 +6,6 @@ const mutate = vi.fn();
 
 vi.mock("@confect/react", () => ({
   useMutation: () => Object.assign(mutate, { withOptimisticUpdate: vi.fn() }),
-  useQuery: vi.fn(),
 }));
 
 vi.mock("convex-helpers/react/sessions", () => ({

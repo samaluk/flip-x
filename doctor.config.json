@@ -24,7 +24,6 @@
       "game/application/**",
       "game/infrastructure/**",
       "game/logic/**",
-      "shared/lib/__mocks__/confect-hooks.ts",
       "shared/lib/lobby-code.ts"
     ],
     "overrides": [

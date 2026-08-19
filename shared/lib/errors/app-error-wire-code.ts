@@ -28,8 +28,8 @@ export const APP_ERROR_WIRE_CODE = {
 } as const;
 
 const CANONICAL_CODES = new Set<string>(Object.values(APP_ERROR_WIRE_CODE));
-type AppErrorWireCode = (typeof APP_ERROR_WIRE_CODE)[keyof typeof APP_ERROR_WIRE_CODE];
-type ErrorCodeTranslator = (key: AppErrorWireCode) => string;
+export type AppErrorWireCode = (typeof APP_ERROR_WIRE_CODE)[keyof typeof APP_ERROR_WIRE_CODE];
+export type ErrorCodeTranslator = (key: AppErrorWireCode) => string;
 
 function isWireCodeMessage(message: string): message is AppErrorWireCode {
   return CANONICAL_CODES.has(message);

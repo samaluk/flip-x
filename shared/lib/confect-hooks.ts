@@ -14,9 +14,9 @@ import { useSessionId } from "convex-helpers/react/sessions";
 import * as Option from "effect/Option";
 import { useMemo } from "react";
 
-type SessionRef = Ref.AnyPublicQuery | Ref.AnyPublicMutation | Ref.AnyPublicAction;
-type SessionArgs<T extends SessionRef> = Extract<Ref.Args<T>, { sessionId: string }>;
-type SessionlessArgs<T extends SessionRef> = Omit<SessionArgs<T>, "sessionId">;
+export type SessionRef = Ref.AnyPublicQuery | Ref.AnyPublicMutation | Ref.AnyPublicAction;
+export type SessionArgs<T extends SessionRef> = Extract<Ref.Args<T>, { sessionId: string }>;
+export type SessionlessArgs<T extends SessionRef> = Omit<SessionArgs<T>, "sessionId">;
 export type SessionConfectOptimisticLocalStore = {
   getQuery<Query extends Ref.AnyPublicQuery>(
     ref: Query,
@@ -34,7 +34,7 @@ export type SessionConfectOptimisticLocalStore = {
     value: Ref.Returns<Query> | undefined,
   ): void;
 };
-type SessionConfectMutation<Mutation extends Ref.AnyPublicMutation> = ((
+export type SessionConfectMutation<Mutation extends Ref.AnyPublicMutation> = ((
   args: SessionlessArgs<Mutation>,
 ) => InvokeReturn<Mutation>) & {
   withOptimisticUpdate(

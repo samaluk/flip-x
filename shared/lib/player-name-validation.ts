@@ -1,6 +1,6 @@
 /** Shared validation for trimmed lobby/player display names (create + join flows). */
 
-type TrimmedPlayerNameIssue = "empty" | "too_long" | "no_session";
+export type TrimmedPlayerNameIssue = "empty" | "too_long" | "no_session";
 
 /** Message keys shared by MatchSetup and Game namespaces for player-name validation toasts. */
 export const PLAYER_NAME_ISSUE_TOAST_KEY = {
