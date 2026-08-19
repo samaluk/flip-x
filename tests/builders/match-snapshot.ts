@@ -3,7 +3,7 @@ import type { Id } from "@/convex/_generated/dataModel";
 
 import { playerRoundState } from "./player-round-state";
 
-type MatchSnapshotArgs = Parameters<typeof buildMatchSnapshot>[0];
+export type MatchSnapshotArgs = Parameters<typeof buildMatchSnapshot>[0];
 
 export function matchSnapshotArgs(overrides: Partial<MatchSnapshotArgs> = {}): MatchSnapshotArgs {
   return {
