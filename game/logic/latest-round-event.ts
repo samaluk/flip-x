@@ -55,6 +55,7 @@ const tryEmptyPayloadBlockLatest: TryLatest = (event, base) => {
   const t = event.eventType;
   if (
     t !== "second_chance_held" &&
+    t !== "second_chance_passed" &&
     t !== "second_chance_discarded" &&
     t !== "flip7" &&
     t !== "freeze_applied" &&
@@ -64,13 +65,6 @@ const tryEmptyPayloadBlockLatest: TryLatest = (event, base) => {
     return null;
   }
   return { ...base, type: event.eventType, payload: event.payload };
-};
-
-const trySecondChancePassedLatest: TryLatest = (event, base) => {
-  if (event.eventType !== "second_chance_passed") {
-    return null;
-  }
-  return { ...base, type: "second_chance_passed", payload: event.payload };
 };
 
 const tryDuplicateFamilyLatest: TryLatest = (event, base) => {
@@ -106,7 +100,6 @@ const latestAttempts: readonly TryLatest[] = [
   tryNumberDrawnLatest,
   tryModifierDrawnLatest,
   tryEmptyPayloadBlockLatest,
-  trySecondChancePassedLatest,
   tryDuplicateFamilyLatest,
   tryDeferredPairLatest,
   tryFlipThreeTargetedLatest,
