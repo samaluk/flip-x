@@ -12,6 +12,17 @@
   "jsPlugins": ["eslint-plugin-i18next"],
   "rules": {
     "react/react-in-jsx-scope": "off",
+    // React Compiler strict rules (oxlint 1.79+): `correctness` and
+    // `suspicious` already cover most compiler rules. Enable the
+    // remaining strict-appropriate opt-in rules; leave `react/todo`
+    // off — it reports compiler bail-outs (e.g., try/finally) that are
+    // idiomatic in this codebase and upstream ships it off by default.
+    // See https://oxc.rs/blog/2026-08-18-react-compiler-support
+    "react/no-deriving-state-in-effects": "error",
+    "react/unsupported-syntax": "error",
+    "react/invariant": "error",
+    "react/syntax": "error",
+    "react/rule-suppression": "warn",
     // Convex documents use `_id`; Effect tagged errors use `_tag`.
     "no-underscore-dangle": ["error", { "allow": ["_id", "_tag"] }],
     // TypeScript escape-hatch rules: forbid `any`, unsafe assertions, non-null
