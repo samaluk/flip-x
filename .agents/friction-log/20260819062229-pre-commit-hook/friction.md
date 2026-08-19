@@ -1,6 +1,7 @@
 ---
 title: 'Pre-commit hook audits stale staged content after failed commit'
 severity: 'minor'
+issue: 'samaluk/flip-x#614'
 ---
 
 ## Expected Behavior
