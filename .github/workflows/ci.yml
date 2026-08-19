@@ -74,8 +74,8 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # Authoritative strict Fallow migration gate (changed-file `new-only` audit).
-  # Mirrors `pnpm fallow:ci`; the review job below owns the PR feedback surface.
+  # Authoritative strict Fallow gate: changed-file audit plus the full-repository
+  # dead-code, duplication, and health checks. The review job owns PR feedback.
   gate:
     name: Fallow gate
     needs: test
@@ -91,7 +91,7 @@ jobs:
 
       - uses: ./.github/actions/setup-toolchain
 
-      # Same coverage evidence the test job produced, so audit CRAP scoring
+      # Same coverage evidence the test job produced, so audit and health CRAP scoring
       # matches — downloaded rather than regenerated to avoid a second
       # install + test run.
       - name: Download coverage
@@ -148,7 +148,7 @@ jobs:
         with:
           version: 3.17.0
           command: audit
-          gate: new-only
+          gate: all
           type-aware: true
           coverage: coverage/coverage-final.json
           coverage-root: ${{ github.workspace }}

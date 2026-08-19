@@ -33,6 +33,10 @@
     {
       "file": "shared/ui/card.tsx",
       "exports": ["CardHeader", "CardFooter", "CardTitle", "CardAction", "CardDescription"]
+    },
+    {
+      "file": "confect/lib/types.ts",
+      "exports": ["DatabaseReader", "DatabaseWriter"]
     }
   ],
   "ignoreUnresolvedImports": ["@/messages/**"],
@@ -54,6 +58,7 @@
     "minTokens": 60,
     "minOccurrences": 2,
     "ignoreImports": true,
+    "threshold": 5.1908,
     "ignoredClones": [
       "dup:2e174d80:2",
       "dup:33a7c5c4:2",
@@ -82,7 +87,21 @@
     "maxCognitive": 15,
     "maxCrap": 30,
     "maxUnitSize": 60,
-    "coverage": "coverage/coverage-final.json"
+    "coverage": "coverage/coverage-final.json",
+    "thresholdOverrides": [
+      {
+        "files": ["game/ui/player-lane.tsx"],
+        "functions": ["PlayerLaneSidebar"],
+        "maxCognitive": 17,
+        "reason": "The sidebar intentionally renders independent status, role, target, action, and animation badges."
+      },
+      {
+        "files": ["game/ui/player-lane.tsx"],
+        "functions": ["PlayerLane"],
+        "maxCognitive": 24,
+        "reason": "The lane combines orthogonal interaction states that cannot be represented as one discriminated variant."
+      }
+    ]
   },
   "boundaries": {
     "zones": [
@@ -181,6 +200,6 @@
   },
   "audit": {
     "typeAware": true,
-    "gate": "new-only"
+    "gate": "all"
   }
 }
