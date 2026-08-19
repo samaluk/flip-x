@@ -1,23 +1,43 @@
-import { createDeck } from "./card-types";
+import { createDeck, type Card } from "./card-types";
 import { invalidAction, invalidTurn } from "../../shared/lib/errors/domain";
 import { resolvePendingTargetAction } from "./action-resolution";
 import { applyCardToPlayer } from "./apply-card";
 import { addEvent, cardEventPayload, type RoundEvent } from "./events";
 import { drawCard } from "./draw";
 import { advanceFlip3Hit, isFlip3ActiveForPlayer } from "./flip-three";
-import { maybeFinishRound } from "./round-finalization";
+import type { RngService } from "./rng";
+import { finishRoundAsAllInactive, maybeFinishRound } from "./round-finalization";
 import {
   clonePendingFlip3,
   clonePlayerStates,
   cloneRoundRuntime,
-  type CreateRoundRuntimeOptions,
+  createDefaultPlayerRoundState,
   type OrderedPlayer,
   type PendingAction,
   type PlayerRoundState,
-  type ResolveResult,
   type RoundRuntime,
 } from "./round-state";
-import { getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
+import { advanceToNextActiveSeat, getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
+
+export type CreateRoundRuntimeOptions = {
+  drawPile?: Card[];
+  discardPile?: Card[];
+  openingSeatIndex?: number;
+  turnSeatIndex?: number;
+  activePlayerId?: string | null;
+  endedBy?: RoundRuntime["endedBy"];
+  pendingAction?: PendingAction | null;
+  pendingFlip3?: RoundRuntime["pendingFlip3"];
+  phase?: RoundRuntime["phase"];
+  rng?: RngService;
+  maxNumberCardValue?: number;
+};
+
+type ResolveResult = {
+  round: RoundRuntime;
+  playerStates: Record<string, PlayerRoundState>;
+  events: RoundEvent[];
+};
 
 function transitionDealingToPlayerTurns(
   round: RoundRuntime,
@@ -116,9 +136,7 @@ function finalizeDealingIfStuck(
   }
   const anyActive = Object.values(playerStates).some((s) => s.status === "active");
   if (!anyActive) {
-    round.phase = "scoring";
-    round.endedBy = "all_inactive";
-    round.activePlayerId = null;
+    finishRoundAsAllInactive(round);
   } else {
     transitionDealingToPlayerTurns(round, players, playerStates);
   }
@@ -126,21 +144,7 @@ function finalizeDealingIfStuck(
 
 export function createPlayerRoundStates(players: OrderedPlayer[]) {
   return Object.fromEntries(
-    players.map((player) => [
-      player.playerId,
-      {
-        playerId: player.playerId,
-        status: "waiting",
-        numberCards: [],
-        modifierCards: [],
-        heldActionCards: [],
-        receivedActionCards: [],
-        roundScore: 0,
-        pointsAtRisk: 0,
-        hasFlip7: false,
-        bustCard: null,
-      } satisfies PlayerRoundState,
-    ]),
+    players.map((player) => [player.playerId, createDefaultPlayerRoundState(player.playerId)]),
   );
 }
 
@@ -270,9 +274,7 @@ function advanceTurnWhenQueueClear(
   playerStates: Record<string, PlayerRoundState>,
 ) {
   if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
-    const nextSeat = nextActiveSeatIndex(players, playerStates, round.turnSeatIndex);
-    round.turnSeatIndex = nextSeat ?? round.turnSeatIndex;
-    round.activePlayerId = nextSeat === null ? null : getPlayerBySeat(players, nextSeat).playerId;
+    advanceToNextActiveSeat(round, players, playerStates);
     maybeFinishRound(round, players, playerStates);
   }
 }

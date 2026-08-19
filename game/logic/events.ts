@@ -6,7 +6,7 @@ import {
   type ModifierCard,
 } from "./card-types";
 
-type EventBase<TEventType extends string> = {
+export type EventBase<TEventType extends string> = {
   eventType: TEventType;
   actorPlayerId: string | null;
   targetPlayerId: string | null;
@@ -29,15 +29,13 @@ export type RoundEvent =
     })
   | (EventBase<
       | "second_chance_held"
+      | "second_chance_passed"
       | "second_chance_discarded"
       | "flip7"
       | "freeze_applied"
       | "stay"
       | "flip3_completed"
     > & {
-      payload: Record<string, never>;
-    })
-  | (EventBase<"second_chance_passed"> & {
       payload: Record<string, never>;
     })
   | (EventBase<"second_chance_used" | "duplicate_bust"> & {
@@ -53,16 +51,16 @@ export type RoundEvent =
       payload: { finalRoundScore: number };
     });
 
-type RoundEventType = RoundEvent["eventType"];
+export type RoundEventType = RoundEvent["eventType"];
 
-type PersistedRoundEvent = {
+export type PersistedRoundEvent = {
   eventType: string;
   actorPlayerId: string | null;
   targetPlayerId: string | null;
   payload: unknown;
 };
 
-type EncodedRoundEvent = Omit<PersistedRoundEvent, "eventType"> & {
+export type EncodedRoundEvent = Omit<PersistedRoundEvent, "eventType"> & {
   eventType: RoundEventType;
 };
 
@@ -187,13 +185,12 @@ export function decodeRoundEvent(event: PersistedRoundEvent): RoundEvent {
     case "modifier_drawn":
       return { ...base, eventType: event.eventType, payload: decodeModifierPayload(event.payload) };
     case "second_chance_held":
+    case "second_chance_passed":
     case "second_chance_discarded":
     case "flip7":
     case "freeze_applied":
     case "stay":
     case "flip3_completed":
-      return { ...base, eventType: event.eventType, payload: decodeEmptyPayload(event.payload) };
-    case "second_chance_passed":
       return { ...base, eventType: event.eventType, payload: decodeEmptyPayload(event.payload) };
     case "second_chance_used":
     case "duplicate_bust":

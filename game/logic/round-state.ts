@@ -1,9 +1,8 @@
 import type { ActionCard, ActionKind, Card, ModifierCard, NumberCard } from "./card-types";
-import type { RngService } from "./rng";
 
-type PlayerRoundStatus = "waiting" | "active" | "stayed" | "busted" | "frozen" | "completed";
+export type PlayerRoundStatus = "waiting" | "active" | "stayed" | "busted" | "frozen" | "completed";
 
-type RoundPhase = "dealing" | "player_turns" | "resolving_action" | "scoring" | "completed";
+export type RoundPhase = "dealing" | "player_turns" | "resolving_action" | "scoring" | "completed";
 
 export type OrderedPlayer = {
   playerId: string;
@@ -17,7 +16,7 @@ export type PendingAction = {
   resume: "dealing" | "turns";
 };
 
-type PendingFlip3 = {
+export type PendingFlip3 = {
   sourcePlayerId: string;
   targetPlayerId: string;
   cardsRemaining: number;
@@ -37,6 +36,21 @@ export type PlayerRoundState = {
   bustCard: NumberCard | null;
 };
 
+export function createDefaultPlayerRoundState(playerId: string): PlayerRoundState {
+  return {
+    playerId,
+    status: "waiting",
+    numberCards: [],
+    modifierCards: [],
+    heldActionCards: [],
+    receivedActionCards: [],
+    roundScore: 0,
+    pointsAtRisk: 0,
+    hasFlip7: false,
+    bustCard: null,
+  };
+}
+
 export type RoundRuntime = {
   phase: RoundPhase;
   roundNumber: number;
@@ -49,26 +63,6 @@ export type RoundRuntime = {
   endedBy: "all_inactive" | "flip7" | "unknown";
   pendingAction: PendingAction | null;
   pendingFlip3: PendingFlip3 | null;
-};
-
-export type CreateRoundRuntimeOptions = {
-  drawPile?: Card[];
-  discardPile?: Card[];
-  openingSeatIndex?: number;
-  turnSeatIndex?: number;
-  activePlayerId?: string | null;
-  endedBy?: RoundRuntime["endedBy"];
-  pendingAction?: PendingAction | null;
-  pendingFlip3?: PendingFlip3 | null;
-  phase?: RoundPhase;
-  rng?: RngService;
-  maxNumberCardValue?: number;
-};
-
-export type ResolveResult = {
-  round: RoundRuntime;
-  playerStates: Record<string, PlayerRoundState>;
-  events: import("./events").RoundEvent[];
 };
 
 function clonePlayerState(playerState: PlayerRoundState): PlayerRoundState {
