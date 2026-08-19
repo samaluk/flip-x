@@ -1,3 +1,9 @@
+# Fail fast in hooks: `pnpm run`/`pnpm exec` (every hk step via `pnpm exec`/`pnpm run`)
+# must not auto-install or prompt. Surface a clear VERIFY_DEPS_BEFORE_RUN error instead
+# of ERR_PNPM_ABORTED_REMOVE_MODULES_DIR_NO_TTY in non-TTY agent shells. Recovery is
+# an explicit `pnpm install` (or `CI=1 pnpm install` when stdin is not a TTY and the
+# store/layout is incompatible and needs a purge).
+verifyDepsBeforeRun: error
 allowBuilds:
   "@parcel/watcher": true
   "@posthog/cli": true
