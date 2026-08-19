@@ -11,12 +11,8 @@ import { toast } from "sonner";
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
-import {
-  getTrimmedPlayerNameIssue,
-  PLAYER_NAME_ISSUE_TOAST_KEY,
-} from "@/shared/lib/player-name-validation";
+import { executeMatchSubmission } from "./home-submission";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { useRouter } from "@/shared/i18n/navigation";
@@ -58,86 +54,71 @@ export function HomeClient() {
   async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const trimmedName = name.trim();
-
-    setName(trimmedName);
-    setColorId(selectedColorId);
-
-    const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
-    if (nameIssue) {
-      toast.error(t(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      const result = await createMatch({
-        hostName: trimmedName,
-        hostColorId: selectedColorId,
-      });
-      if (Either.isLeft(result)) {
-        toast.error(translateAppErrorToast(result.left, tErrors));
-        return;
-      }
-
-      startTransition(() => {
-        push(`/game/${result.right.matchId}`);
-      });
-    } catch {
-      toast.error(t("toastCreateFailed"));
-    } finally {
-      setIsSubmitting(false);
-    }
+    await executeMatchSubmission({
+      name,
+      selectedColorId,
+      sessionId,
+      setName,
+      setColorId,
+      setIsSubmitting,
+      tSetup: t,
+      tErrors,
+      onSuccess: (matchId) => {
+        startTransition(() => {
+          push(`/game/${matchId}`);
+        });
+      },
+      perform: (trimmedName) =>
+        createMatch({
+          hostName: trimmedName,
+          hostColorId: selectedColorId,
+        }),
+      fallbackErrorKey: "toastCreateFailed",
+    });
   }
 
   async function handleJoin(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    const playerName = name.trim();
     const lobbyCode = (joinCode ?? "").trim();
-
-    setName(playerName);
-    setColorId(selectedColorId);
-
-    const nameIssue = getTrimmedPlayerNameIssue(playerName, sessionId);
-    if (nameIssue) {
-      toast.error(t(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
-      return;
-    }
-
     if (lobbyCode.length !== 4) {
       toast.error(t("toastCodeLength"));
       return;
     }
 
-    setIsSubmitting(true);
-
-    try {
-      const lookup = await joinByCode({
-        lobbyCode: lobbyCode.toUpperCase(),
-      });
-      if (Either.isLeft(lookup)) {
-        toast.error(translateAppErrorToast(lookup.left, tErrors));
-        return;
-      }
-      const joined = await joinMatch({
-        matchId: lookup.right.matchId,
-        playerName,
-        playerColorId: selectedColorId,
-      });
-      if (Either.isLeft(joined)) {
-        toast.error(translateAppErrorToast(joined.left, tErrors));
-        return;
-      }
-      startTransition(() => {
-        push(`/game/${lookup.right.matchId}`);
-      });
-    } catch {
-      toast.error(t("toastJoinFailed"));
-    } finally {
-      setIsSubmitting(false);
-    }
+    await executeMatchSubmission({
+      name,
+      selectedColorId,
+      sessionId,
+      setName,
+      setColorId,
+      setIsSubmitting,
+      tSetup: t,
+      tErrors,
+      onSuccess: (matchId) => {
+        startTransition(() => {
+          push(`/game/${matchId}`);
+        });
+      },
+      perform: async (playerName) => {
+        const lookup = await joinByCode({
+          lobbyCode: lobbyCode.toUpperCase(),
+        });
+        if (Either.isLeft(lookup)) {
+          return lookup;
+        }
+        const joined = await joinMatch({
+          matchId: lookup.right.matchId,
+          playerName,
+          playerColorId: selectedColorId,
+        });
+        if (Either.isLeft(joined)) {
+          return joined;
+        }
+        return Either.right({ matchId: lookup.right.matchId });
+      },
+      fallbackErrorKey: "toastJoinFailed",
+    });
   }
 
   return (
