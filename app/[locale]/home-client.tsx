@@ -5,15 +5,16 @@ import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
 import * as Either from "effect/Either";
 import { useTranslations } from "next-intl";
-import { startTransition, type SubmitEvent, useState } from "react";
+import { type FormEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
 import { PlayerColorPicker } from "@/game/ui/player-color-picker";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
+import { CreateForm } from "./create-form";
 import { executeMatchSubmission } from "./home-submission";
+import { JoinForm } from "./join-form";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { useRouter } from "@/shared/i18n/navigation";
 import refs from "@/confect/_generated/refs";
@@ -51,7 +52,7 @@ export function HomeClient() {
   });
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
-  async function handleCreate(event: SubmitEvent<HTMLFormElement>) {
+  async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     await executeMatchSubmission({
@@ -77,7 +78,7 @@ export function HomeClient() {
     });
   }
 
-  async function handleJoin(event: SubmitEvent<HTMLFormElement>) {
+  async function handleJoin(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const lobbyCode = (joinCode ?? "").trim();
@@ -154,79 +155,29 @@ export function HomeClient() {
           />
 
           {!isJoinMode ? (
-            <div className="space-y-6">
-              <form onSubmit={(event) => void handleCreate(event)}>
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="h-12 w-full text-base font-medium"
-                  disabled={isSubmitting || !name.trim() || !sessionId}
-                >
-                  {t("createNewGame")}
-                </Button>
-              </form>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">{t("or")}</span>
-                </div>
-              </div>
-
-              <Button
-                variant="outline"
-                size="lg"
-                className="h-12 w-full text-base"
-                onClick={() => setHasOpenedJoinFlow(true)}
-              >
-                {t("joinExistingGame")}
-              </Button>
-            </div>
+            <CreateForm
+              onSubmit={(event) => void handleCreate(event)}
+              onOpenJoinFlow={() => setHasOpenedJoinFlow(true)}
+              disabled={isSubmitting || !name.trim() || !sessionId}
+              createButtonLabel={t("createNewGame")}
+              dividerLabel={t("or")}
+              joinButtonLabel={t("joinExistingGame")}
+            />
           ) : (
-            <form onSubmit={(event) => void handleJoin(event)} className="space-y-4">
-              <div className="flex flex-col gap-2">
-                <label htmlFor="joinCode" className="text-sm font-medium text-foreground">
-                  {tLobby("lobbyCode")}
-                </label>
-                <Input
-                  id="joinCode"
-                  value={joinCode ?? ""}
-                  onChange={(e) => {
-                    void setJoinCode(e.target.value.toUpperCase());
-                  }}
-                  placeholder={tLobby("codePlaceholder")}
-                  maxLength={4}
-                  className="h-12 text-center font-mono text-2xl tracking-widest uppercase"
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="lg"
-                  className="h-12 flex-1"
-                  onClick={() => {
-                    setHasOpenedJoinFlow(false);
-                    void setJoinCode(null);
-                  }}
-                >
-                  {t("cancel")}
-                </Button>
-                <Button
-                  type="submit"
-                  size="lg"
-                  className="h-12 flex-1 text-base font-medium"
-                  disabled={
-                    isSubmitting || !name.trim() || (joinCode?.length ?? 0) !== 4 || !sessionId
-                  }
-                >
-                  {t("joinGame")}
-                </Button>
-              </div>
-            </form>
+            <JoinForm
+              joinCode={joinCode ?? ""}
+              onJoinCodeChange={(code) => void setJoinCode(code)}
+              onSubmit={(event) => void handleJoin(event)}
+              onCancel={() => {
+                setHasOpenedJoinFlow(false);
+                void setJoinCode(null);
+              }}
+              disabled={isSubmitting || !name.trim() || (joinCode?.length ?? 0) !== 4 || !sessionId}
+              lobbyCodeLabel={tLobby("lobbyCode")}
+              codePlaceholder={tLobby("codePlaceholder")}
+              cancelLabel={t("cancel")}
+              joinButtonLabel={t("joinGame")}
+            />
           )}
         </div>
       </div>
