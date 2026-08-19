@@ -14,7 +14,7 @@ import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
 import { activePlayerIds } from "./turn-order";
 
-type ApplyCardResult = { pending: boolean };
+export type ApplyCardResult = { pending: boolean };
 
 function applyHeldSecondChance(
   round: RoundRuntime,

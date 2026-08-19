@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/shared/ui/button";
 
-interface LobbyCodeDisplayProps {
+export interface LobbyCodeDisplayProps {
   code: string;
 }
 

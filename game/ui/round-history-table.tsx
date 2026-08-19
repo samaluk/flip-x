@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 
-type RoundHistoryTableProps = {
+export type RoundHistoryTableProps = {
   history: MatchSnapshot["roundHistory"];
   players: MatchSnapshot["players"];
 };

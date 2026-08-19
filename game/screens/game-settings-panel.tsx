@@ -27,7 +27,7 @@ import {
 } from "@/shared/ui/accordion";
 import { Button } from "@/shared/ui/button";
 
-type GameSettingsPanelProps = {
+export type GameSettingsPanelProps = {
   snapshot: MatchSnapshot;
 };
 
