@@ -11,7 +11,7 @@ import {
 import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/ui/round-event-format";
@@ -20,6 +20,7 @@ import { PlayerLane } from "@/game/ui/player-lane";
 import { RoundHistoryTable } from "@/game/ui/round-history-table";
 import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
+import { resolveTurnControlsPhase } from "@/game/ui/turn-controls-phase";
 import { cn } from "@/shared/lib/utils";
 import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import {
@@ -112,20 +113,13 @@ export function GameTableView({
 
   const opponentsGridClass = opponentsGridCols(opponents.length);
 
-  // Mirrors the render conditions inside TurnControls so we can skip the sticky dock
-  // (and avoid reserving bottom padding) when no action UI would appear.
-  const hasTurnControls =
-    snapshot.status !== "completed" &&
-    (snapshot.roundStatus === "completed" ||
-      snapshot.pendingAction !== null ||
-      (activePlayer !== undefined && snapshot.roundStatus === "player_turns"));
+  const hasTurnControls = resolveTurnControlsPhase(snapshot).kind !== "none";
 
   const turnControls = (
     <TurnControls
       snapshot={snapshot}
       onHit={onHit}
       onStay={onStay}
-      onResolveAction={onResolveAction}
       onStartNextRound={onStartNextRound}
     />
   );
@@ -171,27 +165,40 @@ export function GameTableView({
           </section>
         ) : null}
 
-        {hasTurnControls ? (
-          <section
-            aria-label={t("turnActions")}
-            className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
-          >
-            {turnControls}
-          </section>
-        ) : null}
+        {hasTurnControls ? <TurnControlsDesktop t={t} controls={turnControls} /> : null}
 
         <RoundHistorySection snapshot={snapshot} tHistory={tHistory} />
 
-        {hasTurnControls ? (
-          <section
-            aria-label={t("turnActions")}
-            className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
-          >
-            <div className="mx-auto max-w-5xl">{turnControls}</div>
-          </section>
-        ) : null}
+        {hasTurnControls ? <TurnControlsMobile t={t} controls={turnControls} /> : null}
       </div>
     </LazyMotion>
+  );
+}
+
+type TurnControlsDockProps = {
+  t: ReturnType<typeof useTranslations<"GameTable">>;
+  controls: ReactNode;
+};
+
+function TurnControlsDesktop({ t, controls }: TurnControlsDockProps) {
+  return (
+    <section
+      aria-label={t("turnActions")}
+      className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
+    >
+      {controls}
+    </section>
+  );
+}
+
+function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
+  return (
+    <section
+      aria-label={t("turnActions")}
+      className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
+    >
+      <div className="mx-auto max-w-5xl">{controls}</div>
+    </section>
   );
 }
 
