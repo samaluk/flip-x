@@ -8,8 +8,7 @@ import { lobbyCodeUnavailable, lobbyNotFound } from "../shared/lib/errors/domain
 import { enforceRateLimit } from "./lib/rate_limiter";
 import { getPlayersByMatchWithReader } from "./lib/store";
 import { DatabaseReader as DatabaseReaderService } from "./_generated/services";
-
-type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
+import type { DatabaseReader } from "./lib/types";
 
 function resolveUniqueLobbyCodeAttempt(
   lookupMatchByLobbyCode: (lobbyCode: string) => Effect.Effect<Doc<"matches"> | null, unknown>,

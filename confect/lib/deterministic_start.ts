@@ -1,7 +1,9 @@
 import type { Card } from "../../game/logic/card-types";
 
-type DeterministicStartInput = { readonly roundSeed: { readonly drawPile: readonly Card[] } };
-type DeterministicStartOutput = { roundSeed: { drawPile: Card[] } };
+export type DeterministicStartInput = {
+  readonly roundSeed: { readonly drawPile: readonly Card[] };
+};
+export type DeterministicStartOutput = { roundSeed: { drawPile: Card[] } };
 
 export function cloneDeterministicStart(
   deterministicStart?: DeterministicStartInput,

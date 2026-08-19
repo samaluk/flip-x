@@ -12,7 +12,7 @@ export const rateLimiter = new RateLimiter(components.rateLimiter, {
   startMatch: { kind: "fixed window", rate: 20, period: MINUTE },
 });
 
-type AppRateLimitName = "createMatch" | "joinByCode" | "joinMatch" | "startMatch";
+export type AppRateLimitName = "createMatch" | "joinByCode" | "joinMatch" | "startMatch";
 
 export function enforceRateLimit(
   ctx: Parameters<typeof rateLimiter.limit>[0],
