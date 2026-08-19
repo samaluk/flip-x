@@ -9,7 +9,32 @@
   "ignorePatterns": [".next/**", "e2e/**", "scripts/**"],
   "ignoreFindings": ["convex/_generated/**", "confect/_generated/**"],
   "dynamicallyLoaded": ["confect/**/*.impl.ts", "confect/impl.ts", "confect/spec.ts"],
-  "ignoreExports": [{ "file": "shared/i18n/navigation.ts", "exports": ["usePathname"] }],
+  "ignoreExports": [
+    {
+      "file": "shared/i18n/navigation.ts",
+      "exports": ["usePathname"]
+    },
+    {
+      "file": "shared/ui/alert.tsx",
+      "exports": ["AlertAction"]
+    },
+    {
+      "file": "shared/ui/avatar.tsx",
+      "exports": ["AvatarImage", "AvatarGroup", "AvatarGroupCount"]
+    },
+    {
+      "file": "shared/ui/badge.tsx",
+      "exports": ["badgeVariants"]
+    },
+    {
+      "file": "shared/ui/button.tsx",
+      "exports": ["buttonVariants"]
+    },
+    {
+      "file": "shared/ui/card.tsx",
+      "exports": ["CardHeader", "CardFooter", "CardTitle", "CardAction", "CardDescription"]
+    }
+  ],
   "ignoreUnresolvedImports": ["@/messages/**"],
   "ignoreDependencies": ["@confect/test", "tailwindcss"],
   "typeAware": {
@@ -30,16 +55,25 @@
     "minOccurrences": 2,
     "ignoreImports": true,
     "ignoredClones": [
+      "dup:2e174d80:2",
+      "dup:33a7c5c4:2",
+      "dup:8691c349:2",
+      "dup:9ed7c5ca:2",
+      "dup:c77b3abb6f87acd9-1:2",
+      "dup:c77b3abb6f87acd9-32:2",
+      "dup:c77b3abb6f87acd9-16:2",
+      "dup:c77b3abb6f87acd9-2:3",
+      "dup:c77b3abb6f87acd9-28:2",
+      "dup:c77b3abb6f87acd9-26:3",
+      "dup:c77b3abb6f87acd9-9:2",
       "dup:c77b3abb6f87acd9-33:2",
-      "dup:c77b3abb6f87acd9-32:3",
-      "dup:c77b3abb6f87acd9-15:3",
+      "dup:c77b3abb6f87acd9-27:2",
+      "dup:c77b3abb6f87acd9-10:2",
+      "dup:c77b3abb6f87acd9-35:2",
+      "dup:c77b3abb6f87acd9-7:2",
+      "dup:c77b3abb6f87acd9-31:2",
       "dup:146daa20:2",
       "dup:ec5a72c6:2",
-      "dup:c77b3abb6f87acd9-20:2",
-      "dup:c77b3abb6f87acd9-40:2",
-      "dup:c77b3abb6f87acd9-8:2",
-      "dup:c77b3abb6f87acd9-25:2",
-      "dup:c77b3abb6f87acd9-22:2",
       "dup:6f87acd9:2"
     ]
   },
@@ -52,17 +86,38 @@
   },
   "boundaries": {
     "zones": [
-      { "name": "generated", "patterns": ["convex/_generated/**", "confect/_generated/**"] },
-      { "name": "tests", "patterns": ["tests/**", "game/**/*.test.tsx", "game/**/*.vitest.tsx"] },
+      {
+        "name": "generated",
+        "patterns": ["convex/_generated/**", "confect/_generated/**"]
+      },
+      {
+        "name": "tests",
+        "patterns": ["tests/**", "game/**/*.test.tsx", "game/**/*.vitest.tsx"]
+      },
       {
         "name": "adapters",
         "patterns": ["shared/analytics/posthog-convex.ts", "shared/lib/loose-translate.ts"]
       },
-      { "name": "logic", "patterns": ["game/logic/**"] },
-      { "name": "application", "patterns": ["game/application/**"] },
-      { "name": "infrastructure", "patterns": ["game/infrastructure/**"] },
-      { "name": "backend", "patterns": ["convex/**", "confect/**"] },
-      { "name": "shared", "patterns": ["shared/**"] },
+      {
+        "name": "logic",
+        "patterns": ["game/logic/**"]
+      },
+      {
+        "name": "application",
+        "patterns": ["game/application/**"]
+      },
+      {
+        "name": "infrastructure",
+        "patterns": ["game/infrastructure/**"]
+      },
+      {
+        "name": "backend",
+        "patterns": ["convex/**", "confect/**"]
+      },
+      {
+        "name": "shared",
+        "patterns": ["shared/**"]
+      },
       {
         "name": "ui",
         "patterns": [
@@ -77,7 +132,10 @@
       }
     ],
     "rules": [
-      { "from": "logic", "allow": ["shared", "generated"] },
+      {
+        "from": "logic",
+        "allow": ["shared", "generated"]
+      },
       {
         "from": "application",
         "allow": ["logic", "infrastructure", "shared", "adapters", "generated"]
@@ -90,8 +148,14 @@
         "from": "backend",
         "allow": ["logic", "application", "infrastructure", "shared", "adapters", "generated"]
       },
-      { "from": "shared", "allow": ["generated"] },
-      { "from": "adapters", "allow": ["logic", "backend", "shared", "generated"] },
+      {
+        "from": "shared",
+        "allow": ["generated"]
+      },
+      {
+        "from": "adapters",
+        "allow": ["logic", "backend", "shared", "generated"]
+      },
       {
         "from": "ui",
         "allow": ["logic", "application", "backend", "shared", "adapters", "generated"]

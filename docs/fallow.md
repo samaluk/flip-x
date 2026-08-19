@@ -71,14 +71,18 @@ cleanup work, not permanent acceptance.
   zero abstentions and unresolved queries).
 - Duplication uses semantic mode, near detection, eight-line/60-token floors,
   pair-level `minOccurrences: 2`, and import wiring ignored. Reviewed Confect
-  clones are fingerprinted narrowly: generated service declarations and
-  `GroupImpl`/`FunctionImpl` registration symmetry are framework-owned;
-  turn-command wrappers preserve distinct command contracts; indexed reads
-  preserve table-specific inference; and the cascading-delete/player-color
-  matches are semantic-normalization false positives. Presence component error
-  handling is shared in authored code instead of fingerprinted. Ten fingerprints
-  apply to the full scan; `dup:6f87acd9:2` is the changed-file audit fingerprint
-  for the same reviewed session-store/lobby indexed-read pair.
+  clones, global CSS theme variables, shared Effect error boilerplate, shared UI
+  primitive structures, and static player color palettes are fingerprinted
+  narrowly: generated service declarations and `GroupImpl`/`FunctionImpl`
+  registration symmetry are framework-owned; turn-command wrappers preserve
+  distinct command contracts; indexed reads preserve table-specific inference;
+  CSS `:root`/`.dark` variable pairs declare theme tokens; Effect
+  `Schema.TaggedError` classes define nominal domain error schemas; shadcn/ui
+  primitive wrappers forward standard component slots/props; and
+  cascading-delete/player-color matches are semantic-normalization false
+  positives. Presence component error handling is shared in authored code
+  instead of fingerprinted. `dup:6f87acd9:2` is the changed-file audit
+  fingerprint for the same reviewed session-store/lobby indexed-read pair.
 - Vitest produces real V8 Istanbul coverage. Fallow consumes it for audit and
   health/CRAP scoring. Structural coverage gaps were evaluated but remain
   advisory/off because the current 61-file/140-export signal is too noisy for
@@ -95,9 +99,10 @@ cleanup work, not permanent acceptance.
   errors. Existing private-type leaks remain visible for later cleanup.
 
 Only narrow, re-tested exceptions remain: generated Convex/Confect surfaces,
-the `@/messages/**` JSON alias, `@confect/test`, `tailwindcss`, and the
-next-intl `usePathname` export. Each covers runtime or build-time usage that
-Fallow cannot infer from the static graph alone.
+the `@/messages/**` JSON alias, `@confect/test`, `tailwindcss`, the next-intl
+`usePathname` export, and standard public shadcn/ui primitive component exports.
+Each covers runtime, build-time, or library-contract usage that Fallow cannot
+infer from the static graph alone.
 
 ## Hooks
 
