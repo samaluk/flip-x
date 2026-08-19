@@ -11,7 +11,7 @@ import {
 import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
 import { formatLatestRoundEventBody } from "@/game/ui/round-event-format";
@@ -422,15 +422,19 @@ type RoundHistorySectionProps = {
 };
 
 function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
+  const [prevRoundStatus, setPrevRoundStatus] = useState(snapshot.roundStatus);
   const [expandedSections, setExpandedSections] = useState<string[]>(["history"]);
 
-  useEffect(() => {
+  if (snapshot.roundStatus !== prevRoundStatus) {
+    setPrevRoundStatus(snapshot.roundStatus);
     if (snapshot.roundStatus === "completed") {
       setExpandedSections((current) =>
         current.includes("breakdown") ? current : [...current, "breakdown"],
       );
+    } else {
+      setExpandedSections((current) => current.filter((s) => s !== "breakdown"));
     }
-  }, [snapshot.roundStatus]);
+  }
 
   return (
     <Card className="w-full">
