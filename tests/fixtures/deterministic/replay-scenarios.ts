@@ -1,5 +1,6 @@
-import { actionCard, numberCard, withReplayFillerCards } from "./card-builders";
+import { actionCard, numberCard } from "@/tests/builders/cards";
 import type { DeterministicReplayScenario, ReplayExpectedState } from "./scenario-types";
+import { withReplayFillerCards } from "./fillers";
 import { cloneDeterministicStartOptions } from "./scenario-runner";
 
 function expectState(snapshot: ReplayExpectedState): ReplayExpectedState {
