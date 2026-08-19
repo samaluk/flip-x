@@ -44,6 +44,8 @@ function useLocalSessionStorage(key: string, initialValue: SessionId | undefined
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
   return (
     <ConvexProvider client={convex}>
+      {/* why: `SessionProvider.useStorage` intentionally accepts a hook as a value — the library calls it internally. The React Compiler's `react/hooks` rule treats any hook-as-value as a Rules-of-Hooks violation; narrow suppress here preserves the intended API while keeping the compiler check for all other code. */}
+      {/* oxlint-disable-next-line react/hooks -- `useLocalSessionStorage` is a storage hook passed to `SessionProvider`; the library invokes it internally per its `UseStorage` contract */}
       <SessionProvider useStorage={useLocalSessionStorage} storageKey="flip-x.anonymous-session-id">
         {children}
       </SessionProvider>

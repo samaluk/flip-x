@@ -84,6 +84,13 @@ function usePresenceHeartbeat({
     const abortController = new AbortController();
     let timeoutId: number | undefined;
 
+    const scheduleHeartbeat = () => {
+      timeoutId = window.setTimeout(
+        () => void sendHeartbeat().catch(() => {}),
+        PRESENCE_INTERVAL_MS,
+      );
+    };
+
     const sendHeartbeat = async () => {
       try {
         const result = await heartbeat({
@@ -105,13 +112,12 @@ function usePresenceHeartbeat({
           sessionId,
           syncPlayer,
         });
-      } finally {
-        if (!abortController.signal.aborted) {
-          timeoutId = window.setTimeout(
-            () => void sendHeartbeat().catch(() => {}),
-            PRESENCE_INTERVAL_MS,
-          );
-        }
+      } catch {
+        // heartbeat/sync failures are retried via the scheduled next tick
+      }
+
+      if (!abortController.signal.aborted) {
+        scheduleHeartbeat();
       }
     };
 
@@ -123,16 +129,9 @@ function usePresenceHeartbeat({
         window.clearTimeout(timeoutId);
       }
     };
-  }, [
-    heartbeat,
-    matchId,
-    playerId,
-    presenceSessionId,
-    sessionId,
-    sessionTokenRef,
-    setRoomToken,
-    syncPlayer,
-  ]);
+    // why: `heartbeat`, `sessionTokenRef`, `setRoomToken`, and `syncPlayer` are stable across renders (mutation hook / ref / state setter). The linter infers them as dependencies, but changing them should not restart the presence heartbeat — only identity/room changes should.
+    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-effect-dependencies -- stable refs/setters intentionally omitted; see comment above
+  }, [matchId, playerId, presenceSessionId, sessionId]);
 }
 
 type SyncPresentPlayerArgs = {
