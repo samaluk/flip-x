@@ -1,39 +1,15 @@
 import type { Doc, Id } from "../../convex/_generated/dataModel";
 import type { MutationCtx } from "../../convex/_generated/server";
+import type { GameTransition } from "../application/game-transition";
 import type { RoundCompletionOutcome } from "../application/round-completion";
 import type { RoundEvent } from "../logic/events";
 import type { PlayerRoundState, RoundRuntime } from "../logic/round-state";
-import type { GameCommand } from "../application/game-command";
 import {
   serializePlayerRoundState,
   serializePlayerRoundStatePatch,
   serializeRoundEvent,
   serializeRoundRuntime,
 } from "./serializers";
-
-export type GameTransition = {
-  command: GameCommand["type"];
-  roundWrite:
-    | {
-        kind: "create";
-        roundNumber: number;
-        startedAt: number;
-        round: RoundRuntime;
-      }
-    | {
-        kind: "update";
-        roundId: Id<"rounds">;
-        round: RoundRuntime;
-      };
-  playerStates: Record<string, PlayerRoundState>;
-  events: RoundEvent[];
-  finalized?: RoundCompletionOutcome;
-  matchUpdateContext: {
-    nextMatchStatus?: "in_progress" | "completed";
-    nextCurrentRoundNumber?: number;
-    nextDealerSeat?: number;
-  };
-};
 
 export type SaveCommandResultInput = {
   match: Doc<"matches">;
@@ -176,39 +152,34 @@ async function persistRoundCompletionOutcome(ctx: MutationCtx, input: SaveComman
   return finalized.matchCompleted;
 }
 
-export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResultInput) {
-  const { match, playerIdMap, transition } = input;
-  const nowMillis = input.nowMillis ?? Date.now();
-  const roundId =
-    transition.roundWrite.kind === "create"
-      ? await createRound(ctx, match._id, transition.roundWrite, playerIdMap, nowMillis)
-      : transition.roundWrite.roundId;
-
-  const latestRound = transition.finalized?.round ?? transition.roundWrite.round;
-  const latestPlayerStates = transition.finalized?.playerStates ?? transition.playerStates;
-  const latestEvents = [...transition.events, ...(transition.finalized?.events ?? [])];
-
-  await persistPlayerStates(ctx, roundId, latestPlayerStates, playerIdMap);
-  await persistRoundRuntime(ctx, roundId, latestRound, playerIdMap, nowMillis);
-  await persistEvents(ctx, roundId, latestEvents, playerIdMap, nowMillis);
-
-  let matchCompleted = false;
-
-  if (transition.finalized) {
-    await rewriteScoreBreakdowns(ctx, roundId, transition.finalized.scoreBreakdowns, playerIdMap);
-    matchCompleted = await persistRoundCompletionOutcome(ctx, input);
-  }
-
-  const patch: Partial<Doc<"matches">> = {
-    version: match.version + 1,
-    updatedAt: nowMillis,
+function resolveLatestRoundEntities(transition: GameTransition) {
+  const finalized = transition.finalized;
+  return {
+    round: finalized?.round ?? transition.roundWrite.round,
+    playerStates: finalized?.playerStates ?? transition.playerStates,
+    events: finalized ? [...transition.events, ...finalized.events] : transition.events,
   };
+}
 
+export function resolveMatchPatch(
+  match: Doc<"matches">,
+  transition: GameTransition,
+  playerIdMap: Map<string, Id<"players">>,
+  nowMillis: number,
+): Partial<Doc<"matches">> {
   const matchPatch = transition.finalized?.matchPatch;
   const nextMatchStatus = matchPatch?.status ?? transition.matchUpdateContext.nextMatchStatus;
   const nextCurrentRoundNumber =
     matchPatch?.currentRoundNumber ?? transition.matchUpdateContext.nextCurrentRoundNumber;
   const nextDealerSeat = matchPatch?.dealerSeat ?? transition.matchUpdateContext.nextDealerSeat;
+  const winnerPlayerId = matchPatch?.winnerPlayerId
+    ? playerIdMap.get(matchPatch.winnerPlayerId)
+    : undefined;
+
+  const patch: Partial<Doc<"matches">> = {
+    version: match.version + 1,
+    updatedAt: nowMillis,
+  };
 
   if (nextMatchStatus) {
     patch.status = nextMatchStatus;
@@ -219,11 +190,35 @@ export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResu
   if (nextDealerSeat !== undefined) {
     patch.dealerSeat = nextDealerSeat;
   }
-  if (matchPatch?.winnerPlayerId) {
-    // oxlint-disable-next-line typescript/no-non-null-assertion
-    patch.winnerPlayerId = playerIdMap.get(matchPatch.winnerPlayerId)!;
+  if (winnerPlayerId) {
+    patch.winnerPlayerId = winnerPlayerId;
   }
 
+  return patch;
+}
+
+export async function saveCommandResult(ctx: MutationCtx, input: SaveCommandResultInput) {
+  const { match, playerIdMap, transition } = input;
+  const nowMillis = input.nowMillis ?? Date.now();
+  const roundId =
+    transition.roundWrite.kind === "create"
+      ? await createRound(ctx, match._id, transition.roundWrite, playerIdMap, nowMillis)
+      : transition.roundWrite.roundId;
+
+  const { round, playerStates, events } = resolveLatestRoundEntities(transition);
+
+  await persistPlayerStates(ctx, roundId, playerStates, playerIdMap);
+  await persistRoundRuntime(ctx, roundId, round, playerIdMap, nowMillis);
+  await persistEvents(ctx, roundId, events, playerIdMap, nowMillis);
+
+  let matchCompleted = false;
+
+  if (transition.finalized) {
+    await rewriteScoreBreakdowns(ctx, roundId, transition.finalized.scoreBreakdowns, playerIdMap);
+    matchCompleted = await persistRoundCompletionOutcome(ctx, input);
+  }
+
+  const patch = resolveMatchPatch(match, transition, playerIdMap, nowMillis);
   await ctx.db.patch(match._id, patch);
 
   return {
