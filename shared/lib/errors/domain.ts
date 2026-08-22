@@ -156,9 +156,6 @@ export class InvalidConfirmation extends Schema.TaggedError<InvalidConfirmation>
   { message: Schema.String },
 ) {}
 
-export const invalidConfirmation = (): InvalidConfirmation =>
-  new InvalidConfirmation({ message: W.InvalidConfirmation });
-
 export const AppErrorSchema = Schema.Union(
   MatchNotFound,
   InvalidTurn,
