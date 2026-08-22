@@ -22,7 +22,3 @@ export function createProductionRng(random: () => number = Math.random): RngServ
 }
 
 export const productionRng = createProductionRng();
-
-export const fixedRng: RngService = {
-  shuffle: (items) => [...items],
-};

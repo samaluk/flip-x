@@ -4,7 +4,7 @@ import { APP_ERROR_WIRE_CODE, translateConvexError } from "@/shared/lib/errors/a
 import {
   insufficientPlayers,
   invalidAction,
-  invalidConfirmation,
+  InvalidConfirmation,
   invalidHostName,
   invalidMatchState,
   invalidPlayerColor,
@@ -58,7 +58,7 @@ describe("AppError wire codes and Errors.* messages", () => {
     staleGameState({ expectedVersion: 1, actualVersion: 2 }),
     unsupportedRelationship(),
     unsupportedTable({ table: "x", id: "y" }),
-    invalidConfirmation(),
+    new InvalidConfirmation({ message: APP_ERROR_WIRE_CODE.InvalidConfirmation }),
   ];
 
   it("maps every AppError tag to a stable wire code on .message", () => {

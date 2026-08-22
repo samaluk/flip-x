@@ -58,10 +58,20 @@ function takenColorIdsExcludingViewer(
   players: readonly Doc<"players">[],
   existingViewerPlayerId: Id<"players"> | null,
 ): PlayerColorId[] {
-  return players
-    .filter((player) => !existingViewerPlayerId || player._id !== existingViewerPlayerId)
-    .map((player) => player.colorId)
-    .filter((colorId): colorId is PlayerColorId => isPlayerColorId(colorId ?? ""));
+  const takenColorIds: PlayerColorId[] = [];
+
+  for (const player of players) {
+    if (existingViewerPlayerId && player._id === existingViewerPlayerId) {
+      continue;
+    }
+
+    const { colorId } = player;
+    if (colorId !== undefined && isPlayerColorId(colorId)) {
+      takenColorIds.push(colorId);
+    }
+  }
+
+  return takenColorIds;
 }
 
 function assertMatchJoinable(reader: DatabaseReader, matchId: Id<"matches">) {

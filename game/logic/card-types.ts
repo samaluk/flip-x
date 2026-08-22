@@ -108,7 +108,3 @@ export function isModifierCard(card: Card): card is ModifierCard {
 export function isActionCard(card: Card): card is ActionCard {
   return card.type === "action";
 }
-
-export function countDeckCards() {
-  return buildOrderedDeck().length;
-}

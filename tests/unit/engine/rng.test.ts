@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { buildOrderedDeck, createDeck } from "@/game/logic/card-types";
 import { createPlayerRoundStates, createRoundRuntime } from "@/game/logic/command-handler";
-import { createProductionRng, fixedRng } from "@/game/logic/rng";
+import { createProductionRng, type RngService } from "@/game/logic/rng";
+
+// Test fixture: an RngService that leaves the deck in its built order.
+const fixedRng: RngService = {
+  shuffle: (items) => [...items],
+};
 
 describe("rng", () => {
   it("keeps the ordered deck with fixedRng", () => {
