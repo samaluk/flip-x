@@ -18,20 +18,17 @@ type SyncPlayerMutation = ReturnType<
 export function useMatchPresence(matchId: string, playerId: Id<"players"> | undefined) {
   const [sessionId] = useSessionId();
   const [presenceSessionId] = useState(() => crypto.randomUUID());
-  const [roomToken, setRoomToken] = useState<string | null>(null);
   const sessionTokenRef = useRef<string | null>(null);
   const syncPlayer = useSessionConfectMutation(refs.public.presence.syncPlayer);
-  const presence = useQuery(api.presence.list, roomToken ? { roomToken } : "skip");
-
-  usePresenceHeartbeat({
+  const { roomToken } = usePresenceHeartbeat({
     matchId,
     playerId,
     presenceSessionId,
     sessionId,
     sessionTokenRef,
-    setRoomToken,
     syncPlayer,
   });
+  const presence = useQuery(api.presence.list, roomToken ? { roomToken } : "skip");
   usePageHideDisconnect(sessionTokenRef);
 
   useEffect(() => {
@@ -60,7 +57,6 @@ type PresenceHeartbeatArgs = {
   presenceSessionId: string;
   sessionId: string | undefined;
   sessionTokenRef: React.RefObject<string | null>;
-  setRoomToken: (roomToken: string) => void;
   syncPlayer: SyncPlayerMutation;
 };
 
@@ -70,10 +66,10 @@ function usePresenceHeartbeat({
   presenceSessionId,
   sessionId,
   sessionTokenRef,
-  setRoomToken,
   syncPlayer,
 }: PresenceHeartbeatArgs) {
   const heartbeat = useMutation(api.presence.heartbeat);
+  const [roomToken, setRoomToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (!playerId || !sessionId) {
@@ -81,7 +77,7 @@ function usePresenceHeartbeat({
     }
 
     const activePlayerId = playerId;
-    const abortController = new AbortController();
+    let ignore = false;
     let timeoutId: number | undefined;
 
     const scheduleHeartbeat = () => {
@@ -100,13 +96,13 @@ function usePresenceHeartbeat({
           interval: PRESENCE_INTERVAL_MS,
         });
 
-        if (!abortController.signal.aborted) {
+        if (!ignore) {
           sessionTokenRef.current = result.sessionToken;
           setRoomToken(result.roomToken);
         }
 
         await syncPresentPlayer({
-          aborted: abortController.signal.aborted,
+          aborted: ignore,
           matchId,
           playerId: activePlayerId,
           sessionId,
@@ -116,7 +112,7 @@ function usePresenceHeartbeat({
         // heartbeat/sync failures are retried via the scheduled next tick
       }
 
-      if (!abortController.signal.aborted) {
+      if (!ignore) {
         scheduleHeartbeat();
       }
     };
@@ -124,14 +120,16 @@ function usePresenceHeartbeat({
     void sendHeartbeat().catch(() => {});
 
     return () => {
-      abortController.abort();
+      ignore = true;
       if (timeoutId !== undefined) {
         window.clearTimeout(timeoutId);
       }
     };
-    // why: `heartbeat`, `sessionTokenRef`, `setRoomToken`, and `syncPlayer` are stable across renders (mutation hook / ref / state setter). The linter infers them as dependencies, but changing them should not restart the presence heartbeat — only identity/room changes should.
+    // why: `heartbeat`, `sessionTokenRef`, and `syncPlayer` are stable across renders (mutation hook / ref). The linter infers them as dependencies, but changing them should not restart the presence heartbeat — only identity/room changes should.
     // oxlint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-effect-dependencies -- stable refs/setters intentionally omitted; see comment above
   }, [matchId, playerId, presenceSessionId, sessionId]);
+
+  return { roomToken };
 }
 
 type SyncPresentPlayerArgs = {
