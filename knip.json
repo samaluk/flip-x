@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  // React Doctor's dead-code analyzer (deslop/Knip engine) ships presets for
+  // Next.js and other frameworks but none for this project's Convex/Confect
+  // backend, whose modules are loaded by framework convention rather than
+  // imported from a detected entry. Declare those units so reachability
+  // reflects what the Convex bundler actually deploys:
+  //
+  //   - convex/*.ts: every module directly under convex/ is deployed as its
+  //     own public-function (or schema) entry point.
+  //   - confect/**/*.impl.ts: Confect implementation groups wired into the
+  //     app by confect/_generated/registeredFunctions/*.
+  //   - confect/tables/**/*.ts: Confect table definitions consumed by the
+  //     generated database schema.
+  //
+  // confect/_generated/** must stay ignored (see .oxlintignore): generated
+  // files are excluded from the analyzer's module graph, so reachability has
+  // to start at the source modules the generator wires together.
+  "entry": ["convex/**/*.ts", "confect/**/*.impl.ts", "confect/tables/**/*.ts"]
+}
