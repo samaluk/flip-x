@@ -46,7 +46,10 @@ local push_checks = new Mapping<String, Step> {
     }
   }
   ["fetch"] {
-    check = "git fetch origin master || true"
+    check = new CommandSpec {
+      command = "git fetch origin master || true"
+      effect = "read"
+    }
   }
   ["react-doctor"] {
     check = new CommandSpec {
