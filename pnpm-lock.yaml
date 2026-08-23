@@ -33,8 +33,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(convex@1.44.0(react@19.2.8))
       '@posthog/next':
-        specifier: 0.8.5
-        version: 0.8.5(@types/react@19.2.18)(next@16.3.1(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.8.6
+        version: 0.8.6(@types/react@19.2.18)(next@16.3.1(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@sholajegede/convex-cascading-deletes':
         specifier: 0.1.2
         version: 0.1.2(convex@1.44.0(react@19.2.8))(react@19.2.8)
@@ -2277,8 +2277,8 @@ packages:
   '@posthog/core@1.48.8':
     resolution: {integrity: sha512-LAOBOjMQrQmgcbZxnubl74l2GQd5OWqxCJJ8mzcWdZRWbfO6Y/A6E3fqWjDtm68hY4LxC/bbopG60cxZW8cfWw==}
 
-  '@posthog/next@0.8.5':
-    resolution: {integrity: sha512-6OdnkhrdyuZB3HBv5QvcyXslmEWeZvaWsLkzAvsKnqyzFFKlKZxYpdmNS3QnyvtoFmyZMlpn1jE6v3acHRB/wA==}
+  '@posthog/next@0.8.6':
+    resolution: {integrity: sha512-cqyrwr/0yyj+SfJhXtr3S6ZJW8K19CFNm4jVI6SKxRO3g62L0njexxeD286s+PrwVAY2ixd45RGFYDb9p83Kcg==}
     peerDependencies:
       '@vercel/functions': '>=1.0.0'
       next: '>=13.0.0'
@@ -7494,7 +7494,7 @@ snapshots:
     dependencies:
       '@posthog/types': 1.405.1
 
-  '@posthog/next@0.8.5(@types/react@19.2.18)(next@16.3.1(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@posthog/next@0.8.6(@types/react@19.2.18)(next@16.3.1(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@posthog/core': 1.48.8
       '@posthog/react': 1.10.3(@types/react@19.2.18)(posthog-js@1.418.10)(react@19.2.8)
