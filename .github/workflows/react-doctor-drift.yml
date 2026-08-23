@@ -7,8 +7,12 @@ name: React Doctor (drift scan)
 # dependency bumps that don't touch react-doctor only cost a no-op run. A failed
 # scan is never cached - actions/cache only saves entries when the job succeeds -
 # so an unscanned version is always retried on the next triggering push.
-# Unlike the PR gate in react-doctor.yml this workflow stays read-only: it exists
-# to surface drift in the project's overall health score, not to gate merges.
+# Unlike the PR gate in react-doctor.yml this workflow stays comment-free: it
+# exists to surface drift in the project's overall health score, not to gate
+# merges, so it documents that explicitly with `comment: false` +
+# `review-comments: false` and reports only through the commit status.
+# The scan pins the same react-doctor CLI version that keys the cache, so a
+# scanned version always means "this exact CLI was run over the full project".
 
 on:
   push:
@@ -25,6 +29,9 @@ concurrency:
 
 jobs:
   drift-scan:
+    permissions:
+      contents: read
+      statuses: write # commit status is the trend marker on the default branch
     # Fork-safe runner selection, matching the main React Doctor workflow.
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || (vars.USE_SELF_HOSTED_RUNNERS == 'true' && fromJSON('["self-hosted","macOS","ARM64"]') || 'ubuntu-latest') }}
     timeout-minutes: 20
@@ -38,18 +45,18 @@ jobs:
       # react-doctor package from node_modules.
       - uses: ./.github/actions/setup-toolchain
 
-      - id: ver
+      - id: rdver
         run: echo "version=$(node -p "require('react-doctor/package.json').version")" >> "$GITHUB_OUTPUT"
 
       - id: seen
         uses: actions/cache@v4
         with:
           path: .rd-drift
-          key: rd-drift-${{ steps.ver.outputs.version }}
+          key: rd-drift-${{ steps.rdver.outputs.version }}
 
       - name: Mark this version as scanned
         if: steps.seen.outputs.cache-hit != 'true'
-        run: mkdir -p .rd-drift && date > ".rd-drift/${{ steps.ver.outputs.version }}"
+        run: mkdir -p .rd-drift && date > ".rd-drift/${{ steps.rdver.outputs.version }}"
 
       - name: React Doctor (full drift scan)
         if: steps.seen.outputs.cache-hit != 'true'
@@ -57,3 +64,11 @@ jobs:
         with:
           scope: full
           blocking: warning
+          # Scan with the exact react-doctor CLI pinned by package.json - the
+          # same version this workflow's cache key tracks.
+          version: ${{ steps.rdver.outputs.version }}
+          # No PR feedback surface exists here; the commit status on master is
+          # the drift trend marker.
+          comment: false
+          review-comments: false
+          commit-status: true

@@ -8,8 +8,11 @@ name: React Doctor
 #     posting a sticky PR summary comment, inline review comments, and a commit status.
 #   - master (default branch): posts a commit status on each push, so branch health
 #     stays visible alongside the PR gate.
-# The Action checks out the repo itself and needs no dependency install, build, cache
-# population, or Convex preview, so it stays independent from the general CI workflow.
+# The Action checks out the repo itself. The only extra setup is the shared
+# toolchain bootstrap, which lets the workflow read the pinned react-doctor CLI
+# version from node_modules and pass it as `version:` - so every scan runs the
+# exact same CLI the local hk gates run, and Renovate bumps propagate here
+# automatically through the dependency manifest alone.
 # The React project lives at the repo root, so no `directory` override is needed.
 # The workflow-level token stays read-only; write scopes for review comments, the
 # PR comment, and the commit status are granted to the single job that needs them.
@@ -53,6 +56,14 @@ jobs:
           # git-clean there and let the runner manage workspace reuse instead.
           clean: ${{ vars.USE_SELF_HOSTED_RUNNERS != 'true' }}
 
+      # Installs dependencies so the version probe below can resolve the pinned
+      # react-doctor package from node_modules.
+      - uses: ./.github/actions/setup-toolchain
+
+      - name: Resolve react-doctor CLI version
+        id: rdver
+        run: echo "version=$(node -p "require('react-doctor/package.json').version")" >> "$GITHUB_OUTPUT"
+
       - name: Scan changed code for new findings
         # Immutable pin for the current v2 release (v2.2.8 is what the `v2` tag
         # points to). The Action uses the installed project config at the root.
@@ -62,6 +73,9 @@ jobs:
           blocking: warning
           # Report only issues introduced relative to the merge base (PR-scoped).
           scope: changed
+          # Scan with the exact react-doctor CLI pinned by package.json, not the
+          # Action's own bundled copy, so CI agrees with the local hk gates.
+          version: ${{ steps.rdver.outputs.version }}
           comment: true
           review-comments: true
           commit-status: true
