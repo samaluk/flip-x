@@ -47,10 +47,11 @@ version-matched TypeScript-Go companion before diagnosing a semantic result.
 
 ## CI And Coverage
 
-`.github/workflows/ci.yml` shares one coverage artifact across the Fallow jobs:
+`.github/workflows/fallow.yml` is the dedicated Fallow workflow and shares one
+coverage artifact across its jobs:
 
 - **Test with coverage** runs `pnpm test:coverage` and uploads `coverage/coverage-final.json`.
-- **Fallow gate** downloads the artifact and runs `pnpm fallow:ci`, which composes the strict audit, dead-code, duplication, and health commands.
+- **Fallow gate** downloads the artifact and runs `pnpm fallow:full`, which composes the strict audit, dead-code, duplication, and health commands.
 - **Fallow PR review** runs one immutable native Fallow Action analysis with `gate: all`, type-aware analysis, and the same coverage artifact. It renders the sticky summary, Check Run, inline review comments, and review guidance.
 
 No job reinstalls dependencies or reruns the test suite solely to obtain Fallow

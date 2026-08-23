@@ -15,11 +15,12 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Static quality checks, tests, Fallow gates, and the runtime-facing suites run
-  # as parallel jobs so a pull request goes green as fast as possible. Each job
-  # is its own required status check on the master-branch ruleset, so every one
-  # must pass for a merge. setup-toolchain installs Node, pnpm, and dependencies,
-  # so checkout + setup is all each job needs.
+  # Static quality checks and the runtime-facing suites run as parallel jobs.
+  # Each job is its own required status check on the master-branch ruleset, so
+  # every one must pass for a merge. setup-toolchain installs Node, pnpm, and
+  # dependencies, so checkout + setup is all each job needs. The Fallow gates
+  # (including the coverage-producing Vitest run they consume) live in their
+  # own workflow: .github/workflows/fallow.yml.
   static:
     name: Lint, typecheck, format, i18n & design
     runs-on: ubuntu-latest
@@ -45,118 +46,6 @@ jobs:
 
       - name: Check i18n
         run: pnpm i18n:check
-
-  # Runs the fast Vitest suites (engine, infrastructure, contract, ui, confect)
-  # once with coverage and shares coverage-final.json with both Fallow jobs, so
-  # they do not reinstall and re-run the suite just to score the same evidence.
-  test:
-    name: Test with coverage
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: ./.github/actions/setup-toolchain
-
-      - name: Test with coverage
-        run: pnpm test:coverage
-
-      - name: Upload coverage
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: coverage
-          path: coverage/coverage-final.json
-          if-no-files-found: error
-          retention-days: 1
-
-  # Authoritative strict Fallow gate: changed-file audit plus the full-repository
-  # dead-code, duplication, and health checks. The review job owns PR feedback.
-  gate:
-    name: Fallow gate
-    needs: test
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: ./.github/actions/setup-toolchain
-
-      # Same coverage evidence the test job produced, so audit and health CRAP scoring
-      # matches — downloaded rather than regenerated to avoid a second
-      # install + test run.
-      - name: Download coverage
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: coverage
-          path: coverage
-
-      - name: Fallow CI gate
-        run: pnpm fallow:ci
-        env:
-          FALLOW_AUDIT_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'origin/master' }}
-
-  # One immutable Fallow 3.17.0 Action analysis. It renders the compact sticky
-  # summary, Check Run, inline review comments, and review guidance directly.
-  # This job is a required check (fail-on-issues is on), so Fallow findings block
-  # the merge; the gate job owns the strict project-wide gates.
-  review:
-    name: Fallow PR review
-    needs: test
-    if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: read
-      pull-requests: write
-      checks: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
-      - uses: ./.github/actions/setup-toolchain
-
-      # Fallow installs its CLI globally with npm. The runtime managed by
-      # pnpm/setup can use a different npm prefix, so expose that bin directory.
-      - name: Expose npm global binaries
-        run: echo "$(npm config get prefix)/bin" >> "$GITHUB_PATH"
-
-      # Same coverage evidence the test job produced, so audit CRAP scoring
-      # matches — downloaded rather than regenerated to avoid a second
-      # install + test run.
-      - name: Download coverage
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          name: coverage
-          path: coverage
-
-      - name: Fallow changed-code audit
-        uses: fallow-rs/fallow@ecf5a314fd3e10974acb4f5a7f867c433030522d # v3.17.0
-        with:
-          version: 3.17.0
-          command: audit
-          gate: all
-          type-aware: true
-          coverage: coverage/coverage-final.json
-          coverage-root: ${{ github.workspace }}
-          comment: true
-          comment-layout: compact
-          branded-token: false
-          review-comments: true
-          review-guidance: true
 
   build:
     name: Production build
