@@ -1,0 +1,59 @@
+name: React Doctor (drift scan)
+
+# Full-project React Doctor scan that runs exactly once per resolved react-doctor
+# CLI version instead of on a cron. Exactly-once semantics come from the cache key
+# being the resolved version (`rd-drift-<version>`): a version that has already
+# been scanned restores a cache hit and skips both the marker and the scan, while
+# dependency bumps that don't touch react-doctor only cost a no-op run. A failed
+# scan is never cached - actions/cache only saves entries when the job succeeds -
+# so an unscanned version is always retried on the next triggering push.
+# Unlike the PR gate in react-doctor.yml this workflow stays read-only: it exists
+# to surface drift in the project's overall health score, not to gate merges.
+
+on:
+  push:
+    branches: [master]
+    paths: ["**/package.json", "**/pnpm-lock.yaml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-doctor-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift-scan:
+    # Fork-safe runner selection, matching the main React Doctor workflow.
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || (vars.USE_SELF_HOSTED_RUNNERS == 'true' && fromJSON('["self-hosted","macOS","ARM64"]') || 'ubuntu-latest') }}
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Installs dependencies so the version probe below can resolve the pinned
+      # react-doctor package from node_modules.
+      - uses: ./.github/actions/setup-toolchain
+
+      - id: ver
+        run: echo "version=$(node -p "require('react-doctor/package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - id: seen
+        uses: actions/cache@v4
+        with:
+          path: .rd-drift
+          key: rd-drift-${{ steps.ver.outputs.version }}
+
+      - name: Mark this version as scanned
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: mkdir -p .rd-drift && date > ".rd-drift/${{ steps.ver.outputs.version }}"
+
+      - name: React Doctor (full drift scan)
+        if: steps.seen.outputs.cache-hit != 'true'
+        uses: millionco/react-doctor@01820bb4fd4d0a4aebcd8df2b2a143a098649cb2 # v2.2.8
+        with:
+          scope: full
+          blocking: warning
