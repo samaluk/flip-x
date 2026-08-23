@@ -52,9 +52,10 @@
     "fallow:suppressions": "fallow suppressions",
     "fallow:fix:preview": "fallow fix --type-aware --dry-run",
     "fallow:fix": "fallow fix --type-aware --yes",
-    "doctor": "react-doctor",
-    "doctor:diff": "react-doctor --scope changed --blocking warning",
-    "doctor:staged": "react-doctor --staged --blocking warning --yes --project flip-x"
+    "react-doctor": "react-doctor --verbose",
+    "react-doctor:staged": "react-doctor --staged --yes --no-score --blocking warning --project flip-x",
+    "react-doctor:changed": "react-doctor --scope changed --base origin/master --yes --no-score --blocking warning --project flip-x",
+    "react-doctor:full": "react-doctor --scope full --yes --no-score --blocking warning --project flip-x"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",

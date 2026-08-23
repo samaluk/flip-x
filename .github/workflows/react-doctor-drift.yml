@@ -1,0 +1,77 @@
+name: React Doctor (drift scan)
+
+# Full-project React Doctor scan that runs exactly once per resolved react-doctor
+# CLI version instead of on a cron. Exactly-once semantics come from the cache key
+# being the resolved version (`rd-drift-<version>`): a version that has already
+# been scanned restores a cache hit and skips both the marker and the scan, while
+# dependency bumps that don't touch react-doctor only cost a no-op run. A failed
+# scan is never cached - actions/cache only saves entries when the job succeeds -
+# so an unscanned version is always retried on the next triggering push.
+# Unlike the PR gate in react-doctor.yml this workflow stays comment-free: it
+# exists to surface drift in the project's overall health score, not to gate
+# merges, so it documents that explicitly with `comment: false` +
+# `review-comments: false` and reports only through the commit status.
+# The scan pins the same react-doctor CLI version that keys the cache, so a
+# scanned version always means "this exact CLI was run over the full project".
+
+on:
+  push:
+    branches: [master]
+    paths: ["**/package.json", "**/pnpm-lock.yaml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: react-doctor-drift-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  drift-scan:
+    permissions:
+      contents: read
+      statuses: write # commit status is the trend marker on the default branch
+    # Fork-safe runner selection, matching the main React Doctor workflow.
+    runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || (vars.USE_SELF_HOSTED_RUNNERS == 'true' && fromJSON('["self-hosted","macOS","ARM64"]') || 'ubuntu-latest') }}
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The two-space indent anchors the lockfile's package key (and avoids
+      # matching lookalikes such as oxlint-plugin-react-doctor); this repo's
+      # lockfile carries no tarball URLs, so the family's leading-slash grep
+      # would never match here.
+      - id: rdver
+        run: |
+          v="$(grep -m1 -oE '^  react-doctor@[0-9]+\.[0-9]+\.[0-9]+' pnpm-lock.yaml | cut -d@ -f2-)"
+          if [ -z "$v" ]; then echo "::error::react-doctor version not found in pnpm-lock.yaml"; exit 1; fi
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+
+      - id: seen
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .rd-drift
+          key: rd-drift-${{ steps.rdver.outputs.version }}
+
+      - name: Mark this version as scanned
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: mkdir -p .rd-drift && date > ".rd-drift/${{ steps.rdver.outputs.version }}"
+
+      - name: React Doctor (full drift scan)
+        if: steps.seen.outputs.cache-hit != 'true'
+        uses: millionco/react-doctor@01820bb4fd4d0a4aebcd8df2b2a143a098649cb2 # v2.2.8
+        with:
+          scope: full
+          blocking: warning
+          # Scan with the exact react-doctor CLI resolved from pnpm-lock.yaml -
+          # the same version this workflow's cache key tracks.
+          version: ${{ steps.rdver.outputs.version }}
+          # No PR feedback surface exists here; the commit status on master is
+          # the drift trend marker.
+          comment: false
+          review-comments: false
+          commit-status: true

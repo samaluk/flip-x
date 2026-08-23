@@ -16,6 +16,7 @@ allowBuilds:
   protobufjs: true
   sharp: false
   unrs-resolver: false
+minimumReleaseAge: 1440
 minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
   - fallow@3.17.0
@@ -28,3 +29,9 @@ minimumReleaseAgeExclude:
   - "@fallow-cli/linux-x64-musl@3.17.0"
   - "@fallow-cli/win32-arm64-msvc@3.17.0"
   - "@fallow-cli/win32-x64-msvc@3.17.0"
+trustPolicy: no-downgrade
+# semver@6.3.1 is the standard CVE-2022-25883 backport (published 2023 without
+# provenance, unlike 6.3.0); the no-downgrade policy reads that age gap as a
+# possible takeover, so pin the exception to the exact vetted version.
+trustPolicyExclude:
+  - "semver@6.3.1"
