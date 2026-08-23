@@ -45,6 +45,16 @@ local push_checks = new Mapping<String, Step> {
       effect = "read"
     }
   }
+  ["fetch"] {
+    check = "git fetch origin master || true"
+  }
+  ["react-doctor"] {
+    check = new CommandSpec {
+      command = "pnpm react-doctor:changed"
+      effect = "read"
+    }
+    depends = List("fetch")
+  }
   ["i18n"] {
     check = new CommandSpec {
       command = "pnpm i18n:check"
@@ -76,7 +86,7 @@ hooks {
       ["react-doctor"] {
         types = List("javascript", "typescript")
         check = new CommandSpec {
-          command = "pnpm doctor:staged"
+          command = "pnpm react-doctor:staged"
           effect = "read"
         }
       }
