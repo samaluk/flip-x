@@ -27,7 +27,7 @@ local commit_checks = new Mapping<String, Step> {
   }
   ["fallow-audit"] {
     check = new CommandSpec {
-      command = "pnpm fallow:audit:staged"
+      command = "pnpm fallow:staged"
       effect = "write"
     }
   }
@@ -66,9 +66,10 @@ local push_checks = new Mapping<String, Step> {
   }
   ["fallow"] {
     check = new CommandSpec {
-      command = "pnpm test:coverage && pnpm fallow:ci"
+      command = "pnpm test:coverage && pnpm fallow:full"
       effect = "write"
     }
+    depends = List("fetch")
   }
   ["design"] {
     glob = "DESIGN.md"

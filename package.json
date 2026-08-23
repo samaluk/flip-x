@@ -45,7 +45,6 @@
     "fallow:health": "fallow health --coverage coverage/coverage-final.json --coverage-root \"$PWD\" --fail-on-issues",
     "fallow:audit": "fallow audit --gate all --type-aware --coverage coverage/coverage-final.json --coverage-root \"$PWD\"",
     "fallow:staged": "git diff --cached | fallow audit --diff-file - --base HEAD --gate all --type-aware",
-    "fallow:audit:staged": "pnpm fallow:staged",
     "fallow:full": "pnpm fallow:audit && pnpm fallow:dead-code && pnpm fallow:dupes && pnpm fallow:health",
     "fallow:ci": "pnpm fallow:full",
     "fallow:recommend": "fallow recommend",

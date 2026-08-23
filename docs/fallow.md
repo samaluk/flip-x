@@ -25,6 +25,12 @@ pnpm fallow:health
 The authoritative local and CI composition is:
 
 ```bash
+pnpm fallow:full
+```
+
+which expands to:
+
+```bash
 pnpm fallow:audit && pnpm fallow:dead-code && pnpm fallow:dupes && pnpm fallow:health
 ```
 
@@ -101,8 +107,8 @@ paths are equivalent to runtime test coverage.
 
 `hk` is the only hook manager:
 
-- **Pre-commit** runs the staged, coverage-free `fallow audit --base HEAD --gate all` through `pnpm fallow:audit:staged`.
-- **Pre-push** runs coverage and then the complete `pnpm fallow:ci` composition alongside the normal project checks.
+- **Pre-commit** runs `pnpm fallow:staged`, which pipes `git diff --cached` into `fallow audit --diff-file - --base HEAD --gate all --type-aware` so findings are scoped line-level to staged hunks. Staged diffs that add no lines (pure renames, pure deletions, binary-only changes) fall back to plain file-scoped auditing instead of passing through the empty diff filter (`scripts/fallow-staged.sh`).
+- **Pre-push** fetches `origin/master` first (so base resolution sees current master), then runs coverage and the complete `pnpm fallow:full` composition alongside the normal project checks; the fallow step depends on the `fetch` step.
 
 There is no baseline updater, regression-count wrapper, freshness check, or
 custom Fallow orchestration layer.
