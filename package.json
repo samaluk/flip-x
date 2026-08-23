@@ -111,7 +111,7 @@
     "jsdom": "30.0.1",
     "oxfmt": "0.64.0",
     "oxlint": "1.79.0",
-    "oxlint-tailwindcss": "1.9.0",
+    "oxlint-tailwindcss": "1.10.0",
     "oxlint-tsgolint": "7.0.2001",
     "portless": "0.15.5",
     "react-doctor": "0.9.12",
