@@ -45,6 +45,9 @@ pnpm fallow:health
 
 The audit probe is run against `HEAD` so it examines exactly the staged
 changes. CI uses the same `all` gate against the pull request's changed files.
+Staged diffs without added lines (pure renames, deletions, binary-only
+changes) are audited file-scoped rather than through fallow's empty diff
+filter.
 
 ## Completeness Checks
 

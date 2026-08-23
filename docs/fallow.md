@@ -107,7 +107,7 @@ paths are equivalent to runtime test coverage.
 
 `hk` is the only hook manager:
 
-- **Pre-commit** runs the staged, coverage-free audit through `pnpm fallow:staged`: `git diff --cached` is piped into `fallow audit --diff-file - --base HEAD --gate all --type-aware`, so findings are scoped line-level to staged hunks.
+- **Pre-commit** runs `pnpm fallow:staged`, which pipes `git diff --cached` into `fallow audit --diff-file - --base HEAD --gate all --type-aware` so findings are scoped line-level to staged hunks. Staged diffs that add no lines (pure renames, pure deletions, binary-only changes) fall back to plain file-scoped auditing instead of passing through the empty diff filter (`scripts/fallow-staged.sh`).
 - **Pre-push** fetches `origin/master` first (so base resolution sees current master), then runs coverage and the complete `pnpm fallow:full` composition alongside the normal project checks; the fallow step depends on the `fetch` step.
 
 There is no baseline updater, regression-count wrapper, freshness check, or
