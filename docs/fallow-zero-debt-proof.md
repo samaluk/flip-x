@@ -9,7 +9,7 @@ removed before the next case. The repository is clean before the probes.
 | Probe | Blocking command | Expected result | What it proves |
 | --- | --- | --- | --- |
 | Add an unused production export | `pnpm fallow:dead-code` | Exit `1` | Dead-code findings are not accepted by the full-repository gate. |
-| Add a semantic clone to changed code | `pnpm fallow:dupes` and `pnpm fallow:audit:staged` | Exit `1`, audit verdict `fail` | The duplication ceiling and `all` audit gate block duplication introduced by the staged change. |
+| Add a semantic clone to changed code | `pnpm fallow:dupes` and `pnpm fallow:staged` | Exit `1`, audit verdict `fail` | The duplication ceiling and `all` audit gate block duplication introduced by the staged change. |
 | Add a function above the cognitive threshold | `pnpm fallow:health` | Exit `1` | Coverage-aware health findings block the repository gate. |
 | Remove each probe | The same command for each row | Exit `0` | The gate returns to clean after the debt is removed. |
 
@@ -33,7 +33,7 @@ pnpm fallow:health
 # After adding one probe, stage it and run the matching command.
 pnpm fallow:dead-code
 pnpm fallow:dupes
-pnpm fallow:audit:staged
+pnpm fallow:staged
 pnpm fallow:health
 
 # Remove the probe, regenerate coverage when health was exercised, and rerun.
