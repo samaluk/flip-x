@@ -32,8 +32,5 @@
         "rules": ["deslop/unused-dev-dependency"]
       }
     ]
-  },
-  "rules": {
-    "react-doctor/require-pnpm-hardening": "off"
   }
 }
