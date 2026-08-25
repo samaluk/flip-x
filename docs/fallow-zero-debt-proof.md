@@ -9,15 +9,16 @@ removed before the next case. The repository is clean before the probes.
 | Probe | Blocking command | Expected result | What it proves |
 | --- | --- | --- | --- |
 | Add an unused production export | `pnpm fallow:dead-code` | Exit `1` | Dead-code findings are not accepted by the full-repository gate. |
-| Add a semantic clone to changed code | `pnpm fallow:dupes` and `pnpm fallow:staged` | Exit `1`, audit verdict `fail` | The duplication ceiling and `all` audit gate block duplication introduced by the staged change. |
+| Add a semantic clone to changed code | `pnpm fallow:dupes` and `pnpm fallow:staged` | Audit verdict `fail`; the clone must be reviewed before adding an exact fingerprint/count | The `all` audit gate blocks duplication introduced by the staged change, while the full duplication report exposes new clone debt without an aggregate allowance. |
 | Add a function above the cognitive threshold | `pnpm fallow:health` | Exit `1` | Coverage-aware health findings block the repository gate. |
 | Remove each probe | The same command for each row | Exit `0` | The gate returns to clean after the debt is removed. |
 
-The repository configures Fallow's native duplication threshold at `5.1908%`.
-The current scan measures `5.190732%`, leaving no meaningful growth allowance.
-The changed-file `audit --gate all` is an additional strict proof for the
-introduced clone itself, while the standalone command proves that the full
-repository stays under the measured ceiling.
+The repository uses the exact measured `5.4016%` duplication value as its
+narrow threshold because Fallow 3.17 reassigns ordinal clone fingerprints when
+the reviewed `ignoredClones` set changes. There is no generic headroom. The
+changed-file `audit --gate all` is the strict blocking proof for an introduced
+clone, and the standalone command remains the full repository duplication
+report.
 
 ## Reproduction Shape
 
