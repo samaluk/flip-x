@@ -86,6 +86,10 @@ jobs:
         if: steps.seen.outputs.cache-hit != 'true'
         run: pnpm test:coverage
 
+      - name: Verify coverage artifact
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: test -s coverage/coverage-final.json
+
       - name: Fallow (full drift scan)
         if: steps.seen.outputs.cache-hit != 'true'
         run: pnpm fallow:full
