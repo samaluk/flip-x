@@ -38,7 +38,7 @@ The commands have distinct responsibilities:
 
 - `fallow audit --gate all` blocks every error-severity finding in changed files.
 - `fallow dead-code --type-aware --fail-on-issues` blocks dead code, duplicate exports, boundary violations, private-type leaks, and incomplete semantic evidence.
-- `fallow dupes --fail-on-issues` reports the full semantic and near-miss duplication surface. It uses the narrow `2.7392%` ceiling only because Fallow 3.17 reassigns ordinal `dup:c77b3abb6f87acd9-N` fingerprints when the reviewed suppression set changes; the ceiling equals the current measured value and leaves no headroom.
+- `fallow dupes --fail-on-issues` reports the full semantic and near-miss duplication surface. It uses the narrow `5.4016%` ceiling only because Fallow 3.17 reassigns ordinal `dup:c77b3abb6f87acd9-N` fingerprints when the reviewed suppression set changes; the ceiling equals the current measured value and leaves no headroom.
 - `fallow health --coverage coverage/coverage-final.json --coverage-root "$PWD" --fail-on-issues` blocks complexity, CRAP, and unit-size findings using the same Istanbul artifact produced by the test job.
 
 Fallow exit codes are native: `0` is clean, `1` is a finding, and `2` is an
@@ -72,26 +72,30 @@ infrastructure, backend, shared, and UI zones. `requireAllFiles` remains enabled
 with only the documented tooling exclusions, and the full boundary scan passes.
 
 Duplication uses semantic mode with near-miss detection, eight-line/60-token
-floors, pair-level `minOccurrences: 2`, and import wiring ignored. There is no
-repository-wide percentage threshold. Reviewed clone fingerprints are narrow
-and change-sensitive: a content or occurrence-count change makes the clone
-reportable again. The current reviewed groups are:
+floors, pair-level `minOccurrences: 2`, and import wiring ignored. The stable
+`ignoredClones` fingerprints are narrow and change-sensitive: a content or
+occurrence-count change makes the clone reportable again. Fallow's ordinal
+`dup:c77b3abb6f87acd9-N` fingerprints are not stable when the suppression set
+changes, so those intentional groups remain visible and are covered by the
+exact `5.4016%` measurement bound described below. The reviewed groups are:
 
 | Fingerprints and counts | Classification and reason |
 | --- | --- |
-| `dup:c77b3abb6f87acd9-20:2`, `dup:c77b3abb6f87acd9-9:2`, `dup:c77b3abb6f87acd9-1:3`, `dup:c77b3abb6f87acd9-16:2`, `dup:c77b3abb6f87acd9-28:2`, `dup:c77b3abb6f87acd9-26:3`, `dup:c77b3abb6f87acd9-27:2` | Effect `Schema.TaggedError` declarations in `shared/lib/errors/domain.ts`; each error must retain its own stable class and constructor. |
-| `dup:c77b3abb6f87acd9-14:3`, `dup:c77b3abb6f87acd9-21:2`, `dup:c77b3abb6f87acd9-19:2` | Standard shadcn/Base UI primitive wrappers; each exported primitive keeps its library-required markup and slot contract. |
-| `dup:c77b3abb6f87acd9-15:2` | Static `PLAYER_COLORS` data; adjacent entries intentionally share one record shape. |
-| `dup:c77b3abb6f87acd9-18:2`, `dup:c77b3abb6f87acd9-17:3`, `dup:c77b3abb6f87acd9-7:3`, `dup:c77b3abb6f87acd9-10:2` | Confect `FunctionImpl` and `GroupImpl` registration symmetry; framework-owned wiring must remain explicit at each entrypoint. |
-| `dup:c77b3abb6f87acd9-6:3`, `dup:66964408:2`, `dup:776beb96:2`, `dup:c77b3abb6f87acd9-12:2` | VRT cases intentionally repeat the render, viewport, and screenshot scaffold while varying the visual scenario. |
-| `dup:65e19125:2` | Latest-event handlers deliberately preserve explicit event-family dispatch and exhaustive ordering. |
-| `dup:c77b3abb6f87acd9-5:2`, `dup:c77b3abb6f87acd9-13:2` | Table-specific indexed reads and object-shape normalization are unrelated operations reported by semantic normalization. |
-| `dup:c77b3abb6f87acd9-11:2` | Card and player memo comparators compare different domain props and remain separate to preserve their component boundaries. |
-| `dup:c77b3abb6f87acd9-8:2` | Card SVG geometry has intentionally similar parameterized path markup but represents different motifs. |
-| `dup:c77b3abb6f87acd9-4:2` | Deterministic replay expectations repeat stable player snapshots so each transition remains readable and independently asserted. |
-| `dup:c77b3abb6f87acd9-3:2`, `dup:c77b3abb6f87acd9-2:2` | Event decoding and pending-action state transitions are distinct discriminated-union branches; the similarity is a semantic false positive. |
-| `dup:2e174d80:2`, `dup:33a7c5c4:2`, `dup:8691c349:2`, `dup:9ed7c5ca:2` | Repeated CSS token and utility blocks in `app/globals.css`; the stylesheet keeps nearby declarations explicit for cascade and responsive-state readability. |
-| `dup:146daa20:2`, `dup:ec5a72c6:2` | Generated Confect service declarations and adjacent domain operation branches; framework/type-shape repetition is not authored shared behavior. |
+| `dup:2e174d80:2`, `dup:33a7c5c4:2`, `dup:8691c349:2`, `dup:9ed7c5ca:2` | Stable hash fingerprints for repeated CSS token and utility blocks in `app/globals.css`; nearby declarations remain explicit for cascade readability. |
+| `dup:146daa20:2`, `dup:ec5a72c6:2` | Stable hash fingerprints for generated Confect service declarations and adjacent domain operation branches. |
+| `dup:65e19125:2` | Stable hash fingerprint for latest-event handlers that preserve explicit event-family dispatch and exhaustive ordering. |
+| `dup:66964408:2`, `dup:776beb96:2` | Stable hash fingerprints for VRT cases that repeat the render, viewport, and screenshot scaffold while varying the visual scenario. |
+| `dup:c77b3abb6f87acd9-1:2`, `dup:c77b3abb6f87acd9-25:2`, `dup:c77b3abb6f87acd9-13:2`, `dup:c77b3abb6f87acd9-2:3`, `dup:c77b3abb6f87acd9-21:2` | Ordinal groups for Effect `Schema.TaggedError` declarations; each error retains its own stable class and constructor. |
+| `dup:c77b3abb6f87acd9-19:3`, `dup:c77b3abb6f87acd9-8:2`, `dup:c77b3abb6f87acd9-26:2`, `dup:c77b3abb6f87acd9-9:2`, `dup:c77b3abb6f87acd9-24:2` | Ordinal groups for standard shadcn/Base UI primitive wrappers; each exported primitive keeps its library-required markup and slot contract. |
+| `dup:c77b3abb6f87acd9-20:2`, `dup:c77b3abb6f87acd9-28:2`, `dup:c77b3abb6f87acd9-6:2` | Ordinal groups for static player-color data and semantic object-shape normalization false positives. |
+| `dup:c77b3abb6f87acd9-23:2`, `dup:c77b3abb6f87acd9-22:3`, `dup:c77b3abb6f87acd9-11:3`, `dup:c77b3abb6f87acd9-14:2`, `dup:c77b3abb6f87acd9-16:2` | Ordinal groups for Confect `FunctionImpl` and `GroupImpl` registration symmetry; framework-owned wiring remains explicit at each entrypoint. |
+| `dup:c77b3abb6f87acd9-7:3`, `dup:c77b3abb6f87acd9-17:2` | Ordinal groups for VRT cases that intentionally keep each visual scenario readable and independently asserted. |
+| `dup:c77b3abb6f87acd9-12:2` | Ordinal group for geometry-specific card SVGs with similar parameterized path markup but different motifs. |
+| `dup:c77b3abb6f87acd9-18:2` | Ordinal group for table-specific indexed reads reported by semantic normalization; the operations have different boundaries. |
+| `dup:c77b3abb6f87acd9-15:2` | Ordinal group for card and player memo comparators that compare different domain props and remain separate by component boundary. |
+| `dup:c77b3abb6f87acd9-5:2`, `dup:c77b3abb6f87acd9-27:2` | Ordinal groups for deterministic replay and Confect test fixtures; repeated snapshots and interface methods remain independently readable. |
+| `dup:c77b3abb6f87acd9-10:2` | Ordinal group for separate command handlers with the same transition scaffold but different validation and resolution semantics. |
+| `dup:c77b3abb6f87acd9-4:2`, `dup:c77b3abb6f87acd9-3:2` | Ordinal groups for event decoding and pending-action state transitions; these are distinct discriminated-union branches and a semantic false positive. |
 
 No remaining group is extractable authored duplication. New clone content or
 an occurrence-count change is intentionally reportable rather than absorbed by
@@ -99,14 +103,13 @@ aggregate headroom.
 
 ### Fallow Fingerprint Limitation
 
-This bound is reproducible without source changes. With the original reviewed
-set, `shared/lib/errors/domain.ts:45-71` is reported as
-`dup:c77b3abb6f87acd9-20`; after adding the newly discovered reviewed groups,
-the same lines are reported as `dup:c77b3abb6f87acd9-11`. The same remapping
-occurs for the UI and Confect groups. The change is caused by the suppression
-set changing the ordinal clone-family numbering, not by source content. The
-`2.7392` value is the exact current report, so any measurable increase remains
-blocking.
+This bound is reproducible without source changes. Run the semantic-plus-near
+scan with only the nine stable hash fingerprints above; it reports `844`
+duplicated lines out of `15,625`, or exactly `5.4016%`. Adding an ordinal
+`dup:c77b3abb6f87acd9-N` fingerprint changes the ordinal assigned to other
+source ranges, so the same source can receive a different fingerprint when the
+suppression set changes. The `5.4016` value is the exact current report with
+only stable suppressions, so any measurable increase remains blocking.
 
 The generated Confect services expose service tags and identifiers named
 `DatabaseReader` and `DatabaseWriter`. `confect/lib/types.ts` intentionally
