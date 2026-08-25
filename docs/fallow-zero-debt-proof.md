@@ -63,3 +63,16 @@ The strict composition also proves the supporting evidence paths:
 These checks are deliberately separate. A combined fallback analysis must not
 be allowed to turn an incomplete configured semantic project into a successful
 repository gate.
+
+## Version Drift Checks
+
+The version-drift workflow preserves the same contract on a cache miss:
+
+- The lockfile parser's result matches the first line of `pnpm exec fallow --version` after `pnpm install --frozen-lockfile`.
+- `coverage/coverage-final.json` exists after `pnpm test:coverage`, before the workflow invokes `pnpm fallow:full`.
+- `pnpm fallow:full` expands to audit, dead-code, duplication, and health in that order.
+- A temporary unused export makes `pnpm fallow:full` exit `1`; removing it returns the command to exit `0`.
+- The marker and every setup, install, coverage, and gate step use the same cache-miss condition. GitHub only saves the marker after job success, so failures remain retryable and a successful same-version rerun skips the guarded steps.
+
+The workflow itself passes `actionlint`. Temporary findings are removed after
+validation.
