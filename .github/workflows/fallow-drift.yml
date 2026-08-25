@@ -8,11 +8,10 @@ name: Fallow (drift scan)
 # A failed scan is never cached - actions/cache only saves entries when the job
 # succeeds - so an unscanned version is always retried on the next triggering
 # push.
-# Unlike the PR gate in fallow.yml this workflow has no install step: the
-# Action installs its own pinned binary, with the version resolved straight
-# out of pnpm-lock.yaml so a scanned version always means "this exact CLI was
-# run over the full project". The scan is fully blocking (fail-on-issues) -
-# there is no pre-existing debt to ratchet against.
+# On a cache miss, the workflow installs the lockfile dependency graph,
+# generates fresh coverage, and runs the same explicit full gate as normal CI
+# and pre-push. This keeps version drift focused on whether that canonical gate
+# still passes with the newly resolved Fallow version.
 
 on:
   push:
@@ -38,6 +37,7 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       # The two-space indent anchors the lockfile's package key (and avoids
@@ -60,13 +60,36 @@ jobs:
         if: steps.seen.outputs.cache-hit != 'true'
         run: mkdir -p .fallow-drift && date > ".fallow-drift/${{ steps.fver.outputs.version }}"
 
-      # No `command:` input means the Action runs every analysis (dead-code,
-      # dupes, health, audit); fail-on-issues defaults to and is pinned true,
-      # so findings block. Thresholds come from .fallowrc.json, the same config
-      # the PR gates enforce.
+      - name: Setup Node and pnpm
+        if: steps.seen.outputs.cache-hit != 'true'
+        uses: pnpm/setup@84cb39b217b10273981911c288cd62326dc7c6d2 # v2.0.2
+        with:
+          runtime: node
+          cache: true
+          install: false
+
+      - name: Install dependencies
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify Fallow version
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: |
+          actual="$(pnpm exec fallow --version | sed -n '1s/^fallow //p')"
+          expected="${{ steps.fver.outputs.version }}"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::installed fallow version $actual does not match lockfile version $expected"
+            exit 1
+          fi
+
+      - name: Generate coverage
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: pnpm test:coverage
+
+      - name: Verify coverage artifact
+        if: steps.seen.outputs.cache-hit != 'true'
+        run: test -s coverage/coverage-final.json
+
       - name: Fallow (full drift scan)
         if: steps.seen.outputs.cache-hit != 'true'
-        uses: fallow-rs/fallow@ecf5a314fd3e10974acb4f5a7f867c433030522d # v3.17.0
-        with:
-          version: ${{ steps.fver.outputs.version }}
-          fail-on-issues: true
+        run: pnpm fallow:full

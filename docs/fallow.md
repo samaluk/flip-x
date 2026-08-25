@@ -54,10 +54,28 @@ coverage artifact across its jobs:
 - **Fallow gate** downloads the artifact and runs `pnpm fallow:full`, which composes the strict audit, dead-code, duplication, and health commands.
 - **Fallow PR review** runs one immutable native Fallow Action analysis with `gate: all`, type-aware analysis, and the same coverage artifact. It renders the sticky summary, Check Run, inline review comments, and review guidance.
 
-No job reinstalls dependencies or reruns the test suite solely to obtain Fallow
-coverage. The audit and health commands both receive repository-relative
-coverage evidence; the Action receives the workspace root through
-`coverage-root`.
+Within that workflow, no job reinstalls dependencies or reruns the test suite
+solely to obtain Fallow coverage. The audit and health commands both receive
+repository-relative coverage evidence; the Action receives the workspace root
+through `coverage-root`.
+
+### Version Drift
+
+`.github/workflows/fallow-drift.yml` runs once per exact Fallow version resolved
+from `pnpm-lock.yaml`, rather than on a cron. On a cache miss it checks out full
+history, sets up the repository's pinned Node and pnpm versions, installs with
+`pnpm install --frozen-lockfile`, verifies the installed CLI matches the
+lockfile version, generates fresh coverage, and runs `pnpm fallow:full`.
+
+The version-keyed cache marker is saved by GitHub only after the entire job
+succeeds. A failed install, test, or gate therefore remains retryable, while a
+successful same-version rerun is a cache-hit no-op. The native Fallow Action
+remains the PR feedback surface in `.github/workflows/fallow.yml`; it does not
+define a separate drift verdict.
+
+The exact duplication percentage bound remains only the documented workaround
+for Fallow's unstable ordinal clone fingerprints. It is independent of the
+version-drift cache and execution mechanics.
 
 ## Configuration
 
