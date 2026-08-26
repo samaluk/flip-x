@@ -1,6 +1,6 @@
 # Cache Components migration tracker
 
-Tracking breakages surfaced after enabling `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (#483). Follow-up work lives in #487 (Playwright `instant()` tests).
+Epic #478 (Next.js 16.3 adoption) is complete. This doc tracks breakages surfaced after enabling `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (#483).
 
 Partial prefetch tuning for home → game navigation landed in #486 via `shared/i18n/match-navigation.ts`.
 
@@ -78,7 +78,7 @@ pnpm build                # static generation for en + es locales
 | #485 | #483 | Route Suspense / cache migration |
 | #486 | #485 | Partial prefetch per-link tuning — done (#486) |
 | #487 | #485 | Playwright `instant()` regression tests — done (`issue-487-instant-playwright-tests`) |
-| #488 | #483, #485 | Offline resilience — in progress (`issue-488-offline-resilience`) |
+| #488 | #483, #485 | Offline resilience — done (#488) |
 
 ## Offline resilience (#488)
 
@@ -108,7 +108,7 @@ Gameplay mutations still fail immediately at the Convex client layer when offlin
 If offline queuing causes confusing UX with Convex (for example stale optimistic UI while a Next.js navigation is still pending, or users assuming a gameplay mutation will retry when it will not):
 
 1. Remove `experimental.useOffline: true` from `next.config.ts`.
-2. Remove `OfflineBanner`, `OfflineLoadingStatus`, and their layout/`loading.tsx` wiring.
+2. Remove `OfflineBanner`, `ConnectivityLoadingShell`, and their layout/`loading.tsx` wiring.
 3. Remove the `Connectivity` namespace from `messages/en.json` and `messages/es.json`.
 4. Redeploy. Pending Next.js requests will fail immediately again instead of queueing.
 
