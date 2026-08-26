@@ -2,7 +2,7 @@
 
 import { Settings2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { startTransition, useActionState } from "react";
+import { useTransition } from "react";
 
 import refs from "@/confect/_generated/refs";
 import {
@@ -71,9 +71,11 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
     }
   }
 
-  const [, updateSettings, isUpdating] = useActionState<null, SettingsPatch>(
-    async (_previousState, patch) => {
-      await toastEitherMutationFailure(
+  const [isUpdating, startTransition] = useTransition();
+
+  function updateSettings(patch: SettingsPatch) {
+    startTransition(() => {
+      void toastEitherMutationFailure(
         updateMatchSettings({
           matchId: snapshot.matchId,
           expectedVersion: snapshot.version,
@@ -84,10 +86,8 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
           translateError,
         },
       );
-      return null;
-    },
-    null,
-  );
+    });
+  }
 
   return (
     <section className="surface-elevated rounded-2xl p-4 text-foreground sm:p-5">
@@ -140,11 +140,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     type="button"
                     variant={isActive ? "default" : "outline"}
                     disabled={isUpdating}
-                    onClick={() => {
-                      startTransition(() => {
-                        updateSettings(preset.settings);
-                      });
-                    }}
+                    onClick={() => updateSettings(preset.settings)}
                     className={cn(
                       "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-start whitespace-normal",
                       isRecommended && !isActive ? "border-primary/70" : "",
@@ -176,22 +172,14 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                       value={settings.targetScore}
                       values={TARGET_SCORE_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(targetScore) => {
-                        startTransition(() => {
-                          updateSettings({ targetScore });
-                        });
-                      }}
+                      onChange={(targetScore) => updateSettings({ targetScore })}
                     />
                     <SettingsSelect
                       label={t("Max number card")}
                       value={settings.maxNumberCardValue}
                       values={MAX_NUMBER_CARD_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(maxNumberCardValue) => {
-                        startTransition(() => {
-                          updateSettings({ maxNumberCardValue });
-                        });
-                      }}
+                      onChange={(maxNumberCardValue) => updateSettings({ maxNumberCardValue })}
                     />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">

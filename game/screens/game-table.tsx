@@ -1,7 +1,7 @@
 "use client";
 
 import * as Either from "effect/Either";
-import { startTransition, useActionState } from "react";
+import { useTransition } from "react";
 
 import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
@@ -72,67 +72,58 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
   const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
   const { gameActionFailed, translateToast: translateError } = useAppErrors();
+  const [isPending, startTransition] = useTransition();
 
-  const [, runAction, isPending] = useActionState<
-    null,
-    () => Promise<Either.Either<unknown, AppError>>
-  >(async (_previousState: null, action) => {
-    await toastEitherMutationFailure(action(), {
-      missingMessage: gameActionFailed,
-      translateError,
+  function runMutation(action: () => Promise<Either.Either<unknown, AppError>>) {
+    startTransition(() => {
+      void toastEitherMutationFailure(action(), {
+        missingMessage: gameActionFailed,
+        translateError,
+      });
     });
-    return null;
-  }, null);
+  }
 
   function handleHit() {
-    startTransition(() => {
-      runAction(() =>
-        takeTurn({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-          action: "hit",
-        }),
-      );
-    });
+    runMutation(() =>
+      takeTurn({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+        action: "hit",
+      }),
+    );
   }
 
   function handleStay() {
-    startTransition(() => {
-      runAction(() =>
-        takeTurn({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-          action: "stay",
-        }),
-      );
-    });
+    runMutation(() =>
+      takeTurn({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+        action: "stay",
+      }),
+    );
   }
 
   function handleResolveAction(targetPlayerId: Id<"players">) {
-    startTransition(() => {
-      runAction(() =>
-        resolveAction({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-          targetPlayerId,
-        }),
-      );
-    });
+    runMutation(() =>
+      resolveAction({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+        targetPlayerId,
+      }),
+    );
   }
 
   function handleStartNextRound() {
-    startTransition(() => {
-      runAction(() =>
-        startNextRound({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-        }),
-      );
-    });
+    runMutation(() =>
+      startNextRound({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+      }),
+    );
   }
 
   return (

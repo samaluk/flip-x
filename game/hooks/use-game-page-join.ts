@@ -3,7 +3,7 @@
 import { useSessionId } from "convex-helpers/react/sessions";
 import * as Either from "effect/Either";
 import { useExtracted } from "next-intl";
-import { type SubmitEvent, startTransition, useActionState, useState } from "react";
+import { useActionState, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -54,7 +54,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
       .filter((playerColorId): playerColorId is string => typeof playerColorId === "string") ?? [];
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
-  const [, submitJoin, isJoining] = useActionState(async () => {
+  const [, joinFormAction, isJoining] = useActionState(async () => {
     const trimmedName = playerName.trim();
     const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
     if (nameIssue) {
@@ -82,15 +82,8 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
     return null;
   }, null);
 
-  function handleJoin(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    startTransition(() => {
-      submitJoin();
-    });
-  }
-
   return {
-    handleJoin,
+    joinFormAction,
     isJoining,
     playerName,
     selectedColorId,
@@ -98,7 +91,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
     setPlayerName,
     usedColorIds,
   } satisfies {
-    handleJoin: (event: SubmitEvent<HTMLFormElement>) => void;
+    joinFormAction: typeof joinFormAction;
     isJoining: boolean;
     playerName: string;
     selectedColorId: PlayerColorId;

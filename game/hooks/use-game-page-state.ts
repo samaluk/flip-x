@@ -23,7 +23,7 @@ export type GamePageState = {
   selectedColorId: PlayerColorId;
   usedColorIds: string[];
   isJoining: boolean;
-  onJoin: (event: React.SubmitEvent<HTMLFormElement>) => void;
+  joinFormAction: () => void;
   onPlayerNameChange: (value: string) => void;
   onColorChange: (colorId: PlayerColorId) => void;
   onCopyInvite: () => void;
@@ -43,7 +43,7 @@ export function useGamePageState(matchId: string): GamePageState {
   const viewerPlayerId = snapshot?.viewerPlayerId;
   const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId ?? undefined);
   const {
-    handleJoin,
+    joinFormAction,
     isJoining,
     playerName,
     selectedColorId,
@@ -74,7 +74,7 @@ export function useGamePageState(matchId: string): GamePageState {
     selectedColorId,
     usedColorIds,
     isJoining,
-    onJoin: handleJoin,
+    joinFormAction,
     onPlayerNameChange: setPlayerName,
     onColorChange: setColorId,
     onCopyInvite: () => void onCopyInvite(),
