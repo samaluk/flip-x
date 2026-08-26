@@ -1,3 +1,4 @@
+import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as Either from "effect/Either";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -8,6 +9,7 @@ import refs from "@/confect/_generated/refs";
 import { lobbyNotFound, nameAlreadyTaken } from "@/shared/lib/errors/domain";
 import { withIntlEn } from "@/tests/test-intl";
 
+const mockPrefetch = vi.fn();
 const mockPush = vi.fn();
 let mockSessionId: string | null = "test-session-id";
 let mockInitialQueryCode: string | null = null;
@@ -29,7 +31,7 @@ vi.mock("sonner", () => ({
 }));
 
 vi.mock("@/shared/i18n/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ prefetch: mockPrefetch, push: mockPush }),
 }));
 
 vi.mock("convex-helpers/react/sessions", () => ({
@@ -83,6 +85,7 @@ describe("HomeClient", () => {
     mockJoinByCode.mockReset();
     mockJoinMatch.mockReset();
     mockPush.mockReset();
+    mockPrefetch.mockReset();
     mockToast.error.mockReset();
     mockToast.success.mockReset();
     window.localStorage.clear();
@@ -110,6 +113,7 @@ describe("HomeClient", () => {
     });
 
     await waitFor(() => {
+      expect(mockPrefetch).toHaveBeenCalledWith("/game/match-123", { kind: PrefetchKind.FULL });
       expect(mockPush).toHaveBeenCalledWith("/game/match-123");
     });
   });
@@ -147,6 +151,9 @@ describe("HomeClient", () => {
     });
 
     await waitFor(() => {
+      expect(mockPrefetch).toHaveBeenCalledWith("/game/match-join-456", {
+        kind: PrefetchKind.FULL,
+      });
       expect(mockPush).toHaveBeenCalledWith("/game/match-join-456");
     });
   });
