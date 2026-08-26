@@ -17,13 +17,13 @@ type SyncPlayerMutation = ReturnType<
 
 export function useMatchPresence(matchId: string, playerId: Id<"players"> | undefined) {
   const [sessionId] = useSessionId();
-  const [presenceSessionId] = useState(() => crypto.randomUUID());
+  const presenceSessionIdRef = useRef<string | null>(null);
   const sessionTokenRef = useRef<string | null>(null);
   const syncPlayer = useSessionConfectMutation(refs.public.presence.syncPlayer);
   const { roomToken } = usePresenceHeartbeat({
     matchId,
     playerId,
-    presenceSessionId,
+    presenceSessionIdRef,
     sessionId,
     sessionTokenRef,
     syncPlayer,
@@ -54,7 +54,7 @@ export function useMatchPresence(matchId: string, playerId: Id<"players"> | unde
 type PresenceHeartbeatArgs = {
   matchId: string;
   playerId: Id<"players"> | undefined;
-  presenceSessionId: string;
+  presenceSessionIdRef: React.RefObject<string | null>;
   sessionId: string | undefined;
   sessionTokenRef: React.RefObject<string | null>;
   syncPlayer: SyncPlayerMutation;
@@ -63,7 +63,7 @@ type PresenceHeartbeatArgs = {
 function usePresenceHeartbeat({
   matchId,
   playerId,
-  presenceSessionId,
+  presenceSessionIdRef,
   sessionId,
   sessionTokenRef,
   syncPlayer,
@@ -75,6 +75,11 @@ function usePresenceHeartbeat({
     if (!playerId || !sessionId) {
       return undefined;
     }
+
+    if (!presenceSessionIdRef.current) {
+      presenceSessionIdRef.current = crypto.randomUUID();
+    }
+    const presenceSessionId = presenceSessionIdRef.current;
 
     const activePlayerId = playerId;
     let ignore = false;
@@ -127,7 +132,7 @@ function usePresenceHeartbeat({
     };
     // why: `heartbeat`, `sessionTokenRef`, and `syncPlayer` are stable across renders (mutation hook / ref). The linter infers them as dependencies, but changing them should not restart the presence heartbeat — only identity/room changes should.
     // oxlint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-effect-dependencies -- stable refs/setters intentionally omitted; see comment above
-  }, [matchId, playerId, presenceSessionId, sessionId]);
+  }, [matchId, playerId, sessionId]);
 
   return { roomToken };
 }
