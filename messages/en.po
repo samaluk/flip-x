@@ -174,12 +174,14 @@ msgstr "FREEZE"
 
 #: game/cards/modifier-content.tsx
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "ZHccEc"
 msgstr "×2"
 
 #: game/cards/modifier-content.tsx
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "G5qKtr"
 msgstr "+{value}"
@@ -581,16 +583,19 @@ msgid "QlsDcr"
 msgstr "Action"
 
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "85hyTu"
 msgstr "Flip Three"
 
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "EgadwQ"
 msgstr "Freeze"
 
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "NY9djt"
 msgstr "Second Chance"

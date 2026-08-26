@@ -7,16 +7,22 @@ import type { ModifierCard } from "@/game/logic/card-types";
 import type { CardEventPayload } from "@/game/logic/events";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
-type CardTranslator = ReturnType<typeof useExtracted>;
+type CardLabels = {
+  flipThree: string;
+  freeze: string;
+  secondChance: string;
+  x2: string;
+  plusValue: (value: string) => string;
+};
 
-function actionKindLabel(actionKind: ActionKind, tCards: CardTranslator) {
+function actionKindLabel(actionKind: ActionKind, labels: CardLabels) {
   switch (actionKind) {
     case "flip_three":
-      return tCards("Flip Three");
+      return labels.flipThree;
     case "freeze":
-      return tCards("Freeze");
+      return labels.freeze;
     case "second_chance":
-      return tCards("Second Chance");
+      return labels.secondChance;
     default: {
       const exhaustiveCheck: never = actionKind;
       return exhaustiveCheck;
@@ -24,26 +30,33 @@ function actionKindLabel(actionKind: ActionKind, tCards: CardTranslator) {
   }
 }
 
-function modifierLabel(modifierValue: ModifierCard["modifierValue"], tCards: CardTranslator) {
+function modifierLabel(modifierValue: ModifierCard["modifierValue"], labels: CardLabels) {
   if (modifierValue === "x2") {
-    return tCards("×2");
+    return labels.x2;
   }
-  return tCards("+{value}", { value: String(modifierValue) });
+  return labels.plusValue(String(modifierValue));
 }
 
-function cardPayloadLabel(payload: CardEventPayload, tCards: CardTranslator) {
+function cardPayloadLabel(payload: CardEventPayload, labels: CardLabels) {
   if (payload.cardKind === "number") {
     return String(payload.numberValue);
   }
   if (payload.cardKind === "modifier") {
-    return modifierLabel(payload.modifierValue, tCards);
+    return modifierLabel(payload.modifierValue, labels);
   }
-  return actionKindLabel(payload.actionKind, tCards);
+  return actionKindLabel(payload.actionKind, labels);
 }
 
 export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): string {
   const tEvents = useExtracted("Events");
   const tCards = useExtracted("Cards");
+  const cardLabels: CardLabels = {
+    flipThree: tCards("Flip Three"),
+    freeze: tCards("Freeze"),
+    secondChance: tCards("Second Chance"),
+    x2: tCards("×2"),
+    plusValue: (value) => tCards("+{value}", { value }),
+  };
 
   if (!latest) {
     return tEvents("No table event has been logged yet.");
@@ -52,7 +65,7 @@ export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): s
   switch (latest.type) {
     case "pending_action":
       return tEvents("{action} is waiting for a target.", {
-        action: actionKindLabel(latest.payload.actionKind, tCards),
+        action: actionKindLabel(latest.payload.actionKind, cardLabels),
       });
     case "second_chance_used":
       return tEvents(
@@ -73,7 +86,7 @@ export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): s
       return tEvents("Flip Three completed!");
     case "deferred_action":
       return tEvents("{action} was queued until Flip Three finished.", {
-        action: actionKindLabel(latest.payload.actionKind, tCards),
+        action: actionKindLabel(latest.payload.actionKind, cardLabels),
       });
     case "duplicate_bust":
       return tEvents("Drew duplicate {duplicate} — bust!", {
@@ -87,7 +100,7 @@ export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): s
       return tEvents("Triggered flip-x!");
     case "modifier_drawn":
       return tEvents("Player revealed modifier {modifier}.", {
-        modifier: modifierLabel(latest.payload.modifierValue, tCards),
+        modifier: modifierLabel(latest.payload.modifierValue, cardLabels),
       });
     case "second_chance_held":
       return tEvents("Player stored a Second Chance card.");
@@ -97,13 +110,13 @@ export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): s
       return tEvents("Extra Second Chance was passed to another active player.");
     case "initial_deal":
       return tEvents("Initial deal revealed {card} for the player.", {
-        card: cardPayloadLabel(latest.payload, tCards),
+        card: cardPayloadLabel(latest.payload, cardLabels),
       });
     case "stay":
       return tEvents("Stayed and banked points.");
     case "hit":
       return tEvents("Hit and revealed {card}.", {
-        card: cardPayloadLabel(latest.payload, tCards),
+        card: cardPayloadLabel(latest.payload, cardLabels),
       });
     case "round_scored":
       return tEvents("Round scored at {score} points.", {
