@@ -1,6 +1,10 @@
 {
   "mirrors": [
     {
+      "issue": "samaluk/flip-x#512",
+      "path": ".agents/friction-log/20260807005917-frog-skills-sync/friction.md"
+    },
+    {
       "issue": "samaluk/flip-x#538",
       "path": ".agents/friction-log/20260810141918-pre-commit-pnpm/friction.md"
     },
