@@ -2,20 +2,9 @@ import * as Either from "effect/Either";
 import { toast } from "sonner";
 
 import type { PlayerColorId } from "@/shared/lib/player-colors";
+import type { TrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 import type { AppError } from "@/shared/lib/errors/domain";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
-import {
-  getTrimmedPlayerNameIssue,
-  PLAYER_NAME_ISSUE_TOAST_KEY,
-} from "@/shared/lib/player-name-validation";
-
-export type MatchSetupToastKey =
-  | "toastNameRequired"
-  | "toastNameLength"
-  | "toastSession"
-  | "toastCreateFailed"
-  | "toastJoinFailed"
-  | "toastCodeLength";
+import { getTrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 
 export interface ExecuteMatchSubmissionOptions<T extends { matchId: string }> {
   name: string;
@@ -24,11 +13,11 @@ export interface ExecuteMatchSubmissionOptions<T extends { matchId: string }> {
   setName: (name: string) => void;
   setColorId: (colorId: PlayerColorId) => void;
   setIsSubmitting: (submitting: boolean) => void;
-  tSetup: (key: MatchSetupToastKey) => string;
-  tErrors: unknown;
+  getPlayerNameIssueToast: (issue: TrimmedPlayerNameIssue) => string;
+  translateError: (error: AppError) => string;
   onSuccess: (matchId: string) => void;
   perform: (trimmedName: string) => Promise<Either.Either<T, AppError>>;
-  fallbackErrorKey: "toastCreateFailed" | "toastJoinFailed";
+  getFallbackErrorToast: () => string;
 }
 
 export async function executeMatchSubmission<T extends { matchId: string }>({
@@ -38,11 +27,11 @@ export async function executeMatchSubmission<T extends { matchId: string }>({
   setName,
   setColorId,
   setIsSubmitting,
-  tSetup,
-  tErrors,
+  getPlayerNameIssueToast,
+  translateError,
   onSuccess,
   perform,
-  fallbackErrorKey,
+  getFallbackErrorToast,
 }: ExecuteMatchSubmissionOptions<T>): Promise<void> {
   const trimmedName = name.trim();
 
@@ -51,7 +40,7 @@ export async function executeMatchSubmission<T extends { matchId: string }>({
 
   const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
   if (nameIssue) {
-    toast.error(tSetup(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
+    toast.error(getPlayerNameIssueToast(nameIssue));
     return;
   }
 
@@ -60,13 +49,13 @@ export async function executeMatchSubmission<T extends { matchId: string }>({
   try {
     const result = await perform(trimmedName);
     if (Either.isLeft(result)) {
-      toast.error(translateAppErrorToast(result.left, tErrors));
+      toast.error(translateError(result.left));
       return;
     }
 
     onSuccess(result.right.matchId);
   } catch {
-    toast.error(tSetup(fallbackErrorKey));
+    toast.error(getFallbackErrorToast());
   } finally {
     setIsSubmitting(false);
   }

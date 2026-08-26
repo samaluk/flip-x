@@ -1,12 +1,14 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type SubmitEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
+import type { TrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import { prefetchAndPushGameMatch } from "@/shared/i18n/match-navigation";
 import { useRouter } from "@/shared/i18n/navigation";
@@ -50,6 +52,21 @@ function useHomeMutations() {
   return { createMatch, joinByCode, joinMatch };
 }
 
+function useMatchSetupPlayerNameIssueToast() {
+  const t = useExtracted("MatchSetup");
+
+  return (issue: TrimmedPlayerNameIssue) => {
+    switch (issue) {
+      case "empty":
+        return t("Please enter your name.");
+      case "too_long":
+        return t("Name must be 20 characters or less.");
+      case "no_session":
+        return t("Session not available.");
+    }
+  };
+}
+
 export function useHomeMatchSetup() {
   const router = useRouter();
   const [sessionId] = useSessionId();
@@ -59,9 +76,10 @@ export function useHomeMatchSetup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createMatch, joinByCode, joinMatch } = useHomeMutations();
 
-  const t = useTranslations("MatchSetup");
-  const tErrors = useTranslations("Errors");
-  const tLobby = useTranslations("Lobby");
+  const t = useExtracted("MatchSetup");
+  const tErrors = useExtracted("Errors");
+  const tLobby = useExtracted("Lobby");
+  const getPlayerNameIssueToast = useMatchSetupPlayerNameIssueToast();
 
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
@@ -81,15 +99,15 @@ export function useHomeMatchSetup() {
       setName,
       setColorId,
       setIsSubmitting,
-      tSetup: t,
-      tErrors,
+      getPlayerNameIssueToast,
+      translateError: (error) => translateAppErrorToast(error, tErrors),
       onSuccess: navigateToMatch,
       perform: (trimmedName) =>
         createMatch({
           hostName: trimmedName,
           hostColorId: selectedColorId,
         }),
-      fallbackErrorKey: "toastCreateFailed",
+      getFallbackErrorToast: () => t("Could not create the match."),
     });
   }
 
@@ -98,7 +116,7 @@ export function useHomeMatchSetup() {
 
     const lobbyCode = (joinCode ?? "").trim();
     if (lobbyCode.length !== 4) {
-      toast.error(t("toastCodeLength"));
+      toast.error(t("Please enter a 4-character code."));
       return;
     }
 
@@ -109,8 +127,8 @@ export function useHomeMatchSetup() {
       setName,
       setColorId,
       setIsSubmitting,
-      tSetup: t,
-      tErrors,
+      getPlayerNameIssueToast,
+      translateError: (error) => translateAppErrorToast(error, tErrors),
       onSuccess: navigateToMatch,
       perform: (playerName) =>
         performHomeJoinByCode({
@@ -120,7 +138,7 @@ export function useHomeMatchSetup() {
           playerName,
           playerColorId: selectedColorId,
         }),
-      fallbackErrorKey: "toastJoinFailed",
+      getFallbackErrorToast: () => t("Could not join the game."),
     });
   }
 

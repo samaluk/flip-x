@@ -13,20 +13,24 @@ export function HomeClient() {
     <main className="relative flex min-h-dvh flex-1 items-center justify-center px-6 selection:bg-primary/20">
       <div className="w-full max-w-md space-y-10">
         <HomeHeader
-          title={setup.t("title")}
-          subtitle={setup.isJoinMode ? setup.t("subtitleJoin") : setup.t("subtitleCreate")}
+          title={setup.t("flip-x")}
+          subtitle={
+            setup.isJoinMode
+              ? setup.t("Enter your name and join the game")
+              : setup.t("Create a game or join an existing one")
+          }
         />
 
         <div className="space-y-6">
           <HomePlayerFields
             name={setup.name}
             onNameChange={setup.setName}
-            nameLabel={setup.t("yourName")}
-            namePlaceholder={setup.t("namePlaceholder")}
+            nameLabel={setup.t("Your name")}
+            namePlaceholder={setup.t("Enter your name")}
             colorId={setup.selectedColorId}
             onColorChange={setup.setColorId}
             usedColorIds={setup.isJoinMode ? setup.usedColorIds : []}
-            colorLabel={setup.t("playerColor")}
+            colorLabel={setup.t("Player color")}
           />
 
           {!setup.isJoinMode ? (
@@ -34,9 +38,9 @@ export function HomeClient() {
               onSubmit={(event) => void setup.handleCreate(event)}
               onOpenJoinFlow={() => setup.setHasOpenedJoinFlow(true)}
               disabled={setup.isSubmitting || !setup.name.trim() || !setup.sessionId}
-              createButtonLabel={setup.t("createNewGame")}
+              createButtonLabel={setup.t("Create New Game")}
               dividerLabel={setup.t("or")}
-              joinButtonLabel={setup.t("joinExistingGame")}
+              joinButtonLabel={setup.t("Join Existing Game")}
             />
           ) : (
             <JoinForm
@@ -53,10 +57,10 @@ export function HomeClient() {
                 (setup.joinCode?.length ?? 0) !== 4 ||
                 !setup.sessionId
               }
-              lobbyCodeLabel={setup.tLobby("lobbyCode")}
-              codePlaceholder={setup.tLobby("codePlaceholder")}
-              cancelLabel={setup.t("cancel")}
-              joinButtonLabel={setup.t("joinGame")}
+              lobbyCodeLabel={setup.tLobby("Lobby code")}
+              codePlaceholder={setup.tLobby("ABCD")}
+              cancelLabel={setup.t("Cancel")}
+              joinButtonLabel={setup.t("Join Game")}
             />
           )}
         </div>
