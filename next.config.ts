@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
   allowedDevOrigins: ["127.0.0.1", "flip-x.localhost", "*.flip-x.localhost"],
   experimental: {
+    // Queue failed soft navigations, prefetches, and Server Actions until reconnect (#488).
+    // https://nextjs.org/docs/app/api-reference/config/next-config-js/useOffline
+    useOffline: true,
     // The root layout lives under a top-level dynamic segment (`[locale]`), so
     // the app-level 404 needs `app/global-not-found.tsx` to render consistently.
     // https://nextjs.org/docs/app/api-reference/config/next-config-js/experimental#globalnotfound

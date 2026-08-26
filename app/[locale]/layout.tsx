@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { OfflineBanner } from "@/shared/connectivity/offline-feedback";
 import { ConvexClientProvider } from "@/shared/providers/convex-client-provider";
 import { LanguageSwitcher } from "@/shared/language-switcher";
 import { routing } from "@/shared/i18n/routing";
@@ -57,6 +58,7 @@ export default async function RootLayout({
         <AnalyticsProvider>
           <NuqsAdapter>
             <NextIntlClientProvider messages={messages}>
+              <OfflineBanner />
               <Suspense
                 fallback={
                   <div
