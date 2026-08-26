@@ -21,7 +21,7 @@ test.describe("instant navigation", () => {
     const createButton = page.getByRole("button", { name: /Create New Game/i });
     await waitForEnabled(createButton);
 
-    await instant(async () => {
+    await instant(page, async () => {
       await createButton.click();
       await page.waitForURL(/\/game\/[^/?#]+/);
       await expectGameInstantShell(page);
@@ -56,7 +56,7 @@ test.describe("instant navigation", () => {
     const joinButton = joinForm.getByRole("button", { name: /Join Game/i });
     await waitForEnabled(joinButton);
 
-    await instant(async () => {
+    await instant(guestPage, async () => {
       await joinButton.click();
       await guestPage.waitForURL(/\/game\/[^/?#]+/);
       await expectGameInstantShell(guestPage);
