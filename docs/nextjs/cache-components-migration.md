@@ -22,43 +22,34 @@ Tracking breakages surfaced after enabling `cacheComponents: true` and `partialP
 
 ## Known breakages
 
-### 1. Anonymous session ID blocks prerender — #485
+### 1. Anonymous session ID blocks prerender — fixed (minimal)
 
 | | |
 |---|---|
 | **Route** | `/[locale]` (all locales) |
 | **Message** | `blocking-prerender-crypto-client` — unstable `crypto.randomUUID()` in a Client Component |
 | **Source** | `shared/providers/convex-client-provider.tsx` — `SessionProvider` from `convex-helpers/react/sessions` |
-| **Dev** | Instant Insights overlay on first visit to `/` or `/en` |
-| **Build** | `next build` fails prerendering `/en` (`Export encountered an error on /[locale]/page`) |
-| **Fix direction** | Wrap `ConvexClientProvider` in `<Suspense>` or defer session ID generation to `useEffect` (see [Next.js docs](https://nextjs.org/docs/messages/blocking-prerender-crypto-client)) |
+| **Fix** | `SessionProvider` uses `ssrFriendly`; layout wraps `LanguageSwitcher` and `ConvexClientProvider` in `<Suspense>` so client hooks and session setup stream after prerender |
+| **Remaining (#485)** | Route-level Suspense / `'use cache'` audit, Navigation Inspector validation for home → game |
 
-This is the only blocker observed after #517 (root layout under `app/[locale]/`). Game routes inherit the layout failure until the session provider is fixed.
+Previously blocked build and E2E until fixed; the full Cache Components route migration remains in #485.
 
 ### 2. Route-level Cache Components work — #485 (scope)
 
 | Route | Status | Notes |
 |-------|--------|-------|
-| `/[locale]` | Blocked | Session provider prerender error |
-| `/[locale]/game/[matchId]` | Pending audit | Has `loading.tsx`; needs Suspense / `'use cache'` audit once #485 unblocks build |
+| `/[locale]` | Build unblocked | Session provider uses `ssrFriendly`; route cache audit remains in #485 |
+| `/[locale]/game/[matchId]` | Pending audit | Has `loading.tsx`; needs Suspense / `'use cache'` audit in #485 |
 | `app/global-not-found.tsx` | OK | Added for dynamic-segment root layout (#517) |
 
 ## Migration warnings (expected)
 
-With flags enabled but before #485 lands, expect:
-
-1. **Instant Insights overlay** on home — `crypto.randomUUID()` validation error (see above).
-2. **`pnpm build` failure** during static generation of locale home pages — same root cause.
-3. **No config validation errors** — flags are recognized on Next.js 16.3.2.
-
-After fixing #485, re-run:
+With flags enabled, Instant Insights may still report route-level blockers until #485 lands (Suspense boundaries, `'use cache'` on safe fetches). Re-run after #485:
 
 ```bash
 PORTLESS=0 pnpm dev:app   # browse all routes; confirm Instant Insights stays quiet
 pnpm build                # should complete static generation
 ```
-
-Use [`instant-navigation-devtools.md`](./instant-navigation-devtools.md) to validate shells with Navigation Inspector before closing #485.
 
 ## Ticket map (epic #478)
 
