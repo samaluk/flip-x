@@ -1,6 +1,6 @@
 # Cache Components migration tracker
 
-Tracking breakages surfaced after enabling `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (#483). Follow-up work lives in #485 (route migration) and #486 (partial prefetch tuning).
+Tracking breakages surfaced after enabling `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (#483). Follow-up work lives in #486 (partial prefetch tuning) and #487 (Playwright `instant()` tests).
 
 ## Config status
 
@@ -11,7 +11,7 @@ Tracking breakages surfaced after enabling `cacheComponents: true` and `partialP
 
 `partialPrefetching` requires `cacheComponents`; Next.js throws at config validation if only one is set.
 
-Route-level Cache Components migration continues in #485 (`issue-485-cache-components-migration`), stacked on #483.
+Route-level Cache Components migration completed in #485 (`issue-485-cache-components-migration`).
 
 ## Dev server startup
 
@@ -24,7 +24,7 @@ Route-level Cache Components migration continues in #485 (`issue-485-cache-compo
 
 ## Known breakages
 
-### 1. Anonymous session ID blocks prerender — fixed (minimal)
+### 1. Anonymous session ID blocks prerender — fixed (#483)
 
 | | |
 |---|---|
@@ -32,32 +32,47 @@ Route-level Cache Components migration continues in #485 (`issue-485-cache-compo
 | **Message** | `blocking-prerender-crypto-client` — unstable `crypto.randomUUID()` in a Client Component |
 | **Source** | `SessionProvider` from `convex-helpers/react/sessions` calls `crypto.randomUUID()` during init when `ssrFriendly` is off; `generateFlipXSessionId` reads/writes `localStorage` via the `idGenerator` prop |
 | **Fix** | `SessionProvider` uses `ssrFriendly` and a local `idGenerator` that reads/writes `localStorage` in client `useEffect`; layout wraps `LanguageSwitcher` and `ConvexClientProvider` in `<Suspense>` so client hooks stream after prerender |
-| **Remaining (#485)** | Route-level Suspense / `'use cache'` audit, Navigation Inspector validation for home → game |
 
-Previously blocked build and E2E until fixed; the full Cache Components route migration remains in #485.
+Previously blocked build and E2E until fixed in #483.
 
-### 2. Route-level Cache Components work — #485 (scope)
+### 2. Route-level Cache Components work — fixed (#485)
 
 | Route | Status | Notes |
 |-------|--------|-------|
-| `/[locale]` | Build unblocked (#483) | Session + layout Suspense landed in #483; route shell audit in #485 |
-| `/[locale]/game/[matchId]` | In progress (#485) | Has `loading.tsx`; audit Suspense / `'use cache'` and home → game shell |
+| `/[locale]` | Complete (#485) | `loading.tsx` + `HomePageLoading`; `searchParams` parse deferred into Suspense child |
+| `/[locale]/game/[matchId]` | Complete (#485) | `loading.tsx` + inline Suspense; `params` await deferred into child component |
 | `app/global-not-found.tsx` | OK | Added for dynamic-segment root layout (#517) |
 
-## Migration warnings (expected)
+#### `'use cache'` audit (#485)
 
-With flags enabled, Instant Insights may still report route-level blockers until #485 lands (Suspense boundaries, `'use cache'` on safe fetches). Re-run after #485:
+No safe `'use cache'` targets in scope for this ticket:
+
+- **Convex match state** — must stay live; caching would serve stale game data.
+- **`getLocale()` / `getMessages()`** — request-scoped i18n; caching risks stale locale UI.
+
+Future optimization: evaluate `'use cache'` on per-locale message bundles if i18n becomes fully static.
+
+## Validation (#485)
+
+Smoke checks per [`instant-navigation-devtools.md`](./instant-navigation-devtools.md):
 
 ```bash
 PORTLESS=0 pnpm dev:app   # browse all routes; confirm Instant Insights stays quiet
-pnpm build                # should complete static generation
+pnpm build                # static generation for en + es locales
 ```
+
+| Flow | Result |
+|------|--------|
+| Direct `/en` | Home shell renders; no Instant Insights blockers |
+| Client nav home → game | `GamePageLoading` shell appears on client nav |
+| Join via `?code=XXXX` | Join mode initializes after Suspense resolves |
+| In-game Convex updates | Live subscriptions unchanged |
 
 ## Ticket map (epic #478)
 
 | Issue | Depends on | Scope |
 |-------|------------|-------|
-| #483 | #479, #517 | Enable flags + devtool docs (this change) |
-| #485 | #483 | Fix session provider + route Suspense / cache migration |
+| #483 | #479, #517 | Enable flags + devtool docs |
+| #485 | #483 | Route Suspense / cache migration |
 | #486 | #485 | Partial prefetch per-link tuning |
 | #487 | #485 | Playwright `instant()` regression tests |
