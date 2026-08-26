@@ -1,20 +1,7 @@
 {
-  "Metadata": {
-    "title": "flip-x",
-    "description": "Shared-table web app for playing flip-x with live scoring."
-  },
-  "LanguageSwitcher": {
-    "english": "English",
-    "spanish": "Español",
-    "aria": "Language"
-  },
   "Common": {
     "waiting": "Waiting",
     "playerArrow": "{from} → {to}"
-  },
-  "Connectivity": {
-    "waitingForConnection": "Waiting for connection…",
-    "offlineBanner": "You're offline. Pending requests will retry when you're back online."
   },
   "Home": {
     "heroLine1": "flip-x, fully scored",
@@ -34,38 +21,6 @@
     "backHome": "Back to home",
     "joinTableTitle": "Join the table",
     "joinTableBody": "Code {code} is ready. Enter your name to claim a seat."
-  },
-  "Lobby": {
-    "codePlaceholder": "ABCD",
-    "lobbyCode": "Lobby code"
-  },
-  "MatchSetup": {
-    "title": "flip-x",
-    "subtitleJoin": "Enter your name and join the game",
-    "subtitleCreate": "Create a game or join an existing one",
-    "yourName": "Your name",
-    "playerColor": "Player color",
-    "namePlaceholder": "Enter your name",
-    "createNewGame": "Create New Game",
-    "or": "or",
-    "joinExistingGame": "Join Existing Game",
-    "cancel": "Cancel",
-    "joinGame": "Join Game",
-    "rulesHelp": "Rules help",
-    "rulesTitle": "How this table plays flip-x",
-    "rulesIntro": "Hit to reveal another card, stay to bank what you have, and avoid duplicate numbers unless a Second Chance saves you.",
-    "rulesStep1": "Seven unique number cards ends the round immediately with a flip-x bonus.",
-    "rulesStep2": "Freeze banks a player's current total. Flip Three forces three more cards.",
-    "rulesStep3": "Second Chance discards one future duplicate instead of busting the player.",
-    "footnote": "Share the match URL after setup. Each player enters their own name when joining, and refresh reconnects to the latest committed turn.",
-    "joinLobby": "Join Lobby",
-    "createLobby": "Create Lobby",
-    "toastNameRequired": "Please enter your name.",
-    "toastNameLength": "Name must be 20 characters or less.",
-    "toastSession": "Session not available.",
-    "toastCreateFailed": "Could not create the match.",
-    "toastJoinFailed": "Could not join the game.",
-    "toastCodeLength": "Please enter a 4-character code."
   },
   "JoinLobby": {
     "title": "Join a Game",
@@ -329,9 +284,45 @@
     "starting": "Starting...",
     "toastFailed": "Could not start the game."
   },
+  "Metadata": {
+    "a05Y4b": "flip-x",
+    "UynQpB": "Shared-table web app for playing flip-x with live scoring."
+  },
+  "MatchSetup": {
+    "e_6mlg": "Please enter your name.",
+    "aURH8N": "Name must be 20 characters or less.",
+    "AbM0BV": "Session not available.",
+    "a05Y4b": "flip-x",
+    "DslkPE": "Enter your name and join the game",
+    "XzIePt": "Create a game or join an existing one",
+    "vlKhIl": "Your name",
+    "DX9QSt": "Enter your name",
+    "7rG3A8": "Player color",
+    "oeFpdf": "Create New Game",
+    "Ntjkqd": "or",
+    "ANvEa8": "Join Existing Game",
+    "47FYwb": "Cancel",
+    "7ERAwR": "Join Game",
+    "c1GqDU": "Could not create the match.",
+    "QFyPhb": "Please enter a 4-character code.",
+    "pQvtX8": "Could not join the game."
+  },
+  "Lobby": {
+    "vaiSyy": "Lobby code",
+    "SexVvY": "ABCD"
+  },
   "NotFoundPage": {
-    "title": "404 – Page not found",
-    "description": "The page you're looking for doesn't exist.",
-    "home": "Go home"
+    "ggGfHP": "404 – Page not found",
+    "rUBRAG": "The page you're looking for doesn't exist.",
+    "SWMHO-": "Go home"
+  },
+  "Connectivity": {
+    "xEhFzj": "You're offline. Pending requests will retry when you're back online.",
+    "P-JCzG": "Waiting for connection…"
+  },
+  "LanguageSwitcher": {
+    "y1Z3or": "Language",
+    "WkrNSk": "English",
+    "dX8jTq": "Español"
   }
 }

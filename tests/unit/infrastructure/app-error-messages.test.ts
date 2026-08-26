@@ -26,8 +26,7 @@ import {
   type AppError,
 } from "@/shared/lib/errors/domain";
 
-import en from "../../../messages/en.json";
-import es from "../../../messages/es.json";
+import { en, es } from "@/messages/catalogs";
 
 function mockErrorsT(key: string, values?: Record<string, string | number>): string {
   return values !== undefined && key === "generic" ? `generic:${values.message}` : key;
@@ -68,7 +67,7 @@ describe("AppError wire codes and Errors.* messages", () => {
     }
   });
 
-  it("defines every wire code under Errors in en.json and es.json", () => {
+  it("defines every wire code under Errors in PO catalogs", () => {
     for (const code of Object.values(APP_ERROR_WIRE_CODE)) {
       expect(en.Errors).toHaveProperty(code);
       expect(es.Errors).toHaveProperty(code);

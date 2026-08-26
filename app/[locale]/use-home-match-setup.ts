@@ -1,12 +1,14 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
-import { useTranslations } from "next-intl";
+import { useExtracted, useTranslations } from "next-intl";
 import { type SubmitEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
+import type { TrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import { prefetchAndPushGameMatch } from "@/shared/i18n/match-navigation";
 import { useRouter } from "@/shared/i18n/navigation";
@@ -50,6 +52,46 @@ function useHomeMutations() {
   return { createMatch, joinByCode, joinMatch };
 }
 
+function useMatchSetupPlayerNameIssueToast() {
+  const t = useExtracted("MatchSetup");
+
+  return (issue: TrimmedPlayerNameIssue) => {
+    switch (issue) {
+      case "empty":
+        return t("Please enter your name.");
+      case "too_long":
+        return t("Name must be 20 characters or less.");
+      case "no_session":
+        return t("Session not available.");
+      default: {
+        const exhaustiveCheck: never = issue;
+        return exhaustiveCheck;
+      }
+    }
+  };
+}
+
+function useHomeMatchSetupLabels() {
+  const t = useExtracted("MatchSetup");
+  const tLobby = useExtracted("Lobby");
+
+  return {
+    title: t("flip-x"),
+    subtitleJoin: t("Enter your name and join the game"),
+    subtitleCreate: t("Create a game or join an existing one"),
+    yourName: t("Your name"),
+    namePlaceholder: t("Enter your name"),
+    playerColor: t("Player color"),
+    createNewGame: t("Create New Game"),
+    or: t("or"),
+    joinExistingGame: t("Join Existing Game"),
+    lobbyCode: tLobby("Lobby code"),
+    codePlaceholder: tLobby("ABCD"),
+    cancel: t("Cancel"),
+    joinGame: t("Join Game"),
+  };
+}
+
 export function useHomeMatchSetup() {
   const router = useRouter();
   const [sessionId] = useSessionId();
@@ -59,9 +101,10 @@ export function useHomeMatchSetup() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createMatch, joinByCode, joinMatch } = useHomeMutations();
 
-  const t = useTranslations("MatchSetup");
+  const t = useExtracted("MatchSetup");
   const tErrors = useTranslations("Errors");
-  const tLobby = useTranslations("Lobby");
+  const labels = useHomeMatchSetupLabels();
+  const getPlayerNameIssueToast = useMatchSetupPlayerNameIssueToast();
 
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
@@ -81,15 +124,15 @@ export function useHomeMatchSetup() {
       setName,
       setColorId,
       setIsSubmitting,
-      tSetup: t,
-      tErrors,
+      getPlayerNameIssueToast,
+      translateError: (error) => translateAppErrorToast(error, tErrors),
       onSuccess: navigateToMatch,
       perform: (trimmedName) =>
         createMatch({
           hostName: trimmedName,
           hostColorId: selectedColorId,
         }),
-      fallbackErrorKey: "toastCreateFailed",
+      getFallbackErrorToast: () => t("Could not create the match."),
     });
   }
 
@@ -98,7 +141,7 @@ export function useHomeMatchSetup() {
 
     const lobbyCode = (joinCode ?? "").trim();
     if (lobbyCode.length !== 4) {
-      toast.error(t("toastCodeLength"));
+      toast.error(t("Please enter a 4-character code."));
       return;
     }
 
@@ -109,8 +152,8 @@ export function useHomeMatchSetup() {
       setName,
       setColorId,
       setIsSubmitting,
-      tSetup: t,
-      tErrors,
+      getPlayerNameIssueToast,
+      translateError: (error) => translateAppErrorToast(error, tErrors),
       onSuccess: navigateToMatch,
       perform: (playerName) =>
         performHomeJoinByCode({
@@ -120,7 +163,7 @@ export function useHomeMatchSetup() {
           playerName,
           playerColorId: selectedColorId,
         }),
-      fallbackErrorKey: "toastJoinFailed",
+      getFallbackErrorToast: () => t("Could not join the game."),
     });
   }
 
@@ -138,7 +181,6 @@ export function useHomeMatchSetup() {
     setHasOpenedJoinFlow,
     handleCreate,
     handleJoin,
-    t,
-    tLobby,
+    labels,
   };
 }

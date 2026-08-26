@@ -2,23 +2,28 @@ import { hasLocale } from "next-intl";
 import { getRequestConfig, type RequestConfig } from "next-intl/server";
 import { locale as rootLocale } from "next/root-params";
 
-import enMessages from "../../messages/en.json";
-import esMessages from "../../messages/es.json";
 import { routing } from "./routing";
-
-const messagesByLocale = {
-  en: enMessages,
-  es: esMessages,
-};
 
 export default getRequestConfig(async () => {
   // oxlint-disable-next-line typescript/no-unsafe-assignment, typescript/no-unsafe-call
   const paramValue = await rootLocale();
   const locale = hasLocale(routing.locales, paramValue) ? paramValue : routing.defaultLocale;
 
+  // oxlint-disable-next-line typescript/no-unsafe-assignment -- dynamic PO imports return plain objects from the next-intl loader.
+  const [legacyMessages, extractedMessages] = await Promise.all([
+    import(`../../messages/legacy/${locale}.po`),
+    import(`../../messages/${locale}.po`),
+  ]);
+
+  // oxlint-disable typescript/consistent-type-assertions,typescript/no-unsafe-type-assertion,typescript/no-unsafe-member-access -- PO loader exports are untyped; merged shape matches CatalogMessages.
+  const messages = {
+    ...legacyMessages.default,
+    ...extractedMessages.default,
+  } as RequestConfig["messages"];
+  // oxlint-enable typescript/consistent-type-assertions,typescript/no-unsafe-type-assertion,typescript/no-unsafe-member-access
+
   return {
     locale,
-    // oxlint-disable-next-line typescript/no-unsafe-type-assertion,typescript/no-unnecessary-type-assertion,typescript/consistent-type-assertions -- JSON imports widen literals, while next-intl narrows messages from the source locale. React Doctor's type graph lacks the generated per-locale declarations and so flags the cast as unnecessary, but it is required. Pinning the base in CI reproduces this when typegen hasn't run first.
-    messages: messagesByLocale[locale] as RequestConfig["messages"],
+    messages,
   };
 });

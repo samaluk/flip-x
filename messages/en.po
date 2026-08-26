@@ -1,0 +1,152 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: app/[locale]/layout.tsx
+msgctxt "Metadata"
+msgid "a05Y4b"
+msgstr "flip-x"
+
+#: app/[locale]/layout.tsx
+msgctxt "Metadata"
+msgid "UynQpB"
+msgstr "Shared-table web app for playing flip-x with live scoring."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "e_6mlg"
+msgstr "Please enter your name."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "aURH8N"
+msgstr "Name must be 20 characters or less."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "AbM0BV"
+msgstr "Session not available."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "a05Y4b"
+msgstr "flip-x"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "DslkPE"
+msgstr "Enter your name and join the game"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "XzIePt"
+msgstr "Create a game or join an existing one"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "vlKhIl"
+msgstr "Your name"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "DX9QSt"
+msgstr "Enter your name"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "7rG3A8"
+msgstr "Player color"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "oeFpdf"
+msgstr "Create New Game"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "Ntjkqd"
+msgstr "or"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "ANvEa8"
+msgstr "Join Existing Game"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "Lobby"
+msgid "vaiSyy"
+msgstr "Lobby code"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "Lobby"
+msgid "SexVvY"
+msgstr "ABCD"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "47FYwb"
+msgstr "Cancel"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "7ERAwR"
+msgstr "Join Game"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "c1GqDU"
+msgstr "Could not create the match."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "QFyPhb"
+msgstr "Please enter a 4-character code."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "pQvtX8"
+msgstr "Could not join the game."
+
+#: app/global-not-found.tsx
+msgctxt "NotFoundPage"
+msgid "ggGfHP"
+msgstr "404 – Page not found"
+
+#: app/global-not-found.tsx
+msgctxt "NotFoundPage"
+msgid "rUBRAG"
+msgstr "The page you're looking for doesn't exist."
+
+#: app/global-not-found.tsx
+msgctxt "NotFoundPage"
+msgid "SWMHO-"
+msgstr "Go home"
+
+#: shared/connectivity/offline-feedback.tsx
+msgctxt "Connectivity"
+msgid "xEhFzj"
+msgstr "You're offline. Pending requests will retry when you're back online."
+
+#: shared/connectivity/offline-feedback.tsx
+msgctxt "Connectivity"
+msgid "P-JCzG"
+msgstr "Waiting for connection…"
+
+#: shared/language-switcher.tsx
+msgctxt "LanguageSwitcher"
+msgid "y1Z3or"
+msgstr "Language"
+
+#: shared/language-switcher.tsx
+msgctxt "LanguageSwitcher"
+msgid "WkrNSk"
+msgstr "English"
+
+#: shared/language-switcher.tsx
+msgctxt "LanguageSwitcher"
+msgid "dX8jTq"
+msgstr "Español"

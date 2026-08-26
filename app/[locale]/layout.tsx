@@ -6,7 +6,7 @@ import { LanguageSwitcher } from "@/shared/language-switcher";
 import { routing } from "@/shared/i18n/routing";
 import { Geist, Geist_Mono } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { getExtracted, getLocale, getMessages } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { Toaster } from "sonner";
@@ -30,10 +30,10 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata() {
-  const t = await getTranslations("Metadata");
+  const t = await getExtracted("Metadata");
   return {
-    title: t("title"),
-    description: t("description"),
+    title: t("flip-x"),
+    description: t("Shared-table web app for playing flip-x with live scoring."),
   };
 }
 
