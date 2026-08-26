@@ -13,7 +13,6 @@
     "playerArrow": "{from} → {to}"
   },
   "Connectivity": {
-    "loading": "Loading…",
     "waitingForConnection": "Waiting for connection…",
     "offlineBanner": "You're offline. Pending requests will retry when you're back online."
   },
