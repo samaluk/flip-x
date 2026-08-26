@@ -39,6 +39,8 @@ Architecture references:
   Convex code. Those rules override general Convex knowledge.
 - For Next.js changes, read the relevant docs under `node_modules/next/dist/docs/`
   before editing.
+- For Instant Navigation validation, read `docs/nextjs/instant-navigation-devtools.md`
+  and track flag breakages in `docs/nextjs/cache-components-migration.md`.
 
 If `DESIGN.md` changes, run `pnpm design:lint` before finishing.
 

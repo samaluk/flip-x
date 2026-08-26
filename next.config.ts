@@ -3,6 +3,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 import { withPostHogConfig } from "@posthog/nextjs-config";
 
 const nextConfig: NextConfig = {
+  // Instant Navigation: Cache Components + Partial Prefetching (#483).
+  // https://nextjs.org/docs/app/guides/instant-navigation
+  cacheComponents: true,
+  partialPrefetching: true,
   reactCompiler: true,
   allowedDevOrigins: ["127.0.0.1", "flip-x.localhost", "*.flip-x.localhost"],
   experimental: {
