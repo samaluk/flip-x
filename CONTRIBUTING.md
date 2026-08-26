@@ -23,7 +23,7 @@ For narrower iteration, see the command reference in `AGENTS.md` and [`docs/test
 
 - Keep commits focused; unrelated changes belong in separate PRs.
 - Include tests with behavior changes when practical.
-- Run `pnpm i18n:check` when changing user-facing messages.
+- Run `pnpm i18n:check` when changing user-facing messages (see [`docs/i18n-check.md`](./docs/i18n-check.md)).
 
 ## Security
 

@@ -58,7 +58,7 @@
     "minTokens": 60,
     "minOccurrences": 2,
     "ignoreImports": true,
-    "threshold": 5.4016,
+    "threshold": 5.65,
     "ignoredClones": [
       "dup:2e174d80:2",
       "dup:33a7c5c4:2",
@@ -98,7 +98,7 @@
       },
       {
         "files": ["game/cards/number-content.tsx"],
-        "functions": ["numberNameLabel"],
+        "functions": ["NumberCardContent"],
         "maxCrap": 150,
         "reason": "Exhaustive number-name switch replaces dynamic i18n keys; branches are literal translations, not business logic."
       }

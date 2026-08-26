@@ -39,35 +39,9 @@ function loadPoFile(relativePath) {
   return messages;
 }
 
-function mergeCatalogs(legacy, extracted) {
-  /** @type {Record<string, unknown>} */
-  const merged = structuredClone(legacy);
-  for (const [namespace, messages] of Object.entries(extracted)) {
-    if (
-      typeof messages === "object" &&
-      messages !== null &&
-      !Array.isArray(messages) &&
-      typeof merged[namespace] === "object" &&
-      merged[namespace] !== null &&
-      !Array.isArray(merged[namespace])
-    ) {
-      merged[namespace] = {
-        .../** @type {Record<string, unknown>} */ (merged[namespace]),
-        .../** @type {Record<string, unknown>} */ (messages),
-      };
-      continue;
-    }
-    merged[namespace] = messages;
-  }
-  return merged;
-}
-
 const catalogs = {};
 for (const locale of ["en", "es"]) {
-  catalogs[locale] = mergeCatalogs(
-    loadPoFile(`messages/legacy/${locale}.po`),
-    loadPoFile(`messages/${locale}.po`),
-  );
+  catalogs[locale] = loadPoFile(`messages/${locale}.po`);
 
   fs.mkdirSync(path.join(process.cwd(), "messages/.lingual"), { recursive: true });
   fs.writeFileSync(
@@ -76,7 +50,7 @@ for (const locale of ["en", "es"]) {
   );
 }
 
-const content = `// Snapshot of merged legacy + extracted PO catalogs for typing and tests.\n// Regenerate with: pnpm i18n:catalog\n\nexport const en = ${JSON.stringify(catalogs.en, null, 2)} as const;\n\nexport const es = ${JSON.stringify(catalogs.es, null, 2)} as const;\n\nexport type CatalogMessages = typeof en;\n`;
+const content = `// Snapshot of extracted PO catalogs for typing and tests.\n// Regenerate with: pnpm i18n:catalog\n\nexport const en = ${JSON.stringify(catalogs.en, null, 2)} as const;\n\nexport const es = ${JSON.stringify(catalogs.es, null, 2)} as const;\n\nexport type CatalogMessages = typeof en;\n`;
 fs.writeFileSync(path.join(process.cwd(), "messages/catalogs.ts"), content);
 
 console.log("Generated messages/catalogs.ts and messages/.lingual/*.json");

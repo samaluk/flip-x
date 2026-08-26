@@ -6,7 +6,7 @@ import { type SubmitEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
+import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import type { TrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
@@ -102,7 +102,7 @@ export function useHomeMatchSetup() {
   const { createMatch, joinByCode, joinMatch } = useHomeMutations();
 
   const t = useExtracted("MatchSetup");
-  const tErrors = useExtracted("Errors");
+  const translateError = useTranslateAppErrorToast();
   const labels = useHomeMatchSetupLabels();
   const getPlayerNameIssueToast = useMatchSetupPlayerNameIssueToast();
 
@@ -125,7 +125,7 @@ export function useHomeMatchSetup() {
       setColorId,
       setIsSubmitting,
       getPlayerNameIssueToast,
-      translateError: (error) => translateAppErrorToast(error, tErrors),
+      translateError,
       onSuccess: navigateToMatch,
       perform: (trimmedName) =>
         createMatch({
@@ -153,7 +153,7 @@ export function useHomeMatchSetup() {
       setColorId,
       setIsSubmitting,
       getPlayerNameIssueToast,
-      translateError: (error) => translateAppErrorToast(error, tErrors),
+      translateError,
       onSuccess: navigateToMatch,
       perform: (playerName) =>
         performHomeJoinByCode({

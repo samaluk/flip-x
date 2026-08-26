@@ -14,6 +14,7 @@ import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import type { PlayerColorId } from "@/shared/lib/player-colors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
+import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
 import {
   getTrimmedPlayerNameIssue,
   type TrimmedPlayerNameIssue,
@@ -45,7 +46,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
   const [playerName, setPlayerName] = useState("");
   const { colorId, setColorId } = usePlayerLocalPrefs();
   const t = useExtracted("Game");
-  const tErrors = useExtracted("Errors");
+  const translateError = useTranslateAppErrorToast();
   const getPlayerNameIssueToast = useGamePlayerNameIssueToast();
   const usedColorIds =
     players
@@ -69,7 +70,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
       }),
       {
         missingMessage: t("Could not join the game."),
-        tErrors,
+        translateError,
       },
     );
     if (!result || Either.isLeft(result)) {

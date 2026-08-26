@@ -1,18 +1,42 @@
-# i18n-check notes
+# i18n workflow
 
-This repository uses `@lingual/i18n-check` for locale consistency checks and a first pass at code usage checks.
+flip-x uses [next-intl message extraction](https://next-intl.dev/docs/usage/extraction) for source strings and [eloqnt](https://cli.eloqnt.dev/docs) for locale validation and future translation.
 
-## Current command behavior
+## Layout
 
-- `pnpm i18n:messages` is fully enabled (`missingKeys` + `invalidKeys`) against `messages/en.json` as the source locale.
-- `pnpm i18n:usage` currently runs `undefined` checks on `app`, `shared`, and `game/cards`.
+- `messages/en.po` — extracted English catalog from `useExtracted` / `t()` call sites
+- `messages/es.po` — Spanish translations
+- `messages/catalogs.ts` — generated snapshot for typing and tests (`pnpm i18n:catalog`)
+- `.eloqnt/config.ts` — eloqnt project config (source paths, locales, lint rules)
+- `.eloqnt/styleguides/en.md` — tone and terminology for `eloqnt translate`
 
-## Known parser limitations with `next-intl` (v0.9.4)
+## Day-to-day commands
 
-Running `i18n-check --format next-intl --unused ...` over all app sources currently has two concrete issues:
+```bash
+pnpm i18n:check    # eloqnt lint — run in CI, hooks, and before PRs
+pnpm i18n:catalog  # regenerate catalogs.ts and messages/.lingual snapshots
+```
 
-1. Parsing fails for `game/ui` and `game/screens` with:
-   `Error: Can't validate translations. Check if the format is supported...`
-2. `unused` detection reports all locale keys as unused in this codebase, which is a false positive.
+After adding or changing extracted strings in `app/`, `shared/`, or `game/`:
 
-Because of this, we are not enabling `unused` enforcement yet and we are not adding broad ignore globs that could hide real issues.
+1. Run the app or `pnpm build` so next-intl writes updated `messages/en.po`.
+2. Update `messages/es.po` for new keys (manually or with `eloqnt translate` when configured).
+3. Run `pnpm i18n:catalog` when tests or types need the snapshot.
+4. Run `pnpm i18n:check` to confirm catalogs and call sites stay in sync.
+
+## Authoring rules
+
+- Use literal English strings in `useExtracted('Namespace')` and `t('…')` — no dynamic keys or template-literal message IDs.
+- Keep ICU placeholders (`{count}`, `{name}`, …) identical across locales.
+- Write the product name as **flip-x** (lowercase) in source copy.
+- See `.eloqnt/styleguides/en.md` for card-game terminology and voice.
+
+## CI
+
+CI runs `pnpm i18n:check` (eloqnt lint only). There is no auto-translate workflow in CI; translation is a local or manual step.
+
+## References
+
+- https://next-intl.dev/docs/usage/extraction
+- https://cli.eloqnt.dev/docs
+- https://cli.eloqnt.dev/docs/styleguides

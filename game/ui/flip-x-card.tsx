@@ -5,7 +5,6 @@ import { useExtracted } from "next-intl";
 import { memo, type ReactNode } from "react";
 
 import { ActionCardContent } from "@/game/cards/action-content";
-import { actionKindLabel } from "@/game/cards/action-kind-label";
 import { ModifierCardContent } from "@/game/cards/modifier-content";
 import { NumberCardContent } from "@/game/cards/number-content";
 import type { ModifierCard } from "@/game/logic/card-types";
@@ -74,7 +73,21 @@ function ScreenReaderSummary(props: FlipXCardProps) {
         ? t("×2")
         : t("+{value}", { value: String(props.modifierValue) });
   } else {
-    valueLabel = actionKindLabel(props.actionKind, t);
+    switch (props.actionKind) {
+      case "flip_three":
+        valueLabel = t("Flip Three");
+        break;
+      case "freeze":
+        valueLabel = t("Freeze");
+        break;
+      case "second_chance":
+        valueLabel = t("Second Chance");
+        break;
+      default: {
+        const exhaustiveCheck: never = props.actionKind;
+        valueLabel = exhaustiveCheck;
+      }
+    }
   }
 
   return (

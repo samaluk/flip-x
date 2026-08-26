@@ -10,6 +10,7 @@ export default defineConfig({
   },
   lint: {
     rules: {
+      "missing-translation": "error",
       "orphan-message": "error",
     },
   },

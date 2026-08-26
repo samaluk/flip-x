@@ -72,13 +72,41 @@ describe("AppError wire codes and Errors.* messages", () => {
     }
   });
 
-  it("defines every wire code under Errors in PO catalogs", () => {
-    for (const code of Object.values(APP_ERROR_WIRE_CODE)) {
-      expect(en.Errors).toHaveProperty(code);
-      expect(es.Errors).toHaveProperty(code);
-      expect(typeof en.Errors[code as keyof typeof en.Errors]).toBe("string");
-      expect(typeof es.Errors[code as keyof typeof es.Errors]).toBe("string");
+  const expectedErrorMessages = [
+    "Match not found.",
+    "It is not your turn or the turn is invalid.",
+    "That action is not valid right now.",
+    "That target is not allowed.",
+    "Enter a valid host name.",
+    "Choose valid game settings.",
+    "Could not assign a lobby code. Try again.",
+    "No lobby found for that code.",
+    "Enter a valid player name.",
+    "That name is already taken at this table.",
+    "Choose a valid player color.",
+    "That player color is already taken at this table.",
+    "Only the host can do that.",
+    "At least two players need to join before the game can start.",
+    "Join the game first.",
+    "Too many attempts. Please wait a moment and try again.",
+    "This action is not allowed in the current match state.",
+    "The game changed. Refresh and try again.",
+    "Unsupported relationship.",
+    "Unsupported table.",
+    "Invalid confirmation.",
+    "Game action failed.",
+    "{message}",
+  ] as const;
+
+  it("defines every error toast message in PO catalogs", () => {
+    const englishMessages = Object.values(en.Errors);
+    const spanishMessages = Object.values(es.Errors);
+    for (const message of expectedErrorMessages) {
+      expect(englishMessages).toContain(message);
     }
+    expect(englishMessages).toHaveLength(expectedErrorMessages.length);
+    expect(spanishMessages).toHaveLength(expectedErrorMessages.length);
+    expect(spanishMessages.every((translation) => translation.length > 0)).toBe(true);
   });
 
   it("keeps tags and payload fields stable", () => {

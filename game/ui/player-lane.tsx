@@ -25,24 +25,6 @@ import {
   type PlayerLaneProps,
   type SnapshotPlayer,
 } from "@/game/ui/player-lane-compare";
-import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
-
-function formatRoundStatusLabel(status: LaneRoundStatus, t: ExtractedTranslator): string | null {
-  switch (status) {
-    case "active":
-      return null;
-    case "busted":
-      return t("Busted");
-    case "stayed":
-      return t("Banked");
-    case "frozen":
-      return t("Frozen");
-    case "completed":
-      return t("Scored");
-    default:
-      return t("Waiting");
-  }
-}
 
 function statusVariant(status: LaneRoundStatus) {
   switch (status) {
@@ -78,6 +60,93 @@ type PlayerLaneSidebarProps = {
   flip3Remaining: number | null;
 };
 
+function useRoundStatusLabel(displayStatus: LaneRoundStatus): string | null {
+  const t = useExtracted("PlayerLane");
+  if (displayStatus === "active") {
+    return null;
+  }
+
+  switch (displayStatus) {
+    case "busted":
+      return t("Busted");
+    case "stayed":
+      return t("Banked");
+    case "frozen":
+      return t("Frozen");
+    case "completed":
+      return t("Scored");
+    default:
+      return t("Waiting");
+  }
+}
+
+// why: badge visibility is independent orthogonal lane state, not a discriminated variant.
+// react-doctor-disable-next-line react-doctor/no-many-boolean-props
+function PlayerLaneBadges({
+  roundStatusLabel,
+  displayStatus,
+  isDealer,
+  isViewer,
+  isSelfTargeting,
+  incomingActionKind,
+  flip3Remaining,
+  isOnline,
+}: {
+  roundStatusLabel: string | null;
+  displayStatus: LaneRoundStatus;
+  isDealer: boolean;
+  isViewer: boolean;
+  isSelfTargeting: boolean;
+  incomingActionKind: "flip_three" | "freeze" | null;
+  flip3Remaining: number | null;
+  isOnline: boolean;
+}) {
+  const t = useExtracted("PlayerLane");
+
+  return (
+    <div className="flex w-full flex-wrap gap-1">
+      {roundStatusLabel ? (
+        <Badge variant={statusVariant(displayStatus)} className="max-w-full text-xs">
+          {roundStatusLabel}
+        </Badge>
+      ) : null}
+      {isDealer ? (
+        <Badge variant="default" className="text-xs">
+          {t("Dealer")}
+        </Badge>
+      ) : null}
+      {isViewer ? (
+        <Badge variant="default" className="border-primary/30 bg-primary/15 text-xs text-primary">
+          {t("You")}
+        </Badge>
+      ) : null}
+      {isOnline && !isViewer ? (
+        <Badge variant="secondary" className="text-xs">
+          {t("Online")}
+        </Badge>
+      ) : null}
+      {isSelfTargeting ? (
+        <Badge variant="outline" className="text-xs">
+          <UserIcon className="size-3" />
+          {t("Self")}
+        </Badge>
+      ) : null}
+      {incomingActionKind ? (
+        <Badge variant="destructive" className="text-xs">
+          <CrosshairIcon className="size-3" />
+          {t("Incoming")}
+        </Badge>
+      ) : null}
+      {flip3Remaining !== null && flip3Remaining > 0 ? (
+        <Badge variant="outline" className="text-xs">
+          <RefreshCwIcon className="size-3 animate-spin" />
+          {t("{count} to draw", { count: String(flip3Remaining) })}
+        </Badge>
+      ) : null}
+    </div>
+  );
+}
+
 function PlayerLaneSidebar({
   player,
   compact,
@@ -89,7 +158,7 @@ function PlayerLaneSidebar({
   flip3Remaining,
 }: PlayerLaneSidebarProps) {
   const t = useExtracted("PlayerLane");
-  const roundStatusLabel = formatRoundStatusLabel(displayStatus, t);
+  const roundStatusLabel = useRoundStatusLabel(displayStatus);
   const playerColor = getPlayerColor(player.colorId, player.seatIndex);
   const initials = playerInitials(player.displayName);
 
@@ -138,46 +207,16 @@ function PlayerLaneSidebar({
         </div>
       </div>
 
-      <div className="flex w-full flex-wrap gap-1">
-        {roundStatusLabel ? (
-          <Badge variant={statusVariant(displayStatus)} className="max-w-full text-xs">
-            {roundStatusLabel}
-          </Badge>
-        ) : null}
-        {isDealer ? (
-          <Badge variant="default" className="text-xs">
-            {t("Dealer")}
-          </Badge>
-        ) : null}
-        {isViewer ? (
-          <Badge variant="default" className="border-primary/30 bg-primary/15 text-xs text-primary">
-            {t("You")}
-          </Badge>
-        ) : null}
-        {player.isOnline && !isViewer ? (
-          <Badge variant="secondary" className="text-xs">
-            {t("Online")}
-          </Badge>
-        ) : null}
-        {isSelfTargeting ? (
-          <Badge variant="outline" className="text-xs">
-            <UserIcon className="size-3" />
-            {t("Self")}
-          </Badge>
-        ) : null}
-        {incomingActionKind ? (
-          <Badge variant="destructive" className="text-xs">
-            <CrosshairIcon className="size-3" />
-            {t("Incoming")}
-          </Badge>
-        ) : null}
-        {flip3Remaining !== null && flip3Remaining > 0 ? (
-          <Badge variant="outline" className="text-xs">
-            <RefreshCwIcon className="size-3 animate-spin" />
-            {t("{count} to draw", { count: String(flip3Remaining) })}
-          </Badge>
-        ) : null}
-      </div>
+      <PlayerLaneBadges
+        roundStatusLabel={roundStatusLabel}
+        displayStatus={displayStatus}
+        isDealer={isDealer}
+        isViewer={isViewer}
+        isSelfTargeting={isSelfTargeting}
+        incomingActionKind={incomingActionKind}
+        flip3Remaining={flip3Remaining}
+        isOnline={player.isOnline}
+      />
     </aside>
   );
 }
