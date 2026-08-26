@@ -1,7 +1,9 @@
+/** @vitest-environment jsdom */
+
+import { renderHook } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import { APP_ERROR_WIRE_CODE, translateConvexError } from "@/shared/lib/errors/app-error-wire-code";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import {
   insufficientPlayers,
   invalidAction,
@@ -26,6 +28,8 @@ import {
   appErrorWireCode,
   type AppError,
 } from "@/shared/lib/errors/domain";
+import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
+import { IntlEnProvider } from "@/tests/test-intl";
 
 function mockErrorsT(key: string, values?: Record<string, string | number>): string {
   return values !== undefined && key === "generic" ? `generic:${values.message}` : key;
@@ -33,10 +37,6 @@ function mockErrorsT(key: string, values?: Record<string, string | number>): str
 
 function mockGenericErrorT(message: string): string {
   return `generic:${message}`;
-}
-
-function mockExtractedErrorsT(message: string, values?: Record<string, string | number>): string {
-  return values !== undefined ? `${message}:${JSON.stringify(values)}` : message;
 }
 
 describe("AppError wire codes and Errors.* messages", () => {
@@ -98,23 +98,24 @@ describe("AppError wire codes and Errors.* messages", () => {
     });
   });
 
-  it("translateAppErrorToast maps wire codes to extracted English messages", () => {
-    expect(translateAppErrorToast(matchNotFound({ matchId: "m1" }), mockExtractedErrorsT)).toBe(
+  it("useAppErrors maps wire codes to extracted English messages", () => {
+    const { result } = renderHook(() => useAppErrors(), { wrapper: IntlEnProvider });
+
+    expect(result.current.translateToast(matchNotFound({ matchId: "m1" }))).toBe(
       "Match not found.",
     );
-    expect(translateAppErrorToast(nameAlreadyTaken({ name: "Sam" }), mockExtractedErrorsT)).toBe(
+    expect(result.current.translateToast(nameAlreadyTaken({ name: "Sam" }))).toBe(
       "That name is already taken at this table.",
     );
-    expect(
-      translateAppErrorToast(insufficientPlayers({ minPlayers: 2 }), mockExtractedErrorsT),
-    ).toBe("At least two players need to join before the game can start.");
+    expect(result.current.translateToast(insufficientPlayers({ minPlayers: 2 }))).toBe(
+      "At least two players need to join before the game can start.",
+    );
+    expect(result.current.matchNotFoundTitle).toBe("Match not found.");
+    expect(result.current.gameActionFailed).toBe("Game action failed.");
   });
 
-  it("translateConvexError resolves canonical codes and legacy _tag names", () => {
+  it("translateConvexError resolves canonical wire codes and falls back for unknown strings", () => {
     expect(translateConvexError("MATCH_NOT_FOUND", mockErrorsT, mockGenericErrorT)).toBe(
-      "MATCH_NOT_FOUND",
-    );
-    expect(translateConvexError("MatchNotFound", mockErrorsT, mockGenericErrorT)).toBe(
       "MATCH_NOT_FOUND",
     );
     expect(translateConvexError("unknown-code", mockErrorsT, mockGenericErrorT)).toBe(

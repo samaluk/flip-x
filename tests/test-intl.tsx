@@ -1,10 +1,14 @@
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactElement, ReactNode } from "react";
 
-export function withIntlEn(ui: ReactElement): ReactNode {
+export function IntlEnProvider({ children }: { children: ReactNode }) {
   return (
     <NextIntlClientProvider locale="en" timeZone="UTC">
-      {ui}
+      {children}
     </NextIntlClientProvider>
   );
+}
+
+export function withIntlEn(ui: ReactElement): ReactNode {
+  return <IntlEnProvider>{ui}</IntlEnProvider>;
 }
