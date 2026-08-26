@@ -78,3 +78,40 @@ pnpm build                # static generation for en + es locales
 | #485 | #483 | Route Suspense / cache migration |
 | #486 | #485 | Partial prefetch per-link tuning — done (#486) |
 | #487 | #485 | Playwright `instant()` regression tests — done (`issue-487-instant-playwright-tests`) |
+| #488 | #483, #485 | Offline resilience — in progress (`issue-488-offline-resilience`) |
+
+## Offline resilience (#488)
+
+`experimental.useOffline: true` queues failed soft navigations, prefetches, and Server Actions until connectivity returns. The app shows an `OfflineBanner` in the locale layout and connectivity-aware copy on route loading shells.
+
+| Flag | Value | Since |
+|------|-------|-------|
+| `experimental.useOffline` | `true` | #488 |
+
+### What Next.js retries
+
+- Soft navigations into prefetched routes
+- RSC data fetches blocked by Suspense
+- Link prefetches
+- Server Actions (none in flip-x today)
+
+### What Next.js does not retry
+
+- Convex `useMutation` / `useConfectMutation` calls (create/join/hit/stay)
+- Direct `fetch()` in client components
+- Full page reloads while offline (needs a service worker for that)
+
+Gameplay mutations still fail immediately at the Convex client layer when offline. Users see existing toast/error UX for those paths; only framework navigation and RSC streaming get automatic retry.
+
+### Rollback
+
+If offline queuing causes confusing UX with Convex (for example stale optimistic UI while a Next.js navigation is still pending, or users assuming a gameplay mutation will retry when it will not):
+
+1. Remove `experimental.useOffline: true` from `next.config.ts`.
+2. Remove `OfflineBanner`, `OfflineLoadingStatus`, and their layout/`loading.tsx` wiring.
+3. Remove the `Connectivity` namespace from `messages/en.json` and `messages/es.json`.
+4. Redeploy. Pending Next.js requests will fail immediately again instead of queueing.
+
+Validate rollback with `pnpm build` and the instant-navigation Playwright suite (`pnpm test:e2e e2e/instant-navigation.spec.ts`).
+
+Test offline behavior with `next build && next start`; dev mode is not a reliable reference per the Next.js offline guide.
