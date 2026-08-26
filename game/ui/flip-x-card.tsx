@@ -83,8 +83,10 @@ function ScreenReaderSummary(props: FlipXCardProps) {
       case "second_chance":
         valueLabel = t("Second Chance");
         break;
-      default:
-        valueLabel = t("Action");
+      default: {
+        const exhaustiveCheck: never = props.actionKind;
+        valueLabel = exhaustiveCheck;
+      }
     }
   }
 
