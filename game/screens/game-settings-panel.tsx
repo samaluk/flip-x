@@ -15,8 +15,8 @@ import {
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
+import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 import {
   Accordion,
   AccordionContent,
@@ -34,37 +34,9 @@ type SettingsPatch = {
   maxNumberCardValue?: number;
 };
 
-type GameSettingsTranslator = ExtractedTranslator;
-
-function presetLabel(presetId: string, t: GameSettingsTranslator): string {
-  switch (presetId) {
-    case "classic":
-      return t("Classic");
-    case "extended":
-      return t("Extended");
-    case "big-table":
-      return t("Big Table");
-    default:
-      return presetId;
-  }
-}
-
-function presetHelper(presetId: string, t: GameSettingsTranslator): string {
-  switch (presetId) {
-    case "classic":
-      return t("Official baseline. Best for 2-4 players.");
-    case "extended":
-      return t("Better for 4-5 players. More cards and a slightly longer match.");
-    case "big-table":
-      return t("Better for 6+ players. Larger deck, higher ceiling, longer match.");
-    default:
-      return "";
-  }
-}
-
 export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const t = useExtracted("GameSettings");
-  const tErrors = useExtracted("Errors");
+  const translateError = useTranslateAppErrorToast();
   const updateMatchSettings = useSessionConfectMutation(refs.public.matches.updateMatchSettings);
   const settings = snapshot.settings;
   const hostCanEdit = snapshot.status === "setup" && (snapshot.isHost ?? false);
@@ -72,6 +44,32 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const recommendedPreset = GAME_SETTING_PRESETS.find(
     (preset) => preset.id === recommendedPresetId,
   );
+
+  function presetLabel(presetId: string): string {
+    switch (presetId) {
+      case "classic":
+        return t("Classic");
+      case "extended":
+        return t("Extended");
+      case "big-table":
+        return t("Big Table");
+      default:
+        return presetId;
+    }
+  }
+
+  function presetHelper(presetId: string): string {
+    switch (presetId) {
+      case "classic":
+        return t("Official baseline. Best for 2-4 players.");
+      case "extended":
+        return t("Better for 4-5 players. More cards and a slightly longer match.");
+      case "big-table":
+        return t("Better for 6+ players. Larger deck, higher ceiling, longer match.");
+      default:
+        return "";
+    }
+  }
 
   const [, updateSettings, isUpdating] = useActionState<null, SettingsPatch>(
     async (_previousState, patch) => {
@@ -83,7 +81,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
         }),
         {
           missingMessage: t("Could not update game settings."),
-          tErrors,
+          translateError,
         },
       );
       return null;
@@ -104,7 +102,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
               {hostCanEdit && recommendedPreset ? (
                 <p className="mt-1 text-xs text-muted-foreground">
                   {t("Recommended for this lobby: {preset}", {
-                    preset: presetLabel(recommendedPreset.id, t),
+                    preset: presetLabel(recommendedPreset.id),
                   })}
                 </p>
               ) : null}
@@ -149,7 +147,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     )}
                   >
                     <span className="flex w-full items-center justify-between gap-2">
-                      <span>{presetLabel(preset.id, t)}</span>
+                      <span>{presetLabel(preset.id)}</span>
                       {isRecommended ? (
                         <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs text-primary">
                           {t("Recommended")}
@@ -157,7 +155,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                       ) : null}
                     </span>
                     <span className="text-xs text-muted-foreground group-data-[slot=button]:text-current/70">
-                      {presetHelper(preset.id, t)}
+                      {presetHelper(preset.id)}
                     </span>
                   </Button>
                 );

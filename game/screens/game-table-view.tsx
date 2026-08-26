@@ -14,8 +14,8 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
-import { formatLatestRoundEventBody } from "@/game/ui/round-event-format";
 import type { MatchSnapshot } from "@/game/logic/view-models";
+import { useLatestRoundEventBody } from "@/game/ui/use-round-event-format";
 import { PlayerLane } from "@/game/ui/player-lane";
 import { RoundHistoryTable } from "@/game/ui/round-history-table";
 import { ScoreSummary } from "@/game/ui/score-summary";
@@ -30,7 +30,6 @@ import {
 } from "@/shared/ui/accordion";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
-import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
 const listStagger: Variants = {
   hidden: { opacity: 0 },
@@ -68,21 +67,6 @@ export type GameTableViewProps = {
   freezeLaneLayout?: boolean;
 };
 
-function matchStatusLabel(status: MatchSnapshot["status"], t: ExtractedTranslator): string {
-  switch (status) {
-    case "setup":
-      return t("setup");
-    case "in_progress":
-      return t("in progress");
-    case "completed":
-      return t("completed");
-    default: {
-      const exhaustiveCheck: never = status;
-      return exhaustiveCheck;
-    }
-  }
-}
-
 export function GameTableView({
   snapshot,
   isPending = false,
@@ -93,21 +77,7 @@ export function GameTableView({
   disableCardFlip3d = false,
   freezeLaneLayout = false,
 }: GameTableViewProps) {
-  const t = useExtracted("GameTable");
-  const tEvents = useExtracted("Events");
-  const tCards = useExtracted("Cards");
-  const tHistory = useExtracted("RoundHistory");
-
-  const viewerPlayer = snapshot.players.find(
-    (player) => player.playerId === snapshot.viewerPlayerId,
-  );
-  const activePlayer = snapshot.players.find(
-    (player) => player.playerId === snapshot.activePlayerId,
-  );
-  const { viewer, opponents } = partitionPlayers(snapshot);
-  const latestBody = snapshot.latestEvent
-    ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
-    : tEvents("No table event has been logged yet.");
+  const latestBody = useLatestRoundEventBody(snapshot.latestEvent);
 
   const pendingAction = snapshot.pendingAction;
   const viewerIsSource = Boolean(
@@ -121,11 +91,16 @@ export function GameTableView({
     pendingAction.eligibleTargetIds.includes(snapshot.viewerPlayerId ?? ""),
   );
 
-  const callText = callTextForSnapshot(snapshot, activePlayer, t);
-
+  const activePlayer = snapshot.players.find(
+    (player) => player.playerId === snapshot.activePlayerId,
+  );
+  const viewerPlayer = snapshot.players.find(
+    (player) => player.playerId === snapshot.viewerPlayerId,
+  );
+  const { viewer, opponents } = partitionPlayers(snapshot);
   const opponentsGridClass = opponentsGridCols(opponents.length);
-
   const hasTurnControls = resolveTurnControlsPhase(snapshot).kind !== "none";
+  const controlsPending = isPending || !!snapshot.optimisticTurn;
 
   const turnControls = (
     <TurnControls
@@ -135,15 +110,11 @@ export function GameTableView({
       onStartNextRound={onStartNextRound}
     />
   );
-  const controlsPending = isPending || !!snapshot.optimisticTurn;
 
   return (
     <GameTableLayout
       snapshot={snapshot}
-      t={t}
-      tHistory={tHistory}
       isPending={controlsPending}
-      callText={callText}
       latestBody={latestBody}
       activePlayer={activePlayer}
       viewerPlayer={viewerPlayer}
@@ -163,10 +134,7 @@ export function GameTableView({
 
 type GameTableLayoutProps = {
   snapshot: MatchSnapshot;
-  t: ExtractedTranslator;
-  tHistory: (message: string, values?: Record<string, string | number>) => string;
   isPending: boolean;
-  callText: string;
   latestBody: string;
   activePlayer: MatchSnapshot["players"][number] | undefined;
   viewerPlayer: MatchSnapshot["players"][number] | undefined;
@@ -184,10 +152,7 @@ type GameTableLayoutProps = {
 
 function GameTableLayout({
   snapshot,
-  t,
-  tHistory,
   isPending,
-  callText,
   latestBody,
   activePlayer,
   viewerPlayer,
@@ -207,9 +172,7 @@ function GameTableLayout({
       <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
         <GameTableHud
           snapshot={snapshot}
-          t={t}
           isPending={isPending}
-          callText={callText}
           latestBody={latestBody}
           activePlayer={activePlayer}
           viewerPlayer={viewerPlayer}
@@ -220,14 +183,13 @@ function GameTableLayout({
           opponents={opponents}
           opponentsGridClass={opponentsGridClass}
           freezeLaneLayout={freezeLaneLayout}
-          t={t}
           viewerIsSource={viewerIsSource}
           viewerCanTargetSelf={viewerCanTargetSelf}
           onResolveAction={onResolveAction}
           disableCardFlip3d={disableCardFlip3d}
         />
-        <RoundHistorySection snapshot={snapshot} tHistory={tHistory} />
-        <GameTableTurnControls hasTurnControls={hasTurnControls} t={t} controls={turnControls} />
+        <RoundHistorySection snapshot={snapshot} />
+        <GameTableTurnControls hasTurnControls={hasTurnControls} controls={turnControls} />
       </div>
     </LazyMotion>
   );
@@ -235,11 +197,9 @@ function GameTableLayout({
 
 function GameTableTurnControls({
   hasTurnControls,
-  t,
   controls,
 }: {
   hasTurnControls: boolean;
-  t: ExtractedTranslator;
   controls: ReactNode;
 }) {
   if (!hasTurnControls) {
@@ -247,43 +207,61 @@ function GameTableTurnControls({
   }
   return (
     <>
-      <TurnControlsDesktop t={t} controls={controls} />
-      <TurnControlsMobile t={t} controls={controls} />
+      <TurnControlsDesktop controls={controls} />
+      <TurnControlsMobile controls={controls} />
     </>
   );
 }
 
-type GameTablePlayersProps = Omit<GameTableOpponentsSectionProps, "opponents"> & {
+type GameTablePlayersProps = {
+  snapshot: MatchSnapshot;
   viewer: MatchSnapshot["players"][number] | null;
   opponents: MatchSnapshot["players"];
   opponentsGridClass: string;
+  freezeLaneLayout: boolean;
+  viewerIsSource: boolean;
+  viewerCanTargetSelf: boolean;
+  onResolveAction: (targetPlayerId: Id<"players">) => void;
+  disableCardFlip3d: boolean;
 };
 
 function GameTablePlayers({
   viewer,
   opponents,
   opponentsGridClass,
-  ...opponentProps
+  snapshot,
+  freezeLaneLayout,
+  viewerIsSource,
+  viewerCanTargetSelf,
+  onResolveAction,
+  disableCardFlip3d,
 }: GameTablePlayersProps) {
+  const t = useExtracted("GameTable");
+
   return (
     <>
       <GameTableOpponentsSection
         opponents={opponents}
         opponentsGridClass={opponentsGridClass}
-        {...opponentProps}
+        snapshot={snapshot}
+        freezeLaneLayout={freezeLaneLayout}
+        viewerIsSource={viewerIsSource}
+        viewerCanTargetSelf={viewerCanTargetSelf}
+        onResolveAction={onResolveAction}
+        disableCardFlip3d={disableCardFlip3d}
       />
       {viewer ? (
-        <section aria-label={opponentProps.t("Your hand")} className="space-y-2">
+        <section aria-label={t("Your hand")} className="space-y-2">
           <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {opponentProps.t("Your hand")}
+            {t("Your hand")}
           </div>
           <MatchPlayerLane
-            snapshot={opponentProps.snapshot}
+            snapshot={snapshot}
             player={viewer}
-            viewerIsSource={opponentProps.viewerIsSource}
-            viewerCanTargetSelf={opponentProps.viewerCanTargetSelf}
-            onResolveAction={opponentProps.onResolveAction}
-            disableCardFlip3d={opponentProps.disableCardFlip3d}
+            viewerIsSource={viewerIsSource}
+            viewerCanTargetSelf={viewerCanTargetSelf}
+            onResolveAction={onResolveAction}
+            disableCardFlip3d={disableCardFlip3d}
           />
         </section>
       ) : null}
@@ -291,12 +269,9 @@ function GameTablePlayers({
   );
 }
 
-type TurnControlsDockProps = {
-  t: ExtractedTranslator;
-  controls: ReactNode;
-};
+function TurnControlsDesktop({ controls }: { controls: ReactNode }) {
+  const t = useExtracted("GameTable");
 
-function TurnControlsDesktop({ t, controls }: TurnControlsDockProps) {
   return (
     <section
       aria-label={t("Turn actions")}
@@ -307,7 +282,9 @@ function TurnControlsDesktop({ t, controls }: TurnControlsDockProps) {
   );
 }
 
-function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
+function TurnControlsMobile({ controls }: { controls: ReactNode }) {
+  const t = useExtracted("GameTable");
+
   return (
     <section
       aria-label={t("Turn actions")}
@@ -320,9 +297,7 @@ function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
 
 type GameTableHudProps = {
   snapshot: MatchSnapshot;
-  t: ExtractedTranslator;
   isPending: boolean;
-  callText: string;
   latestBody: string;
   activePlayer: MatchSnapshot["players"][number] | undefined;
   viewerPlayer: MatchSnapshot["players"][number] | undefined;
@@ -330,14 +305,41 @@ type GameTableHudProps = {
 
 function GameTableHud({
   snapshot,
-  t,
   isPending,
-  callText,
   latestBody,
   activePlayer,
   viewerPlayer,
 }: GameTableHudProps) {
+  const t = useExtracted("GameTable");
   const matchComplete = snapshot.status === "completed";
+
+  let callText: string;
+  if (snapshot.roundStatus === "completed") {
+    callText = t("The round is scored and ready for the next deal.");
+  } else if (activePlayer) {
+    callText = t("{name} is deciding whether to push or bank points.", {
+      name: activePlayer.displayName,
+    });
+  } else {
+    callText = t("Waiting for the next resolution.");
+  }
+
+  let matchStatus: string;
+  switch (snapshot.status) {
+    case "setup":
+      matchStatus = t("setup");
+      break;
+    case "in_progress":
+      matchStatus = t("in progress");
+      break;
+    case "completed":
+      matchStatus = t("completed");
+      break;
+    default: {
+      const exhaustiveCheck: never = snapshot.status;
+      matchStatus = exhaustiveCheck;
+    }
+  }
 
   return (
     <section
@@ -366,7 +368,7 @@ function GameTableHud({
 
         <div className="ms-auto flex flex-wrap items-center gap-1.5">
           <Badge variant="outline" data-slot="match-status" data-status={snapshot.status}>
-            {matchStatusLabel(snapshot.status, t)}
+            {matchStatus}
           </Badge>
           <Badge variant="outline" className="hidden sm:inline-flex">
             {t("Dealer position {n}", { n: String(snapshot.dealerSeat + 1) })}
@@ -425,7 +427,6 @@ type GameTableOpponentsSectionProps = {
   opponents: MatchSnapshot["players"];
   opponentsGridClass: string;
   freezeLaneLayout: boolean;
-  t: ExtractedTranslator;
   snapshot: MatchSnapshot;
   viewerIsSource: boolean;
   viewerCanTargetSelf: boolean;
@@ -437,13 +438,14 @@ function GameTableOpponentsSection({
   opponents,
   opponentsGridClass,
   freezeLaneLayout,
-  t,
   snapshot,
   viewerIsSource,
   viewerCanTargetSelf,
   onResolveAction,
   disableCardFlip3d,
 }: GameTableOpponentsSectionProps) {
+  const t = useExtracted("GameTable");
+
   if (opponents.length === 0) {
     return null;
   }
@@ -545,10 +547,10 @@ function MatchPlayerLane({
 
 type RoundHistorySectionProps = {
   snapshot: MatchSnapshot;
-  tHistory: (message: string, values?: Record<string, string | number>) => string;
 };
 
-function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
+function RoundHistorySection({ snapshot }: RoundHistorySectionProps) {
+  const tHistory = useExtracted("RoundHistory");
   const [prevRoundStatus, setPrevRoundStatus] = useState(snapshot.roundStatus);
   const [expandedSections, setExpandedSections] = useState<string[]>(() =>
     snapshot.roundStatus === "completed" ? ["history", "breakdown"] : ["history"],
@@ -600,22 +602,6 @@ function incomingActionKindForPlayer(
     return null;
   }
   return pendingAction.eligibleTargetIds.includes(playerId) ? pendingAction.actionKind : null;
-}
-
-function callTextForSnapshot(
-  snapshot: MatchSnapshot,
-  activePlayer: MatchSnapshot["players"][number] | undefined,
-  t: ExtractedTranslator,
-) {
-  if (snapshot.roundStatus === "completed") {
-    return t("The round is scored and ready for the next deal.");
-  }
-  if (activePlayer) {
-    return t("{name} is deciding whether to push or bank points.", {
-      name: activePlayer.displayName,
-    });
-  }
-  return t("Waiting for the next resolution.");
 }
 
 /** Viewer first/pinned, opponents in seat order. */

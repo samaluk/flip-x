@@ -1,21 +1,37 @@
-import type { MatchSnapshot } from "@/game/logic/view-models";
+"use client";
+
+import { useExtracted } from "next-intl";
+
+import type { ActionKind } from "@/game/logic/card-types";
 import type { ModifierCard } from "@/game/logic/card-types";
 import type { CardEventPayload } from "@/game/logic/events";
-import { actionKindLabel } from "@/game/cards/action-kind-label";
-import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
+import type { MatchSnapshot } from "@/game/logic/view-models";
 
-function modifierLabel(
-  modifierValue: ModifierCard["modifierValue"],
-  tCards: ExtractedTranslator,
-): string {
+type CardTranslator = ReturnType<typeof useExtracted>;
+
+function actionKindLabel(actionKind: ActionKind, tCards: CardTranslator) {
+  switch (actionKind) {
+    case "flip_three":
+      return tCards("Flip Three");
+    case "freeze":
+      return tCards("Freeze");
+    case "second_chance":
+      return tCards("Second Chance");
+    default: {
+      const exhaustiveCheck: never = actionKind;
+      return exhaustiveCheck;
+    }
+  }
+}
+
+function modifierLabel(modifierValue: ModifierCard["modifierValue"], tCards: CardTranslator) {
   if (modifierValue === "x2") {
     return tCards("×2");
   }
   return tCards("+{value}", { value: String(modifierValue) });
 }
 
-/** Card face label for event copy (number value, modifier, or action name). */
-function cardPayloadLabel(payload: CardEventPayload, tCards: ExtractedTranslator): string {
+function cardPayloadLabel(payload: CardEventPayload, tCards: CardTranslator) {
   if (payload.cardKind === "number") {
     return String(payload.numberValue);
   }
@@ -25,11 +41,14 @@ function cardPayloadLabel(payload: CardEventPayload, tCards: ExtractedTranslator
   return actionKindLabel(payload.actionKind, tCards);
 }
 
-export function formatLatestRoundEventBody(
-  latest: NonNullable<MatchSnapshot["latestEvent"]>,
-  tEvents: ExtractedTranslator,
-  tCards: ExtractedTranslator,
-): string {
+export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): string {
+  const tEvents = useExtracted("Events");
+  const tCards = useExtracted("Cards");
+
+  if (!latest) {
+    return tEvents("No table event has been logged yet.");
+  }
+
   switch (latest.type) {
     case "pending_action":
       return tEvents("{action} is waiting for a target.", {
@@ -39,14 +58,14 @@ export function formatLatestRoundEventBody(
       return tEvents(
         "Second Chance discarded duplicate {duplicate} instead of busting the player.",
         {
-          duplicate: latest.payload.duplicate,
+          duplicate: String(latest.payload.duplicate),
         },
       );
     case "freeze_applied":
       return tEvents("Frozen! Points banked and out of round.");
     case "flip_three_targeted":
       return tEvents("Flip Three targeted! {cardsRemaining} cards to draw.", {
-        cardsRemaining: latest.payload.cardsRemaining,
+        cardsRemaining: String(latest.payload.cardsRemaining),
       });
     case "flip3_hit":
       return tEvents("Card drawn.");
@@ -58,11 +77,11 @@ export function formatLatestRoundEventBody(
       });
     case "duplicate_bust":
       return tEvents("Drew duplicate {duplicate} — bust!", {
-        duplicate: latest.payload.duplicate,
+        duplicate: String(latest.payload.duplicate),
       });
     case "number_drawn":
       return tEvents("Revealed number {numberValue}.", {
-        numberValue: latest.payload.numberValue,
+        numberValue: String(latest.payload.numberValue),
       });
     case "flip7":
       return tEvents("Triggered flip-x!");
@@ -88,7 +107,7 @@ export function formatLatestRoundEventBody(
       });
     case "round_scored":
       return tEvents("Round scored at {score} points.", {
-        score: latest.payload.finalRoundScore,
+        score: String(latest.payload.finalRoundScore),
       });
     default:
       return tEvents("Table event recorded.");

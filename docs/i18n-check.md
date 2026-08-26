@@ -6,7 +6,6 @@ flip-x uses [next-intl message extraction](https://next-intl.dev/docs/usage/extr
 
 - `messages/en.po` — extracted English catalog from `useExtracted` / `t()` call sites
 - `messages/es.po` — Spanish translations
-- `messages/legacy/*.po` — pre-extraction game copy merged at runtime
 - `messages/catalogs.ts` — generated snapshot for typing and tests (`pnpm i18n:catalog`)
 - `.eloqnt/config.ts` — eloqnt project config (source paths, locales, lint rules)
 - `.eloqnt/styleguides/en.md` — tone and terminology for `eloqnt translate`
@@ -22,7 +21,7 @@ After adding or changing extracted strings in `app/`, `shared/`, or `game/`:
 
 1. Run the app or `pnpm build` so next-intl writes updated `messages/en.po`.
 2. Update `messages/es.po` for new keys (manually or with `eloqnt translate` when configured).
-3. Run `pnpm i18n:catalog` when tests or types need the merged snapshot.
+3. Run `pnpm i18n:catalog` when tests or types need the snapshot.
 4. Run `pnpm i18n:check` to confirm catalogs and call sites stay in sync.
 
 ## Authoring rules

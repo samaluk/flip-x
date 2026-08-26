@@ -6,44 +6,11 @@ import { useId } from "react";
 import { CardFrame } from "@/game/cards/card-frame";
 import { cardTw } from "@/game/cards/card-responsive";
 import { CARD_NAVY, NUMBER_CARD_PALETTES } from "@/game/cards/card-palettes";
-import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
+
 const NUMBER_FRAME: Readonly<{ border: string; background: string }> = {
   border: CARD_NAVY,
   background: "#f5eedc",
 };
-
-function numberNameLabel(value: number, t: ExtractedTranslator): string {
-  switch (value) {
-    case 0:
-      return t("ZERO");
-    case 1:
-      return t("ONE");
-    case 2:
-      return t("TWO");
-    case 3:
-      return t("THREE");
-    case 4:
-      return t("FOUR");
-    case 5:
-      return t("FIVE");
-    case 6:
-      return t("SIX");
-    case 7:
-      return t("SEVEN");
-    case 8:
-      return t("EIGHT");
-    case 9:
-      return t("NINE");
-    case 10:
-      return t("TEN");
-    case 11:
-      return t("ELEVEN");
-    case 12:
-      return t("TWELVE");
-    default:
-      return t("ZERO");
-  }
-}
 
 function OutlinedDigit({
   value,
@@ -130,6 +97,52 @@ export function NumberCardContent({
   const uid = useId().replace(/:/g, "");
   const gradSuffix = uid;
   const palette = NUMBER_CARD_PALETTES[numberValue];
+
+  let numberName: string;
+  switch (numberValue) {
+    case 0:
+      numberName = t("ZERO");
+      break;
+    case 1:
+      numberName = t("ONE");
+      break;
+    case 2:
+      numberName = t("TWO");
+      break;
+    case 3:
+      numberName = t("THREE");
+      break;
+    case 4:
+      numberName = t("FOUR");
+      break;
+    case 5:
+      numberName = t("FIVE");
+      break;
+    case 6:
+      numberName = t("SIX");
+      break;
+    case 7:
+      numberName = t("SEVEN");
+      break;
+    case 8:
+      numberName = t("EIGHT");
+      break;
+    case 9:
+      numberName = t("NINE");
+      break;
+    case 10:
+      numberName = t("TEN");
+      break;
+    case 11:
+      numberName = t("ELEVEN");
+      break;
+    case 12:
+      numberName = t("TWELVE");
+      break;
+    default:
+      numberName = t("ZERO");
+  }
+
   return (
     <CardFrame
       borderColor={NUMBER_FRAME.border}
@@ -167,7 +180,7 @@ export function NumberCardContent({
                   "sm:text-[0.65rem]",
                 )}
               >
-                {numberNameLabel(numberValue, t)}
+                {numberName}
               </span>
             </div>
           </div>
