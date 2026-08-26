@@ -34,6 +34,14 @@ const withNextIntl = createNextIntlPlugin({
   requestConfig: "./shared/i18n/request.ts",
   experimental: {
     createMessagesDeclaration: "./messages/en.json",
+    extract: true,
+    messages: {
+      path: "./messages",
+      format: "po",
+      locales: "infer",
+      sourceLocale: "en",
+    },
+    srcPath: ["./app", "./shared", "./game"],
   },
 });
 
