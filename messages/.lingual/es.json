@@ -1,20 +1,7 @@
 {
-  "Metadata": {
-    "title": "flip-x",
-    "description": "Aplicación web de mesa compartida para jugar flip-x con puntuación en vivo."
-  },
-  "LanguageSwitcher": {
-    "english": "English",
-    "spanish": "Español",
-    "aria": "Idioma"
-  },
   "Common": {
     "waiting": "Esperando",
     "playerArrow": "{from} → {to}"
-  },
-  "Connectivity": {
-    "waitingForConnection": "Esperando conexión…",
-    "offlineBanner": "Estás sin conexión. Las solicitudes pendientes se reintentarán cuando vuelvas a estar en línea."
   },
   "Home": {
     "heroLine1": "flip-x, puntuación",
@@ -34,38 +21,6 @@
     "backHome": "Volver al inicio",
     "joinTableTitle": "Únete a la mesa",
     "joinTableBody": "El código {code} está listo. Escribe tu nombre para ocupar un sitio."
-  },
-  "Lobby": {
-    "codePlaceholder": "ABCD",
-    "lobbyCode": "Código del lobby"
-  },
-  "MatchSetup": {
-    "title": "flip-x",
-    "subtitleJoin": "Escribe tu nombre y únete a la partida",
-    "subtitleCreate": "Crea una partida o únete a una existente",
-    "yourName": "Tu nombre",
-    "playerColor": "Color del jugador",
-    "namePlaceholder": "Escribe tu nombre",
-    "createNewGame": "Crear nueva partida",
-    "or": "o",
-    "joinExistingGame": "Unirse a una partida existente",
-    "cancel": "Cancelar",
-    "joinGame": "Unirse a la partida",
-    "rulesHelp": "Ayuda de reglas",
-    "rulesTitle": "Cómo juega esta mesa a flip-x",
-    "rulesIntro": "Pide carta para revelar otra, planta para asegurar lo que llevas y evita números duplicados salvo que una Segunda oportunidad te salve.",
-    "rulesStep1": "Siete cartas numéricas distintas terminan la ronda al instante con bonus flip-x.",
-    "rulesStep2": "Congelar guarda el total actual del jugador. Tres más obliga a robar tres cartas más.",
-    "rulesStep3": "Segunda oportunidad descarta un duplicado futuro en lugar de eliminar al jugador.",
-    "footnote": "Comparte la URL de la partida al terminar la configuración. Cada jugador pone su nombre al unirse; al recargar se reconecta al último turno confirmado.",
-    "joinLobby": "Entrar al lobby",
-    "createLobby": "Crear lobby",
-    "toastNameRequired": "Escribe tu nombre.",
-    "toastNameLength": "El nombre debe tener 20 caracteres o menos.",
-    "toastSession": "Sesión no disponible.",
-    "toastCreateFailed": "No se pudo crear la partida.",
-    "toastJoinFailed": "No se pudo unir a la partida.",
-    "toastCodeLength": "Introduce un código de 4 caracteres."
   },
   "JoinLobby": {
     "title": "Unirse a una partida",
@@ -329,9 +284,45 @@
     "starting": "Iniciando...",
     "toastFailed": "No se pudo empezar la partida."
   },
+  "Metadata": {
+    "a05Y4b": "flip-x",
+    "UynQpB": "Aplicación web de mesa compartida para jugar flip-x con puntuación en vivo."
+  },
+  "MatchSetup": {
+    "e_6mlg": "Escribe tu nombre.",
+    "aURH8N": "El nombre debe tener 20 caracteres o menos.",
+    "AbM0BV": "Sesión no disponible.",
+    "a05Y4b": "flip-x",
+    "DslkPE": "Escribe tu nombre y únete a la partida",
+    "XzIePt": "Crea una partida o únete a una existente",
+    "vlKhIl": "Tu nombre",
+    "DX9QSt": "Escribe tu nombre",
+    "7rG3A8": "Color del jugador",
+    "oeFpdf": "Crear nueva partida",
+    "Ntjkqd": "o",
+    "ANvEa8": "Unirse a una partida existente",
+    "47FYwb": "Cancelar",
+    "7ERAwR": "Entrar",
+    "c1GqDU": "No se pudo crear la partida.",
+    "QFyPhb": "Introduce un código de 4 caracteres.",
+    "pQvtX8": "No se pudo unir a la partida."
+  },
+  "Lobby": {
+    "vaiSyy": "Codigo de la sala",
+    "SexVvY": "ABCD"
+  },
   "NotFoundPage": {
-    "title": "404 – Página no encontrada",
-    "description": "La página que buscas no existe.",
-    "home": "Ir al inicio"
+    "ggGfHP": "404 – Página no encontrada",
+    "rUBRAG": "La página que buscas no existe.",
+    "SWMHO-": "Ir al inicio"
+  },
+  "Connectivity": {
+    "xEhFzj": "Estás sin conexión. Las solicitudes pendientes se reintentarán cuando vuelvas a estar en línea.",
+    "P-JCzG": "Esperando conexión…"
+  },
+  "LanguageSwitcher": {
+    "y1Z3or": "Idioma",
+    "WkrNSk": "English",
+    "dX8jTq": "Español"
   }
 }

@@ -185,7 +185,14 @@
     ],
     "coverage": {
       "requireAllFiles": true,
-      "allowUnmatched": ["*.config.ts", "*.config.mjs", "global.d.ts", "scripts/**", "e2e/**"]
+      "allowUnmatched": [
+        "*.config.ts",
+        "*.config.mjs",
+        "global.d.ts",
+        "messages/**",
+        "scripts/**",
+        "e2e/**"
+      ]
     }
   },
   "audit": {
