@@ -105,6 +105,9 @@ importers:
       '@lingual/i18n-check':
         specifier: 0.9.5
         version: 0.9.5
+      '@next/playwright':
+        specifier: 16.3.3
+        version: 16.3.3(@playwright/test@1.62.1)
       '@playwright/test':
         specifier: 1.62.1
         version: 1.62.1
@@ -1413,6 +1416,14 @@ packages:
 
   '@next/env@16.3.2':
     resolution: {integrity: sha512-8k4YoG8cM7LWlkfzGNYCRBbFNlernLiMw4s0btVl+CmmWqn3VpYypA72/5Feb1UWdxe6tHqr5KHP4p4Y4m9luA==}
+
+  '@next/playwright@16.3.3':
+    resolution: {integrity: sha512-Uha5vKciXER99u9J9ePBW6FQJxMklZp9K2r+xzW/KBvaS2ITvOsP/6BMyQBv2FJbitW5TQv+KNv72aqtnsikuw==}
+    peerDependencies:
+      '@playwright/test': '>=1.0.0'
+    peerDependenciesMeta:
+      '@playwright/test':
+        optional: true
 
   '@next/swc-darwin-arm64@16.3.2':
     resolution: {integrity: sha512-ib5Llm93YCKoKWDh6ZaHq6QWTuOZ2bRkSnUwMmX8dsRIOkBNL1vVlSiUKSfixPL9SSh9pvukzqajk/klkn5vqg==}
@@ -6985,6 +6996,10 @@ snapshots:
     optional: true
 
   '@next/env@16.3.2': {}
+
+  '@next/playwright@16.3.3(@playwright/test@1.62.1)':
+    optionalDependencies:
+      '@playwright/test': 1.62.1
 
   '@next/swc-darwin-arm64@16.3.2':
     optional: true
