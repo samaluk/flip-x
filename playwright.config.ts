@@ -50,6 +50,8 @@ const webServerEnv = {
 
 export default defineConfig({
   testDir: "./e2e",
+  // E2E instant-navigation tests use the `instant` fixture in `e2e/fixtures.ts`, which
+  // passes this `use.baseURL` into `@next/playwright`'s `instant()` helper.
   // Helpers can legitimately spend close to 90s waiting for game state changes,
   // so the overall test budget needs to stay comfortably above that.
   timeout: 180_000,
