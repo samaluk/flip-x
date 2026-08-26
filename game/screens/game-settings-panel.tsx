@@ -2,9 +2,7 @@
 
 import { Settings2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import * as Either from "effect/Either";
 import { useActionState } from "react";
-import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
 import {
@@ -16,8 +14,9 @@ import {
 } from "@/game/logic/game-settings";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
+import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 import {
   Accordion,
   AccordionContent,
@@ -35,7 +34,7 @@ type SettingsPatch = {
   maxNumberCardValue?: number;
 };
 
-type GameSettingsTranslator = (message: string, values?: Record<string, string | number>) => string;
+type GameSettingsTranslator = ExtractedTranslator;
 
 function presetLabel(presetId: string, t: GameSettingsTranslator): string {
   switch (presetId) {
@@ -76,18 +75,17 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
 
   const [, updateSettings, isUpdating] = useActionState<null, SettingsPatch>(
     async (_previousState, patch) => {
-      const result = await updateMatchSettings({
-        matchId: snapshot.matchId,
-        expectedVersion: snapshot.version,
-        patch,
-      }).catch(() => null);
-      if (!result) {
-        toast.error(t("Could not update game settings."));
-        return null;
-      }
-      if (Either.isLeft(result)) {
-        toast.error(translateAppErrorToast(result.left, tErrors));
-      }
+      await toastEitherMutationFailure(
+        updateMatchSettings({
+          matchId: snapshot.matchId,
+          expectedVersion: snapshot.version,
+          patch,
+        }),
+        {
+          missingMessage: t("Could not update game settings."),
+          tErrors,
+        },
+      );
       return null;
     },
     null,

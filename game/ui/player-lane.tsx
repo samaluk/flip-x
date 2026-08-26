@@ -25,10 +25,9 @@ import {
   type PlayerLaneProps,
   type SnapshotPlayer,
 } from "@/game/ui/player-lane-compare";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
-type PlayerLaneTranslations = (message: string, values?: Record<string, string | number>) => string;
-
-function formatRoundStatusLabel(status: LaneRoundStatus, t: PlayerLaneTranslations): string | null {
+function formatRoundStatusLabel(status: LaneRoundStatus, t: ExtractedTranslator): string | null {
   switch (status) {
     case "active":
       return null;

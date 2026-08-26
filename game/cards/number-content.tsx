@@ -6,14 +6,13 @@ import { useId } from "react";
 import { CardFrame } from "@/game/cards/card-frame";
 import { cardTw } from "@/game/cards/card-responsive";
 import { CARD_NAVY, NUMBER_CARD_PALETTES } from "@/game/cards/card-palettes";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 const NUMBER_FRAME: Readonly<{ border: string; background: string }> = {
   border: CARD_NAVY,
   background: "#f5eedc",
 };
 
-type CardsTranslator = (message: string, values?: Record<string, string | number>) => string;
-
-function numberNameLabel(value: number, t: CardsTranslator): string {
+function numberNameLabel(value: number, t: ExtractedTranslator): string {
   switch (value) {
     case 0:
       return t("ZERO");

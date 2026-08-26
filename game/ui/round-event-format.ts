@@ -1,24 +1,12 @@
 import type { MatchSnapshot } from "@/game/logic/view-models";
-import type { ActionKind, ModifierCard } from "@/game/logic/card-types";
+import type { ModifierCard } from "@/game/logic/card-types";
 import type { CardEventPayload } from "@/game/logic/events";
-
-export type EventTranslator = (message: string, values?: Record<string, string | number>) => string;
-
-// fallow-ignore-next-line code-duplication -- same action-kind switch as flip-x-card; literals must stay at each callsite for extraction.
-function actionKindLabel(actionKind: ActionKind, tCards: EventTranslator): string {
-  switch (actionKind) {
-    case "flip_three":
-      return tCards("Flip Three");
-    case "freeze":
-      return tCards("Freeze");
-    case "second_chance":
-      return tCards("Second Chance");
-  }
-}
+import { actionKindLabel } from "@/game/cards/action-kind-label";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
 function modifierLabel(
   modifierValue: ModifierCard["modifierValue"],
-  tCards: EventTranslator,
+  tCards: ExtractedTranslator,
 ): string {
   if (modifierValue === "x2") {
     return tCards("×2");
@@ -27,7 +15,7 @@ function modifierLabel(
 }
 
 /** Card face label for event copy (number value, modifier, or action name). */
-function cardPayloadLabel(payload: CardEventPayload, tCards: EventTranslator): string {
+function cardPayloadLabel(payload: CardEventPayload, tCards: ExtractedTranslator): string {
   if (payload.cardKind === "number") {
     return String(payload.numberValue);
   }
@@ -39,8 +27,8 @@ function cardPayloadLabel(payload: CardEventPayload, tCards: EventTranslator): s
 
 export function formatLatestRoundEventBody(
   latest: NonNullable<MatchSnapshot["latestEvent"]>,
-  tEvents: EventTranslator,
-  tCards: EventTranslator,
+  tEvents: ExtractedTranslator,
+  tCards: ExtractedTranslator,
 ): string {
   switch (latest.type) {
     case "pending_action":

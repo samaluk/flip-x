@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { memo, type ReactNode } from "react";
 
 import { ActionCardContent } from "@/game/cards/action-content";
+import { actionKindLabel } from "@/game/cards/action-kind-label";
 import { ModifierCardContent } from "@/game/cards/modifier-content";
 import { NumberCardContent } from "@/game/cards/number-content";
 import type { ModifierCard } from "@/game/logic/card-types";
@@ -56,22 +57,6 @@ function FaceContent(props: FlipXCardProps) {
     return <ModifierCardContent modifierValue={props.modifierValue} compact={compact} />;
   }
   return <ActionCardContent actionKind={props.actionKind} compact={compact} />;
-}
-
-type CardsTranslator = (message: string, values?: Record<string, string | number>) => string;
-
-function actionKindLabel(
-  actionKind: "freeze" | "flip_three" | "second_chance",
-  t: CardsTranslator,
-): string {
-  switch (actionKind) {
-    case "flip_three":
-      return t("Flip Three");
-    case "freeze":
-      return t("Freeze");
-    case "second_chance":
-      return t("Second Chance");
-  }
 }
 
 function ScreenReaderSummary(props: FlipXCardProps) {

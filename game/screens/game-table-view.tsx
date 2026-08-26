@@ -30,6 +30,7 @@ import {
 } from "@/shared/ui/accordion";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
 const listStagger: Variants = {
   hidden: { opacity: 0 },
@@ -67,9 +68,7 @@ export type GameTableViewProps = {
   freezeLaneLayout?: boolean;
 };
 
-type GameTableTranslator = (message: string, values?: Record<string, string | number>) => string;
-
-function matchStatusLabel(status: MatchSnapshot["status"], t: GameTableTranslator): string {
+function matchStatusLabel(status: MatchSnapshot["status"], t: ExtractedTranslator): string {
   switch (status) {
     case "setup":
       return t("setup");
@@ -77,6 +76,10 @@ function matchStatusLabel(status: MatchSnapshot["status"], t: GameTableTranslato
       return t("in progress");
     case "completed":
       return t("completed");
+    default: {
+      const exhaustiveCheck: never = status;
+      return exhaustiveCheck;
+    }
   }
 }
 
@@ -160,7 +163,7 @@ export function GameTableView({
 
 type GameTableLayoutProps = {
   snapshot: MatchSnapshot;
-  t: GameTableTranslator;
+  t: ExtractedTranslator;
   tHistory: (message: string, values?: Record<string, string | number>) => string;
   isPending: boolean;
   callText: string;
@@ -236,7 +239,7 @@ function GameTableTurnControls({
   controls,
 }: {
   hasTurnControls: boolean;
-  t: GameTableTranslator;
+  t: ExtractedTranslator;
   controls: ReactNode;
 }) {
   if (!hasTurnControls) {
@@ -289,7 +292,7 @@ function GameTablePlayers({
 }
 
 type TurnControlsDockProps = {
-  t: GameTableTranslator;
+  t: ExtractedTranslator;
   controls: ReactNode;
 };
 
@@ -317,7 +320,7 @@ function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
 
 type GameTableHudProps = {
   snapshot: MatchSnapshot;
-  t: GameTableTranslator;
+  t: ExtractedTranslator;
   isPending: boolean;
   callText: string;
   latestBody: string;
@@ -422,7 +425,7 @@ type GameTableOpponentsSectionProps = {
   opponents: MatchSnapshot["players"];
   opponentsGridClass: string;
   freezeLaneLayout: boolean;
-  t: GameTableTranslator;
+  t: ExtractedTranslator;
   snapshot: MatchSnapshot;
   viewerIsSource: boolean;
   viewerCanTargetSelf: boolean;
@@ -602,7 +605,7 @@ function incomingActionKindForPlayer(
 function callTextForSnapshot(
   snapshot: MatchSnapshot,
   activePlayer: MatchSnapshot["players"][number] | undefined,
-  t: GameTableTranslator,
+  t: ExtractedTranslator,
 ) {
   if (snapshot.roundStatus === "completed") {
     return t("The round is scored and ready for the next deal.");

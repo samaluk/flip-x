@@ -3,14 +3,12 @@
 import { LazyMotion, domAnimation, m } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import * as Either from "effect/Either";
 import { useActionState } from "react";
-import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
 import { Button } from "@/shared/ui/button";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
+import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
 
 export interface StartGameButtonProps {
   matchId: string;
@@ -24,18 +22,17 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
   const t = useExtracted("StartGameButton");
   const tErrors = useExtracted("Errors");
   const [, startGame, isSubmitting] = useActionState(async () => {
-    const result = await startMatch({
-      matchId,
-      expectedVersion: version,
-      idempotencyKey: crypto.randomUUID(),
-    }).catch(() => null);
-    if (!result) {
-      toast.error(t("Could not start the game."));
-      return null;
-    }
-    if (Either.isLeft(result)) {
-      toast.error(translateAppErrorToast(result.left, tErrors));
-    }
+    await toastEitherMutationFailure(
+      startMatch({
+        matchId,
+        expectedVersion: version,
+        idempotencyKey: crypto.randomUUID(),
+      }),
+      {
+        missingMessage: t("Could not start the game."),
+        tErrors,
+      },
+    );
     return null;
   }, null);
 

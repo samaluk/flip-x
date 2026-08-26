@@ -29,7 +29,9 @@ import {
   UnsupportedTable,
 } from "./errors/domain";
 
-export type ErrorTranslator = (message: string, values?: Record<string, string | number>) => string;
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
+
+export type ErrorTranslator = ExtractedTranslator;
 
 // fallow-ignore-next-line complexity -- exhaustive AppError wire-code switch; each case calls t() with a distinct literal for extraction.
 function translateWireCode(code: AppErrorWireCode, t: ErrorTranslator): string {

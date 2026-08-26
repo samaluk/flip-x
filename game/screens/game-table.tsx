@@ -3,7 +3,6 @@
 import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
 import { useActionState } from "react";
-import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
@@ -13,7 +12,7 @@ import {
   useSessionConfectMutation,
 } from "@/shared/lib/confect-hooks";
 import type { AppError } from "@/shared/lib/errors/domain";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
+import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type TakeTurnArgs = {
@@ -78,14 +77,10 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
     null,
     () => Promise<Either.Either<unknown, AppError>>
   >(async (_previousState: null, action) => {
-    const result = await action().catch(() => null);
-    if (!result) {
-      toast.error(tErrors("Game action failed."));
-      return null;
-    }
-    if (Either.isLeft(result)) {
-      toast.error(translateAppErrorToast(result.left, tErrors));
-    }
+    await toastEitherMutationFailure(action(), {
+      missingMessage: tErrors("Game action failed."),
+      tErrors,
+    });
     return null;
   }, null);
 

@@ -11,6 +11,7 @@ import {
   resolveTurnControlsPhase,
   type TurnControlsPhase,
 } from "@/game/ui/turn-controls-phase";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
 export function TurnControls({
   snapshot,
@@ -43,11 +44,6 @@ export function TurnControls({
   }
 }
 
-type TurnControlsTranslations = (
-  message: string,
-  values?: Record<string, string | number>,
-) => string;
-
 function CompletedRoundControls({
   phase,
   onStartNextRound,
@@ -55,7 +51,7 @@ function CompletedRoundControls({
 }: {
   phase: Extract<TurnControlsPhase, { kind: "completed_round" }>;
   onStartNextRound: () => void;
-  t: TurnControlsTranslations;
+  t: ExtractedTranslator;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -77,7 +73,7 @@ function PendingResolveControls({
   t,
 }: {
   phase: Extract<TurnControlsPhase, { kind: "pending_resolve" }>;
-  t: TurnControlsTranslations;
+  t: ExtractedTranslator;
 }) {
   return (
     <PendingActionControls
@@ -92,7 +88,7 @@ function PendingWaitControls({
   t,
 }: {
   phase: Extract<TurnControlsPhase, { kind: "pending_wait" }>;
-  t: TurnControlsTranslations;
+  t: ExtractedTranslator;
 }) {
   return <PendingActionControls message={pendingWaitMessage(phase.actionKind, t)} />;
 }
@@ -106,16 +102,13 @@ function PendingActionControls({ message, targetHint }: { message: string; targe
   );
 }
 
-function pendingResolveMessage(
-  actionKind: PendingAction["actionKind"],
-  t: TurnControlsTranslations,
-) {
+function pendingResolveMessage(actionKind: PendingAction["actionKind"], t: ExtractedTranslator) {
   return actionKind === "freeze"
     ? t("Choose who banks their points and freezes out of the round.")
     : t("Choose who must keep drawing until three cards resolve.");
 }
 
-function pendingWaitMessage(actionKind: PendingAction["actionKind"], t: TurnControlsTranslations) {
+function pendingWaitMessage(actionKind: PendingAction["actionKind"], t: ExtractedTranslator) {
   return actionKind === "freeze" ? t("Freeze being resolved...") : t("Flip 3 being resolved...");
 }
 
@@ -128,7 +121,7 @@ function ActiveTurnControls({
   phase: Extract<TurnControlsPhase, { kind: "active_turn" }>;
   onHit: () => void;
   onStay: () => void;
-  t: TurnControlsTranslations;
+  t: ExtractedTranslator;
 }) {
   const statusHint = activeTurnStatusHint(phase, t);
   const turnPending = phase.optimisticAction !== null;
@@ -167,7 +160,7 @@ function ActiveTurnControls({
 
 function activeTurnStatusHint(
   phase: Extract<TurnControlsPhase, { kind: "active_turn" }>,
-  t: TurnControlsTranslations,
+  t: ExtractedTranslator,
 ) {
   if (!phase.hasViewer) {
     return (
