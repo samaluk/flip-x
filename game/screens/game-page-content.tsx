@@ -22,7 +22,7 @@ export type GamePageContentProps = {
   selectedColorId: PlayerColorId;
   usedColorIds: string[];
   isJoining: boolean;
-  onJoin: (event: SubmitEvent<HTMLFormElement>) => Promise<void>;
+  onJoin: (event: SubmitEvent<HTMLFormElement>) => void;
   onPlayerNameChange: (value: string) => void;
   onColorChange: (colorId: PlayerColorId) => void;
   onCopyInvite: () => void;
@@ -140,7 +140,7 @@ function GameJoinForm({
       <p className="mt-1 mb-4 text-sm text-muted-foreground">
         {t("Enter your name to claim a seat at the table.")}
       </p>
-      <form onSubmit={(event) => void onJoin(event)} className="flex flex-col gap-4 sm:max-w-md">
+      <form onSubmit={onJoin} className="flex flex-col gap-4 sm:max-w-md">
         <div className="flex gap-3">
           <Input
             value={playerName}

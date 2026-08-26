@@ -3,7 +3,7 @@
 import { useSessionId } from "convex-helpers/react/sessions";
 import * as Either from "effect/Either";
 import { useExtracted } from "next-intl";
-import { type SubmitEvent, useCallback, useMemo, useState } from "react";
+import { type SubmitEvent, useActionState, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -44,7 +44,6 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
   const joinMatch = useSessionConfectMutation(refs.public.matches.joinMatch);
   const [playerName, setPlayerName] = useState("");
   const { colorId, setColorId } = usePlayerLocalPrefs();
-  const [isJoining, setIsJoining] = useState(false);
   const t = useExtracted("Game");
   const tErrors = useExtracted("Errors");
   const getPlayerNameIssueToast = useGamePlayerNameIssueToast();
@@ -58,48 +57,37 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
   );
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
 
-  const handleJoin = useCallback(
-    async (event: SubmitEvent<HTMLFormElement>) => {
-      event.preventDefault();
+  const [, submitJoin, isJoining] = useActionState(async () => {
+    const trimmedName = playerName.trim();
+    const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
+    if (nameIssue) {
+      toast.error(getPlayerNameIssueToast(nameIssue));
+      return null;
+    }
 
-      const trimmedName = playerName.trim();
-      const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
-      if (nameIssue) {
-        toast.error(getPlayerNameIssueToast(nameIssue));
-        return;
-      }
+    const result = await joinMatch({
+      matchId: matchIdConvex,
+      playerName: trimmedName,
+      playerColorId: selectedColorId,
+    }).catch(() => null);
+    if (!result) {
+      toast.error(t("Could not join the game."));
+      return null;
+    }
+    if (Either.isLeft(result)) {
+      toast.error(translateAppErrorToast(result.left, tErrors));
+      return null;
+    }
 
-      setIsJoining(true);
-      try {
-        const result = await joinMatch({
-          matchId: matchIdConvex,
-          playerName: trimmedName,
-          playerColorId: selectedColorId,
-        });
-        if (Either.isLeft(result)) {
-          toast.error(translateAppErrorToast(result.left, tErrors));
-        } else {
-          setColorId(selectedColorId);
-          setPlayerName("");
-        }
-      } catch {
-        toast.error(t("Could not join the game."));
-      } finally {
-        setIsJoining(false);
-      }
-    },
-    [
-      joinMatch,
-      matchIdConvex,
-      playerName,
-      selectedColorId,
-      sessionId,
-      setColorId,
-      t,
-      tErrors,
-      getPlayerNameIssueToast,
-    ],
-  );
+    setColorId(selectedColorId);
+    setPlayerName("");
+    return null;
+  }, null);
+
+  function handleJoin(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    submitJoin();
+  }
 
   return {
     handleJoin,
@@ -110,7 +98,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
     setPlayerName,
     usedColorIds,
   } satisfies {
-    handleJoin: (event: SubmitEvent<HTMLFormElement>) => Promise<void>;
+    handleJoin: (event: SubmitEvent<HTMLFormElement>) => void;
     isJoining: boolean;
     playerName: string;
     selectedColorId: PlayerColorId;

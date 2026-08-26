@@ -22,7 +22,7 @@ export type GamePageState = {
   selectedColorId: PlayerColorId;
   usedColorIds: string[];
   isJoining: boolean;
-  onJoin: (event: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
+  onJoin: (event: React.SubmitEvent<HTMLFormElement>) => void;
   onPlayerNameChange: (value: string) => void;
   onColorChange: (colorId: PlayerColorId) => void;
   onCopyInvite: () => void;

@@ -3,7 +3,7 @@
 import { Settings2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
-import { useState } from "react";
+import { useActionState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -28,6 +28,11 @@ import { Button } from "@/shared/ui/button";
 
 export type GameSettingsPanelProps = {
   snapshot: MatchSnapshot;
+};
+
+type SettingsPatch = {
+  targetScore?: number;
+  maxNumberCardValue?: number;
 };
 
 type GameSettingsTranslator = (message: string, values?: Record<string, string | number>) => string;
@@ -62,7 +67,6 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const t = useExtracted("GameSettings");
   const tErrors = useExtracted("Errors");
   const updateMatchSettings = useSessionConfectMutation(refs.public.matches.updateMatchSettings);
-  const [isUpdating, setIsUpdating] = useState(false);
   const settings = snapshot.settings;
   const hostCanEdit = snapshot.status === "setup" && (snapshot.isHost ?? false);
   const recommendedPresetId = recommendedPresetForPlayerCount(snapshot.players.length);
@@ -70,24 +74,24 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
     (preset) => preset.id === recommendedPresetId,
   );
 
-  async function updateSettings(patch: { targetScore?: number; maxNumberCardValue?: number }) {
-    setIsUpdating(true);
-    try {
+  const [, updateSettings, isUpdating] = useActionState<null, SettingsPatch>(
+    async (_previousState, patch) => {
       const result = await updateMatchSettings({
         matchId: snapshot.matchId,
         expectedVersion: snapshot.version,
         patch,
-      });
+      }).catch(() => null);
+      if (!result) {
+        toast.error(t("Could not update game settings."));
+        return null;
+      }
       if (Either.isLeft(result)) {
         toast.error(translateAppErrorToast(result.left, tErrors));
-        return;
       }
-    } catch {
-      toast.error(t("Could not update game settings."));
-    } finally {
-      setIsUpdating(false);
-    }
-  }
+      return null;
+    },
+    null,
+  );
 
   return (
     <section className="surface-elevated rounded-2xl p-4 text-foreground sm:p-5">
@@ -140,7 +144,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     type="button"
                     variant={isActive ? "default" : "outline"}
                     disabled={isUpdating}
-                    onClick={() => void updateSettings(preset.settings)}
+                    onClick={() => updateSettings(preset.settings)}
                     className={cn(
                       "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-start whitespace-normal",
                       isRecommended && !isActive ? "border-primary/70" : "",
@@ -172,14 +176,14 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                       value={settings.targetScore}
                       values={TARGET_SCORE_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(targetScore) => void updateSettings({ targetScore })}
+                      onChange={(targetScore) => updateSettings({ targetScore })}
                     />
                     <SettingsSelect
                       label={t("Max number card")}
                       value={settings.maxNumberCardValue}
                       values={MAX_NUMBER_CARD_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(maxNumberCardValue) => void updateSettings({ maxNumberCardValue })}
+                      onChange={(maxNumberCardValue) => updateSettings({ maxNumberCardValue })}
                     />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">

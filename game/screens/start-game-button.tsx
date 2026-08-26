@@ -4,7 +4,7 @@ import { LazyMotion, domAnimation, m } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
-import { useState } from "react";
+import { useActionState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -21,27 +21,23 @@ export interface StartGameButtonProps {
 
 export function StartGameButton({ matchId, version, isHost, playerCount }: StartGameButtonProps) {
   const startMatch = useSessionConfectMutation(refs.public.matches.startMatch);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const t = useExtracted("StartGameButton");
   const tErrors = useExtracted("Errors");
-
-  async function handleStart() {
-    setIsSubmitting(true);
-    try {
-      const result = await startMatch({
-        matchId,
-        expectedVersion: version,
-        idempotencyKey: crypto.randomUUID(),
-      });
-      if (Either.isLeft(result)) {
-        toast.error(translateAppErrorToast(result.left, tErrors));
-      }
-    } catch {
+  const [, startGame, isSubmitting] = useActionState(async () => {
+    const result = await startMatch({
+      matchId,
+      expectedVersion: version,
+      idempotencyKey: crypto.randomUUID(),
+    }).catch(() => null);
+    if (!result) {
       toast.error(t("Could not start the game."));
-    } finally {
-      setIsSubmitting(false);
+      return null;
     }
-  }
+    if (Either.isLeft(result)) {
+      toast.error(translateAppErrorToast(result.left, tErrors));
+    }
+    return null;
+  }, null);
 
   if (!isHost) {
     return null;
@@ -54,7 +50,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Button
-          onClick={() => void handleStart()}
+          onClick={() => startGame()}
           disabled={isSubmitting || playerCount < 2}
           size="lg"
           className="gap-2 rounded-full px-6"
