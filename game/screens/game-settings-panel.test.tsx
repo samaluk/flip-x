@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
@@ -54,5 +54,27 @@ describe("GameSettingsPanel", () => {
       },
     });
     expect(screen.queryByText(/save settings/i)).not.toBeInTheDocument();
+  });
+
+  it("disables preset controls while a settings update is pending", async () => {
+    let resolveUpdate: (value: unknown) => void = () => {};
+    const pendingUpdate = new Promise((resolve) => {
+      resolveUpdate = resolve;
+    });
+    updateMatchSettings.mockReturnValue(pendingUpdate);
+
+    render(withIntlEn(<GameSettingsPanel snapshot={setupSnapshot(true)} />));
+
+    const extendedButton = screen.getByRole("button", { name: /extended/i });
+    fireEvent.click(extendedButton);
+
+    await waitFor(() => {
+      expect(extendedButton).toBeDisabled();
+    });
+
+    resolveUpdate(null);
+    await waitFor(() => {
+      expect(extendedButton).not.toBeDisabled();
+    });
   });
 });

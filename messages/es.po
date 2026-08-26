@@ -174,12 +174,14 @@ msgstr "CONGELAR"
 
 #: game/cards/modifier-content.tsx
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "ZHccEc"
 msgstr "×2"
 
 #: game/cards/modifier-content.tsx
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "G5qKtr"
 msgstr "+{value}"
@@ -581,16 +583,19 @@ msgid "QlsDcr"
 msgstr "Acción"
 
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "85hyTu"
 msgstr "Tres más"
 
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "EgadwQ"
 msgstr "Congelar"
 
 #: game/ui/flip-x-card.tsx
+#: game/ui/use-round-event-format.ts
 msgctxt "Cards"
 msgid "NY9djt"
 msgstr "Segunda oportunidad"

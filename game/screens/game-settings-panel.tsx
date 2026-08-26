@@ -2,7 +2,7 @@
 
 import { Settings2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useActionState } from "react";
+import { useTransition } from "react";
 
 import refs from "@/confect/_generated/refs";
 import {
@@ -71,8 +71,10 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
     }
   }
 
-  const [, updateSettings, isUpdating] = useActionState<null, SettingsPatch>(
-    async (_previousState, patch) => {
+  const [isUpdating, startTransition] = useTransition();
+
+  function updateSettings(patch: SettingsPatch) {
+    startTransition(async () => {
       await toastEitherMutationFailure(
         updateMatchSettings({
           matchId: snapshot.matchId,
@@ -84,10 +86,8 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
           translateError,
         },
       );
-      return null;
-    },
-    null,
-  );
+    });
+  }
 
   return (
     <section className="surface-elevated rounded-2xl p-4 text-foreground sm:p-5">

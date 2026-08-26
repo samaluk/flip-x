@@ -2,7 +2,6 @@
 
 import { LinkIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import type { SubmitEvent } from "react";
 
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
 import { GameTable } from "@/game/screens/game-table";
@@ -22,7 +21,7 @@ export type GamePageContentProps = {
   selectedColorId: PlayerColorId;
   usedColorIds: string[];
   isJoining: boolean;
-  onJoin: (event: SubmitEvent<HTMLFormElement>) => void;
+  joinFormAction: () => void;
   onPlayerNameChange: (value: string) => void;
   onColorChange: (colorId: PlayerColorId) => void;
   onCopyInvite: () => void;
@@ -46,7 +45,7 @@ export function GamePageContent({
   selectedColorId,
   usedColorIds,
   isJoining,
-  onJoin,
+  joinFormAction,
   onPlayerNameChange,
   onColorChange,
   onCopyInvite,
@@ -62,7 +61,7 @@ export function GamePageContent({
           selectedColorId={selectedColorId}
           usedColorIds={usedColorIds}
           isJoining={isJoining}
-          onJoin={onJoin}
+          joinFormAction={joinFormAction}
           onPlayerNameChange={onPlayerNameChange}
           onColorChange={onColorChange}
         />
@@ -126,7 +125,7 @@ function GameJoinForm({
   selectedColorId,
   usedColorIds,
   isJoining,
-  onJoin,
+  joinFormAction,
   onPlayerNameChange,
   onColorChange,
 }: Omit<GamePageContentProps, "matchId" | "snapshot" | "onCopyInvite">) {
@@ -140,7 +139,7 @@ function GameJoinForm({
       <p className="mt-1 mb-4 text-sm text-muted-foreground">
         {t("Enter your name to claim a seat at the table.")}
       </p>
-      <form onSubmit={onJoin} className="flex flex-col gap-4 sm:max-w-md">
+      <form action={joinFormAction} className="flex flex-col gap-4 sm:max-w-md">
         <div className="flex gap-3">
           <Input
             value={playerName}

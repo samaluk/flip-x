@@ -1,7 +1,7 @@
 "use client";
 
 import * as Either from "effect/Either";
-import { useActionState } from "react";
+import { useTransition } from "react";
 
 import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
@@ -72,20 +72,21 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
   const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
   const { gameActionFailed, translateToast: translateError } = useAppErrors();
+  const [isPending, startTransition] = useTransition();
 
-  const [, runAction, isPending] = useActionState<
-    null,
-    () => Promise<Either.Either<unknown, AppError>>
-  >(async (_previousState: null, action) => {
-    await toastEitherMutationFailure(action(), {
-      missingMessage: gameActionFailed,
-      translateError,
+  function runMutation(action: () => Promise<Either.Either<unknown, AppError>>) {
+    const result = action();
+
+    startTransition(async () => {
+      await toastEitherMutationFailure(result, {
+        missingMessage: gameActionFailed,
+        translateError,
+      });
     });
-    return null;
-  }, null);
+  }
 
   function handleHit() {
-    runAction(() =>
+    runMutation(() =>
       takeTurn({
         matchId,
         expectedVersion: snapshot.version,
@@ -96,7 +97,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   }
 
   function handleStay() {
-    runAction(() =>
+    runMutation(() =>
       takeTurn({
         matchId,
         expectedVersion: snapshot.version,
@@ -107,7 +108,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   }
 
   function handleResolveAction(targetPlayerId: Id<"players">) {
-    runAction(() =>
+    runMutation(() =>
       resolveAction({
         matchId,
         expectedVersion: snapshot.version,
@@ -118,7 +119,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   }
 
   function handleStartNextRound() {
-    runAction(() =>
+    runMutation(() =>
       startNextRound({
         matchId,
         expectedVersion: snapshot.version,

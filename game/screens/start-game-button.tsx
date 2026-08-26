@@ -43,12 +43,13 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
 
   return (
     <LazyMotion features={domAnimation}>
-      <m.div
+      <m.form
+        action={startGame}
         whileTap={{ scale: 0.97 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Button
-          onClick={() => startGame()}
+          type="submit"
           disabled={isSubmitting || playerCount < 2}
           size="lg"
           className="gap-2 rounded-full px-6"
@@ -56,7 +57,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
           <PlayIcon className="size-4" />
           {isSubmitting ? t("Starting...") : t("Start Game")}
         </Button>
-      </m.div>
+      </m.form>
     </LazyMotion>
   );
 }
