@@ -1,7 +1,7 @@
 "use client";
 
 import { Settings2Icon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,7 +16,6 @@ import {
 } from "@/game/logic/game-settings";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
-import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import {
@@ -31,10 +30,37 @@ export type GameSettingsPanelProps = {
   snapshot: MatchSnapshot;
 };
 
+type GameSettingsTranslator = (message: string, values?: Record<string, string | number>) => string;
+
+function presetLabel(presetId: string, t: GameSettingsTranslator): string {
+  switch (presetId) {
+    case "classic":
+      return t("Classic");
+    case "extended":
+      return t("Extended");
+    case "big-table":
+      return t("Big Table");
+    default:
+      return presetId;
+  }
+}
+
+function presetHelper(presetId: string, t: GameSettingsTranslator): string {
+  switch (presetId) {
+    case "classic":
+      return t("Official baseline. Best for 2-4 players.");
+    case "extended":
+      return t("Better for 4-5 players. More cards and a slightly longer match.");
+    case "big-table":
+      return t("Better for 6+ players. Larger deck, higher ceiling, longer match.");
+    default:
+      return "";
+  }
+}
+
 export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
-  const t = useTranslations("GameSettings");
-  const tErrors = useTranslations("Errors");
-  const tLoose = toLooseTranslate(t);
+  const t = useExtracted("GameSettings");
+  const tErrors = useExtracted("Errors");
   const updateMatchSettings = useSessionConfectMutation(refs.public.matches.updateMatchSettings);
   const [isUpdating, setIsUpdating] = useState(false);
   const settings = snapshot.settings;
@@ -57,7 +83,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
         return;
       }
     } catch {
-      toast.error(t("toastUpdateFailed"));
+      toast.error(t("Could not update game settings."));
     } finally {
       setIsUpdating(false);
     }
@@ -70,11 +96,13 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
           <div className="flex min-w-0 items-center gap-2.5">
             <Settings2Icon className="size-5 shrink-0 text-primary" aria-hidden />
             <div>
-              <h2 className="font-heading text-base font-medium tracking-tight">{t("title")}</h2>
+              <h2 className="font-heading text-base font-medium tracking-tight">
+                {t("Game settings")}
+              </h2>
               {hostCanEdit && recommendedPreset ? (
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {t("recommended", {
-                    preset: tLoose(`preset.${recommendedPreset.id}.label`),
+                  {t("Recommended for this lobby: {preset}", {
+                    preset: presetLabel(recommendedPreset.id, t),
                   })}
                 </p>
               ) : null}
@@ -82,19 +110,19 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
           </div>
           {snapshot.status !== "setup" ? (
             <span className="rounded-full border border-border px-2.5 py-1 text-xs text-muted-foreground">
-              {t("locked")}
+              {t("Locked")}
             </span>
           ) : null}
         </div>
 
         <dl className="grid gap-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
-          <SettingSummaryItem label={t("pointsToWin")} value={String(settings.targetScore)} />
-          <SettingSummaryItem label={t("cards")} value={`0-${settings.maxNumberCardValue}`} />
+          <SettingSummaryItem label={t("Points to win")} value={String(settings.targetScore)} />
+          <SettingSummaryItem label={t("Cards")} value={`0-${settings.maxNumberCardValue}`} />
           <SettingSummaryItem
-            label={t("modifiers")}
+            label={t("Modifiers")}
             value={`+2 to +${settings.modifierRange.max}, x2`}
           />
-          <SettingSummaryItem label={t("mode")} value={settings.modeLabel} />
+          <SettingSummaryItem label={t("Mode")} value={settings.modeLabel} />
         </dl>
 
         {hostCanEdit ? (
@@ -119,15 +147,15 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     )}
                   >
                     <span className="flex w-full items-center justify-between gap-2">
-                      <span>{tLoose(`preset.${preset.id}.label`)}</span>
+                      <span>{presetLabel(preset.id, t)}</span>
                       {isRecommended ? (
                         <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs text-primary">
-                          {t("recommendedBadge")}
+                          {t("Recommended")}
                         </span>
                       ) : null}
                     </span>
                     <span className="text-xs text-muted-foreground group-data-[slot=button]:text-current/70">
-                      {tLoose(`preset.${preset.id}.helper`)}
+                      {presetHelper(preset.id, t)}
                     </span>
                   </Button>
                 );
@@ -136,18 +164,18 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
 
             <Accordion>
               <AccordionItem value="advanced">
-                <AccordionTrigger>{t("advanced")}</AccordionTrigger>
+                <AccordionTrigger>{t("Advanced")}</AccordionTrigger>
                 <AccordionContent>
                   <div className="grid gap-4 pt-2 sm:grid-cols-2">
                     <SettingsSelect
-                      label={t("pointsToWin")}
+                      label={t("Points to win")}
                       value={settings.targetScore}
                       values={TARGET_SCORE_OPTIONS}
                       disabled={isUpdating}
                       onChange={(targetScore) => void updateSettings({ targetScore })}
                     />
                     <SettingsSelect
-                      label={t("maxNumberCard")}
+                      label={t("Max number card")}
                       value={settings.maxNumberCardValue}
                       values={MAX_NUMBER_CARD_OPTIONS}
                       disabled={isUpdating}
@@ -155,10 +183,13 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">
-                    {t("advancedHelper", {
-                      maxNumberCardValue: String(settings.maxNumberCardValue),
-                      maxModifierValue: String(modifierMaxForSettings(settings)),
-                    })}
+                    {t(
+                      "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2.",
+                      {
+                        maxNumberCardValue: String(settings.maxNumberCardValue),
+                        maxModifierValue: String(modifierMaxForSettings(settings)),
+                      },
+                    )}
                   </p>
                 </AccordionContent>
               </AccordionItem>
