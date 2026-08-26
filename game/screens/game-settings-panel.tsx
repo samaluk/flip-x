@@ -15,7 +15,7 @@ import {
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
 import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
-import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
+import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import {
   Accordion,
@@ -36,7 +36,7 @@ type SettingsPatch = {
 
 export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const t = useExtracted("GameSettings");
-  const translateError = useTranslateAppErrorToast();
+  const { translateToast: translateError } = useAppErrors();
   const updateMatchSettings = useSessionConfectMutation(refs.public.matches.updateMatchSettings);
   const settings = snapshot.settings;
   const hostCanEdit = snapshot.status === "setup" && (snapshot.isHost ?? false);

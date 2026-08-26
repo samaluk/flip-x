@@ -14,7 +14,7 @@ import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import type { PlayerColorId } from "@/shared/lib/player-colors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
-import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
+import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import {
   getTrimmedPlayerNameIssue,
   type TrimmedPlayerNameIssue,
@@ -46,7 +46,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
   const [playerName, setPlayerName] = useState("");
   const { colorId, setColorId } = usePlayerLocalPrefs();
   const t = useExtracted("Game");
-  const translateError = useTranslateAppErrorToast();
+  const { translateToast: translateError } = useAppErrors();
   const getPlayerNameIssueToast = useGamePlayerNameIssueToast();
   const usedColorIds =
     players

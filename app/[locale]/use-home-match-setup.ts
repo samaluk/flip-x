@@ -6,7 +6,7 @@ import { type SubmitEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
-import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
+import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import type { TrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
@@ -102,7 +102,7 @@ export function useHomeMatchSetup() {
   const { createMatch, joinByCode, joinMatch } = useHomeMutations();
 
   const t = useExtracted("MatchSetup");
-  const translateError = useTranslateAppErrorToast();
+  const { translateToast: translateError } = useAppErrors();
   const labels = useHomeMatchSetupLabels();
   const getPlayerNameIssueToast = useMatchSetupPlayerNameIssueToast();
 
