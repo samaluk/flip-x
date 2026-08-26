@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 
-import { OfflineBanner, OfflineLoadingStatus } from "@/shared/connectivity/offline-feedback";
+import { ConnectivityLoadingShell, OfflineBanner } from "@/shared/connectivity/offline-feedback";
 import { withIntlEn } from "@/tests/test-intl";
 
 const { useOffline } = vi.hoisted(() => ({
@@ -34,22 +34,36 @@ describe("OfflineBanner", () => {
   });
 });
 
-describe("OfflineLoadingStatus", () => {
+describe("ConnectivityLoadingShell", () => {
   beforeEach(() => {
     useOffline.mockReturnValue(false);
   });
 
-  it("renders nothing when online", () => {
-    const { container } = render(withIntlEn(<OfflineLoadingStatus />));
+  it("renders children without connectivity copy when online", () => {
+    render(
+      withIntlEn(
+        <ConnectivityLoadingShell>
+          <p>Loading shell</p>
+        </ConnectivityLoadingShell>,
+      ),
+    );
 
-    expect(container).toBeEmptyDOMElement();
+    expect(screen.getByText("Loading shell")).toBeInTheDocument();
+    expect(screen.queryByText("Waiting for connection…")).not.toBeInTheDocument();
   });
 
   it("shows waiting-for-connection copy when offline", () => {
     useOffline.mockReturnValue(true);
 
-    render(withIntlEn(<OfflineLoadingStatus />));
+    render(
+      withIntlEn(
+        <ConnectivityLoadingShell>
+          <p>Loading shell</p>
+        </ConnectivityLoadingShell>,
+      ),
+    );
 
     expect(screen.getByText("Waiting for connection…")).toBeInTheDocument();
+    expect(screen.getByText("Loading shell")).toBeInTheDocument();
   });
 });

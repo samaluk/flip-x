@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useOffline } from "next/offline";
+import type { ReactNode } from "react";
 
 import { cn } from "@/shared/lib/utils";
 
@@ -37,21 +38,24 @@ export function OfflineBanner({ className }: { className?: string }) {
   );
 }
 
-export function OfflineLoadingStatus({ className }: { className?: string }) {
+export function ConnectivityLoadingShell({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const isOffline = useOffline();
   const message = useConnectivityMessage("waitingForConnection");
 
-  if (!message) {
-    return null;
-  }
-
   return (
-    <output
-      className={cn(
-        "pointer-events-none fixed inset-x-0 top-12 z-40 text-center text-sm text-muted-foreground",
-        className,
-      )}
-    >
-      {message}
-    </output>
+    <div className={cn(isOffline && "pt-14", className)}>
+      {message ? (
+        <output className="pointer-events-none mb-4 text-center text-sm text-muted-foreground">
+          {message}
+        </output>
+      ) : null}
+      {children}
+    </div>
   );
 }
