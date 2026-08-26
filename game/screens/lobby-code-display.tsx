@@ -1,7 +1,7 @@
 "use client";
 
 import { CopyIcon, CheckIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -13,28 +13,28 @@ export interface LobbyCodeDisplayProps {
 
 export function LobbyCodeDisplay({ code }: LobbyCodeDisplayProps) {
   const [copied, setCopied] = useState(false);
-  const t = useTranslations("LobbyCodeDisplay");
+  const t = useExtracted("LobbyCodeDisplay");
 
   async function copyCode() {
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
-      toast.success(t("toastCopied"));
+      toast.success(t("Lobby code copied!"));
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error(t("toastFailed"));
+      toast.error(t("Could not copy the code."));
     }
   }
 
   return (
     <output
-      aria-label={t("statusLabel")}
+      aria-label={t("Lobby code")}
       className="surface-elevated flex items-center gap-3 rounded-xl px-5 py-3"
     >
       <span className="font-mono text-3xl font-bold tracking-widest text-foreground">{code}</span>
       <Button variant="outline" size="sm" onClick={() => void copyCode()} className="gap-2">
         {copied ? <CheckIcon className="size-4" /> : <CopyIcon className="size-4" />}
-        {copied ? t("copied") : t("copy")}
+        {copied ? t("Copied") : t("Copy")}
       </Button>
     </output>
   );

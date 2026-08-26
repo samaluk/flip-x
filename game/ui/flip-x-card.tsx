@@ -1,10 +1,11 @@
 "use client";
 
 import { m } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { memo, type ReactNode } from "react";
 
 import { ActionCardContent } from "@/game/cards/action-content";
+import { actionKindLabel } from "@/game/cards/action-kind-label";
 import { ModifierCardContent } from "@/game/cards/modifier-content";
 import { NumberCardContent } from "@/game/cards/number-content";
 import type { ModifierCard } from "@/game/logic/card-types";
@@ -59,14 +60,10 @@ function FaceContent(props: FlipXCardProps) {
 }
 
 function ScreenReaderSummary(props: FlipXCardProps) {
-  const t = useTranslations("Cards");
+  const t = useExtracted("Cards");
 
   const kindLabel =
-    props.kind === "number"
-      ? t("kindNumber")
-      : props.kind === "modifier"
-        ? t("kindModifier")
-        : t("kindAction");
+    props.kind === "number" ? t("Number") : props.kind === "modifier" ? t("Bonus") : t("Action");
 
   let valueLabel: string;
   if (props.kind === "number") {
@@ -74,16 +71,16 @@ function ScreenReaderSummary(props: FlipXCardProps) {
   } else if (props.kind === "modifier") {
     valueLabel =
       props.modifierValue === "x2"
-        ? t("modifier.x2")
-        : t("modifier.plus", { value: String(props.modifierValue) });
+        ? t("×2")
+        : t("+{value}", { value: String(props.modifierValue) });
   } else {
-    valueLabel = t(`action.${props.actionKind}`);
+    valueLabel = actionKindLabel(props.actionKind, t);
   }
 
   return (
     <div className="sr-only">
       <span>{kindLabel}</span>
-      <span>{t("numberLine", { label: props.label })}</span>
+      <span>{t("No. {label}", { label: props.label })}</span>
       <span>{valueLabel}</span>
     </div>
   );

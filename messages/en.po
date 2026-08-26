@@ -126,6 +126,841 @@ msgctxt "NotFoundPage"
 msgid "SWMHO-"
 msgstr "Go home"
 
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "nm-yce"
+msgstr "PLAY ON AN ACTIVE PLAYER"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "mfDLmn"
+msgstr "SAVE THIS CARD UNTIL NEEDED"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "n2uOzU"
+msgstr "SECOND"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "uGKkSN"
+msgstr "CHANCE"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "f-bSw4"
+msgstr "INSTANT"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "6M6q_0"
+msgstr "ACTION"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "LhDRin"
+msgstr "FLIP"
+
+#: game/cards/action-content.tsx
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "I9xDqF"
+msgstr "THREE"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "f-cLL5"
+msgstr "FREEZE"
+
+#: game/cards/modifier-content.tsx
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "ZHccEc"
+msgstr "×2"
+
+#: game/cards/modifier-content.tsx
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "G5qKtr"
+msgstr "+{value}"
+
+#: game/cards/modifier-content.tsx
+msgctxt "Cards"
+msgid "vKToVR"
+msgstr "×2 THE SUM OF YOUR NUMBER CARDS"
+
+#: game/cards/modifier-content.tsx
+msgctxt "Cards"
+msgid "9-ji51"
+msgstr "+{value} THE SUM OF YOUR NUMBER CARDS"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "terrkE"
+msgstr "ZERO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "yz4DcX"
+msgstr "ONE"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "8Npezj"
+msgstr "TWO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "aa070x"
+msgstr "FOUR"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "f_00qX"
+msgstr "FIVE"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "rbxTcM"
+msgstr "SIX"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "g-1zxC"
+msgstr "SEVEN"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "WhHFG-"
+msgstr "EIGHT"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "FQyBHt"
+msgstr "NINE"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "D0Tdbd"
+msgstr "TEN"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "2VfxJt"
+msgstr "ELEVEN"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "acgVM-"
+msgstr "TWELVE"
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "e_6mlg"
+msgstr "Please enter your name."
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "aURH8N"
+msgstr "Name must be 20 characters or less."
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "AbM0BV"
+msgstr "Session not available."
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "pQvtX8"
+msgstr "Could not join the game."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "3pP4Fg"
+msgstr "Invite link copied."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "A7txUi"
+msgstr "Could not copy the invite link."
+
+#: game/hooks/use-game-page-state.ts
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "9dWNPy"
+msgstr "Match not found."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "NLUETP"
+msgstr "Match not found"
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "OAc2rT"
+msgstr "The requested match is unavailable or has not been created yet."
+
+#: game/screens/game-error-content.tsx
+msgctxt "Game"
+msgid "M7q8Xk"
+msgstr "Could not load the match"
+
+#: game/screens/game-error-content.tsx
+msgctxt "Game"
+msgid "FazwRl"
+msgstr "Try again"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "rtACcE"
+msgstr "Copy invite link"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "rGvOhK"
+msgstr "Join the game"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "A7KXYH"
+msgstr "Enter your name to claim a seat at the table."
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "vlKhIl"
+msgstr "Your name"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "7ERAwR"
+msgstr "Join Game"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "7rG3A8"
+msgstr "Player color"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "HJEJo0"
+msgstr "Classic"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "fUDl2h"
+msgstr "Extended"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "59CWbw"
+msgstr "Big Table"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "V5yUQX"
+msgstr "Official baseline. Best for 2-4 players."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "fkQcQo"
+msgstr "Better for 4-5 players. More cards and a slightly longer match."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "12G277"
+msgstr "Better for 6+ players. Larger deck, higher ceiling, longer match."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "GY8bVw"
+msgstr "Could not update game settings."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "ixKAYF"
+msgstr "Game settings"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "LlUFYE"
+msgstr "Recommended for this lobby: {preset}"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "oL0rU6"
+msgstr "Locked"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "37dv3i"
+msgstr "Points to win"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "d9iNyj"
+msgstr "Cards"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "BIAFqd"
+msgstr "Modifiers"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "mrOnjM"
+msgstr "Mode"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "VKfWR3"
+msgstr "Recommended"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "3Rx6Qo"
+msgstr "Advanced"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "zM-PPA"
+msgstr "Max number card"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "gAhnbT"
+msgstr "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "LdEa65"
+msgstr "Your hand"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "xIIQHE"
+msgstr "Turn actions"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "KAmBEa"
+msgstr "The round is scored and ready for the next deal."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "ujJps_"
+msgstr "{name} is deciding whether to push or bank points."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "NQ4jqL"
+msgstr "Waiting for the next resolution."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "zXFNiG"
+msgstr "setup"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "NhDwgx"
+msgstr "in progress"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "fT7uau"
+msgstr "completed"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "FFCYOk"
+msgstr "Match {id}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "O7eTPh"
+msgstr "Round {round} of a race to {target} points."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "AAwp4y"
+msgstr "Dealer position {n}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "3iKhP_"
+msgstr "Turn: {name}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "S8snIe"
+msgstr "Updating"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "tmQt4O"
+msgstr "Table call"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "X4CyH-"
+msgstr "You are playing as {name}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "YJbbeg"
+msgstr "Join this game on this device to take turns."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "9kxP3A"
+msgstr "Latest resolution"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "cwn2Os"
+msgstr "Opponents"
+
+#: game/screens/game-table-view.tsx
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "tTQZXr"
+msgstr "Score by round"
+
+#: game/screens/game-table-view.tsx
+msgctxt "RoundHistory"
+msgid "Lkc2Am"
+msgstr "Current round breakdown"
+
+#: game/screens/game-table-view.tsx
+msgctxt "RoundHistory"
+msgid "96Ao_m"
+msgstr "Detailed scoring for the active or most recently completed round."
+
+#: game/screens/game-table.tsx
+msgctxt "Errors"
+msgid "chhyZl"
+msgstr "Game action failed."
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "NilGOF"
+msgstr "Lobby code copied!"
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "acjeOD"
+msgstr "Could not copy the code."
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "vaiSyy"
+msgstr "Lobby code"
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "p556q3"
+msgstr "Copied"
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "4l6vz1"
+msgstr "Copy"
+
+#: game/screens/start-game-button.tsx
+msgctxt "StartGameButton"
+msgid "-bi6ia"
+msgstr "Could not start the game."
+
+#: game/screens/start-game-button.tsx
+msgctxt "StartGameButton"
+msgid "3qXa2f"
+msgstr "Starting..."
+
+#: game/screens/start-game-button.tsx
+msgctxt "StartGameButton"
+msgid "MxeQIj"
+msgstr "Start Game"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "kFkPWB"
+msgstr "Number"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "saDFoR"
+msgstr "Bonus"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "QlsDcr"
+msgstr "Action"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "85hyTu"
+msgstr "Flip Three"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "EgadwQ"
+msgstr "Freeze"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "NY9djt"
+msgstr "Second Chance"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "CuXNi7"
+msgstr "No. {label}"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "1PCThj"
+msgstr "Busted"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "g7If5t"
+msgstr "Banked"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "rzZR_J"
+msgstr "Frozen"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "ERnpdU"
+msgstr "Scored"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "dZd8H_"
+msgstr "Waiting"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "xbovKX"
+msgstr "Dealer"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "kJ5W29"
+msgstr "You"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "ccU6l_"
+msgstr "Online"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "ErxWra"
+msgstr "Self"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "YDkqMJ"
+msgstr "Incoming"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "oZTIL7"
+msgstr "{count} to draw"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "yb45j-"
+msgstr "Total score {score}"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "PL2m0r"
+msgstr "Points at risk"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "EVPZb7"
+msgstr "Select {name} as target"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "Ac7AIs"
+msgstr "Track the running total, the gain from each round, and who is closing in on the target score."
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "1sMKRw"
+msgstr "No rounds to show yet. Live history appears as soon as the first round starts."
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "1AGL1r"
+msgstr "Player"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "wwlk_j"
+msgstr "R{round}*"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "CIxt1U"
+msgstr "R{round}"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "Dn82AL"
+msgstr "Live"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "kCDXlq"
+msgstr "Seat {seat}"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "H-vBOj"
+msgstr "Winner"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "h0NFb4"
+msgstr "{points} to target"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "yw99BZ"
+msgstr "{player}, {round}. Total {total}, round +{gain}. {status}"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "KGEmZH"
+msgstr "Gain {gain}"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "1AGL1r"
+msgstr "Player"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "YL6Hqs"
+msgstr "Numbers"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "ZHccEc"
+msgstr "×2"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "saDFoR"
+msgstr "Bonus"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "a05Y4b"
+msgstr "flip-x"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "r_zRQo"
+msgstr "Round total"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "a5msuh"
+msgstr "Yes"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "oUWADl"
+msgstr "No"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "WARKS0"
+msgstr "Multiplier: ×2"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "FhJo1X"
+msgstr "Multiplier: none"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "dsdNpr"
+msgstr "Final round score: {score}"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "gkK9tw"
+msgstr "Start next round"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "RpSV9W"
+msgstr "Choose who banks their points and freezes out of the round."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "7J5JOV"
+msgstr "Choose who must keep drawing until three cards resolve."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "AnLRFx"
+msgstr "Click a player lane to select target"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "nsOvDk"
+msgstr "Freeze being resolved..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "4o5bSn"
+msgstr "Flip 3 being resolved..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "zNaDqb"
+msgstr "Join the game from this device to play."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "Y1J46T"
+msgstr "Waiting for {name}."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "V67QH_"
+msgstr "Drawing..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "z3gAR5"
+msgstr "Staying..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "PUQyyG"
+msgstr "Draw ({count})"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "lbABe3"
+msgstr "Hit for {name}"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "bw08-c"
+msgstr "Stay for {name}"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "n3XQ56"
+msgstr "No table event has been logged yet."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "clmNx1"
+msgstr "{action} is waiting for a target."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "bnpqEZ"
+msgstr "Second Chance discarded duplicate {duplicate} instead of busting the player."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "x_lXI2"
+msgstr "Frozen! Points banked and out of round."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "UoWhml"
+msgstr "Flip Three targeted! {cardsRemaining} cards to draw."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "ZNBdfc"
+msgstr "Card drawn."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "wHj0UW"
+msgstr "Flip Three completed!"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "8JaGCV"
+msgstr "{action} was queued until Flip Three finished."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "LNzm00"
+msgstr "Drew duplicate {duplicate} — bust!"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "X60ieB"
+msgstr "Revealed number {numberValue}."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "eANbvI"
+msgstr "Triggered flip-x!"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "ZXUvmt"
+msgstr "Player revealed modifier {modifier}."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "dj_dbV"
+msgstr "Player stored a Second Chance card."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "-CKJl0"
+msgstr "Extra Second Chance was discarded because no eligible recipient existed."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "QVcG3z"
+msgstr "Extra Second Chance was passed to another active player."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "sJ49hX"
+msgstr "Initial deal revealed {card} for the player."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "oWAQo9"
+msgstr "Stayed and banked points."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "M-Ftwj"
+msgstr "Hit and revealed {card}."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "1rq-xO"
+msgstr "Round scored at {score} points."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "h5FYW0"
+msgstr "Table event recorded."
+
 #: shared/connectivity/offline-feedback.tsx
 msgctxt "Connectivity"
 msgid "xEhFzj"
@@ -150,3 +985,108 @@ msgstr "English"
 msgctxt "LanguageSwitcher"
 msgid "dX8jTq"
 msgstr "Español"
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Fvxzoz"
+msgstr "It is not your turn or the turn is invalid."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "wJ0Yml"
+msgstr "That action is not valid right now."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Mv-3D4"
+msgstr "That target is not allowed."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "pGqwhk"
+msgstr "Enter a valid host name."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "E6zsGk"
+msgstr "Choose valid game settings."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "oOGuVP"
+msgstr "Could not assign a lobby code. Try again."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "CtWb7v"
+msgstr "No lobby found for that code."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "lrSs1M"
+msgstr "Enter a valid player name."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "H06hB4"
+msgstr "That name is already taken at this table."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "VjKEMs"
+msgstr "Choose a valid player color."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "APS6id"
+msgstr "That player color is already taken at this table."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "YbrPvm"
+msgstr "Only the host can do that."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "pgu2Sq"
+msgstr "At least two players need to join before the game can start."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "tNaxmV"
+msgstr "Join the game first."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "0Io_Ea"
+msgstr "Too many attempts. Please wait a moment and try again."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "xzMfga"
+msgstr "This action is not allowed in the current match state."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Ta2xFQ"
+msgstr "The game changed. Refresh and try again."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "tfukwC"
+msgstr "Unsupported relationship."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "M8TjVq"
+msgstr "Unsupported table."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Wk0ALV"
+msgstr "Invalid confirmation."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "PR2F1h"
+msgstr "{message}"

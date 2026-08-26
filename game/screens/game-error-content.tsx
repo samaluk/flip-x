@@ -1,7 +1,7 @@
 "use client";
 
 import { AlertCircleIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 import { usePostHog } from "@posthog/next";
 
@@ -15,7 +15,7 @@ export type GameErrorContentProps = {
 };
 
 export function GameErrorContent({ error, retry, locale, matchId }: GameErrorContentProps) {
-  const t = useTranslations("Game");
+  const t = useExtracted("Game");
   const posthog = usePostHog();
 
   useEffect(() => {
@@ -39,12 +39,12 @@ export function GameErrorContent({ error, retry, locale, matchId }: GameErrorCon
         </div>
         <div className="space-y-2">
           <h2 className="font-heading text-xl font-medium tracking-tight text-foreground">
-            {t("errorTitle")}
+            {t("Could not load the match")}
           </h2>
           <p className="text-sm leading-relaxed text-muted-foreground">{error.message}</p>
         </div>
         <Button variant="outline" onClick={() => retry()} className="mx-auto">
-          {t("tryAgain")}
+          {t("Try again")}
         </Button>
       </div>
     </div>

@@ -1,49 +1,48 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useId } from "react";
 
 import { CardFrame } from "@/game/cards/card-frame";
 import { cardTw } from "@/game/cards/card-responsive";
 import { CARD_NAVY, NUMBER_CARD_PALETTES } from "@/game/cards/card-palettes";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 const NUMBER_FRAME: Readonly<{ border: string; background: string }> = {
   border: CARD_NAVY,
   background: "#f5eedc",
 };
 
-type NumberNameMessageId =
-  | "numberName.0"
-  | "numberName.1"
-  | "numberName.2"
-  | "numberName.3"
-  | "numberName.4"
-  | "numberName.5"
-  | "numberName.6"
-  | "numberName.7"
-  | "numberName.8"
-  | "numberName.9"
-  | "numberName.10"
-  | "numberName.11"
-  | "numberName.12";
-
-const NUMBER_NAME_IDS = [
-  "numberName.0",
-  "numberName.1",
-  "numberName.2",
-  "numberName.3",
-  "numberName.4",
-  "numberName.5",
-  "numberName.6",
-  "numberName.7",
-  "numberName.8",
-  "numberName.9",
-  "numberName.10",
-  "numberName.11",
-  "numberName.12",
-] as const satisfies readonly NumberNameMessageId[];
-
-function numberNameId(value: number): NumberNameMessageId {
-  return NUMBER_NAME_IDS[value] ?? "numberName.0";
+function numberNameLabel(value: number, t: ExtractedTranslator): string {
+  switch (value) {
+    case 0:
+      return t("ZERO");
+    case 1:
+      return t("ONE");
+    case 2:
+      return t("TWO");
+    case 3:
+      return t("THREE");
+    case 4:
+      return t("FOUR");
+    case 5:
+      return t("FIVE");
+    case 6:
+      return t("SIX");
+    case 7:
+      return t("SEVEN");
+    case 8:
+      return t("EIGHT");
+    case 9:
+      return t("NINE");
+    case 10:
+      return t("TEN");
+    case 11:
+      return t("ELEVEN");
+    case 12:
+      return t("TWELVE");
+    default:
+      return t("ZERO");
+  }
 }
 
 function OutlinedDigit({
@@ -127,7 +126,7 @@ export function NumberCardContent({
   numberValue: number;
   compact?: boolean;
 }) {
-  const t = useTranslations("Cards");
+  const t = useExtracted("Cards");
   const uid = useId().replace(/:/g, "");
   const gradSuffix = uid;
   const palette = NUMBER_CARD_PALETTES[numberValue];
@@ -168,7 +167,7 @@ export function NumberCardContent({
                   "sm:text-[0.65rem]",
                 )}
               >
-                {t(numberNameId(numberValue))}
+                {numberNameLabel(numberValue, t)}
               </span>
             </div>
           </div>

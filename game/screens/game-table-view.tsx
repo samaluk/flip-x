@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { LazyMotion, domAnimation, m } from "motion/react";
 import type { Variants } from "motion/react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type ReactNode, useState } from "react";
 
 import type { Id } from "@/convex/_generated/dataModel";
@@ -22,7 +22,6 @@ import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
 import { resolveTurnControlsPhase } from "@/game/ui/turn-controls-phase";
 import { cn } from "@/shared/lib/utils";
-import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import {
   Accordion,
   AccordionContent,
@@ -31,6 +30,7 @@ import {
 } from "@/shared/ui/accordion";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
 const listStagger: Variants = {
   hidden: { opacity: 0 },
@@ -68,6 +68,21 @@ export type GameTableViewProps = {
   freezeLaneLayout?: boolean;
 };
 
+function matchStatusLabel(status: MatchSnapshot["status"], t: ExtractedTranslator): string {
+  switch (status) {
+    case "setup":
+      return t("setup");
+    case "in_progress":
+      return t("in progress");
+    case "completed":
+      return t("completed");
+    default: {
+      const exhaustiveCheck: never = status;
+      return exhaustiveCheck;
+    }
+  }
+}
+
 export function GameTableView({
   snapshot,
   isPending = false,
@@ -78,10 +93,10 @@ export function GameTableView({
   disableCardFlip3d = false,
   freezeLaneLayout = false,
 }: GameTableViewProps) {
-  const t = useTranslations("GameTable");
-  const tEvents = useTranslations("Events");
-  const tCards = useTranslations("Cards");
-  const tHistory = useTranslations("RoundHistory");
+  const t = useExtracted("GameTable");
+  const tEvents = useExtracted("Events");
+  const tCards = useExtracted("Cards");
+  const tHistory = useExtracted("RoundHistory");
 
   const viewerPlayer = snapshot.players.find(
     (player) => player.playerId === snapshot.viewerPlayerId,
@@ -90,12 +105,9 @@ export function GameTableView({
     (player) => player.playerId === snapshot.activePlayerId,
   );
   const { viewer, opponents } = partitionPlayers(snapshot);
-  const tEventsLoose = toLooseTranslate(tEvents);
-  const tCardsLoose = toLooseTranslate(tCards);
-
   const latestBody = snapshot.latestEvent
-    ? formatLatestRoundEventBody(snapshot.latestEvent, tEventsLoose, tCardsLoose)
-    : tEvents("noneYet");
+    ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
+    : tEvents("No table event has been logged yet.");
 
   const pendingAction = snapshot.pendingAction;
   const viewerIsSource = Boolean(
@@ -151,8 +163,8 @@ export function GameTableView({
 
 type GameTableLayoutProps = {
   snapshot: MatchSnapshot;
-  t: ReturnType<typeof useTranslations<"GameTable">>;
-  tHistory: ReturnType<typeof useTranslations<"RoundHistory">>;
+  t: ExtractedTranslator;
+  tHistory: (message: string, values?: Record<string, string | number>) => string;
   isPending: boolean;
   callText: string;
   latestBody: string;
@@ -227,7 +239,7 @@ function GameTableTurnControls({
   controls,
 }: {
   hasTurnControls: boolean;
-  t: ReturnType<typeof useTranslations<"GameTable">>;
+  t: ExtractedTranslator;
   controls: ReactNode;
 }) {
   if (!hasTurnControls) {
@@ -261,9 +273,9 @@ function GameTablePlayers({
         {...opponentProps}
       />
       {viewer ? (
-        <section aria-label={opponentProps.t("yourHand")} className="space-y-2">
+        <section aria-label={opponentProps.t("Your hand")} className="space-y-2">
           <div className="px-1 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {opponentProps.t("yourHand")}
+            {opponentProps.t("Your hand")}
           </div>
           <MatchPlayerLane
             snapshot={opponentProps.snapshot}
@@ -280,14 +292,14 @@ function GameTablePlayers({
 }
 
 type TurnControlsDockProps = {
-  t: ReturnType<typeof useTranslations<"GameTable">>;
+  t: ExtractedTranslator;
   controls: ReactNode;
 };
 
 function TurnControlsDesktop({ t, controls }: TurnControlsDockProps) {
   return (
     <section
-      aria-label={t("turnActions")}
+      aria-label={t("Turn actions")}
       className="surface-elevated hidden rounded-2xl px-4 py-3 lg:block"
     >
       {controls}
@@ -298,7 +310,7 @@ function TurnControlsDesktop({ t, controls }: TurnControlsDockProps) {
 function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
   return (
     <section
-      aria-label={t("turnActions")}
+      aria-label={t("Turn actions")}
       className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
     >
       <div className="mx-auto max-w-5xl">{controls}</div>
@@ -308,7 +320,7 @@ function TurnControlsMobile({ t, controls }: TurnControlsDockProps) {
 
 type GameTableHudProps = {
   snapshot: MatchSnapshot;
-  t: ReturnType<typeof useTranslations<"GameTable">>;
+  t: ExtractedTranslator;
   isPending: boolean;
   callText: string;
   latestBody: string;
@@ -329,7 +341,7 @@ function GameTableHud({
 
   return (
     <section
-      aria-label={t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
+      aria-label={t("Match {id}", { id: snapshot.matchId.slice(0, 8) })}
       className="surface-elevated overflow-hidden rounded-2xl text-foreground"
     >
       <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
@@ -341,10 +353,10 @@ function GameTableHud({
           )}
           <div className="flex min-w-0 flex-col leading-tight">
             <h1 className="truncate font-heading text-sm font-medium tracking-tight text-foreground sm:text-base">
-              {t("matchTitle", { id: snapshot.matchId.slice(0, 8) })}
+              {t("Match {id}", { id: snapshot.matchId.slice(0, 8) })}
             </h1>
             <span className="text-xs text-muted-foreground">
-              {t("roundRace", {
+              {t("Round {round} of a race to {target} points.", {
                 round: String(snapshot.currentRoundNumber),
                 target: String(snapshot.targetScore),
               })}
@@ -354,21 +366,23 @@ function GameTableHud({
 
         <div className="ms-auto flex flex-wrap items-center gap-1.5">
           <Badge variant="outline" data-slot="match-status" data-status={snapshot.status}>
-            {t(`matchStatus.${snapshot.status}`)}
+            {matchStatusLabel(snapshot.status, t)}
           </Badge>
           <Badge variant="outline" className="hidden sm:inline-flex">
-            {t("dealerSeat", { n: String(snapshot.dealerSeat + 1) })}
+            {t("Dealer position {n}", { n: String(snapshot.dealerSeat + 1) })}
           </Badge>
           {activePlayer ? (
             <Badge variant="default" className="max-w-48">
               <UserRoundIcon className="size-3" aria-hidden />
-              <span className="truncate">{t("turnFor", { name: activePlayer.displayName })}</span>
+              <span className="truncate">
+                {t("Turn: {name}", { name: activePlayer.displayName })}
+              </span>
             </Badge>
           ) : null}
           {isPending ? (
             <Badge variant="secondary" aria-live="polite">
               <RefreshCwIcon className="size-3 animate-spin" aria-hidden />
-              <span className="hidden sm:inline">{t("updating")}</span>
+              <span className="hidden sm:inline">{t("Updating")}</span>
             </Badge>
           ) : null}
         </div>
@@ -377,21 +391,23 @@ function GameTableHud({
       <div className="grid gap-3 border-t border-border px-4 py-2.5 sm:grid-cols-2 sm:px-5">
         <div className="space-y-0.5">
           <div className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {t("tableCall")}
+            {t("Table call")}
           </div>
           <div className="text-sm leading-snug text-foreground">{callText}</div>
           {viewerPlayer ? (
             <div className="text-xs text-muted-foreground">
-              {t("playingAs", { name: viewerPlayer.displayName })}
+              {t("You are playing as {name}", { name: viewerPlayer.displayName })}
             </div>
           ) : (
-            <div className="text-xs text-muted-foreground">{t("joinHint")}</div>
+            <div className="text-xs text-muted-foreground">
+              {t("Join this game on this device to take turns.")}
+            </div>
           )}
         </div>
         <div className="space-y-0.5 border-t border-border pt-2.5 sm:border-s sm:border-t-0 sm:ps-4 sm:pt-0">
           <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
             <AlertTriangleIcon className="size-3" aria-hidden />
-            {t("latestResolution")}
+            {t("Latest resolution")}
           </div>
           <div data-slot="game-latest-resolution" className="text-sm leading-snug text-foreground">
             {latestBody}
@@ -409,7 +425,7 @@ type GameTableOpponentsSectionProps = {
   opponents: MatchSnapshot["players"];
   opponentsGridClass: string;
   freezeLaneLayout: boolean;
-  t: ReturnType<typeof useTranslations<"GameTable">>;
+  t: ExtractedTranslator;
   snapshot: MatchSnapshot;
   viewerIsSource: boolean;
   viewerCanTargetSelf: boolean;
@@ -447,11 +463,11 @@ function GameTableOpponentsSection({
   );
 
   return (
-    <section aria-label={t("opponents")} className="space-y-2">
+    <section aria-label={t("Opponents")} className="space-y-2">
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
           <UsersIcon className="size-3.5" aria-hidden />
-          <span>{t("opponents")}</span>
+          <span>{t("Opponents")}</span>
           <span className="text-muted-foreground/60">·</span>
           <span className="tabular-nums">{opponents.length}</span>
         </div>
@@ -529,7 +545,7 @@ function MatchPlayerLane({
 
 type RoundHistorySectionProps = {
   snapshot: MatchSnapshot;
-  tHistory: ReturnType<typeof useTranslations<"RoundHistory">>;
+  tHistory: (message: string, values?: Record<string, string | number>) => string;
 };
 
 function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
@@ -552,19 +568,19 @@ function RoundHistorySection({ snapshot, tHistory }: RoundHistorySectionProps) {
       <CardContent>
         <Accordion value={expandedSections} onValueChange={setExpandedSections}>
           <AccordionItem value="history">
-            <AccordionTrigger className="text-xl">{tHistory("title")}</AccordionTrigger>
+            <AccordionTrigger className="text-xl">{tHistory("Score by round")}</AccordionTrigger>
             <AccordionContent>
               <RoundHistoryTable history={snapshot.roundHistory} players={snapshot.players} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="breakdown">
             <AccordionTrigger className="text-xl">
-              {tHistory("currentRoundBreakdownTitle")}
+              {tHistory("Current round breakdown")}
             </AccordionTrigger>
             <AccordionContent>
               <div className="px-5 pt-2">
                 <p className="text-sm text-muted-foreground">
-                  {tHistory("currentRoundBreakdownSubtitle")}
+                  {tHistory("Detailed scoring for the active or most recently completed round.")}
                 </p>
               </div>
               <ScoreSummary players={snapshot.players} />
@@ -589,15 +605,17 @@ function incomingActionKindForPlayer(
 function callTextForSnapshot(
   snapshot: MatchSnapshot,
   activePlayer: MatchSnapshot["players"][number] | undefined,
-  t: ReturnType<typeof useTranslations<"GameTable">>,
+  t: ExtractedTranslator,
 ) {
   if (snapshot.roundStatus === "completed") {
-    return t("roundScoredReady");
+    return t("The round is scored and ready for the next deal.");
   }
   if (activePlayer) {
-    return t("playerDeciding", { name: activePlayer.displayName });
+    return t("{name} is deciding whether to push or bank points.", {
+      name: activePlayer.displayName,
+    });
   }
-  return t("waitingResolution");
+  return t("Waiting for the next resolution.");
 }
 
 /** Viewer first/pinned, opponents in seat order. */

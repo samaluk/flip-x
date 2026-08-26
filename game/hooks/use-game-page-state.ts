@@ -1,7 +1,7 @@
 "use client";
 
 import { QueryResult } from "@confect/react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -22,7 +22,7 @@ export type GamePageState = {
   selectedColorId: PlayerColorId;
   usedColorIds: string[];
   isJoining: boolean;
-  onJoin: (event: React.SubmitEvent<HTMLFormElement>) => Promise<void>;
+  onJoin: (event: React.SubmitEvent<HTMLFormElement>) => void;
   onPlayerNameChange: (value: string) => void;
   onColorChange: (colorId: PlayerColorId) => void;
   onCopyInvite: () => void;
@@ -38,8 +38,8 @@ export function useGamePageState(matchId: string): GamePageState {
     matchId: matchIdConvex,
   });
   const snapshot = QueryResult.isSuccess(snapshotResult) ? snapshotResult.value : undefined;
-  const t = useTranslations("Game");
-  const tErrors = useTranslations("Errors");
+  const t = useExtracted("Game");
+  const tErrors = useExtracted("Errors");
   const viewerPlayerId = snapshot?.viewerPlayerId;
   const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId ?? undefined);
   const {
@@ -58,9 +58,9 @@ export function useGamePageState(matchId: string): GamePageState {
         ? `${window.location.origin}?code=${snapshot.lobbyCode}`
         : window.location.href;
       await navigator.clipboard.writeText(url);
-      toast.success(t("toastInviteCopied"));
+      toast.success(t("Invite link copied."));
     } catch {
-      toast.error(t("toastInviteCopyFailed"));
+      toast.error(t("Could not copy the invite link."));
     }
   };
 
@@ -78,8 +78,8 @@ export function useGamePageState(matchId: string): GamePageState {
     onPlayerNameChange: setPlayerName,
     onColorChange: setColorId,
     onCopyInvite: () => void onCopyInvite(),
-    failureTitle: tErrors("MATCH_NOT_FOUND"),
-    matchNotFoundTitle: t("matchNotFoundTitle"),
-    matchNotFoundBody: t("matchNotFoundBody"),
+    failureTitle: tErrors("Match not found."),
+    matchNotFoundTitle: t("Match not found"),
+    matchNotFoundBody: t("The requested match is unavailable or has not been created yet."),
   };
 }

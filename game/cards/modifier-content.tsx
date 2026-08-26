@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 
 import { CardFrame } from "@/game/cards/card-frame";
 import { cardTw } from "@/game/cards/card-responsive";
@@ -15,16 +15,15 @@ export function ModifierCardContent({
   modifierValue: ModifierValue;
   compact?: boolean;
 }) {
-  const t = useTranslations("Cards");
+  const t = useExtracted("Cards");
   const p = MODIFIER_CARD_PALETTE;
   const modifierText = String(modifierValue);
 
-  const centerLabel =
-    modifierValue === "x2" ? t("modifier.x2") : t("modifier.plus", { value: modifierText });
+  const centerLabel = modifierValue === "x2" ? t("×2") : t("+{value}", { value: modifierText });
   const effectLine =
     modifierValue === "x2"
-      ? t("modifier.effectX2")
-      : t("modifier.effectPlus", { value: modifierText });
+      ? t("×2 THE SUM OF YOUR NUMBER CARDS")
+      : t("+{value} THE SUM OF YOUR NUMBER CARDS", { value: modifierText });
 
   return (
     <CardFrame

@@ -1,9 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
-import { useCallback, useTransition } from "react";
-import { toast } from "sonner";
+import { useActionState } from "react";
 
 import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
@@ -13,7 +12,7 @@ import {
   useSessionConfectMutation,
 } from "@/shared/lib/confect-hooks";
 import type { AppError } from "@/shared/lib/errors/domain";
-import { translateAppErrorToast } from "@/shared/lib/convex-error";
+import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type TakeTurnArgs = {
@@ -66,82 +65,67 @@ const optimisticTakeTurn =
   };
 
 export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
-  const [isPending, startTransition] = useTransition();
   const matchId = snapshot.matchId;
   const takeTurn = useSessionConfectMutation(refs.public.turns.takeTurn).withOptimisticUpdate(
     optimisticTakeTurn(matchId),
   );
   const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
   const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
-  const tErrors = useTranslations("Errors");
+  const tErrors = useExtracted("Errors");
 
-  const runAction = useCallback(
-    (action: () => Promise<Either.Either<unknown, AppError>>) => {
-      startTransition(() => {
-        action()
-          .then((result) => {
-            if (Either.isLeft(result)) {
-              toast.error(translateAppErrorToast(result.left, tErrors));
-            }
-          })
-          .catch(() => {
-            toast.error(tErrors("gameActionFailed"));
-          });
-      });
-    },
-    [tErrors],
-  );
+  const [, runAction, isPending] = useActionState<
+    null,
+    () => Promise<Either.Either<unknown, AppError>>
+  >(async (_previousState: null, action) => {
+    await toastEitherMutationFailure(action(), {
+      missingMessage: tErrors("Game action failed."),
+      tErrors,
+    });
+    return null;
+  }, null);
 
-  const handleHit = useCallback(
-    () =>
-      runAction(() =>
-        takeTurn({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-          action: "hit",
-        }),
-      ),
-    [matchId, runAction, snapshot.version, takeTurn],
-  );
+  function handleHit() {
+    runAction(() =>
+      takeTurn({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+        action: "hit",
+      }),
+    );
+  }
 
-  const handleStay = useCallback(
-    () =>
-      runAction(() =>
-        takeTurn({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-          action: "stay",
-        }),
-      ),
-    [matchId, runAction, snapshot.version, takeTurn],
-  );
+  function handleStay() {
+    runAction(() =>
+      takeTurn({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+        action: "stay",
+      }),
+    );
+  }
 
-  const handleResolveAction = useCallback(
-    (targetPlayerId: Id<"players">) =>
-      runAction(() =>
-        resolveAction({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-          targetPlayerId,
-        }),
-      ),
-    [matchId, resolveAction, runAction, snapshot.version],
-  );
+  function handleResolveAction(targetPlayerId: Id<"players">) {
+    runAction(() =>
+      resolveAction({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+        targetPlayerId,
+      }),
+    );
+  }
 
-  const handleStartNextRound = useCallback(
-    () =>
-      runAction(() =>
-        startNextRound({
-          matchId,
-          expectedVersion: snapshot.version,
-          idempotencyKey: crypto.randomUUID(),
-        }),
-      ),
-    [matchId, runAction, snapshot.version, startNextRound],
-  );
+  function handleStartNextRound() {
+    runAction(() =>
+      startNextRound({
+        matchId,
+        expectedVersion: snapshot.version,
+        idempotencyKey: crypto.randomUUID(),
+      }),
+    );
+  }
 
   return (
     <GameTableView

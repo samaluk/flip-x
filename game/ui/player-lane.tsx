@@ -1,7 +1,7 @@
 "use client";
 
 import { CrosshairIcon, RefreshCwIcon, UserIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import {
   memo,
   type CSSProperties,
@@ -25,28 +25,22 @@ import {
   type PlayerLaneProps,
   type SnapshotPlayer,
 } from "@/game/ui/player-lane-compare";
+import type { ExtractedTranslator } from "@/shared/i18n/extracted-translator";
 
-type PlayerLaneStatusKey =
-  | "statusBusted"
-  | "statusStayed"
-  | "statusFrozen"
-  | "statusCompleted"
-  | "statusWaiting";
-
-function statusLabelKey(status: LaneRoundStatus): PlayerLaneStatusKey | null {
+function formatRoundStatusLabel(status: LaneRoundStatus, t: ExtractedTranslator): string | null {
   switch (status) {
     case "active":
       return null;
     case "busted":
-      return "statusBusted";
+      return t("Busted");
     case "stayed":
-      return "statusStayed";
+      return t("Banked");
     case "frozen":
-      return "statusFrozen";
+      return t("Frozen");
     case "completed":
-      return "statusCompleted";
+      return t("Scored");
     default:
-      return "statusWaiting";
+      return t("Waiting");
   }
 }
 
@@ -94,8 +88,8 @@ function PlayerLaneSidebar({
   incomingActionKind,
   flip3Remaining,
 }: PlayerLaneSidebarProps) {
-  const t = useTranslations("PlayerLane");
-  const roundStatusLabelKey = statusLabelKey(displayStatus);
+  const t = useExtracted("PlayerLane");
+  const roundStatusLabel = formatRoundStatusLabel(displayStatus, t);
   const playerColor = getPlayerColor(player.colorId, player.seatIndex);
   const initials = playerInitials(player.displayName);
 
@@ -132,55 +126,55 @@ function PlayerLaneSidebar({
             {player.displayName}
           </h3>
           <div className="truncate text-xs leading-4 text-muted-foreground tabular-nums">
-            {t("totalScore", { score: String(player.totalScore) })}
+            {t("Total score {score}", { score: String(player.totalScore) })}
           </div>
         </div>
       </div>
 
       <div className="flex items-end justify-between gap-2 rounded-md border border-border/55 bg-card/55 px-2 py-1.5">
-        <div className="min-w-0 text-xs leading-4 text-muted-foreground">{t("pointsAtRisk")}</div>
+        <div className="min-w-0 text-xs leading-4 text-muted-foreground">{t("Points at risk")}</div>
         <div className="text-lg leading-5 font-semibold text-foreground tabular-nums">
           {player.pointsAtRisk}
         </div>
       </div>
 
       <div className="flex w-full flex-wrap gap-1">
-        {roundStatusLabelKey ? (
+        {roundStatusLabel ? (
           <Badge variant={statusVariant(displayStatus)} className="max-w-full text-xs">
-            {t(roundStatusLabelKey)}
+            {roundStatusLabel}
           </Badge>
         ) : null}
         {isDealer ? (
           <Badge variant="default" className="text-xs">
-            {t("dealer")}
+            {t("Dealer")}
           </Badge>
         ) : null}
         {isViewer ? (
           <Badge variant="default" className="border-primary/30 bg-primary/15 text-xs text-primary">
-            {t("you")}
+            {t("You")}
           </Badge>
         ) : null}
         {player.isOnline && !isViewer ? (
           <Badge variant="secondary" className="text-xs">
-            {t("online")}
+            {t("Online")}
           </Badge>
         ) : null}
         {isSelfTargeting ? (
           <Badge variant="outline" className="text-xs">
             <UserIcon className="size-3" />
-            {t("selfTarget")}
+            {t("Self")}
           </Badge>
         ) : null}
         {incomingActionKind ? (
           <Badge variant="destructive" className="text-xs">
             <CrosshairIcon className="size-3" />
-            {t("incomingAction")}
+            {t("Incoming")}
           </Badge>
         ) : null}
         {flip3Remaining !== null && flip3Remaining > 0 ? (
           <Badge variant="outline" className="text-xs">
             <RefreshCwIcon className="size-3 animate-spin" />
-            {t("flip3Remaining", { count: String(flip3Remaining) })}
+            {t("{count} to draw", { count: String(flip3Remaining) })}
           </Badge>
         ) : null}
       </div>
@@ -327,7 +321,7 @@ export const PlayerLane = memo(function PlayerLane({
   flip3Remaining = null,
   onSelectTarget,
 }: PlayerLaneProps) {
-  const t = useTranslations("PlayerLane");
+  const t = useExtracted("PlayerLane");
   const displayStatus = getDisplayStatus(player);
   const { dealingIdSet, cardStateAnimation } = usePlayerLaneAnimations(player, displayStatus);
 
@@ -341,7 +335,7 @@ export const PlayerLane = memo(function PlayerLane({
       ? {
           role: "button" as const,
           tabIndex: 0 as const,
-          "aria-label": t("selectTargetLabel", { name: player.displayName }),
+          "aria-label": t("Select {name} as target", { name: player.displayName }),
           onClick: () => {
             selectTarget(player.playerId);
           },
