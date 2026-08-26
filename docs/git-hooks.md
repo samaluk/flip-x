@@ -52,6 +52,29 @@ hk run pre-push --plan
 For a one-off bypass, use `HK=0 git commit` or `HK=0 git push`. Prefer fixing a
 failed gate; the escape hatch is intended for diagnosing hook infrastructure.
 
+## Recovering from a failed pre-commit
+
+Pre-commit checks that read the Git index (`pnpm react-doctor:staged`,
+`pnpm fallow:staged`, and the hook's staged lint paths) audit the **staged**
+snapshot, not your full working tree. After a hook failure, fixes you make in
+the editor stay unstaged until you `git add` them again. Rerunning a staged
+check without restaging can therefore report findings from the older staged
+content even when the worktree is already fixed.
+
+Refresh the index from the worktree for every path that is still staged, then
+rerun the hook or an individual staged check:
+
+```bash
+git add $(git diff --cached --name-only)
+mise run pre-commit
+```
+
+To refresh only specific files, use `git add <path>` instead.
+
+Intentional partial staging (different staged vs unstaged hunks in the same
+file) is preserved only when you restage selectively; restaging a whole path
+replaces its staged snapshot with the current worktree version.
+
 ## Dependency sync and `verifyDepsBeforeRun`
 
 `pnpm-workspace.yaml` sets `verifyDepsBeforeRun: error` so every `pnpm run` /
