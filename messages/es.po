@@ -14,7 +14,7 @@ msgstr "flip-x"
 #: app/[locale]/layout.tsx
 msgctxt "Metadata"
 msgid "UynQpB"
-msgstr "Aplicación web de mesa compartida para jugar flip-x con puntuación en vivo."
+msgstr "Aplicación web de mesa compartida para jugar a flip-x con puntuación en vivo."
 
 #: app/[locale]/use-home-match-setup.ts
 msgctxt "MatchSetup"
@@ -124,7 +124,7 @@ msgstr "La página que buscas no existe."
 #: app/global-not-found.tsx
 msgctxt "NotFoundPage"
 msgid "SWMHO-"
-msgstr "Ir al inicio"
+msgstr "Volver al inicio"
 
 #: game/cards/action-content.tsx
 msgctxt "Cards"
@@ -162,6 +162,7 @@ msgid "LhDRin"
 msgstr "VOLTEA"
 
 #: game/cards/action-content.tsx
+#: game/cards/number-content.tsx
 msgctxt "Cards"
 msgid "I9xDqF"
 msgstr "TRES"
@@ -192,6 +193,66 @@ msgstr "×2 LA SUMA DE TUS CARTAS NUMÉRICAS"
 msgctxt "Cards"
 msgid "9-ji51"
 msgstr "+{value} LA SUMA DE TUS CARTAS NUMÉRICAS"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "terrkE"
+msgstr "CERO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "yz4DcX"
+msgstr "UNO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "8Npezj"
+msgstr "DOS"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "aa070x"
+msgstr "CUATRO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "f_00qX"
+msgstr "CINCO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "rbxTcM"
+msgstr "SEIS"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "g-1zxC"
+msgstr "SIETE"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "WhHFG-"
+msgstr "OCHO"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "FQyBHt"
+msgstr "NUEVE"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "D0Tdbd"
+msgstr "DIEZ"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "2VfxJt"
+msgstr "ONCE"
+
+#: game/cards/number-content.tsx
+msgctxt "Cards"
+msgid "acgVM-"
+msgstr "DOCE"
 
 #: game/hooks/use-game-page-join.ts
 msgctxt "Game"
@@ -224,6 +285,7 @@ msgid "A7txUi"
 msgstr "No se pudo copiar el enlace."
 
 #: game/hooks/use-game-page-state.ts
+#: shared/lib/use-translate-app-error-toast.ts
 msgctxt "Errors"
 msgid "9dWNPy"
 msgstr "Partida no encontrada."
@@ -277,6 +339,36 @@ msgstr "Entrar"
 msgctxt "Game"
 msgid "7rG3A8"
 msgstr "Color del jugador"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "HJEJo0"
+msgstr "Clásico"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "fUDl2h"
+msgstr "Extendido"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "59CWbw"
+msgstr "Mesa grande"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "V5yUQX"
+msgstr "Base oficial. Mejor para 2-4 jugadores."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "fkQcQo"
+msgstr "Mejor para 4-5 jugadores. Más cartas y una partida un poco más larga."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "12G277"
+msgstr "Mejor para 6+ jugadores. Mazo más grande, techo más alto y partida más larga."
 
 #: game/screens/game-settings-panel.tsx
 msgctxt "GameSettings"
@@ -339,9 +431,110 @@ msgid "gAhnbT"
 msgstr "Las cartas incluirán números 0-{maxNumberCardValue}. Los modificadores llegarán hasta +{maxModifierValue}, más x2."
 
 #: game/screens/game-table-view.tsx
-msgctxt "Events"
-msgid "n3XQ56"
-msgstr "Aún no hay eventos en la mesa."
+msgctxt "GameTable"
+msgid "LdEa65"
+msgstr "Tu mano"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "xIIQHE"
+msgstr "Acciones de turno"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "KAmBEa"
+msgstr "La ronda está puntuada y lista para la siguiente repartida."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "ujJps_"
+msgstr "{name} decide si arriesga o asegura puntos."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "NQ4jqL"
+msgstr "Esperando la siguiente resolución."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "zXFNiG"
+msgstr "preparación"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "NhDwgx"
+msgstr "en curso"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "fT7uau"
+msgstr "terminada"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "FFCYOk"
+msgstr "Partida {id}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "O7eTPh"
+msgstr "Ronda {round} de una carrera a {target} puntos."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "AAwp4y"
+msgstr "Posición de mano {n}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "3iKhP_"
+msgstr "Turno: {name}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "S8snIe"
+msgstr "Actualizando"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "tmQt4O"
+msgstr "Estado de la mesa"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "X4CyH-"
+msgstr "Juegas como {name}"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "YJbbeg"
+msgstr "Únete a esta partida en este dispositivo para jugar turnos."
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "9kxP3A"
+msgstr "Última resolución"
+
+#: game/screens/game-table-view.tsx
+msgctxt "GameTable"
+msgid "cwn2Os"
+msgstr "Rivales"
+
+#: game/screens/game-table-view.tsx
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "tTQZXr"
+msgstr "Puntuación por ronda"
+
+#: game/screens/game-table-view.tsx
+msgctxt "RoundHistory"
+msgid "Lkc2Am"
+msgstr "Desglose de la ronda actual"
+
+#: game/screens/game-table-view.tsx
+msgctxt "RoundHistory"
+msgid "96Ao_m"
+msgstr "Puntuación detallada de la ronda activa o la más reciente que se completó."
 
 #: game/screens/game-table.tsx
 msgctxt "Errors"
@@ -405,18 +598,48 @@ msgstr "Acción"
 
 #: game/ui/flip-x-card.tsx
 msgctxt "Cards"
+msgid "85hyTu"
+msgstr "Tres más"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "EgadwQ"
+msgstr "Congelar"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "NY9djt"
+msgstr "Segunda oportunidad"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
 msgid "CuXNi7"
 msgstr "N.º {label}"
 
 #: game/ui/player-lane.tsx
 msgctxt "PlayerLane"
-msgid "yb45j-"
-msgstr "Puntuación total {score}"
+msgid "1PCThj"
+msgstr "Eliminado"
 
 #: game/ui/player-lane.tsx
 msgctxt "PlayerLane"
-msgid "PL2m0r"
-msgstr "Puntos en juego"
+msgid "g7If5t"
+msgstr "Asegurado"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "rzZR_J"
+msgstr "Congelado"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "ERnpdU"
+msgstr "Puntuado"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "dZd8H_"
+msgstr "Esperando"
 
 #: game/ui/player-lane.tsx
 msgctxt "PlayerLane"
@@ -450,13 +673,18 @@ msgstr "{count} por robar"
 
 #: game/ui/player-lane.tsx
 msgctxt "PlayerLane"
+msgid "yb45j-"
+msgstr "Puntuación total {score}"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "PL2m0r"
+msgstr "Puntos en juego"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
 msgid "EVPZb7"
 msgstr "Elegir a {name} como objetivo"
-
-#: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "tTQZXr"
-msgstr "Puntuación por ronda"
 
 #: game/ui/round-history-table.tsx
 msgctxt "RoundHistory"
@@ -568,6 +796,171 @@ msgctxt "ScoreSummary"
 msgid "dsdNpr"
 msgstr "Puntuación final de la ronda: {score}"
 
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "gkK9tw"
+msgstr "Empezar siguiente ronda"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "RpSV9W"
+msgstr "Elige quién asegura sus puntos y queda fuera de la ronda."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "7J5JOV"
+msgstr "Elige quién debe seguir robando hasta resolver tres cartas."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "AnLRFx"
+msgstr "Haz clic en un carril de jugador para elegir objetivo"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "nsOvDk"
+msgstr "Resolviendo Congelar..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "4o5bSn"
+msgstr "Resolviendo Tres más..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "zNaDqb"
+msgstr "Únete a la partida desde este dispositivo para jugar."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "Y1J46T"
+msgstr "Esperando a {name}."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "V67QH_"
+msgstr "Robando..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "z3gAR5"
+msgstr "Plantándose..."
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "PUQyyG"
+msgstr "Robar ({count})"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "lbABe3"
+msgstr "Pedir carta para {name}"
+
+#: game/ui/turn-controls.tsx
+msgctxt "TurnControls"
+msgid "bw08-c"
+msgstr "Plantarse con {name}"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "n3XQ56"
+msgstr "Aún no hay eventos en la mesa."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "clmNx1"
+msgstr "{action} espera un objetivo."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "bnpqEZ"
+msgstr "Segunda oportunidad descartó el duplicado {duplicate} en lugar de eliminar al jugador."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "x_lXI2"
+msgstr "¡Congelado! Puntos asegurados y fuera de la ronda."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "UoWhml"
+msgstr "¡Tres más te afecta! Quedan {cardsRemaining} cartas por robar."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "ZNBdfc"
+msgstr "Carta robada."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "wHj0UW"
+msgstr "¡Tres más completado!"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "8JaGCV"
+msgstr "{action} quedó en cola hasta terminar Tres más."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "LNzm00"
+msgstr "¡Duplicado {duplicate} — eliminado!"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "X60ieB"
+msgstr "Número revelado: {numberValue}."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "eANbvI"
+msgstr "¡flip-x activado!"
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "ZXUvmt"
+msgstr "El jugador reveló el modificador {modifier}."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "dj_dbV"
+msgstr "El jugador guardó una carta Segunda oportunidad."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "-CKJl0"
+msgstr "La Segunda oportunidad extra se descartó porque no había receptor válido."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "QVcG3z"
+msgstr "La Segunda oportunidad extra pasó a otro jugador activo."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "sJ49hX"
+msgstr "La repartida inicial mostró {card} al jugador."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "oWAQo9"
+msgstr "Se plantó y aseguró los puntos."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "M-Ftwj"
+msgstr "Pidió carta y reveló {card}."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "1rq-xO"
+msgstr "Ronda puntuada con {score} puntos."
+
+#: game/ui/use-round-event-format.ts
+msgctxt "Events"
+msgid "h5FYW0"
+msgstr "Evento de mesa registrado."
+
 #: shared/connectivity/offline-feedback.tsx
 msgctxt "Connectivity"
 msgid "xEhFzj"
@@ -592,3 +985,108 @@ msgstr "English"
 msgctxt "LanguageSwitcher"
 msgid "dX8jTq"
 msgstr "Español"
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Fvxzoz"
+msgstr "No es tu turno o el turno no es válido."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "wJ0Yml"
+msgstr "Esa acción no es válida ahora."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Mv-3D4"
+msgstr "Ese objetivo no está permitido."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "pGqwhk"
+msgstr "Introduce un nombre de anfitrión válido."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "E6zsGk"
+msgstr "Elige una configuración de partida válida."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "oOGuVP"
+msgstr "No se pudo asignar un código de lobby. Inténtalo de nuevo."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "CtWb7v"
+msgstr "No hay lobby con ese código."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "lrSs1M"
+msgstr "Introduce un nombre de jugador válido."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "H06hB4"
+msgstr "Ese nombre ya está cogido en esta mesa."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "VjKEMs"
+msgstr "Elige un color de jugador válido."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "APS6id"
+msgstr "Ese color ya está cogido en esta mesa."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "YbrPvm"
+msgstr "Solo el anfitrión puede hacer eso."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "pgu2Sq"
+msgstr "Al menos dos jugadores deben unirse antes de empezar."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "tNaxmV"
+msgstr "Primero únete a la partida."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "0Io_Ea"
+msgstr "Demasiados intentos. Espera un momento y vuelve a intentarlo."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "xzMfga"
+msgstr "Esta acción no está permitida en el estado actual de la partida."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Ta2xFQ"
+msgstr "La partida cambió. Actualiza e inténtalo de nuevo."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "tfukwC"
+msgstr "Relación no admitida."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "M8TjVq"
+msgstr "Tabla no admitida."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "Wk0ALV"
+msgstr "Confirmación no válida."
+
+#: shared/lib/use-translate-app-error-toast.ts
+msgctxt "Errors"
+msgid "PR2F1h"
+msgstr "{message}"
