@@ -1,6 +1,6 @@
 /**
  * Stable strings carried on domain errors via `.message` (Convex/client boundary)
- * and used as keys under `Errors` in `messages/*.json`.
+ * and localized via the `Errors` namespace in `messages/*.po`.
  * Exhaustiveness vs `AppError` is enforced in unit tests.
  */
 export const APP_ERROR_WIRE_CODE = {
@@ -35,13 +35,9 @@ function isWireCodeMessage(message: string): message is AppErrorWireCode {
   return CANONICAL_CODES.has(message);
 }
 
-function isLegacyErrorTag(message: string): message is keyof typeof APP_ERROR_WIRE_CODE {
-  return Object.prototype.hasOwnProperty.call(APP_ERROR_WIRE_CODE, message);
-}
-
 /**
  * Maps Convex/client error strings to localized copy. Accepts canonical wire codes
- * (`MATCH_NOT_FOUND`) and legacy `_tag` names (`MatchNotFound`) from older payloads.
+ * such as `MATCH_NOT_FOUND` on `AppError.message`.
  */
 export function translateConvexError(
   message: string,
@@ -50,9 +46,6 @@ export function translateConvexError(
 ): string {
   if (isWireCodeMessage(message)) {
     return t(message);
-  }
-  if (isLegacyErrorTag(message)) {
-    return t(APP_ERROR_WIRE_CODE[message]);
   }
   return translateGeneric(message);
 }

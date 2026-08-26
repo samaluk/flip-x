@@ -285,17 +285,6 @@ msgid "A7txUi"
 msgstr "No se pudo copiar el enlace."
 
 #: game/hooks/use-game-page-state.ts
-#: shared/lib/use-translate-app-error-toast.ts
-msgctxt "Errors"
-msgid "9dWNPy"
-msgstr "Partida no encontrada."
-
-#: game/hooks/use-game-page-state.ts
-msgctxt "Game"
-msgid "NLUETP"
-msgstr "Partida no encontrada"
-
-#: game/hooks/use-game-page-state.ts
 msgctxt "Game"
 msgid "OAc2rT"
 msgstr "La partida no está disponible o aún no se ha creado."
@@ -535,11 +524,6 @@ msgstr "Desglose de la ronda actual"
 msgctxt "RoundHistory"
 msgid "96Ao_m"
 msgstr "Puntuación detallada de la ronda activa o la más reciente que se completó."
-
-#: game/screens/game-table.tsx
-msgctxt "Errors"
-msgid "chhyZl"
-msgstr "La acción de juego falló."
 
 #: game/screens/lobby-code-display.tsx
 msgctxt "LobbyCodeDisplay"
@@ -986,107 +970,112 @@ msgctxt "LanguageSwitcher"
 msgid "dX8jTq"
 msgstr "Español"
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
+msgctxt "Errors"
+msgid "9dWNPy"
+msgstr "Partida no encontrada."
+
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Fvxzoz"
 msgstr "No es tu turno o el turno no es válido."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "wJ0Yml"
 msgstr "Esa acción no es válida ahora."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Mv-3D4"
 msgstr "Ese objetivo no está permitido."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "pGqwhk"
 msgstr "Introduce un nombre de anfitrión válido."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "E6zsGk"
 msgstr "Elige una configuración de partida válida."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "oOGuVP"
 msgstr "No se pudo asignar un código de lobby. Inténtalo de nuevo."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "CtWb7v"
 msgstr "No hay lobby con ese código."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "lrSs1M"
 msgstr "Introduce un nombre de jugador válido."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "H06hB4"
 msgstr "Ese nombre ya está cogido en esta mesa."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "VjKEMs"
 msgstr "Elige un color de jugador válido."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "APS6id"
 msgstr "Ese color ya está cogido en esta mesa."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "YbrPvm"
 msgstr "Solo el anfitrión puede hacer eso."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "pgu2Sq"
 msgstr "Al menos dos jugadores deben unirse antes de empezar."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "tNaxmV"
 msgstr "Primero únete a la partida."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "0Io_Ea"
 msgstr "Demasiados intentos. Espera un momento y vuelve a intentarlo."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "xzMfga"
 msgstr "Esta acción no está permitida en el estado actual de la partida."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Ta2xFQ"
 msgstr "La partida cambió. Actualiza e inténtalo de nuevo."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "tfukwC"
 msgstr "Relación no admitida."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "M8TjVq"
 msgstr "Tabla no admitida."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Wk0ALV"
 msgstr "Confirmación no válida."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
-msgid "PR2F1h"
-msgstr "{message}"
+msgid "chhyZl"
+msgstr "La acción de juego falló."

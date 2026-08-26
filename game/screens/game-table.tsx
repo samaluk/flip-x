@@ -1,6 +1,5 @@
 "use client";
 
-import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
 import { useActionState } from "react";
 
@@ -12,8 +11,8 @@ import {
   useSessionConfectMutation,
 } from "@/shared/lib/confect-hooks";
 import type { AppError } from "@/shared/lib/errors/domain";
+import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
-import { useTranslateAppErrorToast } from "@/shared/lib/use-translate-app-error-toast";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type TakeTurnArgs = {
@@ -72,15 +71,14 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   );
   const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
   const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
-  const tErrors = useExtracted("Errors");
-  const translateError = useTranslateAppErrorToast();
+  const { gameActionFailed, translateToast: translateError } = useAppErrors();
 
   const [, runAction, isPending] = useActionState<
     null,
     () => Promise<Either.Either<unknown, AppError>>
   >(async (_previousState: null, action) => {
     await toastEitherMutationFailure(action(), {
-      missingMessage: tErrors("Game action failed."),
+      missingMessage: gameActionFailed,
       translateError,
     });
     return null;

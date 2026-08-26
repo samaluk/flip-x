@@ -10,6 +10,7 @@ import { useGamePageJoin } from "@/game/hooks/use-game-page-join";
 import { useMatchPresence } from "@/game/hooks/use-match-presence";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import type { PlayerColorId } from "@/shared/lib/player-colors";
+import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { useSessionConfectQuery } from "@/shared/lib/confect-hooks";
 
 export type GamePageState = {
@@ -26,7 +27,6 @@ export type GamePageState = {
   onPlayerNameChange: (value: string) => void;
   onColorChange: (colorId: PlayerColorId) => void;
   onCopyInvite: () => void;
-  failureTitle: string;
   matchNotFoundTitle: string;
   matchNotFoundBody: string;
 };
@@ -39,7 +39,7 @@ export function useGamePageState(matchId: string): GamePageState {
   });
   const snapshot = QueryResult.isSuccess(snapshotResult) ? snapshotResult.value : undefined;
   const t = useExtracted("Game");
-  const tErrors = useExtracted("Errors");
+  const { matchNotFoundTitle } = useAppErrors();
   const viewerPlayerId = snapshot?.viewerPlayerId;
   const onlinePlayerIds = useMatchPresence(matchId, viewerPlayerId ?? undefined);
   const {
@@ -78,8 +78,7 @@ export function useGamePageState(matchId: string): GamePageState {
     onPlayerNameChange: setPlayerName,
     onColorChange: setColorId,
     onCopyInvite: () => void onCopyInvite(),
-    failureTitle: tErrors("Match not found."),
-    matchNotFoundTitle: t("Match not found"),
+    matchNotFoundTitle,
     matchNotFoundBody: t("The requested match is unavailable or has not been created yet."),
   };
 }

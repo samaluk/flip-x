@@ -285,17 +285,6 @@ msgid "A7txUi"
 msgstr "Could not copy the invite link."
 
 #: game/hooks/use-game-page-state.ts
-#: shared/lib/use-translate-app-error-toast.ts
-msgctxt "Errors"
-msgid "9dWNPy"
-msgstr "Match not found."
-
-#: game/hooks/use-game-page-state.ts
-msgctxt "Game"
-msgid "NLUETP"
-msgstr "Match not found"
-
-#: game/hooks/use-game-page-state.ts
 msgctxt "Game"
 msgid "OAc2rT"
 msgstr "The requested match is unavailable or has not been created yet."
@@ -535,11 +524,6 @@ msgstr "Current round breakdown"
 msgctxt "RoundHistory"
 msgid "96Ao_m"
 msgstr "Detailed scoring for the active or most recently completed round."
-
-#: game/screens/game-table.tsx
-msgctxt "Errors"
-msgid "chhyZl"
-msgstr "Game action failed."
 
 #: game/screens/lobby-code-display.tsx
 msgctxt "LobbyCodeDisplay"
@@ -986,107 +970,112 @@ msgctxt "LanguageSwitcher"
 msgid "dX8jTq"
 msgstr "Español"
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
+msgctxt "Errors"
+msgid "9dWNPy"
+msgstr "Match not found."
+
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Fvxzoz"
 msgstr "It is not your turn or the turn is invalid."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "wJ0Yml"
 msgstr "That action is not valid right now."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Mv-3D4"
 msgstr "That target is not allowed."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "pGqwhk"
 msgstr "Enter a valid host name."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "E6zsGk"
 msgstr "Choose valid game settings."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "oOGuVP"
 msgstr "Could not assign a lobby code. Try again."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "CtWb7v"
 msgstr "No lobby found for that code."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "lrSs1M"
 msgstr "Enter a valid player name."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "H06hB4"
 msgstr "That name is already taken at this table."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "VjKEMs"
 msgstr "Choose a valid player color."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "APS6id"
 msgstr "That player color is already taken at this table."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "YbrPvm"
 msgstr "Only the host can do that."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "pgu2Sq"
 msgstr "At least two players need to join before the game can start."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "tNaxmV"
 msgstr "Join the game first."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "0Io_Ea"
 msgstr "Too many attempts. Please wait a moment and try again."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "xzMfga"
 msgstr "This action is not allowed in the current match state."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Ta2xFQ"
 msgstr "The game changed. Refresh and try again."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "tfukwC"
 msgstr "Unsupported relationship."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "M8TjVq"
 msgstr "Unsupported table."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
 msgid "Wk0ALV"
 msgstr "Invalid confirmation."
 
-#: shared/lib/use-translate-app-error-toast.ts
+#: shared/lib/errors/use-app-errors.ts
 msgctxt "Errors"
-msgid "PR2F1h"
-msgstr "{message}"
+msgid "chhyZl"
+msgstr "Game action failed."

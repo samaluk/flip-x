@@ -10,10 +10,7 @@ export function GamePageClient({ matchId }: { matchId: string }) {
   if (state.isLoading) {
     return <GamePageLoading />;
   }
-  if (state.isFailure) {
-    return <GamePageError title={state.failureTitle} body={state.matchNotFoundBody} />;
-  }
-  if (!state.snapshot) {
+  if (state.isFailure || !state.snapshot) {
     return <GamePageError title={state.matchNotFoundTitle} body={state.matchNotFoundBody} />;
   }
 
