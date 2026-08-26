@@ -126,6 +126,448 @@ msgctxt "NotFoundPage"
 msgid "SWMHO-"
 msgstr "Ir al inicio"
 
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "nm-yce"
+msgstr "JUEGA SOBRE UN JUGADOR ACTIVO"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "mfDLmn"
+msgstr "GUARDA ESTA CARTA HASTA QUE LA NECESITES"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "n2uOzU"
+msgstr "SEGUNDA"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "uGKkSN"
+msgstr "OPORTUNIDAD"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "f-bSw4"
+msgstr "INSTANTÁNEA"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "6M6q_0"
+msgstr "ACCIÓN"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "LhDRin"
+msgstr "VOLTEA"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "I9xDqF"
+msgstr "TRES"
+
+#: game/cards/action-content.tsx
+msgctxt "Cards"
+msgid "f-cLL5"
+msgstr "CONGELAR"
+
+#: game/cards/modifier-content.tsx
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "ZHccEc"
+msgstr "×2"
+
+#: game/cards/modifier-content.tsx
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "G5qKtr"
+msgstr "+{value}"
+
+#: game/cards/modifier-content.tsx
+msgctxt "Cards"
+msgid "vKToVR"
+msgstr "×2 LA SUMA DE TUS CARTAS NUMÉRICAS"
+
+#: game/cards/modifier-content.tsx
+msgctxt "Cards"
+msgid "9-ji51"
+msgstr "+{value} LA SUMA DE TUS CARTAS NUMÉRICAS"
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "e_6mlg"
+msgstr "Escribe tu nombre."
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "aURH8N"
+msgstr "El nombre debe tener 20 caracteres o menos."
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "AbM0BV"
+msgstr "Sesión no disponible."
+
+#: game/hooks/use-game-page-join.ts
+msgctxt "Game"
+msgid "pQvtX8"
+msgstr "No se pudo unir a la partida."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "3pP4Fg"
+msgstr "Enlace copiado."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "A7txUi"
+msgstr "No se pudo copiar el enlace."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Errors"
+msgid "9dWNPy"
+msgstr "Partida no encontrada."
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "NLUETP"
+msgstr "Partida no encontrada"
+
+#: game/hooks/use-game-page-state.ts
+msgctxt "Game"
+msgid "OAc2rT"
+msgstr "La partida no está disponible o aún no se ha creado."
+
+#: game/screens/game-error-content.tsx
+msgctxt "Game"
+msgid "M7q8Xk"
+msgstr "No se pudo cargar la partida"
+
+#: game/screens/game-error-content.tsx
+msgctxt "Game"
+msgid "FazwRl"
+msgstr "Reintentar"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "rtACcE"
+msgstr "Copiar enlace de invitación"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "rGvOhK"
+msgstr "Unirse a la partida"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "A7KXYH"
+msgstr "Escribe tu nombre para ocupar un sitio en la mesa."
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "vlKhIl"
+msgstr "Tu nombre"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "7ERAwR"
+msgstr "Entrar"
+
+#: game/screens/game-page-content.tsx
+msgctxt "Game"
+msgid "7rG3A8"
+msgstr "Color del jugador"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "GY8bVw"
+msgstr "No se pudo actualizar la configuración."
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "ixKAYF"
+msgstr "Configuración de partida"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "LlUFYE"
+msgstr "Recomendado para este lobby: {preset}"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "oL0rU6"
+msgstr "Bloqueada"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "37dv3i"
+msgstr "Puntos para ganar"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "d9iNyj"
+msgstr "Cartas"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "BIAFqd"
+msgstr "Modificadores"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "mrOnjM"
+msgstr "Modo"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "VKfWR3"
+msgstr "Recomendado"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "3Rx6Qo"
+msgstr "Avanzado"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "zM-PPA"
+msgstr "Carta numérica máxima"
+
+#: game/screens/game-settings-panel.tsx
+msgctxt "GameSettings"
+msgid "gAhnbT"
+msgstr "Las cartas incluirán números 0-{maxNumberCardValue}. Los modificadores llegarán hasta +{maxModifierValue}, más x2."
+
+#: game/screens/game-table-view.tsx
+msgctxt "Events"
+msgid "n3XQ56"
+msgstr "Aún no hay eventos en la mesa."
+
+#: game/screens/game-table.tsx
+msgctxt "Errors"
+msgid "chhyZl"
+msgstr "La acción de juego falló."
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "NilGOF"
+msgstr "¡Código copiado!"
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "acjeOD"
+msgstr "No se pudo copiar el código."
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "vaiSyy"
+msgstr "Codigo de la sala"
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "p556q3"
+msgstr "Copiado"
+
+#: game/screens/lobby-code-display.tsx
+msgctxt "LobbyCodeDisplay"
+msgid "4l6vz1"
+msgstr "Copiar"
+
+#: game/screens/start-game-button.tsx
+msgctxt "StartGameButton"
+msgid "-bi6ia"
+msgstr "No se pudo empezar la partida."
+
+#: game/screens/start-game-button.tsx
+msgctxt "StartGameButton"
+msgid "3qXa2f"
+msgstr "Iniciando..."
+
+#: game/screens/start-game-button.tsx
+msgctxt "StartGameButton"
+msgid "MxeQIj"
+msgstr "Empezar partida"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "kFkPWB"
+msgstr "Número"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "saDFoR"
+msgstr "Bonus"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "QlsDcr"
+msgstr "Acción"
+
+#: game/ui/flip-x-card.tsx
+msgctxt "Cards"
+msgid "CuXNi7"
+msgstr "N.º {label}"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "yb45j-"
+msgstr "Puntuación total {score}"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "PL2m0r"
+msgstr "Puntos en juego"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "xbovKX"
+msgstr "Mano"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "kJ5W29"
+msgstr "Tú"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "ccU6l_"
+msgstr "En línea"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "ErxWra"
+msgstr "Yo"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "YDkqMJ"
+msgstr "Entrante"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "oZTIL7"
+msgstr "{count} por robar"
+
+#: game/ui/player-lane.tsx
+msgctxt "PlayerLane"
+msgid "EVPZb7"
+msgstr "Elegir a {name} como objetivo"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "tTQZXr"
+msgstr "Puntuación por ronda"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "Ac7AIs"
+msgstr "Sigue el total acumulado, lo que sumó cada ronda y quién se acerca a la meta."
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "1sMKRw"
+msgstr "Todavía no hay rondas para mostrar. El historial en vivo aparece en cuanto empieza la primera ronda."
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "1AGL1r"
+msgstr "Jugador"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "wwlk_j"
+msgstr "R{round}*"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "CIxt1U"
+msgstr "R{round}"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "Dn82AL"
+msgstr "En vivo"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "kCDXlq"
+msgstr "Puesto {seat}"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "H-vBOj"
+msgstr "Ganador"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "h0NFb4"
+msgstr "{points} para la meta"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "yw99BZ"
+msgstr "{player}, {round}. Total {total}, ronda +{gain}. {status}"
+
+#: game/ui/round-history-table.tsx
+msgctxt "RoundHistory"
+msgid "KGEmZH"
+msgstr "Ganancia {gain}"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "1AGL1r"
+msgstr "Jugador"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "YL6Hqs"
+msgstr "Números"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "ZHccEc"
+msgstr "×2"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "saDFoR"
+msgstr "Bonus"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "a05Y4b"
+msgstr "flip-x"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "r_zRQo"
+msgstr "Total ronda"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "a5msuh"
+msgstr "Sí"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "oUWADl"
+msgstr "No"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "WARKS0"
+msgstr "Multiplicador: ×2"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "FhJo1X"
+msgstr "Multiplicador: ninguno"
+
+#: game/ui/score-summary.tsx
+msgctxt "ScoreSummary"
+msgid "dsdNpr"
+msgstr "Puntuación final de la ronda: {score}"
+
 #: shared/connectivity/offline-feedback.tsx
 msgctxt "Connectivity"
 msgid "xEhFzj"

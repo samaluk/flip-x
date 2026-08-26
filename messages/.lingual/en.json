@@ -51,7 +51,23 @@
     "toastInviteCopied": "Invite link copied.",
     "toastInviteCopyFailed": "Could not copy the invite link.",
     "errorTitle": "Could not load the match",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "e_6mlg": "Please enter your name.",
+    "aURH8N": "Name must be 20 characters or less.",
+    "AbM0BV": "Session not available.",
+    "pQvtX8": "Could not join the game.",
+    "3pP4Fg": "Invite link copied.",
+    "A7txUi": "Could not copy the invite link.",
+    "NLUETP": "Match not found",
+    "OAc2rT": "The requested match is unavailable or has not been created yet.",
+    "M7q8Xk": "Could not load the match",
+    "FazwRl": "Try again",
+    "rtACcE": "Copy invite link",
+    "rGvOhK": "Join the game",
+    "A7KXYH": "Enter your name to claim a seat at the table.",
+    "vlKhIl": "Your name",
+    "7ERAwR": "Join Game",
+    "7rG3A8": "Player color"
   },
   "GameSettings": {
     "title": "Game settings",
@@ -79,7 +95,19 @@
         "label": "Big Table",
         "helper": "Better for 6+ players. Larger deck, higher ceiling, longer match."
       }
-    }
+    },
+    "GY8bVw": "Could not update game settings.",
+    "ixKAYF": "Game settings",
+    "LlUFYE": "Recommended for this lobby: {preset}",
+    "oL0rU6": "Locked",
+    "37dv3i": "Points to win",
+    "d9iNyj": "Cards",
+    "BIAFqd": "Modifiers",
+    "mrOnjM": "Mode",
+    "VKfWR3": "Recommended",
+    "3Rx6Qo": "Advanced",
+    "zM-PPA": "Max number card",
+    "gAhnbT": "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
   },
   "Errors": {
     "generic": "{message}",
@@ -106,7 +134,9 @@
     "INSUFFICIENT_PLAYERS": "At least two players need to join before the game can start.",
     "PLAYER_NOT_JOINED": "Join the game first.",
     "RATE_LIMITED": "Too many attempts. Please wait a moment and try again.",
-    "gameActionFailed": "Game action failed."
+    "gameActionFailed": "Game action failed.",
+    "9dWNPy": "Match not found.",
+    "chhyZl": "Game action failed."
   },
   "Events": {
     "pending_action": "{action} is waiting for a target.",
@@ -128,7 +158,8 @@
     "hit": "Hit and revealed {card}.",
     "round_scored": "Round scored at {score} points.",
     "unknown": "Table event recorded.",
-    "noneYet": "No table event has been logged yet."
+    "noneYet": "No table event has been logged yet.",
+    "n3XQ56": "No table event has been logged yet."
   },
   "Cards": {
     "kindNumber": "Number",
@@ -174,7 +205,24 @@
       "plus": "+{value}",
       "effectPlus": "+{value} THE SUM OF YOUR NUMBER CARDS",
       "effectX2": "×2 THE SUM OF YOUR NUMBER CARDS"
-    }
+    },
+    "nm-yce": "PLAY ON AN ACTIVE PLAYER",
+    "mfDLmn": "SAVE THIS CARD UNTIL NEEDED",
+    "n2uOzU": "SECOND",
+    "uGKkSN": "CHANCE",
+    "f-bSw4": "INSTANT",
+    "6M6q_0": "ACTION",
+    "LhDRin": "FLIP",
+    "I9xDqF": "THREE",
+    "f-cLL5": "FREEZE",
+    "ZHccEc": "×2",
+    "G5qKtr": "+{value}",
+    "vKToVR": "×2 THE SUM OF YOUR NUMBER CARDS",
+    "9-ji51": "+{value} THE SUM OF YOUR NUMBER CARDS",
+    "kFkPWB": "Number",
+    "saDFoR": "Bonus",
+    "QlsDcr": "Action",
+    "CuXNi7": "No. {label}"
   },
   "RoundHistory": {
     "title": "Score by round",
@@ -190,7 +238,19 @@
     "winner": "Winner",
     "scoreCellLabel": "{player}, {round}. Total {total}, round +{gain}. {status}",
     "currentRoundBreakdownTitle": "Current round breakdown",
-    "currentRoundBreakdownSubtitle": "Detailed scoring for the active or most recently completed round."
+    "currentRoundBreakdownSubtitle": "Detailed scoring for the active or most recently completed round.",
+    "tTQZXr": "Score by round",
+    "Ac7AIs": "Track the running total, the gain from each round, and who is closing in on the target score.",
+    "1sMKRw": "No rounds to show yet. Live history appears as soon as the first round starts.",
+    "1AGL1r": "Player",
+    "wwlk_j": "R{round}*",
+    "CIxt1U": "R{round}",
+    "Dn82AL": "Live",
+    "kCDXlq": "Seat {seat}",
+    "H-vBOj": "Winner",
+    "h0NFb4": "{points} to target",
+    "yw99BZ": "{player}, {round}. Total {total}, round +{gain}. {status}",
+    "KGEmZH": "Gain {gain}"
   },
   "ScoreSummary": {
     "title": "Round breakdown",
@@ -205,7 +265,18 @@
     "no": "No",
     "srMultiplierApplied": "Multiplier: ×2",
     "srMultiplierOff": "Multiplier: none",
-    "srFinalScore": "Final round score: {score}"
+    "srFinalScore": "Final round score: {score}",
+    "1AGL1r": "Player",
+    "YL6Hqs": "Numbers",
+    "ZHccEc": "×2",
+    "saDFoR": "Bonus",
+    "a05Y4b": "flip-x",
+    "r_zRQo": "Round total",
+    "a5msuh": "Yes",
+    "oUWADl": "No",
+    "WARKS0": "Multiplier: ×2",
+    "FhJo1X": "Multiplier: none",
+    "dsdNpr": "Final round score: {score}"
   },
   "PlayerLane": {
     "dealer": "Dealer",
@@ -221,7 +292,16 @@
     "selfTarget": "Self",
     "incomingAction": "Incoming",
     "flip3Remaining": "{count} to draw",
-    "selectTargetLabel": "Select {name} as target"
+    "selectTargetLabel": "Select {name} as target",
+    "yb45j-": "Total score {score}",
+    "PL2m0r": "Points at risk",
+    "xbovKX": "Dealer",
+    "kJ5W29": "You",
+    "ccU6l_": "Online",
+    "ErxWra": "Self",
+    "YDkqMJ": "Incoming",
+    "oZTIL7": "{count} to draw",
+    "EVPZb7": "Select {name} as target"
   },
   "TurnControls": {
     "startNextRound": "Start next round",
@@ -277,12 +357,20 @@
     "copy": "Copy",
     "statusLabel": "Lobby code",
     "toastCopied": "Lobby code copied!",
-    "toastFailed": "Could not copy the code."
+    "toastFailed": "Could not copy the code.",
+    "NilGOF": "Lobby code copied!",
+    "acjeOD": "Could not copy the code.",
+    "vaiSyy": "Lobby code",
+    "p556q3": "Copied",
+    "4l6vz1": "Copy"
   },
   "StartGameButton": {
     "startGame": "Start Game",
     "starting": "Starting...",
-    "toastFailed": "Could not start the game."
+    "toastFailed": "Could not start the game.",
+    "-bi6ia": "Could not start the game.",
+    "3qXa2f": "Starting...",
+    "MxeQIj": "Start Game"
   },
   "Metadata": {
     "a05Y4b": "flip-x",

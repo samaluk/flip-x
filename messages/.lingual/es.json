@@ -51,7 +51,23 @@
     "toastInviteCopied": "Enlace copiado.",
     "toastInviteCopyFailed": "No se pudo copiar el enlace.",
     "errorTitle": "No se pudo cargar la partida",
-    "tryAgain": "Reintentar"
+    "tryAgain": "Reintentar",
+    "e_6mlg": "Escribe tu nombre.",
+    "aURH8N": "El nombre debe tener 20 caracteres o menos.",
+    "AbM0BV": "Sesión no disponible.",
+    "pQvtX8": "No se pudo unir a la partida.",
+    "3pP4Fg": "Enlace copiado.",
+    "A7txUi": "No se pudo copiar el enlace.",
+    "NLUETP": "Partida no encontrada",
+    "OAc2rT": "La partida no está disponible o aún no se ha creado.",
+    "M7q8Xk": "No se pudo cargar la partida",
+    "FazwRl": "Reintentar",
+    "rtACcE": "Copiar enlace de invitación",
+    "rGvOhK": "Unirse a la partida",
+    "A7KXYH": "Escribe tu nombre para ocupar un sitio en la mesa.",
+    "vlKhIl": "Tu nombre",
+    "7ERAwR": "Entrar",
+    "7rG3A8": "Color del jugador"
   },
   "GameSettings": {
     "title": "Configuración de partida",
@@ -79,7 +95,19 @@
         "label": "Mesa grande",
         "helper": "Mejor para 6+ jugadores. Mazo más grande, techo más alto y partida más larga."
       }
-    }
+    },
+    "GY8bVw": "No se pudo actualizar la configuración.",
+    "ixKAYF": "Configuración de partida",
+    "LlUFYE": "Recomendado para este lobby: {preset}",
+    "oL0rU6": "Bloqueada",
+    "37dv3i": "Puntos para ganar",
+    "d9iNyj": "Cartas",
+    "BIAFqd": "Modificadores",
+    "mrOnjM": "Modo",
+    "VKfWR3": "Recomendado",
+    "3Rx6Qo": "Avanzado",
+    "zM-PPA": "Carta numérica máxima",
+    "gAhnbT": "Las cartas incluirán números 0-{maxNumberCardValue}. Los modificadores llegarán hasta +{maxModifierValue}, más x2."
   },
   "Errors": {
     "generic": "{message}",
@@ -106,7 +134,9 @@
     "INSUFFICIENT_PLAYERS": "Al menos dos jugadores deben unirse antes de empezar.",
     "PLAYER_NOT_JOINED": "Primero únete a la partida.",
     "RATE_LIMITED": "Demasiados intentos. Espera un momento y vuelve a intentarlo.",
-    "gameActionFailed": "La acción de juego falló."
+    "gameActionFailed": "La acción de juego falló.",
+    "9dWNPy": "Partida no encontrada.",
+    "chhyZl": "La acción de juego falló."
   },
   "Events": {
     "pending_action": "{action} espera un objetivo.",
@@ -128,7 +158,8 @@
     "hit": "Pidió carta y reveló {card}.",
     "round_scored": "Ronda puntuada con {score} puntos.",
     "unknown": "Evento de mesa registrado.",
-    "noneYet": "Aún no hay eventos en la mesa."
+    "noneYet": "Aún no hay eventos en la mesa.",
+    "n3XQ56": "Aún no hay eventos en la mesa."
   },
   "Cards": {
     "kindNumber": "Número",
@@ -174,7 +205,24 @@
       "plus": "+{value}",
       "effectPlus": "+{value} LA SUMA DE TUS CARTAS NUMÉRICAS",
       "effectX2": "×2 LA SUMA DE TUS CARTAS NUMÉRICAS"
-    }
+    },
+    "nm-yce": "JUEGA SOBRE UN JUGADOR ACTIVO",
+    "mfDLmn": "GUARDA ESTA CARTA HASTA QUE LA NECESITES",
+    "n2uOzU": "SEGUNDA",
+    "uGKkSN": "OPORTUNIDAD",
+    "f-bSw4": "INSTANTÁNEA",
+    "6M6q_0": "ACCIÓN",
+    "LhDRin": "VOLTEA",
+    "I9xDqF": "TRES",
+    "f-cLL5": "CONGELAR",
+    "ZHccEc": "×2",
+    "G5qKtr": "+{value}",
+    "vKToVR": "×2 LA SUMA DE TUS CARTAS NUMÉRICAS",
+    "9-ji51": "+{value} LA SUMA DE TUS CARTAS NUMÉRICAS",
+    "kFkPWB": "Número",
+    "saDFoR": "Bonus",
+    "QlsDcr": "Acción",
+    "CuXNi7": "N.º {label}"
   },
   "RoundHistory": {
     "title": "Puntuación por ronda",
@@ -190,7 +238,19 @@
     "winner": "Ganador",
     "scoreCellLabel": "{player}, {round}. Total {total}, ronda +{gain}. {status}",
     "currentRoundBreakdownTitle": "Desglose de la ronda actual",
-    "currentRoundBreakdownSubtitle": "Puntuación detallada de la ronda activa o la más reciente que se completó."
+    "currentRoundBreakdownSubtitle": "Puntuación detallada de la ronda activa o la más reciente que se completó.",
+    "tTQZXr": "Puntuación por ronda",
+    "Ac7AIs": "Sigue el total acumulado, lo que sumó cada ronda y quién se acerca a la meta.",
+    "1sMKRw": "Todavía no hay rondas para mostrar. El historial en vivo aparece en cuanto empieza la primera ronda.",
+    "1AGL1r": "Jugador",
+    "wwlk_j": "R{round}*",
+    "CIxt1U": "R{round}",
+    "Dn82AL": "En vivo",
+    "kCDXlq": "Puesto {seat}",
+    "H-vBOj": "Ganador",
+    "h0NFb4": "{points} para la meta",
+    "yw99BZ": "{player}, {round}. Total {total}, ronda +{gain}. {status}",
+    "KGEmZH": "Ganancia {gain}"
   },
   "ScoreSummary": {
     "title": "Desglose de la ronda",
@@ -205,7 +265,18 @@
     "no": "No",
     "srMultiplierApplied": "Multiplicador: ×2",
     "srMultiplierOff": "Multiplicador: ninguno",
-    "srFinalScore": "Puntuación final de la ronda: {score}"
+    "srFinalScore": "Puntuación final de la ronda: {score}",
+    "1AGL1r": "Jugador",
+    "YL6Hqs": "Números",
+    "ZHccEc": "×2",
+    "saDFoR": "Bonus",
+    "a05Y4b": "flip-x",
+    "r_zRQo": "Total ronda",
+    "a5msuh": "Sí",
+    "oUWADl": "No",
+    "WARKS0": "Multiplicador: ×2",
+    "FhJo1X": "Multiplicador: ninguno",
+    "dsdNpr": "Puntuación final de la ronda: {score}"
   },
   "PlayerLane": {
     "dealer": "Mano",
@@ -221,7 +292,16 @@
     "selfTarget": "Yo",
     "incomingAction": "Entrante",
     "flip3Remaining": "{count} por robar",
-    "selectTargetLabel": "Elegir a {name} como objetivo"
+    "selectTargetLabel": "Elegir a {name} como objetivo",
+    "yb45j-": "Puntuación total {score}",
+    "PL2m0r": "Puntos en juego",
+    "xbovKX": "Mano",
+    "kJ5W29": "Tú",
+    "ccU6l_": "En línea",
+    "ErxWra": "Yo",
+    "YDkqMJ": "Entrante",
+    "oZTIL7": "{count} por robar",
+    "EVPZb7": "Elegir a {name} como objetivo"
   },
   "TurnControls": {
     "startNextRound": "Empezar siguiente ronda",
@@ -277,12 +357,20 @@
     "copy": "Copiar",
     "statusLabel": "Codigo de la sala",
     "toastCopied": "¡Código copiado!",
-    "toastFailed": "No se pudo copiar el código."
+    "toastFailed": "No se pudo copiar el código.",
+    "NilGOF": "¡Código copiado!",
+    "acjeOD": "No se pudo copiar el código.",
+    "vaiSyy": "Codigo de la sala",
+    "p556q3": "Copiado",
+    "4l6vz1": "Copiar"
   },
   "StartGameButton": {
     "startGame": "Empezar partida",
     "starting": "Iniciando...",
-    "toastFailed": "No se pudo empezar la partida."
+    "toastFailed": "No se pudo empezar la partida.",
+    "-bi6ia": "No se pudo empezar la partida.",
+    "3qXa2f": "Iniciando...",
+    "MxeQIj": "Empezar partida"
   },
   "Metadata": {
     "a05Y4b": "flip-x",

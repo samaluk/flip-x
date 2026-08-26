@@ -1,4 +1,4 @@
-/* oxlint-disable typescript/no-unsafe-assignment, typescript/no-unsafe-member-access, typescript/no-unsafe-argument, typescript/no-unsafe-call -- build script over untyped PO parser output. */
+/* oxlint-disable typescript/no-unsafe-assignment, typescript/no-unsafe-member-access, typescript/no-unsafe-argument, typescript/no-unsafe-call, typescript/no-unsafe-type-assertion, typescript/no-unsafe-return -- build script over untyped PO parser output. */
 import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
@@ -39,12 +39,35 @@ function loadPoFile(relativePath) {
   return messages;
 }
 
+function mergeCatalogs(legacy, extracted) {
+  /** @type {Record<string, unknown>} */
+  const merged = structuredClone(legacy);
+  for (const [namespace, messages] of Object.entries(extracted)) {
+    if (
+      typeof messages === "object" &&
+      messages !== null &&
+      !Array.isArray(messages) &&
+      typeof merged[namespace] === "object" &&
+      merged[namespace] !== null &&
+      !Array.isArray(merged[namespace])
+    ) {
+      merged[namespace] = {
+        .../** @type {Record<string, unknown>} */ (merged[namespace]),
+        .../** @type {Record<string, unknown>} */ (messages),
+      };
+      continue;
+    }
+    merged[namespace] = messages;
+  }
+  return merged;
+}
+
 const catalogs = {};
 for (const locale of ["en", "es"]) {
-  catalogs[locale] = {
-    ...loadPoFile(`messages/legacy/${locale}.po`),
-    ...loadPoFile(`messages/${locale}.po`),
-  };
+  catalogs[locale] = mergeCatalogs(
+    loadPoFile(`messages/legacy/${locale}.po`),
+    loadPoFile(`messages/${locale}.po`),
+  );
 
   fs.mkdirSync(path.join(process.cwd(), "messages/.lingual"), { recursive: true });
   fs.writeFileSync(
