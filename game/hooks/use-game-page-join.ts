@@ -3,7 +3,7 @@
 import { useSessionId } from "convex-helpers/react/sessions";
 import * as Either from "effect/Either";
 import { useExtracted } from "next-intl";
-import { type SubmitEvent, useActionState, useState } from "react";
+import { type SubmitEvent, startTransition, useActionState, useState } from "react";
 import { toast } from "sonner";
 
 import refs from "@/confect/_generated/refs";
@@ -84,7 +84,9 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
 
   function handleJoin(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
-    submitJoin();
+    startTransition(() => {
+      submitJoin();
+    });
   }
 
   return {

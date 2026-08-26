@@ -2,7 +2,7 @@
 
 import { Settings2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 
 import refs from "@/confect/_generated/refs";
 import {
@@ -140,7 +140,11 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                     type="button"
                     variant={isActive ? "default" : "outline"}
                     disabled={isUpdating}
-                    onClick={() => updateSettings(preset.settings)}
+                    onClick={() => {
+                      startTransition(() => {
+                        updateSettings(preset.settings);
+                      });
+                    }}
                     className={cn(
                       "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-start whitespace-normal",
                       isRecommended && !isActive ? "border-primary/70" : "",
@@ -172,14 +176,22 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                       value={settings.targetScore}
                       values={TARGET_SCORE_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(targetScore) => updateSettings({ targetScore })}
+                      onChange={(targetScore) => {
+                        startTransition(() => {
+                          updateSettings({ targetScore });
+                        });
+                      }}
                     />
                     <SettingsSelect
                       label={t("Max number card")}
                       value={settings.maxNumberCardValue}
                       values={MAX_NUMBER_CARD_OPTIONS}
                       disabled={isUpdating}
-                      onChange={(maxNumberCardValue) => updateSettings({ maxNumberCardValue })}
+                      onChange={(maxNumberCardValue) => {
+                        startTransition(() => {
+                          updateSettings({ maxNumberCardValue });
+                        });
+                      }}
                     />
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">

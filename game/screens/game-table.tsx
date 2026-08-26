@@ -1,7 +1,7 @@
 "use client";
 
 import * as Either from "effect/Either";
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 
 import refs from "@/confect/_generated/refs";
 import { GameTableView } from "@/game/screens/game-table-view";
@@ -85,46 +85,54 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   }, null);
 
   function handleHit() {
-    runAction(() =>
-      takeTurn({
-        matchId,
-        expectedVersion: snapshot.version,
-        idempotencyKey: crypto.randomUUID(),
-        action: "hit",
-      }),
-    );
+    startTransition(() => {
+      runAction(() =>
+        takeTurn({
+          matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
+          action: "hit",
+        }),
+      );
+    });
   }
 
   function handleStay() {
-    runAction(() =>
-      takeTurn({
-        matchId,
-        expectedVersion: snapshot.version,
-        idempotencyKey: crypto.randomUUID(),
-        action: "stay",
-      }),
-    );
+    startTransition(() => {
+      runAction(() =>
+        takeTurn({
+          matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
+          action: "stay",
+        }),
+      );
+    });
   }
 
   function handleResolveAction(targetPlayerId: Id<"players">) {
-    runAction(() =>
-      resolveAction({
-        matchId,
-        expectedVersion: snapshot.version,
-        idempotencyKey: crypto.randomUUID(),
-        targetPlayerId,
-      }),
-    );
+    startTransition(() => {
+      runAction(() =>
+        resolveAction({
+          matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
+          targetPlayerId,
+        }),
+      );
+    });
   }
 
   function handleStartNextRound() {
-    runAction(() =>
-      startNextRound({
-        matchId,
-        expectedVersion: snapshot.version,
-        idempotencyKey: crypto.randomUUID(),
-      }),
-    );
+    startTransition(() => {
+      runAction(() =>
+        startNextRound({
+          matchId,
+          expectedVersion: snapshot.version,
+          idempotencyKey: crypto.randomUUID(),
+        }),
+      );
+    });
   }
 
   return (

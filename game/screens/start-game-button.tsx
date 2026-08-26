@@ -3,7 +3,7 @@
 import { LazyMotion, domAnimation, m } from "motion/react";
 import { PlayIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useActionState } from "react";
+import { startTransition, useActionState } from "react";
 
 import refs from "@/confect/_generated/refs";
 import { Button } from "@/shared/ui/button";
@@ -48,7 +48,11 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
       >
         <Button
-          onClick={() => startGame()}
+          onClick={() => {
+            startTransition(() => {
+              startGame();
+            });
+          }}
           disabled={isSubmitting || playerCount < 2}
           size="lg"
           className="gap-2 rounded-full px-6"
