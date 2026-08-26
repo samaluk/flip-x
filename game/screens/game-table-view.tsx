@@ -22,7 +22,6 @@ import { ScoreSummary } from "@/game/ui/score-summary";
 import { TurnControls } from "@/game/ui/turn-controls";
 import { resolveTurnControlsPhase } from "@/game/ui/turn-controls-phase";
 import { cn } from "@/shared/lib/utils";
-import { toLooseTranslate } from "@/shared/lib/loose-translate";
 import {
   Accordion,
   AccordionContent,
@@ -103,11 +102,8 @@ export function GameTableView({
     (player) => player.playerId === snapshot.activePlayerId,
   );
   const { viewer, opponents } = partitionPlayers(snapshot);
-  const tEventsLoose = toLooseTranslate(tEvents);
-  const tCardsLoose = toLooseTranslate(tCards);
-
   const latestBody = snapshot.latestEvent
-    ? formatLatestRoundEventBody(snapshot.latestEvent, tEventsLoose, tCardsLoose)
+    ? formatLatestRoundEventBody(snapshot.latestEvent, tEvents, tCards)
     : tEvents("No table event has been logged yet.");
 
   const pendingAction = snapshot.pendingAction;
