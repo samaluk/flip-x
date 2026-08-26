@@ -1,7 +1,7 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { QueryResult, useQuery as useConfectQuery } from "@confect/react";
 import { useSessionId } from "convex-helpers/react/sessions";
-import { useExtracted, useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type SubmitEvent, startTransition, useState } from "react";
 import { toast } from "sonner";
 
@@ -102,7 +102,7 @@ export function useHomeMatchSetup() {
   const { createMatch, joinByCode, joinMatch } = useHomeMutations();
 
   const t = useExtracted("MatchSetup");
-  const tErrors = useTranslations("Errors");
+  const tErrors = useExtracted("Errors");
   const labels = useHomeMatchSetupLabels();
   const getPlayerNameIssueToast = useMatchSetupPlayerNameIssueToast();
 

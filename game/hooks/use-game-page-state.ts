@@ -78,7 +78,7 @@ export function useGamePageState(matchId: string): GamePageState {
     onPlayerNameChange: setPlayerName,
     onColorChange: setColorId,
     onCopyInvite: () => void onCopyInvite(),
-    failureTitle: tErrors("MATCH_NOT_FOUND"),
+    failureTitle: tErrors("Match not found."),
     matchNotFoundTitle: t("Match not found"),
     matchNotFoundBody: t("The requested match is unavailable or has not been created yet."),
   };

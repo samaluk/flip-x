@@ -85,7 +85,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
             }
           })
           .catch(() => {
-            toast.error(tErrors("gameActionFailed"));
+            toast.error(tErrors("Game action failed."));
           });
       });
     },

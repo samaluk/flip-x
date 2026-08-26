@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { APP_ERROR_WIRE_CODE, translateConvexError } from "@/shared/lib/errors/app-error-wire-code";
+import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import {
   insufficientPlayers,
   invalidAction,
@@ -34,6 +35,10 @@ function mockErrorsT(key: string, values?: Record<string, string | number>): str
 
 function mockGenericErrorT(message: string): string {
   return `generic:${message}`;
+}
+
+function mockExtractedErrorsT(message: string, values?: Record<string, string | number>): string {
+  return values !== undefined ? `${message}:${JSON.stringify(values)}` : message;
 }
 
 describe("AppError wire codes and Errors.* messages", () => {
@@ -102,6 +107,18 @@ describe("AppError wire codes and Errors.* messages", () => {
       expectedVersion: 7,
       actualVersion: 8,
     });
+  });
+
+  it("translateAppErrorToast maps wire codes to extracted English messages", () => {
+    expect(translateAppErrorToast(matchNotFound({ matchId: "m1" }), mockExtractedErrorsT)).toBe(
+      "Match not found.",
+    );
+    expect(translateAppErrorToast(nameAlreadyTaken({ name: "Sam" }), mockExtractedErrorsT)).toBe(
+      "That name is already taken at this table.",
+    );
+    expect(
+      translateAppErrorToast(insufficientPlayers({ minPlayers: 2 }), mockExtractedErrorsT),
+    ).toBe("At least two players need to join before the game can start.");
   });
 
   it("translateConvexError resolves canonical codes and legacy _tag names", () => {
