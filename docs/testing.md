@@ -84,7 +84,7 @@ This suite is destructive for its target deployment. The wrapper clears all app 
 - Command: `pnpm test:e2e`
 - Tool: Playwright against the running app and the same Convex deployment URL as backend smoke
 - Paths: `e2e/**`
-- Owns: one or two critical browser journeys, currently create/join/start/hit and join-by-code seat claim.
+- Owns: critical browser journeys (create/join/start/hit, join-by-code seat claim) and instant-navigation shell regressions (`e2e/instant-navigation.spec.ts`, #487).
 - Delete duplicate coverage when it tests game rules better covered by engine or Confect tests.
 
 ## Backend and E2E: local vs preview

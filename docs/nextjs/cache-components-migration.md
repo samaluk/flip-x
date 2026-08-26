@@ -66,7 +66,7 @@ pnpm build                # static generation for en + es locales
 | Flow | Result |
 |------|--------|
 | Direct `/en` | Home shell renders; no Instant Insights blockers |
-| Client nav home → game | `GamePageLoading` shell appears on client nav; create/join calls `router.prefetch(..., { kind: "full" })` before `push` (#486) |
+| Client nav home → game | `GamePageLoading` shell appears on client nav; create/join calls `router.prefetch(..., { kind: "full" })` before `push` (#486); locked by `e2e/instant-navigation.spec.ts` (#487) |
 | Join via `?code=XXXX` | Join mode initializes after Suspense resolves |
 | In-game Convex updates | Live subscriptions unchanged |
 
@@ -77,4 +77,4 @@ pnpm build                # static generation for en + es locales
 | #483 | #479, #517 | Enable flags + devtool docs |
 | #485 | #483 | Route Suspense / cache migration |
 | #486 | #485 | Partial prefetch per-link tuning — done (#486) |
-| #487 | #485 | Playwright `instant()` regression tests |
+| #487 | #485 | Playwright `instant()` regression tests — done (`issue-487-instant-playwright-tests`) |
