@@ -1,6 +1,8 @@
 # Cache Components migration tracker
 
-Tracking breakages surfaced after enabling `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (#483). Follow-up work lives in #486 (partial prefetch tuning) and #487 (Playwright `instant()` tests).
+Tracking breakages surfaced after enabling `cacheComponents: true` and `partialPrefetching: true` in `next.config.ts` (#483). Follow-up work lives in #487 (Playwright `instant()` tests).
+
+Partial prefetch tuning for home → game navigation landed in #486 via `shared/i18n/match-navigation.ts`.
 
 ## Config status
 
@@ -64,7 +66,7 @@ pnpm build                # static generation for en + es locales
 | Flow | Result |
 |------|--------|
 | Direct `/en` | Home shell renders; no Instant Insights blockers |
-| Client nav home → game | `GamePageLoading` shell appears on client nav |
+| Client nav home → game | `GamePageLoading` shell appears on client nav; create/join calls `router.prefetch(..., { kind: "full" })` before `push` (#486) |
 | Join via `?code=XXXX` | Join mode initializes after Suspense resolves |
 | In-game Convex updates | Live subscriptions unchanged |
 
@@ -74,5 +76,5 @@ pnpm build                # static generation for en + es locales
 |-------|------------|-------|
 | #483 | #479, #517 | Enable flags + devtool docs |
 | #485 | #483 | Route Suspense / cache migration |
-| #486 | #485 | Partial prefetch per-link tuning |
+| #486 | #485 | Partial prefetch per-link tuning — done (#486) |
 | #487 | #485 | Playwright `instant()` regression tests |

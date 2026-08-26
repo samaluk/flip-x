@@ -71,4 +71,4 @@ Client navigations only re-render below the shared `/[locale]` layout, so root-l
 
 - [Cache Components migration tracker](./cache-components-migration.md) — known breakages and follow-up tickets
 - [Instant Navigation guide](https://nextjs.org/docs/app/guides/instant-navigation) — upstream patterns and Playwright `instant()` tests (#487)
-- [Partial Prefetching guide](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) — per-link `prefetch` behavior (#486)
+- [Partial Prefetching guide](https://nextjs.org/docs/app/guides/adopting-partial-prefetching) — per-link `prefetch` behavior (home → game uses `router.prefetch` with `kind: "full"` in #486)
