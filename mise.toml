@@ -1,5 +1,5 @@
 [tools]
-hk = "1.56.0"
+hk = "1.56.1"
 "github:mongodb/kingfisher" = "1.113.0"
 
 [env]
