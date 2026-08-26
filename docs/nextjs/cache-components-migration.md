@@ -6,10 +6,12 @@ Tracking breakages surfaced after enabling `cacheComponents: true` and `partialP
 
 | Flag | Value | Since |
 |------|-------|-------|
-| `cacheComponents` | `true` | #483 |
-| `partialPrefetching` | `true` | #483 |
+| `cacheComponents` | `true` | #483 (`issue-483-instant-navigation-config`) |
+| `partialPrefetching` | `true` | #483 (`issue-483-instant-navigation-config`) |
 
 `partialPrefetching` requires `cacheComponents`; Next.js throws at config validation if only one is set.
+
+Route-level Cache Components migration continues in #485 (`issue-485-cache-components-migration`), stacked on #483.
 
 ## Dev server startup
 
@@ -38,8 +40,8 @@ Previously blocked build and E2E until fixed; the full Cache Components route mi
 
 | Route | Status | Notes |
 |-------|--------|-------|
-| `/[locale]` | Build unblocked | Session provider uses `ssrFriendly`; route cache audit remains in #485 |
-| `/[locale]/game/[matchId]` | Pending audit | Has `loading.tsx`; needs Suspense / `'use cache'` audit in #485 |
+| `/[locale]` | Build unblocked (#483) | Session + layout Suspense landed in #483; route shell audit in #485 |
+| `/[locale]/game/[matchId]` | In progress (#485) | Has `loading.tsx`; audit Suspense / `'use cache'` and home → game shell |
 | `app/global-not-found.tsx` | OK | Added for dynamic-segment root layout (#517) |
 
 ## Migration warnings (expected)
