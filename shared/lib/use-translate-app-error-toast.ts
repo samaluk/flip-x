@@ -1,7 +1,6 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { useCallback } from "react";
 
 import { translateAppErrorToast } from "./convex-error";
 import type { AppError } from "./errors/domain";
@@ -35,5 +34,5 @@ export function useTranslateAppErrorToast() {
     t("{message}", { message: "" }),
   ];
 
-  return useCallback((error: AppError) => translateAppErrorToast(error, t), [t]);
+  return (error: AppError) => translateAppErrorToast(error, t);
 }
