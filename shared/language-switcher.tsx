@@ -23,6 +23,9 @@ export function LanguageSwitcher({ className }: { className?: string }) {
         <button
           key={loc}
           type="button"
+          // Locale switches keep the same pathname, so Partial Prefetching's default
+          // App Shell is enough. Avoid router.prefetch({ kind: "full" }) here — there is
+          // no per-link URL data to resolve and live match state must stay client-side.
           onClick={() => replace(window.location.pathname, { locale: loc })}
           className={cn(
             "rounded-full px-3 py-1.5 text-xs font-medium transition-colors",

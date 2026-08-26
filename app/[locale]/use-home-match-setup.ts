@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import refs from "@/confect/_generated/refs";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
+import { prefetchAndPushGameMatch } from "@/shared/i18n/match-navigation";
 import { useRouter } from "@/shared/i18n/navigation";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { executeMatchSubmission, performHomeJoinByCode } from "./home-submission";
@@ -50,7 +51,7 @@ function useHomeMutations() {
 }
 
 export function useHomeMatchSetup() {
-  const { push } = useRouter();
+  const router = useRouter();
   const [sessionId] = useSessionId();
   const { name, setName, colorId, setColorId } = usePlayerLocalPrefs();
   const { joinCode, setJoinCode, isJoinMode, setHasOpenedJoinFlow, usedColorIds } =
@@ -66,7 +67,7 @@ export function useHomeMatchSetup() {
 
   const navigateToMatch = (matchId: string) => {
     startTransition(() => {
-      push(`/game/${matchId}`);
+      prefetchAndPushGameMatch(router, matchId);
     });
   };
 
