@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+
 import { ConvexClientProvider } from "@/shared/providers/convex-client-provider";
 import { LanguageSwitcher } from "@/shared/language-switcher";
 import { routing } from "@/shared/i18n/routing";
@@ -55,8 +57,26 @@ export default async function RootLayout({
         <AnalyticsProvider>
           <NuqsAdapter>
             <NextIntlClientProvider messages={messages}>
-              <LanguageSwitcher />
-              <ConvexClientProvider>{children}</ConvexClientProvider>
+              <Suspense
+                fallback={
+                  <div
+                    aria-hidden
+                    className="fixed inset-e-4 top-4 z-50 h-9 w-24 rounded-full border border-border bg-background/80"
+                  />
+                }
+              >
+                <LanguageSwitcher />
+              </Suspense>
+              <Suspense
+                fallback={
+                  <div
+                    aria-busy="true"
+                    className="flex min-h-0 flex-1 items-center justify-center"
+                  />
+                }
+              >
+                <ConvexClientProvider>{children}</ConvexClientProvider>
+              </Suspense>
             </NextIntlClientProvider>
           </NuqsAdapter>
         </AnalyticsProvider>
