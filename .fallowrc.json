@@ -40,7 +40,7 @@
     }
   ],
   "ignoreUnresolvedImports": ["@/messages/**"],
-  "ignoreDependencies": ["@confect/test", "tailwindcss"],
+  "ignoreDependencies": ["@confect/test", "@next/playwright", "tailwindcss"],
   "typeAware": {
     "enabled": true,
     "require": "complete",
