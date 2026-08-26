@@ -28,8 +28,8 @@ Tracking breakages surfaced after enabling `cacheComponents: true` and `partialP
 |---|---|
 | **Route** | `/[locale]` (all locales) |
 | **Message** | `blocking-prerender-crypto-client` — unstable `crypto.randomUUID()` in a Client Component |
-| **Source** | `shared/providers/convex-client-provider.tsx` — `SessionProvider` from `convex-helpers/react/sessions` |
-| **Fix** | `SessionProvider` uses `ssrFriendly`; layout wraps `LanguageSwitcher` and `ConvexClientProvider` in `<Suspense>` so client hooks and session setup stream after prerender |
+| **Source** | `SessionProvider` from `convex-helpers/react/sessions` calls `crypto.randomUUID()` during init when `ssrFriendly` is off; `useLocalSessionStorage` only reads `window.localStorage` |
+| **Fix** | `SessionProvider` uses `ssrFriendly` and a local `idGenerator` that reads/writes `localStorage` in client `useEffect`; layout wraps `LanguageSwitcher` and `ConvexClientProvider` in `<Suspense>` so client hooks stream after prerender |
 | **Remaining (#485)** | Route-level Suspense / `'use cache'` audit, Navigation Inspector validation for home → game |
 
 Previously blocked build and E2E until fixed; the full Cache Components route migration remains in #485.
