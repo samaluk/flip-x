@@ -29,7 +29,7 @@ export function OfflineBanner({ className }: { className?: string }) {
   return (
     <output
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b border-border bg-surface-muted/95 px-4 py-2 text-center text-sm text-muted-foreground backdrop-blur-sm",
+        "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 px-4 py-2 text-center text-sm text-muted-foreground backdrop-blur-sm",
         className,
       )}
     >
