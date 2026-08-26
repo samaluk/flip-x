@@ -1,0 +1,152 @@
+msgid ""
+msgstr ""
+"Language: es\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: app/[locale]/layout.tsx
+msgctxt "Metadata"
+msgid "a05Y4b"
+msgstr "flip-x"
+
+#: app/[locale]/layout.tsx
+msgctxt "Metadata"
+msgid "UynQpB"
+msgstr "Aplicación web de mesa compartida para jugar flip-x con puntuación en vivo."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "e_6mlg"
+msgstr "Escribe tu nombre."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "aURH8N"
+msgstr "El nombre debe tener 20 caracteres o menos."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "AbM0BV"
+msgstr "Sesión no disponible."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "a05Y4b"
+msgstr "flip-x"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "DslkPE"
+msgstr "Escribe tu nombre y únete a la partida"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "XzIePt"
+msgstr "Crea una partida o únete a una existente"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "vlKhIl"
+msgstr "Tu nombre"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "DX9QSt"
+msgstr "Escribe tu nombre"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "7rG3A8"
+msgstr "Color del jugador"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "oeFpdf"
+msgstr "Crear nueva partida"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "Ntjkqd"
+msgstr "o"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "ANvEa8"
+msgstr "Unirse a una partida existente"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "Lobby"
+msgid "vaiSyy"
+msgstr "Codigo de la sala"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "Lobby"
+msgid "SexVvY"
+msgstr "ABCD"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "47FYwb"
+msgstr "Cancelar"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "7ERAwR"
+msgstr "Entrar"
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "c1GqDU"
+msgstr "No se pudo crear la partida."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "QFyPhb"
+msgstr "Introduce un código de 4 caracteres."
+
+#: app/[locale]/use-home-match-setup.ts
+msgctxt "MatchSetup"
+msgid "pQvtX8"
+msgstr "No se pudo unir a la partida."
+
+#: app/global-not-found.tsx
+msgctxt "NotFoundPage"
+msgid "ggGfHP"
+msgstr "404 – Página no encontrada"
+
+#: app/global-not-found.tsx
+msgctxt "NotFoundPage"
+msgid "rUBRAG"
+msgstr "La página que buscas no existe."
+
+#: app/global-not-found.tsx
+msgctxt "NotFoundPage"
+msgid "SWMHO-"
+msgstr "Ir al inicio"
+
+#: shared/connectivity/offline-feedback.tsx
+msgctxt "Connectivity"
+msgid "xEhFzj"
+msgstr "Estás sin conexión. Las solicitudes pendientes se reintentarán cuando vuelvas a estar en línea."
+
+#: shared/connectivity/offline-feedback.tsx
+msgctxt "Connectivity"
+msgid "P-JCzG"
+msgstr "Esperando conexión…"
+
+#: shared/language-switcher.tsx
+msgctxt "LanguageSwitcher"
+msgid "y1Z3or"
+msgstr "Idioma"
+
+#: shared/language-switcher.tsx
+msgctxt "LanguageSwitcher"
+msgid "WkrNSk"
+msgstr "English"
+
+#: shared/language-switcher.tsx
+msgctxt "LanguageSwitcher"
+msgid "dX8jTq"
+msgstr "Español"

@@ -8,29 +8,26 @@ import { useHomeMatchSetup } from "./use-home-match-setup";
 
 export function HomeClient() {
   const setup = useHomeMatchSetup();
+  const { labels } = setup;
 
   return (
     <main className="relative flex min-h-dvh flex-1 items-center justify-center px-6 selection:bg-primary/20">
       <div className="w-full max-w-md space-y-10">
         <HomeHeader
-          title={setup.t("flip-x")}
-          subtitle={
-            setup.isJoinMode
-              ? setup.t("Enter your name and join the game")
-              : setup.t("Create a game or join an existing one")
-          }
+          title={labels.title}
+          subtitle={setup.isJoinMode ? labels.subtitleJoin : labels.subtitleCreate}
         />
 
         <div className="space-y-6">
           <HomePlayerFields
             name={setup.name}
             onNameChange={setup.setName}
-            nameLabel={setup.t("Your name")}
-            namePlaceholder={setup.t("Enter your name")}
+            nameLabel={labels.yourName}
+            namePlaceholder={labels.namePlaceholder}
             colorId={setup.selectedColorId}
             onColorChange={setup.setColorId}
             usedColorIds={setup.isJoinMode ? setup.usedColorIds : []}
-            colorLabel={setup.t("Player color")}
+            colorLabel={labels.playerColor}
           />
 
           {!setup.isJoinMode ? (
@@ -38,9 +35,9 @@ export function HomeClient() {
               onSubmit={(event) => void setup.handleCreate(event)}
               onOpenJoinFlow={() => setup.setHasOpenedJoinFlow(true)}
               disabled={setup.isSubmitting || !setup.name.trim() || !setup.sessionId}
-              createButtonLabel={setup.t("Create New Game")}
-              dividerLabel={setup.t("or")}
-              joinButtonLabel={setup.t("Join Existing Game")}
+              createButtonLabel={labels.createNewGame}
+              dividerLabel={labels.or}
+              joinButtonLabel={labels.joinExistingGame}
             />
           ) : (
             <JoinForm
@@ -57,10 +54,10 @@ export function HomeClient() {
                 (setup.joinCode?.length ?? 0) !== 4 ||
                 !setup.sessionId
               }
-              lobbyCodeLabel={setup.tLobby("Lobby code")}
-              codePlaceholder={setup.tLobby("ABCD")}
-              cancelLabel={setup.t("Cancel")}
-              joinButtonLabel={setup.t("Join Game")}
+              lobbyCodeLabel={labels.lobbyCode}
+              codePlaceholder={labels.codePlaceholder}
+              cancelLabel={labels.cancel}
+              joinButtonLabel={labels.joinGame}
             />
           )}
         </div>

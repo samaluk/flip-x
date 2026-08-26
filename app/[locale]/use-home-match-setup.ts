@@ -71,6 +71,27 @@ function useMatchSetupPlayerNameIssueToast() {
   };
 }
 
+function useHomeMatchSetupLabels() {
+  const t = useExtracted("MatchSetup");
+  const tLobby = useExtracted("Lobby");
+
+  return {
+    title: t("flip-x"),
+    subtitleJoin: t("Enter your name and join the game"),
+    subtitleCreate: t("Create a game or join an existing one"),
+    yourName: t("Your name"),
+    namePlaceholder: t("Enter your name"),
+    playerColor: t("Player color"),
+    createNewGame: t("Create New Game"),
+    or: t("or"),
+    joinExistingGame: t("Join Existing Game"),
+    lobbyCode: tLobby("Lobby code"),
+    codePlaceholder: tLobby("ABCD"),
+    cancel: t("Cancel"),
+    joinGame: t("Join Game"),
+  };
+}
+
 export function useHomeMatchSetup() {
   const router = useRouter();
   const [sessionId] = useSessionId();
@@ -82,7 +103,7 @@ export function useHomeMatchSetup() {
 
   const t = useExtracted("MatchSetup");
   const tErrors = useExtracted("Errors");
-  const tLobby = useExtracted("Lobby");
+  const labels = useHomeMatchSetupLabels();
   const getPlayerNameIssueToast = useMatchSetupPlayerNameIssueToast();
 
   const selectedColorId = resolvePlayerColorId(colorId, usedColorIds);
@@ -160,7 +181,6 @@ export function useHomeMatchSetup() {
     setHasOpenedJoinFlow,
     handleCreate,
     handleJoin,
-    t,
-    tLobby,
+    labels,
   };
 }
