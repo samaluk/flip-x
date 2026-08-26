@@ -14,6 +14,11 @@ export default defineConfig({
   },
   test: {
     globals: true,
+    server: {
+      deps: {
+        inline: ["next-intl"],
+      },
+    },
     coverage: {
       provider: "v8",
       reporter: ["text", "json"],

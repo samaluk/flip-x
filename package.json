@@ -20,7 +20,6 @@
     "lint:fix:core": "oxlint --fix . --ignore-path .oxlintignore",
     "lint:fix:tailwind": "oxlint --fix . --config .oxlintrc.tailwind.json --ignore-path .oxlintignore",
     "i18n:check": "eloqnt lint",
-    "i18n:catalog": "node scripts/generate-message-catalogs.mjs",
     "design:lint": "pnpm exec design.md lint DESIGN.md",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",

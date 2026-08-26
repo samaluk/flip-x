@@ -90,7 +90,7 @@ Useful development commands:
 - `OXC_LOG=debug pnpm lint`: diagnose slow or memory-heavy type-aware runs.
 - `pnpm format:check`: check formatting with oxfmt.
 - `pnpm format`: write formatting changes with oxfmt.
-- `pnpm i18n:check`: validate locale catalogs and extracted message usage with eloqnt (`docs/i18n-check.md`).
+- `pnpm i18n:check`: validate locale catalogs and extracted message usage with eloqnt (`docs/i18n-check.md`). Component tests use `useExtracted` inline strings — no PO loading in Vitest.
 - `pnpm design:lint`: validate `DESIGN.md`.
 - `pnpm build`: run the Next.js production build.
 
