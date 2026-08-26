@@ -1,7 +1,7 @@
 "use client";
 
 import { LinkIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import type { SubmitEvent } from "react";
 
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
@@ -82,7 +82,7 @@ function GamePageHeader({
   matchId: string;
   onCopyInvite: () => void;
 }) {
-  const t = useTranslations("Game");
+  const t = useExtracted("Game");
   const showLobbyActions = snapshot.status === "setup" || !snapshot.viewerPlayerId;
 
   return (
@@ -90,7 +90,7 @@ function GamePageHeader({
       {showLobbyActions ? <GamePageLobbyActions snapshot={snapshot} matchId={matchId} /> : null}
       <Button variant={showLobbyActions ? "outline" : "ghost"} size="sm" onClick={onCopyInvite}>
         <LinkIcon />
-        <span className="hidden sm:inline">{t("copyInvite")}</span>
+        <span className="hidden sm:inline">{t("Copy invite link")}</span>
       </Button>
     </div>
   );
@@ -130,32 +130,34 @@ function GameJoinForm({
   onPlayerNameChange,
   onColorChange,
 }: Omit<GamePageContentProps, "matchId" | "snapshot" | "onCopyInvite">) {
-  const t = useTranslations("Game");
+  const t = useExtracted("Game");
 
   return (
     <div className="surface-elevated rounded-2xl p-6">
       <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
-        {t("joinTitle")}
+        {t("Join the game")}
       </h2>
-      <p className="mt-1 mb-4 text-sm text-muted-foreground">{t("joinSubtitle")}</p>
+      <p className="mt-1 mb-4 text-sm text-muted-foreground">
+        {t("Enter your name to claim a seat at the table.")}
+      </p>
       <form onSubmit={(event) => void onJoin(event)} className="flex flex-col gap-4 sm:max-w-md">
         <div className="flex gap-3">
           <Input
             value={playerName}
             onChange={(event) => onPlayerNameChange(event.target.value)}
-            placeholder={t("namePlaceholder")}
+            placeholder={t("Your name")}
             maxLength={20}
             className="max-w-xs"
           />
           <Button type="submit" disabled={isJoining || !playerName.trim()} className="font-medium">
-            {t("joinGame")}
+            {t("Join Game")}
           </Button>
         </div>
         <PlayerColorPicker
           value={selectedColorId}
           onChange={onColorChange}
           usedColorIds={usedColorIds}
-          label={t("playerColor")}
+          label={t("Player color")}
         />
       </form>
     </div>

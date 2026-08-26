@@ -1,7 +1,7 @@
 "use client";
 
 import { BanIcon, HandIcon, SparklesIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 
 import { Button } from "@/shared/ui/button";
 import { assertNever } from "@/shared/lib/utils";
@@ -23,7 +23,7 @@ export function TurnControls({
   onStay: () => void;
   onStartNextRound: () => void;
 }) {
-  const t = useTranslations("TurnControls");
+  const t = useExtracted("TurnControls");
   const phase = resolveTurnControlsPhase(snapshot);
 
   switch (phase.kind) {
@@ -43,7 +43,10 @@ export function TurnControls({
   }
 }
 
-type TurnControlsTranslations = ReturnType<typeof useTranslations<"TurnControls">>;
+type TurnControlsTranslations = (
+  message: string,
+  values?: Record<string, string | number>,
+) => string;
 
 function CompletedRoundControls({
   phase,
@@ -63,7 +66,7 @@ function CompletedRoundControls({
         className="rounded-full px-6"
       >
         <SparklesIcon />
-        {t("startNextRound")}
+        {t("Start next round")}
       </Button>
     </div>
   );
@@ -79,7 +82,7 @@ function PendingResolveControls({
   return (
     <PendingActionControls
       message={pendingResolveMessage(phase.actionKind, t)}
-      targetHint={t("selectTargetHint")}
+      targetHint={t("Click a player lane to select target")}
     />
   );
 }
@@ -107,11 +110,13 @@ function pendingResolveMessage(
   actionKind: PendingAction["actionKind"],
   t: TurnControlsTranslations,
 ) {
-  return actionKind === "freeze" ? t("freezePrompt") : t("flipThreePrompt");
+  return actionKind === "freeze"
+    ? t("Choose who banks their points and freezes out of the round.")
+    : t("Choose who must keep drawing until three cards resolve.");
 }
 
 function pendingWaitMessage(actionKind: PendingAction["actionKind"], t: TurnControlsTranslations) {
-  return actionKind === "freeze" ? t("waitingFreeze") : t("waitingFlipThree");
+  return actionKind === "freeze" ? t("Freeze being resolved...") : t("Flip 3 being resolved...");
 }
 
 function ActiveTurnControls({
@@ -138,10 +143,10 @@ function ActiveTurnControls({
       >
         <HandIcon />
         {phase.optimisticAction === "hit"
-          ? t("drawing")
+          ? t("Drawing...")
           : phase.isInFlip3
-            ? t("hitFlip3", { count: String(phase.flip3CardsRemaining) })
-            : t("hitFor", { name: phase.activeDisplayName })}
+            ? t("Draw ({count})", { count: String(phase.flip3CardsRemaining) })
+            : t("Hit for {name}", { name: phase.activeDisplayName })}
       </Button>
       <Button
         variant="outline"
@@ -152,8 +157,8 @@ function ActiveTurnControls({
       >
         <BanIcon />
         {phase.optimisticAction === "stay"
-          ? t("staying")
-          : t("stayFor", { name: phase.activeDisplayName })}
+          ? t("Staying...")
+          : t("Stay for {name}", { name: phase.activeDisplayName })}
       </Button>
       {statusHint}
     </div>
@@ -165,12 +170,16 @@ function activeTurnStatusHint(
   t: TurnControlsTranslations,
 ) {
   if (!phase.hasViewer) {
-    return <div className="text-xs text-muted-foreground">{t("claimToPlay")}</div>;
+    return (
+      <div className="text-xs text-muted-foreground">
+        {t("Join the game from this device to play.")}
+      </div>
+    );
   }
   if (!phase.viewerControlsTurn) {
     return (
       <div className="text-xs text-muted-foreground">
-        {t("waitingFor", { name: phase.activeDisplayName })}
+        {t("Waiting for {name}.", { name: phase.activeDisplayName })}
       </div>
     );
   }
@@ -179,7 +188,7 @@ function activeTurnStatusHint(
   }
   return (
     <div className="text-xs text-muted-foreground" aria-live="polite">
-      {phase.optimisticAction === "hit" ? t("drawing") : t("staying")}
+      {phase.optimisticAction === "hit" ? t("Drawing...") : t("Staying...")}
     </div>
   );
 }

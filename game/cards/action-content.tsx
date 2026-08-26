@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 
 import { ActionBannerStack } from "@/game/cards/action-banner";
 import {
@@ -154,7 +154,7 @@ function InstantActionFace({
   bannerBottomStyle,
   bannerBottomTitle,
 }: InstantActionFaceProps) {
-  const t = useTranslations("Cards");
+  const t = useExtracted("Cards");
   const actionBlock = (
     <InstantActionBlock
       lightningFill={palette.lightningFill}
@@ -171,7 +171,7 @@ function InstantActionFace({
         {actionBlock}
       </ActionIconRow>
       <SkewedHelperText color={palette.smallText} compact={compact}>
-        {t("actionHelper.playOnActive")}
+        {t("PLAY ON AN ACTIVE PLAYER")}
       </SkewedHelperText>
       <ActionBannerStack
         palette={palette}
@@ -182,7 +182,7 @@ function InstantActionFace({
         bottomTitle={bannerBottomTitle}
       />
       <SkewedHelperText color={palette.smallText} compact={compact}>
-        {t("actionHelper.playOnActive")}
+        {t("PLAY ON AN ACTIVE PLAYER")}
       </SkewedHelperText>
       <ActionIconRow flip compact={compact} icon={flippedIcon}>
         {actionBlock}
@@ -192,7 +192,7 @@ function InstantActionFace({
 }
 
 function SecondChanceFace({ palette, compact }: ActionFaceProps) {
-  const t = useTranslations("Cards");
+  const t = useExtracted("Cards");
   const spacer = <div className={cardTw(compact, "h-8 w-full", "sm:h-9")} />;
   return (
     <>
@@ -207,18 +207,18 @@ function SecondChanceFace({ palette, compact }: ActionFaceProps) {
       />
       <ActionIconRow compact={compact} icon={spacer} />
       <SkewedHelperText color={palette.smallText} compact={compact}>
-        {t("actionHelper.saveUntilNeeded")}
+        {t("SAVE THIS CARD UNTIL NEEDED")}
       </SkewedHelperText>
       <ActionBannerStack
         palette={palette}
         compact={compact}
         topStyle={SECOND_CHANCE_BANNER_TOP}
-        topTitle={t("actionTitle.second_chance_line1")}
+        topTitle={t("SECOND")}
         bottomStyle={SECOND_CHANCE_BANNER_BOTTOM}
-        bottomTitle={t("actionTitle.second_chance_line2")}
+        bottomTitle={t("CHANCE")}
       />
       <SkewedHelperText color={palette.smallText} compact={compact}>
-        {t("actionHelper.saveUntilNeeded")}
+        {t("SAVE THIS CARD UNTIL NEEDED")}
       </SkewedHelperText>
       <ActionIconRow flip compact={compact} icon={spacer} />
       <HeartIcon
@@ -315,9 +315,9 @@ function ActionCardFace({
   palette: ActionCardPalette;
   compact: boolean;
 }) {
-  const t = useTranslations("Cards");
-  const instant = t("actionHelper.instant");
-  const actionWord = t("actionHelper.action");
+  const t = useExtracted("Cards");
+  const instant = t("INSTANT");
+  const actionWord = t("ACTION");
 
   return actionKind === "flip_three" ? (
     <FlipThreeActionFace
@@ -325,8 +325,8 @@ function ActionCardFace({
       compact={compact}
       instant={instant}
       action={actionWord}
-      bannerTopTitle={t("actionTitle.flip_three_line1")}
-      bannerBottomTitle={t("actionTitle.flip_three_line2")}
+      bannerTopTitle={t("FLIP")}
+      bannerBottomTitle={t("THREE")}
     />
   ) : actionKind === "freeze" ? (
     <FreezeActionFace
@@ -334,7 +334,7 @@ function ActionCardFace({
       compact={compact}
       instant={instant}
       action={actionWord}
-      bannerTopTitle={t("actionTitle.freeze")}
+      bannerTopTitle={t("FREEZE")}
     />
   ) : (
     <SecondChanceFace palette={palette} compact={compact} />

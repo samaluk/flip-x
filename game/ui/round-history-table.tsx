@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 
 import type { MatchSnapshot } from "@/game/logic/view-models";
 import { cn } from "@/shared/lib/utils";
@@ -11,18 +11,22 @@ export type RoundHistoryTableProps = {
 };
 
 export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) {
-  const t = useTranslations("RoundHistory");
+  const t = useExtracted("RoundHistory");
   const orderedPlayers = [...players].toSorted((left, right) => left.seatIndex - right.seatIndex);
 
   if (history.length === 0) {
     return (
       <section className="space-y-2 px-5 py-4">
         <div>
-          <p className="text-sm font-medium text-foreground">{t("title")}</p>
-          <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+          <p className="text-sm font-medium text-foreground">{t("Score by round")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t(
+              "Track the running total, the gain from each round, and who is closing in on the target score.",
+            )}
+          </p>
         </div>
         <div className="rounded-2xl border bg-muted/40 px-4 py-6 text-sm text-muted-foreground">
-          {t("empty")}
+          {t("No rounds to show yet. Live history appears as soon as the first round starts.")}
         </div>
       </section>
     );
@@ -31,8 +35,12 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
   return (
     <section className="space-y-4 px-5 py-4">
       <div className="space-y-1">
-        <p className="text-sm font-medium text-foreground">{t("title")}</p>
-        <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
+        <p className="text-sm font-medium text-foreground">{t("Score by round")}</p>
+        <p className="text-sm text-muted-foreground">
+          {t(
+            "Track the running total, the gain from each round, and who is closing in on the target score.",
+          )}
+        </p>
       </div>
 
       <div
@@ -43,7 +51,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
           <thead>
             <tr className="bg-muted/35">
               <th className="sticky inset-s-0 z-20 min-w-40 border-b bg-background px-4 py-3 text-xs font-medium tracking-wide uppercase">
-                {t("playerColumn")}
+                {t("Player")}
               </th>
               {history.map((entry) => (
                 <th
@@ -56,12 +64,12 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                   <div className="flex items-center gap-2">
                     <span>
                       {entry.phase === "projected"
-                        ? t("roundHeaderLive", { round: String(entry.roundNumber) })
-                        : t("roundHeader", { round: String(entry.roundNumber) })}
+                        ? t("R{round}*", { round: String(entry.roundNumber) })
+                        : t("R{round}", { round: String(entry.roundNumber) })}
                     </span>
                     {entry.phase === "projected" ? (
                       <span className="rounded-full border border-dashed px-2 py-0.5 text-xs font-semibold text-primary normal-case">
-                        {t("liveBadge")}
+                        {t("Live")}
                       </span>
                     ) : null}
                   </div>
@@ -75,7 +83,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                 <th className="sticky inset-s-0 z-10 border-b bg-background p-4">
                   <div className="text-sm font-medium text-foreground">{player.displayName}</div>
                   <div className="text-xs text-muted-foreground">
-                    {t("seatLabel", { seat: String(player.seatIndex + 1) })}
+                    {t("Seat {seat}", { seat: String(player.seatIndex + 1) })}
                   </div>
                 </th>
                 {history.map((entry) => {
@@ -88,11 +96,11 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
 
                   const roundHeader =
                     entry.phase === "projected"
-                      ? t("roundHeaderLive", { round: String(entry.roundNumber) })
-                      : t("roundHeader", { round: String(entry.roundNumber) });
+                      ? t("R{round}*", { round: String(entry.roundNumber) })
+                      : t("R{round}", { round: String(entry.roundNumber) });
                   const statusText = score.reachedTarget
-                    ? t("winner")
-                    : t("pointsToTarget", { points: String(score.pointsToTarget) });
+                    ? t("Winner")
+                    : t("{points} to target", { points: String(score.pointsToTarget) });
 
                   return (
                     <td
@@ -102,7 +110,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                         entry.phase === "projected" && "border-dashed bg-primary/5",
                         score.reachedTarget && "bg-emerald-500/10",
                       )}
-                      aria-label={t("scoreCellLabel", {
+                      aria-label={t("{player}, {round}. Total {total}, round +{gain}. {status}", {
                         player: player.displayName,
                         round: roundHeader,
                         total: String(score.totalScore),
@@ -118,7 +126,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                           +{score.roundScore}
                           <span className="sr-only">
                             {" "}
-                            {t("gainLabel", { gain: String(score.roundScore) })}
+                            {t("Gain {gain}", { gain: String(score.roundScore) })}
                           </span>
                         </div>
                         <div
@@ -130,8 +138,8 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                           )}
                         >
                           {score.reachedTarget
-                            ? t("winner")
-                            : t("pointsToTarget", { points: String(score.pointsToTarget) })}
+                            ? t("Winner")
+                            : t("{points} to target", { points: String(score.pointsToTarget) })}
                         </div>
                       </div>
                     </td>

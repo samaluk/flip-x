@@ -1,11 +1,11 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 export function ScoreSummary({ players }: { players: MatchSnapshot["players"] }) {
-  const t = useTranslations("ScoreSummary");
+  const t = useExtracted("ScoreSummary");
 
   return (
     <section className="overflow-hidden rounded-2xl p-5 text-card-foreground">
@@ -13,12 +13,12 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
         <table className="w-full min-w-2xl text-start">
           <thead>
             <tr className="border-b border-border text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              <th className="px-3 py-2.5">{t("colPlayer")}</th>
-              <th className="px-3 py-2.5">{t("colNumbers")}</th>
-              <th className="px-3 py-2.5">{t("colX2")}</th>
-              <th className="px-3 py-2.5">{t("colBonus")}</th>
-              <th className="px-3 py-2.5">{t("colFlip7")}</th>
-              <th className="px-3 py-2.5">{t("colRoundTotal")}</th>
+              <th className="px-3 py-2.5">{t("Player")}</th>
+              <th className="px-3 py-2.5">{t("Numbers")}</th>
+              <th className="px-3 py-2.5">{t("×2")}</th>
+              <th className="px-3 py-2.5">{t("Bonus")}</th>
+              <th className="px-3 py-2.5">{t("flip-x")}</th>
+              <th className="px-3 py-2.5">{t("Round total")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -29,11 +29,11 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
                   {player.scoreBreakdown.numberCardTotal}
                 </td>
                 <td className="p-3 text-muted-foreground">
-                  {player.scoreBreakdown.multiplierApplied ? t("yes") : t("no")}
+                  {player.scoreBreakdown.multiplierApplied ? t("Yes") : t("No")}
                   <span className="sr-only">
                     {player.scoreBreakdown.multiplierApplied
-                      ? t("srMultiplierApplied")
-                      : t("srMultiplierOff")}
+                      ? t("Multiplier: ×2")
+                      : t("Multiplier: none")}
                   </span>
                 </td>
                 <td className="p-3 text-muted-foreground tabular-nums">
@@ -45,7 +45,9 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
                 <td className="p-3 text-base font-semibold text-primary tabular-nums">
                   {player.scoreBreakdown.finalRoundScore}
                   <span className="sr-only">
-                    {t("srFinalScore", { score: String(player.scoreBreakdown.finalRoundScore) })}
+                    {t("Final round score: {score}", {
+                      score: String(player.scoreBreakdown.finalRoundScore),
+                    })}
                   </span>
                 </td>
               </tr>
