@@ -12,6 +12,11 @@
     "waiting": "Waiting",
     "playerArrow": "{from} → {to}"
   },
+  "Connectivity": {
+    "loading": "Loading…",
+    "waitingForConnection": "Waiting for connection…",
+    "offlineBanner": "You're offline. Pending requests will retry when you're back online."
+  },
   "Home": {
     "heroLine1": "flip-x, fully scored",
     "heroLine2": "and fully shared.",

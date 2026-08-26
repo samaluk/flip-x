@@ -12,6 +12,11 @@
     "waiting": "Esperando",
     "playerArrow": "{from} → {to}"
   },
+  "Connectivity": {
+    "loading": "Cargando…",
+    "waitingForConnection": "Esperando conexión…",
+    "offlineBanner": "Estás sin conexión. Las solicitudes pendientes se reintentarán cuando vuelvas a estar en línea."
+  },
   "Home": {
     "heroLine1": "flip-x, puntuación",
     "heroLine2": "compartida al completo.",
