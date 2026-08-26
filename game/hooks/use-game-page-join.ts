@@ -2,7 +2,7 @@
 
 import { useSessionId } from "convex-helpers/react/sessions";
 import * as Either from "effect/Either";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type SubmitEvent, useCallback, useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -16,8 +16,27 @@ import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { translateAppErrorToast } from "@/shared/lib/convex-error";
 import {
   getTrimmedPlayerNameIssue,
-  PLAYER_NAME_ISSUE_TOAST_KEY,
+  type TrimmedPlayerNameIssue,
 } from "@/shared/lib/player-name-validation";
+
+function useGamePlayerNameIssueToast() {
+  const t = useExtracted("Game");
+
+  return (issue: TrimmedPlayerNameIssue) => {
+    switch (issue) {
+      case "empty":
+        return t("Please enter your name.");
+      case "too_long":
+        return t("Name must be 20 characters or less.");
+      case "no_session":
+        return t("Session not available.");
+      default: {
+        const exhaustiveCheck: never = issue;
+        return exhaustiveCheck;
+      }
+    }
+  };
+}
 
 export function useGamePageJoin(matchId: string, players: MatchSnapshot["players"] | undefined) {
   const matchIdConvex = matchIdFromConfectWire(matchId);
@@ -26,8 +45,9 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
   const [playerName, setPlayerName] = useState("");
   const { colorId, setColorId } = usePlayerLocalPrefs();
   const [isJoining, setIsJoining] = useState(false);
-  const t = useTranslations("Game");
-  const tErrors = useTranslations("Errors");
+  const t = useExtracted("Game");
+  const tErrors = useExtracted("Errors");
+  const getPlayerNameIssueToast = useGamePlayerNameIssueToast();
   const usedColorIds = useMemo(
     () =>
       players
@@ -45,7 +65,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
       const trimmedName = playerName.trim();
       const nameIssue = getTrimmedPlayerNameIssue(trimmedName, sessionId);
       if (nameIssue) {
-        toast.error(t(PLAYER_NAME_ISSUE_TOAST_KEY[nameIssue]));
+        toast.error(getPlayerNameIssueToast(nameIssue));
         return;
       }
 
@@ -58,17 +78,27 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
         });
         if (Either.isLeft(result)) {
           toast.error(translateAppErrorToast(result.left, tErrors));
-          return;
+        } else {
+          setColorId(selectedColorId);
+          setPlayerName("");
         }
-        setColorId(selectedColorId);
-        setPlayerName("");
       } catch {
-        toast.error(t("toastJoinFailed"));
+        toast.error(t("Could not join the game."));
       } finally {
         setIsJoining(false);
       }
     },
-    [joinMatch, matchIdConvex, playerName, selectedColorId, sessionId, setColorId, t, tErrors],
+    [
+      joinMatch,
+      matchIdConvex,
+      playerName,
+      selectedColorId,
+      sessionId,
+      setColorId,
+      t,
+      tErrors,
+      getPlayerNameIssueToast,
+    ],
   );
 
   return {

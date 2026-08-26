@@ -2,7 +2,7 @@
 
 import { LazyMotion, domAnimation, m } from "motion/react";
 import { PlayIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -22,8 +22,8 @@ export interface StartGameButtonProps {
 export function StartGameButton({ matchId, version, isHost, playerCount }: StartGameButtonProps) {
   const startMatch = useSessionConfectMutation(refs.public.matches.startMatch);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const t = useTranslations("StartGameButton");
-  const tErrors = useTranslations("Errors");
+  const t = useExtracted("StartGameButton");
+  const tErrors = useExtracted("Errors");
 
   async function handleStart() {
     setIsSubmitting(true);
@@ -37,7 +37,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
         toast.error(translateAppErrorToast(result.left, tErrors));
       }
     } catch {
-      toast.error(t("toastFailed"));
+      toast.error(t("Could not start the game."));
     } finally {
       setIsSubmitting(false);
     }
@@ -60,7 +60,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
           className="gap-2 rounded-full px-6"
         >
           <PlayIcon className="size-4" />
-          {isSubmitting ? t("starting") : t("startGame")}
+          {isSubmitting ? t("Starting...") : t("Start Game")}
         </Button>
       </m.div>
     </LazyMotion>

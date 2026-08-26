@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import * as Either from "effect/Either";
 import { useCallback, useTransition } from "react";
 import { toast } from "sonner";
@@ -73,7 +73,7 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   );
   const resolveAction = useSessionConfectMutation(refs.public.turns.resolveAction);
   const startNextRound = useSessionConfectMutation(refs.public.rounds.startNextRound);
-  const tErrors = useTranslations("Errors");
+  const tErrors = useExtracted("Errors");
 
   const runAction = useCallback(
     (action: () => Promise<Either.Either<unknown, AppError>>) => {
