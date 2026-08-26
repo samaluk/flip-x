@@ -10,7 +10,9 @@ import { defineConfig, devices } from "@playwright/test";
 // reuse an existing :3000 server that may be pointed at a different backend.
 
 const convexUrlFromPreviewCmd = process.env.NEXT_PUBLIC_CONVEX_URL;
-const useCiLoopback = !!process.env.CI;
+// CI and Convex-backed runs both need a dedicated loopback dev server so Playwright
+// does not fight an existing portless proxy or a :3000 app on another backend.
+const useDedicatedE2eServer = !!process.env.CI || !!convexUrlFromPreviewCmd;
 
 const e2ePort = process.env.E2E_PORT ?? (convexUrlFromPreviewCmd ? "3001" : "3000");
 
@@ -30,7 +32,7 @@ function getPortlessPublicUrl(): string {
 }
 
 const loopbackUrl = `http://127.0.0.1:${e2ePort}`;
-const e2eBaseUrl = useCiLoopback ? loopbackUrl : getPortlessPublicUrl();
+const e2eBaseUrl = useDedicatedE2eServer ? loopbackUrl : getPortlessPublicUrl();
 
 const portlessCaPath = join(homedir(), ".portless", "ca.pem");
 
@@ -45,7 +47,9 @@ const convexWebServerEnv = convexUrlFromPreviewCmd
 
 const webServerEnv = {
   ...convexWebServerEnv,
-  ...(useCiLoopback || !existsSync(portlessCaPath) ? {} : { NODE_EXTRA_CA_CERTS: portlessCaPath }),
+  ...(useDedicatedE2eServer || !existsSync(portlessCaPath)
+    ? {}
+    : { NODE_EXTRA_CA_CERTS: portlessCaPath }),
 };
 
 export default defineConfig({
@@ -69,7 +73,7 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: useCiLoopback
+    command: useDedicatedE2eServer
       ? `node scripts/stop-next-dev.mjs && pnpm dev:app --port ${e2ePort}`
       : `node scripts/stop-next-dev.mjs && pnpm dev`,
     url: e2eBaseUrl,
