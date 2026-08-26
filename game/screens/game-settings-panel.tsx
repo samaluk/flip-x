@@ -74,8 +74,8 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
   const [isUpdating, startTransition] = useTransition();
 
   function updateSettings(patch: SettingsPatch) {
-    startTransition(() => {
-      void toastEitherMutationFailure(
+    startTransition(async () => {
+      await toastEitherMutationFailure(
         updateMatchSettings({
           matchId: snapshot.matchId,
           expectedVersion: snapshot.version,

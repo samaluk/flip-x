@@ -75,8 +75,8 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const [isPending, startTransition] = useTransition();
 
   function runMutation(action: () => Promise<Either.Either<unknown, AppError>>) {
-    startTransition(() => {
-      void toastEitherMutationFailure(action(), {
+    startTransition(async () => {
+      await toastEitherMutationFailure(action(), {
         missingMessage: gameActionFailed,
         translateError,
       });
