@@ -1,28 +1,16 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useOffline } from "next/offline";
 import type { ReactNode } from "react";
 
 import { cn } from "@/shared/lib/utils";
 
-type ConnectivityMessageKey = "offlineBanner" | "waitingForConnection";
-
-function useConnectivityMessage(key: ConnectivityMessageKey) {
+export function OfflineBanner({ className }: { className?: string }) {
   const isOffline = useOffline();
-  const t = useTranslations("Connectivity");
+  const t = useExtracted("Connectivity");
 
   if (!isOffline) {
-    return null;
-  }
-
-  return t(key);
-}
-
-export function OfflineBanner({ className }: { className?: string }) {
-  const message = useConnectivityMessage("offlineBanner");
-
-  if (!message) {
     return null;
   }
 
@@ -34,7 +22,7 @@ export function OfflineBanner({ className }: { className?: string }) {
         className,
       )}
     >
-      {message}
+      {t("You're offline. Pending requests will retry when you're back online.")}
     </div>
   );
 }
@@ -47,17 +35,16 @@ export function ConnectivityLoadingShell({
   className?: string;
 }) {
   const isOffline = useOffline();
-  const t = useTranslations("Connectivity");
-  const message = isOffline ? t("waitingForConnection") : null;
+  const t = useExtracted("Connectivity");
 
   return (
     <div className={cn(isOffline && "pt-14", className)}>
-      {message ? (
+      {isOffline ? (
         <div
           role="status" // oxlint-disable-line jsx-a11y/prefer-tag-over-role -- live status region; output is for calculation results
           className="pointer-events-none mb-4 text-center text-sm text-muted-foreground"
         >
-          {message}
+          {t("Waiting for connection…")}
         </div>
       ) : null}
       {children}

@@ -63,6 +63,10 @@ function useMatchSetupPlayerNameIssueToast() {
         return t("Name must be 20 characters or less.");
       case "no_session":
         return t("Session not available.");
+      default: {
+        const exhaustiveCheck: never = issue;
+        return exhaustiveCheck;
+      }
     }
   };
 }
