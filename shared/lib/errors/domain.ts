@@ -29,98 +29,93 @@ export class InvalidTarget extends Schema.TaggedError<InvalidTarget>()("InvalidT
 
 export const invalidTarget = (): InvalidTarget => new InvalidTarget({ message: W.InvalidTarget });
 
-export class InvalidHostName extends Schema.TaggedError<InvalidHostName>()("InvalidHostName", {
+class InvalidHostName extends Schema.TaggedError<InvalidHostName>()("InvalidHostName", {
   message: Schema.String,
 }) {}
 
-export const invalidHostName = (): InvalidHostName =>
-  new InvalidHostName({ message: W.InvalidHostName });
+export const invalidHostName = (): AppError => new InvalidHostName({ message: W.InvalidHostName });
 
-export class InvalidGameSettings extends Schema.TaggedError<InvalidGameSettings>()(
-  "InvalidGameSettings",
-  { message: Schema.String },
-) {}
+class InvalidGameSettings extends Schema.TaggedError<InvalidGameSettings>()("InvalidGameSettings", {
+  message: Schema.String,
+}) {}
 
-export const invalidGameSettings = (): InvalidGameSettings =>
+export const invalidGameSettings = (): AppError =>
   new InvalidGameSettings({ message: W.InvalidGameSettings });
 
-export class LobbyCodeUnavailable extends Schema.TaggedError<LobbyCodeUnavailable>()(
+class LobbyCodeUnavailable extends Schema.TaggedError<LobbyCodeUnavailable>()(
   "LobbyCodeUnavailable",
   { message: Schema.String },
 ) {}
 
-export const lobbyCodeUnavailable = (): LobbyCodeUnavailable =>
+export const lobbyCodeUnavailable = (): AppError =>
   new LobbyCodeUnavailable({ message: W.LobbyCodeUnavailable });
 
-export class LobbyNotFound extends Schema.TaggedError<LobbyNotFound>()("LobbyNotFound", {
+class LobbyNotFound extends Schema.TaggedError<LobbyNotFound>()("LobbyNotFound", {
   message: Schema.String,
 }) {}
 
-export const lobbyNotFound = (): LobbyNotFound => new LobbyNotFound({ message: W.LobbyNotFound });
+export const lobbyNotFound = (): AppError => new LobbyNotFound({ message: W.LobbyNotFound });
 
-export class InvalidPlayerName extends Schema.TaggedError<InvalidPlayerName>()(
-  "InvalidPlayerName",
-  { message: Schema.String },
-) {}
+class InvalidPlayerName extends Schema.TaggedError<InvalidPlayerName>()("InvalidPlayerName", {
+  message: Schema.String,
+}) {}
 
-export const invalidPlayerName = (): InvalidPlayerName =>
+export const invalidPlayerName = (): AppError =>
   new InvalidPlayerName({ message: W.InvalidPlayerName });
 
-export class NameAlreadyTaken extends Schema.TaggedError<NameAlreadyTaken>()("NameAlreadyTaken", {
+class NameAlreadyTaken extends Schema.TaggedError<NameAlreadyTaken>()("NameAlreadyTaken", {
   name: Schema.String,
   message: Schema.String,
 }) {}
 
-export const nameAlreadyTaken = (fields: { name: string }): NameAlreadyTaken =>
+export const nameAlreadyTaken = (fields: { name: string }): AppError =>
   new NameAlreadyTaken({ ...fields, message: W.NameAlreadyTaken });
 
-export class InvalidPlayerColor extends Schema.TaggedError<InvalidPlayerColor>()(
-  "InvalidPlayerColor",
-  { colorId: Schema.String, message: Schema.String },
-) {}
+class InvalidPlayerColor extends Schema.TaggedError<InvalidPlayerColor>()("InvalidPlayerColor", {
+  colorId: Schema.String,
+  message: Schema.String,
+}) {}
 
-export const invalidPlayerColor = (fields: { colorId: string }): InvalidPlayerColor =>
+export const invalidPlayerColor = (fields: { colorId: string }): AppError =>
   new InvalidPlayerColor({ ...fields, message: W.InvalidPlayerColor });
 
-export class PlayerColorAlreadyTaken extends Schema.TaggedError<PlayerColorAlreadyTaken>()(
+class PlayerColorAlreadyTaken extends Schema.TaggedError<PlayerColorAlreadyTaken>()(
   "PlayerColorAlreadyTaken",
   { colorId: Schema.String, message: Schema.String },
 ) {}
 
-export const playerColorAlreadyTaken = (fields: { colorId: string }): PlayerColorAlreadyTaken =>
+export const playerColorAlreadyTaken = (fields: { colorId: string }): AppError =>
   new PlayerColorAlreadyTaken({ ...fields, message: W.PlayerColorAlreadyTaken });
 
-export class NotHost extends Schema.TaggedError<NotHost>()("NotHost", { message: Schema.String }) {}
+class NotHost extends Schema.TaggedError<NotHost>()("NotHost", { message: Schema.String }) {}
 
-export const notHost = (): NotHost => new NotHost({ message: W.NotHost });
+export const notHost = (): AppError => new NotHost({ message: W.NotHost });
 
-export class InsufficientPlayers extends Schema.TaggedError<InsufficientPlayers>()(
-  "InsufficientPlayers",
-  { minPlayers: Schema.Number, message: Schema.String },
-) {}
+class InsufficientPlayers extends Schema.TaggedError<InsufficientPlayers>()("InsufficientPlayers", {
+  minPlayers: Schema.Number,
+  message: Schema.String,
+}) {}
 
-export const insufficientPlayers = (fields: { minPlayers: number }): InsufficientPlayers =>
+export const insufficientPlayers = (fields: { minPlayers: number }): AppError =>
   new InsufficientPlayers({ ...fields, message: W.InsufficientPlayers });
 
-export class PlayerNotJoined extends Schema.TaggedError<PlayerNotJoined>()("PlayerNotJoined", {
+class PlayerNotJoined extends Schema.TaggedError<PlayerNotJoined>()("PlayerNotJoined", {
   message: Schema.String,
 }) {}
 
-export const playerNotJoined = (): PlayerNotJoined =>
-  new PlayerNotJoined({ message: W.PlayerNotJoined });
+export const playerNotJoined = (): AppError => new PlayerNotJoined({ message: W.PlayerNotJoined });
 
-export class RateLimited extends Schema.TaggedError<RateLimited>()("RateLimited", {
+class RateLimited extends Schema.TaggedError<RateLimited>()("RateLimited", {
   message: Schema.String,
 }) {}
 
-export const rateLimited = (): RateLimited => new RateLimited({ message: W.RateLimited });
+export const rateLimited = (): AppError => new RateLimited({ message: W.RateLimited });
 
-export class InvalidMatchState extends Schema.TaggedError<InvalidMatchState>()(
-  "InvalidMatchState",
-  { message: Schema.String },
-) {}
+class InvalidMatchState extends Schema.TaggedError<InvalidMatchState>()("InvalidMatchState", {
+  message: Schema.String,
+}) {}
 
-export const invalidMatchState = (): InvalidMatchState =>
+export const invalidMatchState = (): AppError =>
   new InvalidMatchState({ message: W.InvalidMatchState });
 
 export class StaleGameState extends Schema.TaggedError<StaleGameState>()("StaleGameState", {
@@ -134,21 +129,21 @@ export const staleGameState = (fields: {
   actualVersion: number;
 }): StaleGameState => new StaleGameState({ ...fields, message: W.StaleGameState });
 
-export class UnsupportedRelationship extends Schema.TaggedError<UnsupportedRelationship>()(
+class UnsupportedRelationship extends Schema.TaggedError<UnsupportedRelationship>()(
   "UnsupportedRelationship",
   { message: Schema.String },
 ) {}
 
-export const unsupportedRelationship = (): UnsupportedRelationship =>
+export const unsupportedRelationship = (): AppError =>
   new UnsupportedRelationship({ message: W.UnsupportedRelationship });
 
-export class UnsupportedTable extends Schema.TaggedError<UnsupportedTable>()("UnsupportedTable", {
+class UnsupportedTable extends Schema.TaggedError<UnsupportedTable>()("UnsupportedTable", {
   table: Schema.String,
   id: Schema.String,
   message: Schema.String,
 }) {}
 
-export const unsupportedTable = (fields: { table: string; id: string }): UnsupportedTable =>
+export const unsupportedTable = (fields: { table: string; id: string }): AppError =>
   new UnsupportedTable({ ...fields, message: W.UnsupportedTable });
 
 export class InvalidConfirmation extends Schema.TaggedError<InvalidConfirmation>()(
