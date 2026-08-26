@@ -7,6 +7,10 @@
     {
       "issue": "samaluk/flip-x#570",
       "path": ".agents/friction-log/20260816152721-format-check-fails/friction.md"
+    },
+    {
+      "issue": "samaluk/flip-x#614",
+      "path": ".agents/friction-log/20260819062229-pre-commit-hook/friction.md"
     }
   ],
   "version": 1
