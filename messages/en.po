@@ -4,1083 +4,1083 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: next-intl\n"
-"X-Crowdin-SourceKey: msgstr\n"
+"X-Message-Key: msgctxt\n"
 
 #: app/[locale]/layout.tsx
-msgctxt "Metadata"
-msgid "a05Y4b"
+msgctxt "Metadata.a05Y4b"
+msgid "flip-x"
 msgstr "flip-x"
 
 #: app/[locale]/layout.tsx
-msgctxt "Metadata"
-msgid "UynQpB"
+msgctxt "Metadata.UynQpB"
+msgid "Shared-table web app for playing flip-x with live scoring."
 msgstr "Shared-table web app for playing flip-x with live scoring."
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "e_6mlg"
+msgctxt "MatchSetup.e_6mlg"
+msgid "Please enter your name."
 msgstr "Please enter your name."
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "aURH8N"
+msgctxt "MatchSetup.aURH8N"
+msgid "Name must be 20 characters or less."
 msgstr "Name must be 20 characters or less."
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "AbM0BV"
+msgctxt "MatchSetup.AbM0BV"
+msgid "Session not available."
 msgstr "Session not available."
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "a05Y4b"
+msgctxt "MatchSetup.a05Y4b"
+msgid "flip-x"
 msgstr "flip-x"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "DslkPE"
+msgctxt "MatchSetup.DslkPE"
+msgid "Enter your name and join the game"
 msgstr "Enter your name and join the game"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "XzIePt"
+msgctxt "MatchSetup.XzIePt"
+msgid "Create a game or join an existing one"
 msgstr "Create a game or join an existing one"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "vlKhIl"
+msgctxt "MatchSetup.vlKhIl"
+msgid "Your name"
 msgstr "Your name"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "DX9QSt"
+msgctxt "MatchSetup.DX9QSt"
+msgid "Enter your name"
 msgstr "Enter your name"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "7rG3A8"
+msgctxt "MatchSetup.7rG3A8"
+msgid "Player color"
 msgstr "Player color"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "oeFpdf"
+msgctxt "MatchSetup.oeFpdf"
+msgid "Create New Game"
 msgstr "Create New Game"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "Ntjkqd"
+msgctxt "MatchSetup.Ntjkqd"
+msgid "or"
 msgstr "or"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "ANvEa8"
+msgctxt "MatchSetup.ANvEa8"
+msgid "Join Existing Game"
 msgstr "Join Existing Game"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "Lobby"
-msgid "vaiSyy"
+msgctxt "Lobby.vaiSyy"
+msgid "Lobby code"
 msgstr "Lobby code"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "Lobby"
-msgid "SexVvY"
+msgctxt "Lobby.SexVvY"
+msgid "ABCD"
 msgstr "ABCD"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "47FYwb"
+msgctxt "MatchSetup.47FYwb"
+msgid "Cancel"
 msgstr "Cancel"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "7ERAwR"
+msgctxt "MatchSetup.7ERAwR"
+msgid "Join Game"
 msgstr "Join Game"
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "c1GqDU"
+msgctxt "MatchSetup.c1GqDU"
+msgid "Could not create the match."
 msgstr "Could not create the match."
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "QFyPhb"
+msgctxt "MatchSetup.QFyPhb"
+msgid "Please enter a 4-character code."
 msgstr "Please enter a 4-character code."
 
 #: app/[locale]/use-home-match-setup.ts
-msgctxt "MatchSetup"
-msgid "pQvtX8"
+msgctxt "MatchSetup.pQvtX8"
+msgid "Could not join the game."
 msgstr "Could not join the game."
 
 #: app/global-not-found.tsx
-msgctxt "NotFoundPage"
-msgid "ggGfHP"
+msgctxt "NotFoundPage.ggGfHP"
+msgid "404 – Page not found"
 msgstr "404 – Page not found"
 
 #: app/global-not-found.tsx
-msgctxt "NotFoundPage"
-msgid "rUBRAG"
+msgctxt "NotFoundPage.rUBRAG"
+msgid "The page you're looking for doesn't exist."
 msgstr "The page you're looking for doesn't exist."
 
 #: app/global-not-found.tsx
-msgctxt "NotFoundPage"
-msgid "SWMHO-"
+msgctxt "NotFoundPage.SWMHO-"
+msgid "Go home"
 msgstr "Go home"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "nm-yce"
+msgctxt "Cards.nm-yce"
+msgid "PLAY ON AN ACTIVE PLAYER"
 msgstr "PLAY ON AN ACTIVE PLAYER"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "mfDLmn"
+msgctxt "Cards.mfDLmn"
+msgid "SAVE THIS CARD UNTIL NEEDED"
 msgstr "SAVE THIS CARD UNTIL NEEDED"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "n2uOzU"
+msgctxt "Cards.n2uOzU"
+msgid "SECOND"
 msgstr "SECOND"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "uGKkSN"
+msgctxt "Cards.uGKkSN"
+msgid "CHANCE"
 msgstr "CHANCE"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "f-bSw4"
+msgctxt "Cards.f-bSw4"
+msgid "INSTANT"
 msgstr "INSTANT"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "6M6q_0"
+msgctxt "Cards.6M6q_0"
+msgid "ACTION"
 msgstr "ACTION"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "LhDRin"
+msgctxt "Cards.LhDRin"
+msgid "FLIP"
 msgstr "FLIP"
 
 #: game/cards/action-content.tsx
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "I9xDqF"
+msgctxt "Cards.I9xDqF"
+msgid "THREE"
 msgstr "THREE"
 
 #: game/cards/action-content.tsx
-msgctxt "Cards"
-msgid "f-cLL5"
+msgctxt "Cards.f-cLL5"
+msgid "FREEZE"
 msgstr "FREEZE"
 
 #: game/cards/modifier-content.tsx
 #: game/ui/flip-x-card.tsx
 #: game/ui/use-round-event-format.ts
-msgctxt "Cards"
-msgid "ZHccEc"
+msgctxt "Cards.ZHccEc"
+msgid "×2"
 msgstr "×2"
 
 #: game/cards/modifier-content.tsx
 #: game/ui/flip-x-card.tsx
 #: game/ui/use-round-event-format.ts
-msgctxt "Cards"
-msgid "G5qKtr"
+msgctxt "Cards.G5qKtr"
+msgid "+{value}"
 msgstr "+{value}"
 
 #: game/cards/modifier-content.tsx
-msgctxt "Cards"
-msgid "vKToVR"
+msgctxt "Cards.vKToVR"
+msgid "×2 THE SUM OF YOUR NUMBER CARDS"
 msgstr "×2 THE SUM OF YOUR NUMBER CARDS"
 
 #: game/cards/modifier-content.tsx
-msgctxt "Cards"
-msgid "9-ji51"
+msgctxt "Cards.9-ji51"
+msgid "+{value} THE SUM OF YOUR NUMBER CARDS"
 msgstr "+{value} THE SUM OF YOUR NUMBER CARDS"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "terrkE"
+msgctxt "Cards.terrkE"
+msgid "ZERO"
 msgstr "ZERO"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "yz4DcX"
+msgctxt "Cards.yz4DcX"
+msgid "ONE"
 msgstr "ONE"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "8Npezj"
+msgctxt "Cards.8Npezj"
+msgid "TWO"
 msgstr "TWO"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "aa070x"
+msgctxt "Cards.aa070x"
+msgid "FOUR"
 msgstr "FOUR"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "f_00qX"
+msgctxt "Cards.f_00qX"
+msgid "FIVE"
 msgstr "FIVE"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "rbxTcM"
+msgctxt "Cards.rbxTcM"
+msgid "SIX"
 msgstr "SIX"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "g-1zxC"
+msgctxt "Cards.g-1zxC"
+msgid "SEVEN"
 msgstr "SEVEN"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "WhHFG-"
+msgctxt "Cards.WhHFG-"
+msgid "EIGHT"
 msgstr "EIGHT"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "FQyBHt"
+msgctxt "Cards.FQyBHt"
+msgid "NINE"
 msgstr "NINE"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "D0Tdbd"
+msgctxt "Cards.D0Tdbd"
+msgid "TEN"
 msgstr "TEN"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "2VfxJt"
+msgctxt "Cards.2VfxJt"
+msgid "ELEVEN"
 msgstr "ELEVEN"
 
 #: game/cards/number-content.tsx
-msgctxt "Cards"
-msgid "acgVM-"
+msgctxt "Cards.acgVM-"
+msgid "TWELVE"
 msgstr "TWELVE"
 
 #: game/hooks/use-game-page-join.ts
-msgctxt "Game"
-msgid "e_6mlg"
+msgctxt "Game.e_6mlg"
+msgid "Please enter your name."
 msgstr "Please enter your name."
 
 #: game/hooks/use-game-page-join.ts
-msgctxt "Game"
-msgid "aURH8N"
+msgctxt "Game.aURH8N"
+msgid "Name must be 20 characters or less."
 msgstr "Name must be 20 characters or less."
 
 #: game/hooks/use-game-page-join.ts
-msgctxt "Game"
-msgid "AbM0BV"
+msgctxt "Game.AbM0BV"
+msgid "Session not available."
 msgstr "Session not available."
 
 #: game/hooks/use-game-page-join.ts
-msgctxt "Game"
-msgid "pQvtX8"
+msgctxt "Game.pQvtX8"
+msgid "Could not join the game."
 msgstr "Could not join the game."
 
 #: game/hooks/use-game-page-state.ts
-msgctxt "Game"
-msgid "3pP4Fg"
+msgctxt "Game.3pP4Fg"
+msgid "Invite link copied."
 msgstr "Invite link copied."
 
 #: game/hooks/use-game-page-state.ts
-msgctxt "Game"
-msgid "A7txUi"
+msgctxt "Game.A7txUi"
+msgid "Could not copy the invite link."
 msgstr "Could not copy the invite link."
 
 #: game/hooks/use-game-page-state.ts
-msgctxt "Game"
-msgid "OAc2rT"
+msgctxt "Game.OAc2rT"
+msgid "The requested match is unavailable or has not been created yet."
 msgstr "The requested match is unavailable or has not been created yet."
 
 #: game/screens/game-error-content.tsx
-msgctxt "Game"
-msgid "M7q8Xk"
+msgctxt "Game.M7q8Xk"
+msgid "Could not load the match"
 msgstr "Could not load the match"
 
 #: game/screens/game-error-content.tsx
-msgctxt "Game"
-msgid "FazwRl"
+msgctxt "Game.FazwRl"
+msgid "Try again"
 msgstr "Try again"
 
 #: game/screens/game-page-content.tsx
-msgctxt "Game"
-msgid "rtACcE"
+msgctxt "Game.rtACcE"
+msgid "Copy invite link"
 msgstr "Copy invite link"
 
 #: game/screens/game-page-content.tsx
-msgctxt "Game"
-msgid "rGvOhK"
+msgctxt "Game.rGvOhK"
+msgid "Join the game"
 msgstr "Join the game"
 
 #: game/screens/game-page-content.tsx
-msgctxt "Game"
-msgid "A7KXYH"
+msgctxt "Game.A7KXYH"
+msgid "Enter your name to claim a seat at the table."
 msgstr "Enter your name to claim a seat at the table."
 
 #: game/screens/game-page-content.tsx
-msgctxt "Game"
-msgid "vlKhIl"
+msgctxt "Game.vlKhIl"
+msgid "Your name"
 msgstr "Your name"
 
 #: game/screens/game-page-content.tsx
-msgctxt "Game"
-msgid "7ERAwR"
+msgctxt "Game.7ERAwR"
+msgid "Join Game"
 msgstr "Join Game"
 
 #: game/screens/game-page-content.tsx
-msgctxt "Game"
-msgid "7rG3A8"
+msgctxt "Game.7rG3A8"
+msgid "Player color"
 msgstr "Player color"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "HJEJo0"
+msgctxt "GameSettings.HJEJo0"
+msgid "Classic"
 msgstr "Classic"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "fUDl2h"
+msgctxt "GameSettings.fUDl2h"
+msgid "Extended"
 msgstr "Extended"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "59CWbw"
+msgctxt "GameSettings.59CWbw"
+msgid "Big Table"
 msgstr "Big Table"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "V5yUQX"
+msgctxt "GameSettings.V5yUQX"
+msgid "Official baseline. Best for 2-4 players."
 msgstr "Official baseline. Best for 2-4 players."
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "fkQcQo"
+msgctxt "GameSettings.fkQcQo"
+msgid "Better for 4-5 players. More cards and a slightly longer match."
 msgstr "Better for 4-5 players. More cards and a slightly longer match."
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "12G277"
+msgctxt "GameSettings.12G277"
+msgid "Better for 6+ players. Larger deck, higher ceiling, longer match."
 msgstr "Better for 6+ players. Larger deck, higher ceiling, longer match."
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "GY8bVw"
+msgctxt "GameSettings.GY8bVw"
+msgid "Could not update game settings."
 msgstr "Could not update game settings."
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "ixKAYF"
+msgctxt "GameSettings.ixKAYF"
+msgid "Game settings"
 msgstr "Game settings"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "LlUFYE"
+msgctxt "GameSettings.LlUFYE"
+msgid "Recommended for this lobby: {preset}"
 msgstr "Recommended for this lobby: {preset}"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "oL0rU6"
+msgctxt "GameSettings.oL0rU6"
+msgid "Locked"
 msgstr "Locked"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "37dv3i"
+msgctxt "GameSettings.37dv3i"
+msgid "Points to win"
 msgstr "Points to win"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "d9iNyj"
+msgctxt "GameSettings.d9iNyj"
+msgid "Cards"
 msgstr "Cards"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "BIAFqd"
+msgctxt "GameSettings.BIAFqd"
+msgid "Modifiers"
 msgstr "Modifiers"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "mrOnjM"
+msgctxt "GameSettings.mrOnjM"
+msgid "Mode"
 msgstr "Mode"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "VKfWR3"
+msgctxt "GameSettings.VKfWR3"
+msgid "Recommended"
 msgstr "Recommended"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "3Rx6Qo"
+msgctxt "GameSettings.3Rx6Qo"
+msgid "Advanced"
 msgstr "Advanced"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "zM-PPA"
+msgctxt "GameSettings.zM-PPA"
+msgid "Max number card"
 msgstr "Max number card"
 
 #: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings"
-msgid "gAhnbT"
+msgctxt "GameSettings.gAhnbT"
+msgid "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
 msgstr "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "LdEa65"
+msgctxt "GameTable.LdEa65"
+msgid "Your hand"
 msgstr "Your hand"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "xIIQHE"
+msgctxt "GameTable.xIIQHE"
+msgid "Turn actions"
 msgstr "Turn actions"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "KAmBEa"
+msgctxt "GameTable.KAmBEa"
+msgid "The round is scored and ready for the next deal."
 msgstr "The round is scored and ready for the next deal."
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "ujJps_"
+msgctxt "GameTable.ujJps_"
+msgid "{name} is deciding whether to push or bank points."
 msgstr "{name} is deciding whether to push or bank points."
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "NQ4jqL"
+msgctxt "GameTable.NQ4jqL"
+msgid "Waiting for the next resolution."
 msgstr "Waiting for the next resolution."
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "zXFNiG"
+msgctxt "GameTable.zXFNiG"
+msgid "setup"
 msgstr "setup"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "NhDwgx"
+msgctxt "GameTable.NhDwgx"
+msgid "in progress"
 msgstr "in progress"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "fT7uau"
+msgctxt "GameTable.fT7uau"
+msgid "completed"
 msgstr "completed"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "FFCYOk"
+msgctxt "GameTable.FFCYOk"
+msgid "Match {id}"
 msgstr "Match {id}"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "O7eTPh"
+msgctxt "GameTable.O7eTPh"
+msgid "Round {round} of a race to {target} points."
 msgstr "Round {round} of a race to {target} points."
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "AAwp4y"
+msgctxt "GameTable.AAwp4y"
+msgid "Dealer position {n}"
 msgstr "Dealer position {n}"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "3iKhP_"
+msgctxt "GameTable.3iKhP_"
+msgid "Turn: {name}"
 msgstr "Turn: {name}"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "S8snIe"
+msgctxt "GameTable.S8snIe"
+msgid "Updating"
 msgstr "Updating"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "tmQt4O"
+msgctxt "GameTable.tmQt4O"
+msgid "Table call"
 msgstr "Table call"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "X4CyH-"
+msgctxt "GameTable.X4CyH-"
+msgid "You are playing as {name}"
 msgstr "You are playing as {name}"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "YJbbeg"
+msgctxt "GameTable.YJbbeg"
+msgid "Join this game on this device to take turns."
 msgstr "Join this game on this device to take turns."
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "9kxP3A"
+msgctxt "GameTable.9kxP3A"
+msgid "Latest resolution"
 msgstr "Latest resolution"
 
 #: game/screens/game-table-view.tsx
-msgctxt "GameTable"
-msgid "cwn2Os"
+msgctxt "GameTable.cwn2Os"
+msgid "Opponents"
 msgstr "Opponents"
 
 #: game/screens/game-table-view.tsx
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "tTQZXr"
+msgctxt "RoundHistory.tTQZXr"
+msgid "Score by round"
 msgstr "Score by round"
 
 #: game/screens/game-table-view.tsx
-msgctxt "RoundHistory"
-msgid "Lkc2Am"
+msgctxt "RoundHistory.Lkc2Am"
+msgid "Current round breakdown"
 msgstr "Current round breakdown"
 
 #: game/screens/game-table-view.tsx
-msgctxt "RoundHistory"
-msgid "96Ao_m"
+msgctxt "RoundHistory.96Ao_m"
+msgid "Detailed scoring for the active or most recently completed round."
 msgstr "Detailed scoring for the active or most recently completed round."
 
 #: game/screens/lobby-code-display.tsx
-msgctxt "LobbyCodeDisplay"
-msgid "NilGOF"
+msgctxt "LobbyCodeDisplay.NilGOF"
+msgid "Lobby code copied!"
 msgstr "Lobby code copied!"
 
 #: game/screens/lobby-code-display.tsx
-msgctxt "LobbyCodeDisplay"
-msgid "acjeOD"
+msgctxt "LobbyCodeDisplay.acjeOD"
+msgid "Could not copy the code."
 msgstr "Could not copy the code."
 
 #: game/screens/lobby-code-display.tsx
-msgctxt "LobbyCodeDisplay"
-msgid "vaiSyy"
+msgctxt "LobbyCodeDisplay.vaiSyy"
+msgid "Lobby code"
 msgstr "Lobby code"
 
 #: game/screens/lobby-code-display.tsx
-msgctxt "LobbyCodeDisplay"
-msgid "p556q3"
+msgctxt "LobbyCodeDisplay.p556q3"
+msgid "Copied"
 msgstr "Copied"
 
 #: game/screens/lobby-code-display.tsx
-msgctxt "LobbyCodeDisplay"
-msgid "4l6vz1"
+msgctxt "LobbyCodeDisplay.4l6vz1"
+msgid "Copy"
 msgstr "Copy"
 
 #: game/screens/start-game-button.tsx
-msgctxt "StartGameButton"
-msgid "-bi6ia"
+msgctxt "StartGameButton.-bi6ia"
+msgid "Could not start the game."
 msgstr "Could not start the game."
 
 #: game/screens/start-game-button.tsx
-msgctxt "StartGameButton"
-msgid "3qXa2f"
+msgctxt "StartGameButton.3qXa2f"
+msgid "Starting..."
 msgstr "Starting..."
 
 #: game/screens/start-game-button.tsx
-msgctxt "StartGameButton"
-msgid "MxeQIj"
+msgctxt "StartGameButton.MxeQIj"
+msgid "Start Game"
 msgstr "Start Game"
 
 #: game/ui/flip-x-card.tsx
-msgctxt "Cards"
-msgid "kFkPWB"
+msgctxt "Cards.kFkPWB"
+msgid "Number"
 msgstr "Number"
 
 #: game/ui/flip-x-card.tsx
-msgctxt "Cards"
-msgid "saDFoR"
+msgctxt "Cards.saDFoR"
+msgid "Bonus"
 msgstr "Bonus"
 
 #: game/ui/flip-x-card.tsx
-msgctxt "Cards"
-msgid "QlsDcr"
+msgctxt "Cards.QlsDcr"
+msgid "Action"
 msgstr "Action"
 
 #: game/ui/flip-x-card.tsx
 #: game/ui/use-round-event-format.ts
-msgctxt "Cards"
-msgid "85hyTu"
+msgctxt "Cards.85hyTu"
+msgid "Flip Three"
 msgstr "Flip Three"
 
 #: game/ui/flip-x-card.tsx
 #: game/ui/use-round-event-format.ts
-msgctxt "Cards"
-msgid "EgadwQ"
+msgctxt "Cards.EgadwQ"
+msgid "Freeze"
 msgstr "Freeze"
 
 #: game/ui/flip-x-card.tsx
 #: game/ui/use-round-event-format.ts
-msgctxt "Cards"
-msgid "NY9djt"
+msgctxt "Cards.NY9djt"
+msgid "Second Chance"
 msgstr "Second Chance"
 
 #: game/ui/flip-x-card.tsx
-msgctxt "Cards"
-msgid "CuXNi7"
+msgctxt "Cards.CuXNi7"
+msgid "No. {label}"
 msgstr "No. {label}"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "1PCThj"
+msgctxt "PlayerLane.1PCThj"
+msgid "Busted"
 msgstr "Busted"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "g7If5t"
+msgctxt "PlayerLane.g7If5t"
+msgid "Banked"
 msgstr "Banked"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "rzZR_J"
+msgctxt "PlayerLane.rzZR_J"
+msgid "Frozen"
 msgstr "Frozen"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "ERnpdU"
+msgctxt "PlayerLane.ERnpdU"
+msgid "Scored"
 msgstr "Scored"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "dZd8H_"
+msgctxt "PlayerLane.dZd8H_"
+msgid "Waiting"
 msgstr "Waiting"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "xbovKX"
+msgctxt "PlayerLane.xbovKX"
+msgid "Dealer"
 msgstr "Dealer"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "kJ5W29"
+msgctxt "PlayerLane.kJ5W29"
+msgid "You"
 msgstr "You"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "ccU6l_"
+msgctxt "PlayerLane.ccU6l_"
+msgid "Online"
 msgstr "Online"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "ErxWra"
+msgctxt "PlayerLane.ErxWra"
+msgid "Self"
 msgstr "Self"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "YDkqMJ"
+msgctxt "PlayerLane.YDkqMJ"
+msgid "Incoming"
 msgstr "Incoming"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "oZTIL7"
+msgctxt "PlayerLane.oZTIL7"
+msgid "{count} to draw"
 msgstr "{count} to draw"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "yb45j-"
+msgctxt "PlayerLane.yb45j-"
+msgid "Total score {score}"
 msgstr "Total score {score}"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "PL2m0r"
+msgctxt "PlayerLane.PL2m0r"
+msgid "Points at risk"
 msgstr "Points at risk"
 
 #: game/ui/player-lane.tsx
-msgctxt "PlayerLane"
-msgid "EVPZb7"
+msgctxt "PlayerLane.EVPZb7"
+msgid "Select {name} as target"
 msgstr "Select {name} as target"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "Ac7AIs"
+msgctxt "RoundHistory.Ac7AIs"
+msgid "Track the running total, the gain from each round, and who is closing in on the target score."
 msgstr "Track the running total, the gain from each round, and who is closing in on the target score."
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "1sMKRw"
+msgctxt "RoundHistory.1sMKRw"
+msgid "No rounds to show yet. Live history appears as soon as the first round starts."
 msgstr "No rounds to show yet. Live history appears as soon as the first round starts."
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "1AGL1r"
+msgctxt "RoundHistory.1AGL1r"
+msgid "Player"
 msgstr "Player"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "wwlk_j"
+msgctxt "RoundHistory.wwlk_j"
+msgid "R{round}*"
 msgstr "R{round}*"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "CIxt1U"
+msgctxt "RoundHistory.CIxt1U"
+msgid "R{round}"
 msgstr "R{round}"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "Dn82AL"
+msgctxt "RoundHistory.Dn82AL"
+msgid "Live"
 msgstr "Live"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "kCDXlq"
+msgctxt "RoundHistory.kCDXlq"
+msgid "Seat {seat}"
 msgstr "Seat {seat}"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "H-vBOj"
+msgctxt "RoundHistory.H-vBOj"
+msgid "Winner"
 msgstr "Winner"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "h0NFb4"
+msgctxt "RoundHistory.h0NFb4"
+msgid "{points} to target"
 msgstr "{points} to target"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "yw99BZ"
+msgctxt "RoundHistory.yw99BZ"
+msgid "{player}, {round}. Total {total}, round +{gain}. {status}"
 msgstr "{player}, {round}. Total {total}, round +{gain}. {status}"
 
 #: game/ui/round-history-table.tsx
-msgctxt "RoundHistory"
-msgid "KGEmZH"
+msgctxt "RoundHistory.KGEmZH"
+msgid "Gain {gain}"
 msgstr "Gain {gain}"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "1AGL1r"
+msgctxt "ScoreSummary.1AGL1r"
+msgid "Player"
 msgstr "Player"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "YL6Hqs"
+msgctxt "ScoreSummary.YL6Hqs"
+msgid "Numbers"
 msgstr "Numbers"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "ZHccEc"
+msgctxt "ScoreSummary.ZHccEc"
+msgid "×2"
 msgstr "×2"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "saDFoR"
+msgctxt "ScoreSummary.saDFoR"
+msgid "Bonus"
 msgstr "Bonus"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "a05Y4b"
+msgctxt "ScoreSummary.a05Y4b"
+msgid "flip-x"
 msgstr "flip-x"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "r_zRQo"
+msgctxt "ScoreSummary.r_zRQo"
+msgid "Round total"
 msgstr "Round total"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "a5msuh"
+msgctxt "ScoreSummary.a5msuh"
+msgid "Yes"
 msgstr "Yes"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "oUWADl"
+msgctxt "ScoreSummary.oUWADl"
+msgid "No"
 msgstr "No"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "WARKS0"
+msgctxt "ScoreSummary.WARKS0"
+msgid "Multiplier: ×2"
 msgstr "Multiplier: ×2"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "FhJo1X"
+msgctxt "ScoreSummary.FhJo1X"
+msgid "Multiplier: none"
 msgstr "Multiplier: none"
 
 #: game/ui/score-summary.tsx
-msgctxt "ScoreSummary"
-msgid "dsdNpr"
+msgctxt "ScoreSummary.dsdNpr"
+msgid "Final round score: {score}"
 msgstr "Final round score: {score}"
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "gkK9tw"
+msgctxt "TurnControls.gkK9tw"
+msgid "Start next round"
 msgstr "Start next round"
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "RpSV9W"
+msgctxt "TurnControls.RpSV9W"
+msgid "Choose who banks their points and freezes out of the round."
 msgstr "Choose who banks their points and freezes out of the round."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "7J5JOV"
+msgctxt "TurnControls.7J5JOV"
+msgid "Choose who must keep drawing until three cards resolve."
 msgstr "Choose who must keep drawing until three cards resolve."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "AnLRFx"
+msgctxt "TurnControls.AnLRFx"
+msgid "Click a player lane to select target"
 msgstr "Click a player lane to select target"
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "nsOvDk"
+msgctxt "TurnControls.nsOvDk"
+msgid "Freeze being resolved..."
 msgstr "Freeze being resolved..."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "4o5bSn"
+msgctxt "TurnControls.4o5bSn"
+msgid "Flip 3 being resolved..."
 msgstr "Flip 3 being resolved..."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "zNaDqb"
+msgctxt "TurnControls.zNaDqb"
+msgid "Join the game from this device to play."
 msgstr "Join the game from this device to play."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "Y1J46T"
+msgctxt "TurnControls.Y1J46T"
+msgid "Waiting for {name}."
 msgstr "Waiting for {name}."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "V67QH_"
+msgctxt "TurnControls.V67QH_"
+msgid "Drawing..."
 msgstr "Drawing..."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "z3gAR5"
+msgctxt "TurnControls.z3gAR5"
+msgid "Staying..."
 msgstr "Staying..."
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "PUQyyG"
+msgctxt "TurnControls.PUQyyG"
+msgid "Draw ({count})"
 msgstr "Draw ({count})"
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "lbABe3"
+msgctxt "TurnControls.lbABe3"
+msgid "Hit for {name}"
 msgstr "Hit for {name}"
 
 #: game/ui/turn-controls.tsx
-msgctxt "TurnControls"
-msgid "bw08-c"
+msgctxt "TurnControls.bw08-c"
+msgid "Stay for {name}"
 msgstr "Stay for {name}"
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "n3XQ56"
+msgctxt "Events.n3XQ56"
+msgid "No table event has been logged yet."
 msgstr "No table event has been logged yet."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "clmNx1"
+msgctxt "Events.clmNx1"
+msgid "{action} is waiting for a target."
 msgstr "{action} is waiting for a target."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "bnpqEZ"
+msgctxt "Events.bnpqEZ"
+msgid "Second Chance discarded duplicate {duplicate} instead of busting the player."
 msgstr "Second Chance discarded duplicate {duplicate} instead of busting the player."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "x_lXI2"
+msgctxt "Events.x_lXI2"
+msgid "Frozen! Points banked and out of round."
 msgstr "Frozen! Points banked and out of round."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "UoWhml"
+msgctxt "Events.UoWhml"
+msgid "Flip Three targeted! {cardsRemaining} cards to draw."
 msgstr "Flip Three targeted! {cardsRemaining} cards to draw."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "ZNBdfc"
+msgctxt "Events.ZNBdfc"
+msgid "Card drawn."
 msgstr "Card drawn."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "wHj0UW"
+msgctxt "Events.wHj0UW"
+msgid "Flip Three completed!"
 msgstr "Flip Three completed!"
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "8JaGCV"
+msgctxt "Events.8JaGCV"
+msgid "{action} was queued until Flip Three finished."
 msgstr "{action} was queued until Flip Three finished."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "LNzm00"
+msgctxt "Events.LNzm00"
+msgid "Drew duplicate {duplicate} — bust!"
 msgstr "Drew duplicate {duplicate} — bust!"
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "X60ieB"
+msgctxt "Events.X60ieB"
+msgid "Revealed number {numberValue}."
 msgstr "Revealed number {numberValue}."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "eANbvI"
+msgctxt "Events.eANbvI"
+msgid "Triggered flip-x!"
 msgstr "Triggered flip-x!"
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "ZXUvmt"
+msgctxt "Events.ZXUvmt"
+msgid "Player revealed modifier {modifier}."
 msgstr "Player revealed modifier {modifier}."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "dj_dbV"
+msgctxt "Events.dj_dbV"
+msgid "Player stored a Second Chance card."
 msgstr "Player stored a Second Chance card."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "-CKJl0"
+msgctxt "Events.-CKJl0"
+msgid "Extra Second Chance was discarded because no eligible recipient existed."
 msgstr "Extra Second Chance was discarded because no eligible recipient existed."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "QVcG3z"
+msgctxt "Events.QVcG3z"
+msgid "Extra Second Chance was passed to another active player."
 msgstr "Extra Second Chance was passed to another active player."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "sJ49hX"
+msgctxt "Events.sJ49hX"
+msgid "Initial deal revealed {card} for the player."
 msgstr "Initial deal revealed {card} for the player."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "oWAQo9"
+msgctxt "Events.oWAQo9"
+msgid "Stayed and banked points."
 msgstr "Stayed and banked points."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "M-Ftwj"
+msgctxt "Events.M-Ftwj"
+msgid "Hit and revealed {card}."
 msgstr "Hit and revealed {card}."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "1rq-xO"
+msgctxt "Events.1rq-xO"
+msgid "Round scored at {score} points."
 msgstr "Round scored at {score} points."
 
 #: game/ui/use-round-event-format.ts
-msgctxt "Events"
-msgid "h5FYW0"
+msgctxt "Events.h5FYW0"
+msgid "Table event recorded."
 msgstr "Table event recorded."
 
 #: shared/connectivity/offline-feedback.tsx
-msgctxt "Connectivity"
-msgid "xEhFzj"
+msgctxt "Connectivity.xEhFzj"
+msgid "You're offline. Pending requests will retry when you're back online."
 msgstr "You're offline. Pending requests will retry when you're back online."
 
 #: shared/connectivity/offline-feedback.tsx
-msgctxt "Connectivity"
-msgid "P-JCzG"
+msgctxt "Connectivity.P-JCzG"
+msgid "Waiting for connection…"
 msgstr "Waiting for connection…"
 
 #: shared/language-switcher.tsx
-msgctxt "LanguageSwitcher"
-msgid "y1Z3or"
+msgctxt "LanguageSwitcher.y1Z3or"
+msgid "Language"
 msgstr "Language"
 
 #: shared/language-switcher.tsx
-msgctxt "LanguageSwitcher"
-msgid "WkrNSk"
+msgctxt "LanguageSwitcher.WkrNSk"
+msgid "English"
 msgstr "English"
 
 #: shared/language-switcher.tsx
-msgctxt "LanguageSwitcher"
-msgid "dX8jTq"
+msgctxt "LanguageSwitcher.dX8jTq"
+msgid "Español"
 msgstr "Español"
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "9dWNPy"
+msgctxt "Errors.9dWNPy"
+msgid "Match not found."
 msgstr "Match not found."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "Fvxzoz"
+msgctxt "Errors.Fvxzoz"
+msgid "It is not your turn or the turn is invalid."
 msgstr "It is not your turn or the turn is invalid."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "wJ0Yml"
+msgctxt "Errors.wJ0Yml"
+msgid "That action is not valid right now."
 msgstr "That action is not valid right now."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "Mv-3D4"
+msgctxt "Errors.Mv-3D4"
+msgid "That target is not allowed."
 msgstr "That target is not allowed."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "pGqwhk"
+msgctxt "Errors.pGqwhk"
+msgid "Enter a valid host name."
 msgstr "Enter a valid host name."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "E6zsGk"
+msgctxt "Errors.E6zsGk"
+msgid "Choose valid game settings."
 msgstr "Choose valid game settings."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "oOGuVP"
+msgctxt "Errors.oOGuVP"
+msgid "Could not assign a lobby code. Try again."
 msgstr "Could not assign a lobby code. Try again."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "CtWb7v"
+msgctxt "Errors.CtWb7v"
+msgid "No lobby found for that code."
 msgstr "No lobby found for that code."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "lrSs1M"
+msgctxt "Errors.lrSs1M"
+msgid "Enter a valid player name."
 msgstr "Enter a valid player name."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "H06hB4"
+msgctxt "Errors.H06hB4"
+msgid "That name is already taken at this table."
 msgstr "That name is already taken at this table."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "VjKEMs"
+msgctxt "Errors.VjKEMs"
+msgid "Choose a valid player color."
 msgstr "Choose a valid player color."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "APS6id"
+msgctxt "Errors.APS6id"
+msgid "That player color is already taken at this table."
 msgstr "That player color is already taken at this table."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "YbrPvm"
+msgctxt "Errors.YbrPvm"
+msgid "Only the host can do that."
 msgstr "Only the host can do that."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "pgu2Sq"
+msgctxt "Errors.pgu2Sq"
+msgid "At least two players need to join before the game can start."
 msgstr "At least two players need to join before the game can start."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "tNaxmV"
+msgctxt "Errors.tNaxmV"
+msgid "Join the game first."
 msgstr "Join the game first."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "0Io_Ea"
+msgctxt "Errors.0Io_Ea"
+msgid "Too many attempts. Please wait a moment and try again."
 msgstr "Too many attempts. Please wait a moment and try again."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "xzMfga"
+msgctxt "Errors.xzMfga"
+msgid "This action is not allowed in the current match state."
 msgstr "This action is not allowed in the current match state."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "Ta2xFQ"
+msgctxt "Errors.Ta2xFQ"
+msgid "The game changed. Refresh and try again."
 msgstr "The game changed. Refresh and try again."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "tfukwC"
+msgctxt "Errors.tfukwC"
+msgid "Unsupported relationship."
 msgstr "Unsupported relationship."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "M8TjVq"
+msgctxt "Errors.M8TjVq"
+msgid "Unsupported table."
 msgstr "Unsupported table."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "Wk0ALV"
+msgctxt "Errors.Wk0ALV"
+msgid "Invalid confirmation."
 msgstr "Invalid confirmation."
 
 #: shared/lib/errors/use-app-errors.ts
-msgctxt "Errors"
-msgid "chhyZl"
+msgctxt "Errors.chhyZl"
+msgid "Game action failed."
 msgstr "Game action failed."
