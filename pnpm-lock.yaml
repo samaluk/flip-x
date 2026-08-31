@@ -100,8 +100,8 @@ importers:
         specifier: 0.30.0
         version: 0.30.0(effect@3.22.1)(vitest@4.1.11)
       '@eloqnt/cli':
-        specifier: 0.6.26
-        version: 0.6.26(@swc/helpers@0.5.23)
+        specifier: 0.6.27
+        version: 0.6.27(@swc/helpers@0.5.23)
       '@google/design.md':
         specifier: 0.4.0
         version: 0.4.0(supports-color@10.2.2)
@@ -631,8 +631,8 @@ packages:
       '@effect/rpc': ^0.76.2
       effect: ^3.22.1
 
-  '@eloqnt/cli@0.6.26':
-    resolution: {integrity: sha512-F2+6m31TQKDRyZJimopy66g9TL4G/Pz6T/9pXs7smqn33pyWJR485nsJAC6TBa4VTK1Nzsq1lRZUxa5UM0saBg==}
+  '@eloqnt/cli@0.6.27':
+    resolution: {integrity: sha512-l07h81D1TXvwKjFtkp4H2QNlC1yWuqY0dHifECETwtAxBYz1XSqBBdFlAECGqelWeMOsZ1EdzIz4/wFwJ1vATA==}
     hasBin: true
 
   '@eloqnt/config@0.0.2':
@@ -644,11 +644,11 @@ packages:
   '@eloqnt/format-po@0.0.3':
     resolution: {integrity: sha512-4r36qEd7KJFV+IMKUv5czNXbGVys8ahxlQKWoUDV20eGl4Oxr+YZ2O5IEQU09S+d7FvPJ1USnyc/wtCLNCo1Ng==}
 
-  '@eloqnt/format-po@0.0.4':
-    resolution: {integrity: sha512-/KdXDSMTkS660w9swTlWQwVeZLzGVGm5eB4Dmy5YjM8uxXpYc/7B2IOkS9/g4U/i228/snMQuLSLH/32raFZ0g==}
+  '@eloqnt/format-po@0.0.5':
+    resolution: {integrity: sha512-jLJLHzWsJP59UK1BMFklc5S+i4keAdzDR7+7bT+OHrUseT/Nsh5KmsgCd8UA0D9Xy2wZLy7MK1dqdJ3XVytKRg==}
 
-  '@eloqnt/sdk@0.6.24':
-    resolution: {integrity: sha512-1McqgdPTBXz2v7ksca3r4i9Gvnup/hskwZX6HTbSzVXeZ/I/6Wk3iaM9K18g4YEPlqQL5U8KD9+VsnYaetpCHQ==}
+  '@eloqnt/sdk@0.6.25':
+    resolution: {integrity: sha512-VggRn6aIth2kIE6w4E8LLYAOvsHvm0h6z7P11JbTJEMaxQzv6iSjR//JAFqnaDiSZXjtwtPn3Ojv2Nl+lZ/vvg==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -6355,10 +6355,10 @@ snapshots:
       '@effect/rpc': 0.76.2(@effect/platform@0.97.1(effect@3.22.1))(effect@3.22.1)
       effect: 3.22.1
 
-  '@eloqnt/cli@0.6.26(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.6.27(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.6.24(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.25(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
@@ -6376,16 +6376,16 @@ snapshots:
       '@eloqnt/config': 0.0.2
       po-parser: 2.2.0
 
-  '@eloqnt/format-po@0.0.4':
+  '@eloqnt/format-po@0.0.5':
     dependencies:
       '@eloqnt/config': 0.0.2
       po-parser: 2.2.0
 
-  '@eloqnt/sdk@0.6.24(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.6.25(@swc/helpers@0.5.23)':
     dependencies:
       '@eloqnt/config': 0.0.2
       '@eloqnt/format-json': 0.0.3
-      '@eloqnt/format-po': 0.0.4
+      '@eloqnt/format-po': 0.0.5
       '@formatjs/icu-messageformat-parser': 3.5.17
       '@swc/core': 1.16.1(@swc/helpers@0.5.23)
       ai: 7.0.79(zod@4.4.3)
