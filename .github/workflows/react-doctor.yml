@@ -69,7 +69,7 @@ jobs:
       - name: Scan changed code for new findings
         # Immutable pin for the current v2 release (v2.2.8 is what the `v2` tag
         # points to). The Action uses the installed project config at the root.
-        uses: millionco/react-doctor@01820bb4fd4d0a4aebcd8df2b2a143a098649cb2 # v2.2.8
+        uses: millionco/react-doctor@013f7373f91a3b9e68bd1dc7d4d354f4b041b117 # v2.2.9
         with:
           # Fail the check on any new error OR warning introduced by the change.
           blocking: warning
