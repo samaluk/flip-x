@@ -13,9 +13,10 @@ removed before the next case. The repository is clean before the probes.
 | Add a function above the cognitive threshold | `pnpm fallow:health` | Exit `1` | Coverage-aware health findings block the repository gate. |
 | Remove each probe | The same command for each row | Exit `0` | The gate returns to clean after the debt is removed. |
 
-The repository uses the exact measured `5.4016%` duplication value as its
-narrow threshold because Fallow 3.17 reassigns ordinal clone fingerprints when
-the reviewed `ignoredClones` set changes. There is no generic headroom. The
+The repository uses the narrow `duplicates.threshold` ceiling configured in
+`.fallowrc.json` because Fallow reassigns ordinal clone fingerprints when
+the reviewed `ignoredClones` set changes. The ceiling equals the current
+measured value and leaves no generic headroom. The
 changed-file `audit --gate all` is the strict blocking proof for an introduced
 clone, and the standalone command remains the full repository duplication
 report.

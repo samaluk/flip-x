@@ -1,6 +1,6 @@
 # Fallow zero-debt gate
 
-Flip-x uses Fallow 3.17.0 as a strict repository-quality gate. The repository
+Flip-x uses the Fallow version pinned in `package.json` as a strict repository-quality gate. The repository
 does not carry a debt baseline or a regression-count allowance. Existing
 dead-code and health findings are rejected directly, while reviewed framework
 patterns remain narrowly configured or suppressed with reasons.
@@ -38,7 +38,7 @@ The commands have distinct responsibilities:
 
 - `fallow audit --gate all` blocks every error-severity finding in changed files.
 - `fallow dead-code --type-aware --fail-on-issues` blocks dead code, duplicate exports, boundary violations, private-type leaks, and incomplete semantic evidence.
-- `fallow dupes --fail-on-issues` reports the full semantic and near-miss duplication surface. It uses the narrow `5.4016%` ceiling only because Fallow 3.17 reassigns ordinal `dup:c77b3abb6f87acd9-N` fingerprints when the reviewed suppression set changes; the ceiling equals the current measured value and leaves no headroom.
+- `fallow dupes --fail-on-issues` reports the full semantic and near-miss duplication surface. It uses the narrow `duplicates.threshold` ceiling configured in `.fallowrc.json` only because Fallow reassigns ordinal `dup:c77b3abb6f87acd9-N` fingerprints when the reviewed suppression set changes; the ceiling equals the current measured value and leaves no headroom.
 - `fallow health --coverage coverage/coverage-final.json --coverage-root "$PWD" --fail-on-issues` blocks complexity, CRAP, and unit-size findings using the same Istanbul artifact produced by the test job.
 
 Fallow exit codes are native: `0` is clean, `1` is a finding, and `2` is an
@@ -95,7 +95,7 @@ floors, pair-level `minOccurrences: 2`, and import wiring ignored. The stable
 occurrence-count change makes the clone reportable again. Fallow's ordinal
 `dup:c77b3abb6f87acd9-N` fingerprints are not stable when the suppression set
 changes, so those intentional groups remain visible and are covered by the
-exact `5.4016%` measurement bound described below. The reviewed groups are:
+`duplicates.threshold` measurement bound configured in `.fallowrc.json` and described below. The reviewed groups are:
 
 | Fingerprints and counts | Classification and reason |
 | --- | --- |
@@ -122,11 +122,11 @@ aggregate headroom.
 ### Fallow Fingerprint Limitation
 
 This bound is reproducible without source changes. Run the semantic-plus-near
-scan with only the nine stable hash fingerprints above; it reports `844`
-duplicated lines out of `15,625`, or exactly `5.4016%`. Adding an ordinal
+scan with only the stable hash fingerprints above; it reports the value
+configured as `duplicates.threshold` in `.fallowrc.json`. Adding an ordinal
 `dup:c77b3abb6f87acd9-N` fingerprint changes the ordinal assigned to other
 source ranges, so the same source can receive a different fingerprint when the
-suppression set changes. The `5.4016` value is the exact current report with
+suppression set changes. The configured threshold equals the current report with
 only stable suppressions, so any measurable increase remains blocking.
 
 The generated Confect services expose service tags and identifiers named
