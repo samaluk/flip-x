@@ -9,6 +9,7 @@ runs:
     # `pnpm install` (the action's default). No separate setup-node or install
     # step is needed. `--no-runtime` is appended automatically because a
     # runtime is set, so the Node managed here is never shadowed.
+    # Renovate keeps `engines.node` and `devEngines.runtime.version` aligned.
     - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
       with:
         runtime: node

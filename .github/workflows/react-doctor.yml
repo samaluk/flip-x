@@ -65,6 +65,9 @@ jobs:
           v="$(grep -m1 -oE '^  react-doctor@[0-9]+\.[0-9]+\.[0-9]+' pnpm-lock.yaml | cut -d@ -f2-)"
           if [ -z "$v" ]; then echo "::error::react-doctor version not found in pnpm-lock.yaml"; exit 1; fi
           echo "version=$v" >> "$GITHUB_OUTPUT"
+          node_ver="$(sed -n '/"engines"/,/}/s/.*"node": "\([^"]*\)".*/\1/p' package.json | head -1)"
+          if [ -z "$node_ver" ]; then echo "::error::engines.node not found in package.json"; exit 1; fi
+          echo "node=$node_ver" >> "$GITHUB_OUTPUT"
 
       - name: Scan changed code for new findings
         # Immutable pin for the current v2 release (v2.2.8 is what the `v2` tag
@@ -78,6 +81,9 @@ jobs:
           # Scan with the exact react-doctor CLI resolved from pnpm-lock.yaml,
           # not the Action's own bundled copy, so CI agrees with the local hk gates.
           version: ${{ steps.rdver.outputs.version }}
+          # Default `node-version: 24` can resolve older than engines.node;
+          # npm then fails EBADDEVENGINES against package.json.
+          node-version: ${{ steps.rdver.outputs.node }}
           comment: true
           review-comments: true
           commit-status: true

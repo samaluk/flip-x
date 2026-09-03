@@ -1,4 +1,6 @@
 [tools]
+# Node version is single-sourced in package.json (`engines.node` +
+# `devEngines.runtime.version`); do not pin node here to avoid a third source.
 hk = "1.57.0"
 "github:mongodb/kingfisher" = "2.1.0"
 
