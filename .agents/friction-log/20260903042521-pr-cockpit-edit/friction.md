@@ -1,6 +1,7 @@
 ---
 title: 'pr-cockpit edit-body fails on Bash 3.2 with an empty positional array'
 severity: 'minor'
+issue: 'samaluk/flip-x#730'
 ---
 
 ## Expected Behavior
