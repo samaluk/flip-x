@@ -945,11 +945,6 @@ msgctxt "Events.1rq-xO"
 msgid "Round scored at {score} points."
 msgstr "Ronda puntuada con {score} puntos."
 
-#: game/ui/use-round-event-format.ts
-msgctxt "Events.h5FYW0"
-msgid "Table event recorded."
-msgstr "Evento de mesa registrado."
-
 #: shared/connectivity/offline-feedback.tsx
 msgctxt "Connectivity.xEhFzj"
 msgid "You're offline. Pending requests will retry when you're back online."
