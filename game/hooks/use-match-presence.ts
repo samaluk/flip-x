@@ -130,9 +130,7 @@ function usePresenceHeartbeat({
         window.clearTimeout(timeoutId);
       }
     };
-    // why: `heartbeat`, `sessionTokenRef`, and `syncPlayer` are stable across renders (mutation hook / ref). The linter infers them as dependencies, but changing them should not restart the presence heartbeat — only identity/room changes should.
-    // oxlint-disable-next-line react-hooks/exhaustive-deps, react/exhaustive-effect-dependencies -- stable refs/setters intentionally omitted; see comment above
-  }, [matchId, playerId, sessionId]);
+  }, [heartbeat, matchId, playerId, presenceSessionIdRef, sessionId, sessionTokenRef, syncPlayer]);
 
   return { roomToken };
 }
