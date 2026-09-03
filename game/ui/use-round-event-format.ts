@@ -4,7 +4,8 @@ import { useExtracted } from "next-intl";
 
 import type { ActionKind } from "@/game/logic/card-types";
 import type { ModifierCard } from "@/game/logic/card-types";
-import type { CardEventPayload } from "@/game/logic/events";
+import type { CardEventPayload, RoundEventType } from "@/game/logic/events";
+import type { LatestRoundEvent } from "@/game/logic/latest-round-event";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type CardLabels = {
@@ -15,20 +16,10 @@ type CardLabels = {
   plusValue: (value: string) => string;
 };
 
-function actionKindLabel(actionKind: ActionKind, labels: CardLabels) {
-  switch (actionKind) {
-    case "flip_three":
-      return labels.flipThree;
-    case "freeze":
-      return labels.freeze;
-    case "second_chance":
-      return labels.secondChance;
-    default: {
-      const exhaustiveCheck: never = actionKind;
-      return exhaustiveCheck;
-    }
-  }
-}
+type CardContext = {
+  actionLabels: Record<ActionKind, string>;
+  cardLabels: CardLabels;
+};
 
 function modifierLabel(modifierValue: ModifierCard["modifierValue"], labels: CardLabels) {
   if (modifierValue === "x2") {
@@ -37,15 +28,57 @@ function modifierLabel(modifierValue: ModifierCard["modifierValue"], labels: Car
   return labels.plusValue(String(modifierValue));
 }
 
-function cardPayloadLabel(payload: CardEventPayload, labels: CardLabels) {
+function cardPayloadLabel(payload: CardEventPayload, context: CardContext): string {
   if (payload.cardKind === "number") {
     return String(payload.numberValue);
   }
   if (payload.cardKind === "modifier") {
-    return modifierLabel(payload.modifierValue, labels);
+    return modifierLabel(payload.modifierValue, context.cardLabels);
   }
-  return actionKindLabel(payload.actionKind, labels);
+  return context.actionLabels[payload.actionKind];
 }
+
+function getActionKind(payload: LatestRoundEvent["payload"]): ActionKind {
+  return "actionKind" in payload ? payload.actionKind : "flip_three";
+}
+
+function getDuplicate(payload: LatestRoundEvent["payload"]): number {
+  return "duplicate" in payload ? payload.duplicate : 0;
+}
+
+function getCardsRemaining(payload: LatestRoundEvent["payload"]): number {
+  return "cardsRemaining" in payload ? payload.cardsRemaining : 0;
+}
+
+function getNumberValue(payload: LatestRoundEvent["payload"]): number {
+  return "numberValue" in payload ? payload.numberValue : 0;
+}
+
+function getModifierValue(payload: LatestRoundEvent["payload"]): ModifierCard["modifierValue"] {
+  return "modifierValue" in payload ? payload.modifierValue : 0;
+}
+
+function getFinalScore(payload: LatestRoundEvent["payload"]): number {
+  return "finalRoundScore" in payload ? payload.finalRoundScore : 0;
+}
+
+function isCardPayload(payload: LatestRoundEvent["payload"]): payload is CardEventPayload {
+  return (
+    "cardKind" in payload &&
+    (payload.cardKind === "number" ||
+      payload.cardKind === "modifier" ||
+      payload.cardKind === "action")
+  );
+}
+
+function getCardPayload(payload: LatestRoundEvent["payload"]): CardEventPayload {
+  if (isCardPayload(payload)) {
+    return payload;
+  }
+  return { cardKind: "number", numberValue: 0 };
+}
+
+type RoundEventFormatter = (event: LatestRoundEvent) => string;
 
 export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): string {
   const tEvents = useExtracted("Events");
@@ -57,72 +90,73 @@ export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): s
     x2: tCards("×2"),
     plusValue: (value) => tCards("+{value}", { value }),
   };
+  const actionLabels: Record<ActionKind, string> = {
+    flip_three: cardLabels.flipThree,
+    freeze: cardLabels.freeze,
+    second_chance: cardLabels.secondChance,
+  };
+  const cardContext: CardContext = { actionLabels, cardLabels };
 
   if (!latest) {
     return tEvents("No table event has been logged yet.");
   }
 
-  switch (latest.type) {
-    case "pending_action":
-      return tEvents("{action} is waiting for a target.", {
-        action: actionKindLabel(latest.payload.actionKind, cardLabels),
-      });
-    case "second_chance_used":
-      return tEvents(
-        "Second Chance discarded duplicate {duplicate} instead of busting the player.",
-        {
-          duplicate: String(latest.payload.duplicate),
-        },
-      );
-    case "freeze_applied":
-      return tEvents("Frozen! Points banked and out of round.");
-    case "flip_three_targeted":
-      return tEvents("Flip Three targeted! {cardsRemaining} cards to draw.", {
-        cardsRemaining: String(latest.payload.cardsRemaining),
-      });
-    case "flip3_hit":
-      return tEvents("Card drawn.");
-    case "flip3_completed":
-      return tEvents("Flip Three completed!");
-    case "deferred_action":
-      return tEvents("{action} was queued until Flip Three finished.", {
-        action: actionKindLabel(latest.payload.actionKind, cardLabels),
-      });
-    case "duplicate_bust":
-      return tEvents("Drew duplicate {duplicate} — bust!", {
-        duplicate: String(latest.payload.duplicate),
-      });
-    case "number_drawn":
-      return tEvents("Revealed number {numberValue}.", {
-        numberValue: String(latest.payload.numberValue),
-      });
-    case "flip7":
-      return tEvents("Triggered flip-x!");
-    case "modifier_drawn":
-      return tEvents("Player revealed modifier {modifier}.", {
-        modifier: modifierLabel(latest.payload.modifierValue, cardLabels),
-      });
-    case "second_chance_held":
-      return tEvents("Player stored a Second Chance card.");
-    case "second_chance_discarded":
-      return tEvents("Extra Second Chance was discarded because no eligible recipient existed.");
-    case "second_chance_passed":
-      return tEvents("Extra Second Chance was passed to another active player.");
-    case "initial_deal":
-      return tEvents("Initial deal revealed {card} for the player.", {
-        card: cardPayloadLabel(latest.payload, cardLabels),
-      });
-    case "stay":
-      return tEvents("Stayed and banked points.");
-    case "hit":
-      return tEvents("Hit and revealed {card}.", {
-        card: cardPayloadLabel(latest.payload, cardLabels),
-      });
-    case "round_scored":
-      return tEvents("Round scored at {score} points.", {
-        score: String(latest.payload.finalRoundScore),
-      });
-    default:
-      return tEvents("Table event recorded.");
+  const formatters: Record<RoundEventType, RoundEventFormatter> = {
+    pending_action: (event) =>
+      tEvents("{action} is waiting for a target.", {
+        action: actionLabels[getActionKind(event.payload)],
+      }),
+    second_chance_used: (event) =>
+      tEvents("Second Chance discarded duplicate {duplicate} instead of busting the player.", {
+        duplicate: String(getDuplicate(event.payload)),
+      }),
+    freeze_applied: (_event) => tEvents("Frozen! Points banked and out of round."),
+    flip_three_targeted: (event) =>
+      tEvents("Flip Three targeted! {cardsRemaining} cards to draw.", {
+        cardsRemaining: String(getCardsRemaining(event.payload)),
+      }),
+    flip3_hit: (_event) => tEvents("Card drawn."),
+    flip3_completed: (_event) => tEvents("Flip Three completed!"),
+    deferred_action: (event) =>
+      tEvents("{action} was queued until Flip Three finished.", {
+        action: actionLabels[getActionKind(event.payload)],
+      }),
+    duplicate_bust: (event) =>
+      tEvents("Drew duplicate {duplicate} — bust!", {
+        duplicate: String(getDuplicate(event.payload)),
+      }),
+    number_drawn: (event) =>
+      tEvents("Revealed number {numberValue}.", {
+        numberValue: String(getNumberValue(event.payload)),
+      }),
+    flip7: (_event) => tEvents("Triggered flip-x!"),
+    modifier_drawn: (event) =>
+      tEvents("Player revealed modifier {modifier}.", {
+        modifier: modifierLabel(getModifierValue(event.payload), cardLabels),
+      }),
+    second_chance_held: (_event) => tEvents("Player stored a Second Chance card."),
+    second_chance_discarded: (_event) =>
+      tEvents("Extra Second Chance was discarded because no eligible recipient existed."),
+    second_chance_passed: (_event) =>
+      tEvents("Extra Second Chance was passed to another active player."),
+    initial_deal: (event) =>
+      tEvents("Initial deal revealed {card} for the player.", {
+        card: cardPayloadLabel(getCardPayload(event.payload), cardContext),
+      }),
+    stay: (_event) => tEvents("Stayed and banked points."),
+    hit: (event) =>
+      tEvents("Hit and revealed {card}.", {
+        card: cardPayloadLabel(getCardPayload(event.payload), cardContext),
+      }),
+    round_scored: (event) =>
+      tEvents("Round scored at {score} points.", {
+        score: String(getFinalScore(event.payload)),
+      }),
+  };
+
+  const formatter = formatters[latest.type];
+  if (!formatter) {
+    return tEvents("Table event recorded.");
   }
+  return formatter(latest);
 }
