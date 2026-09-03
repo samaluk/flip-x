@@ -3,6 +3,8 @@ import path from "node:path";
 
 import { ConvexTestingHelper } from "convex-helpers/testing";
 
+import { expect, vi } from "vitest";
+
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { createIdempotencyCounter } from "@/tests/builders/idempotency";
@@ -21,6 +23,27 @@ export type TestSession = { name: string; sessionId: SessionId };
 
 export function asSessionId(value: string) {
   return value as SessionId;
+}
+
+export async function expectRejectWithCode(
+  action: Promise<unknown> | (() => Promise<unknown>),
+  expectedCode: string,
+) {
+  const spy = vi.spyOn(console, "error").mockImplementation((...args: unknown[]) => {
+    const text = args.map(String).join(" ");
+    if (text.includes(expectedCode) || text.includes("ConvexError")) {
+      return;
+    }
+    spy.mockRestore();
+    console.error(...args);
+  });
+
+  try {
+    const promise = typeof action === "function" ? action() : action;
+    await expect(promise).rejects.toThrow(expectedCode);
+  } finally {
+    spy.mockRestore();
+  }
 }
 
 export function createTestClient() {

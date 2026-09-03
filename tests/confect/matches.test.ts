@@ -108,6 +108,37 @@ describe("Confect matches", () => {
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 
+  it.effect("rejects join with duplicate name from different session", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* client.mutation(refs.public.matches.createMatch, {
+        hostName: "Host",
+        sessionId: "session-host",
+      });
+
+      yield* client.mutation(refs.public.matches.joinMatch, {
+        matchId: created.matchId,
+        playerName: "Guest",
+        sessionId: "session-guest-a",
+      });
+
+      const exit = yield* client
+        .mutation(refs.public.matches.joinMatch, {
+          matchId: created.matchId,
+          playerName: "guest",
+          sessionId: "session-guest-b",
+        })
+        .pipe(Effect.exit);
+
+      if (Exit.isSuccess(exit)) {
+        throw new Error("Expected duplicate name join to fail");
+      }
+
+      assertEquals(Cause.pretty(exit.cause).includes("NAME_ALREADY_TAKEN"), true);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
   it.effect("starts a match and creates the first round snapshot", () =>
     Effect.gen(function* () {
       const client = yield* TestConfect.TestConfect;
