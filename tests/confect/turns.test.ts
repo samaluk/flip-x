@@ -72,7 +72,7 @@ describe("Confect turns", () => {
 
       const exit = yield* client
         .mutation(refs.public.turns.takeTurn, {
-          matchId: matchId as never,
+          matchId,
           action: "hit",
           sessionId: inactiveSession.sessionId,
           expectedVersion: started.version,

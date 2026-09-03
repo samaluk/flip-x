@@ -1,5 +1,5 @@
 import { describe, it } from "@effect/vitest";
-import { assertEquals } from "@effect/vitest/utils";
+import { assertEquals, assertInclude } from "@effect/vitest/utils";
 import { Cause, Effect, Exit } from "effect";
 
 import refs from "@/confect/_generated/refs";
@@ -135,7 +135,7 @@ describe("Confect matches", () => {
         throw new Error("Expected duplicate name join to fail");
       }
 
-      assertEquals(Cause.pretty(exit.cause).includes("NAME_ALREADY_TAKEN"), true);
+      assertInclude(Cause.pretty(exit.cause), "NAME_ALREADY_TAKEN");
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 
