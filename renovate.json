@@ -17,9 +17,27 @@
       "packageNameTemplate": "jdx/hk",
       "datasourceTemplate": "github-releases",
       "versioningTemplate": "semver-coerced"
+    },
+    {
+      "customType": "regex",
+      "description": "Keep devEngines.runtime.version in sync with engines.node (Vercel reads engines, pnpm/setup reads devEngines)",
+      "managerFilePatterns": ["(^|/)package\\.json$"],
+      "matchStrings": [
+        "\"devEngines\"\\s*:\\s*\\{\\s*\"runtime\"\\s*:\\s*\\{\\s*\"name\"\\s*:\\s*\"node\"\\s*,\\s*\"version\"\\s*:\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "node",
+      "packageNameTemplate": "node",
+      "datasourceTemplate": "node-version"
     }
   ],
   "packageRules": [
+    {
+      "description": "Keep engines.node and devEngines.runtime.version together",
+      "matchPackageNames": ["node"],
+      "groupName": "Node",
+      "groupSlug": "node",
+      "groupSingleUpdates": true
+    },
     {
       "description": "Keep the Fallow package and GitHub Action together",
       "matchPackageNames": ["fallow", "fallow-rs/fallow"],
