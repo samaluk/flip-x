@@ -3,6 +3,22 @@
   "extends": ["config:recommended", ":disableRateLimiting", "helpers:pinGitHubActionDigests"],
   "rangeStrategy": "pin",
   "minimumReleaseAge": "3 days",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Keep every hk.pkl version reference aligned with the mise-managed hk version",
+      "managerFilePatterns": ["/^hk\\.pkl$/"],
+      "matchStrings": [
+        "github\\.com/jdx/hk/releases/download/v(?<currentValue>[^/]+)/hk@",
+        "/hk@(?<currentValue>[^#]+)#/",
+        "min_hk_version\\s*=\\s*\"(?<currentValue>[^\"]+)\""
+      ],
+      "depNameTemplate": "hk",
+      "packageNameTemplate": "jdx/hk",
+      "datasourceTemplate": "github-releases",
+      "versioningTemplate": "semver-coerced"
+    }
+  ],
   "packageRules": [
     {
       "description": "Keep the Fallow package and GitHub Action together",
@@ -17,6 +33,13 @@
       "matchPackageNames": ["pullfrog/pullfrog"],
       "pinDigests": false,
       "rangeStrategy": "replace"
+    },
+    {
+      "description": "Update the mise and hk.pkl references to hk together",
+      "matchPackageNames": ["jdx/hk"],
+      "groupName": "hk",
+      "groupSlug": "hk",
+      "groupSingleUpdates": true
     }
   ]
 }
