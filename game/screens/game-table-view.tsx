@@ -295,12 +295,39 @@ function TurnControlsMobile({ controls }: { controls: ReactNode }) {
   );
 }
 
+type HudPlayer = MatchSnapshot["players"][number];
+
+type CallTextLabels = {
+  scored: string;
+  deciding: (name: string) => string;
+  waiting: string;
+};
+
+function resolveCallText(
+  {
+    roundStatus,
+    activeDisplayName,
+  }: {
+    roundStatus: MatchSnapshot["roundStatus"];
+    activeDisplayName: string | undefined;
+  },
+  labels: CallTextLabels,
+): string {
+  if (roundStatus === "completed") {
+    return labels.scored;
+  }
+  if (activeDisplayName) {
+    return labels.deciding(activeDisplayName);
+  }
+  return labels.waiting;
+}
+
 type GameTableHudProps = {
   snapshot: MatchSnapshot;
   isPending: boolean;
   latestBody: string;
-  activePlayer: MatchSnapshot["players"][number] | undefined;
-  viewerPlayer: MatchSnapshot["players"][number] | undefined;
+  activePlayer: HudPlayer | undefined;
+  viewerPlayer: HudPlayer | undefined;
 };
 
 function GameTableHud({
@@ -311,18 +338,44 @@ function GameTableHud({
   viewerPlayer,
 }: GameTableHudProps) {
   const t = useExtracted("GameTable");
-  const matchComplete = snapshot.status === "completed";
+  const callText = resolveCallText(
+    { roundStatus: snapshot.roundStatus, activeDisplayName: activePlayer?.displayName },
+    {
+      scored: t("The round is scored and ready for the next deal."),
+      deciding: (name) =>
+        t("{name} is deciding whether to push or bank points.", {
+          name,
+        }),
+      waiting: t("Waiting for the next resolution."),
+    },
+  );
 
-  let callText: string;
-  if (snapshot.roundStatus === "completed") {
-    callText = t("The round is scored and ready for the next deal.");
-  } else if (activePlayer) {
-    callText = t("{name} is deciding whether to push or bank points.", {
-      name: activePlayer.displayName,
-    });
-  } else {
-    callText = t("Waiting for the next resolution.");
-  }
+  return (
+    <section
+      aria-label={t("Match {id}", { id: snapshot.matchId.slice(0, 8) })}
+      className="surface-elevated overflow-hidden rounded-2xl text-foreground"
+    >
+      <MatchHeader snapshot={snapshot} isPending={isPending} activePlayer={activePlayer} />
+      <div className="grid gap-3 border-t border-border px-4 py-2.5 sm:grid-cols-2 sm:px-5">
+        <TableCall callText={callText} viewerPlayer={viewerPlayer} />
+        <LatestResolution
+          latestBody={latestBody}
+          latestPlayerNames={snapshot.latestEvent?.playerNames}
+        />
+      </div>
+    </section>
+  );
+}
+
+type MatchHeaderProps = {
+  snapshot: MatchSnapshot;
+  isPending: boolean;
+  activePlayer: HudPlayer | undefined;
+};
+
+function MatchHeader({ snapshot, isPending, activePlayer }: MatchHeaderProps) {
+  const t = useExtracted("GameTable");
+  const matchComplete = snapshot.status === "completed";
 
   let matchStatus: string;
   switch (snapshot.status) {
@@ -342,84 +395,100 @@ function GameTableHud({
   }
 
   return (
-    <section
-      aria-label={t("Match {id}", { id: snapshot.matchId.slice(0, 8) })}
-      className="surface-elevated overflow-hidden rounded-2xl text-foreground"
-    >
-      <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
-        <div className="flex min-w-0 items-center gap-2.5">
-          {matchComplete ? (
-            <TrophyIcon className="size-5 shrink-0 text-primary" aria-hidden />
-          ) : (
-            <CircleDotIcon className="size-5 shrink-0 text-primary" aria-hidden />
-          )}
-          <div className="flex min-w-0 flex-col leading-tight">
-            <h1 className="truncate font-heading text-sm font-medium tracking-tight text-foreground sm:text-base">
-              {t("Match {id}", { id: snapshot.matchId.slice(0, 8) })}
-            </h1>
-            <span className="text-xs text-muted-foreground">
-              {t("Round {round} of a race to {target} points.", {
-                round: String(snapshot.currentRoundNumber),
-                target: String(snapshot.targetScore),
-              })}
+    <div className="flex flex-wrap items-center gap-3 px-4 py-3 sm:px-5">
+      <div className="flex min-w-0 items-center gap-2.5">
+        {matchComplete ? (
+          <TrophyIcon className="size-5 shrink-0 text-primary" aria-hidden />
+        ) : (
+          <CircleDotIcon className="size-5 shrink-0 text-primary" aria-hidden />
+        )}
+        <div className="flex min-w-0 flex-col leading-tight">
+          <h1 className="truncate font-heading text-sm font-medium tracking-tight text-foreground sm:text-base">
+            {t("Match {id}", { id: snapshot.matchId.slice(0, 8) })}
+          </h1>
+          <span className="text-xs text-muted-foreground">
+            {t("Round {round} of a race to {target} points.", {
+              round: String(snapshot.currentRoundNumber),
+              target: String(snapshot.targetScore),
+            })}
+          </span>
+        </div>
+      </div>
+
+      <div className="ms-auto flex flex-wrap items-center gap-1.5">
+        <Badge variant="outline" data-slot="match-status" data-status={snapshot.status}>
+          {matchStatus}
+        </Badge>
+        <Badge variant="outline" className="hidden sm:inline-flex">
+          {t("Dealer position {n}", { n: String(snapshot.dealerSeat + 1) })}
+        </Badge>
+        {activePlayer ? (
+          <Badge variant="default" className="max-w-48">
+            <UserRoundIcon className="size-3" aria-hidden />
+            <span className="truncate">
+              {t("Turn: {name}", { name: activePlayer.displayName })}
             </span>
-          </div>
-        </div>
-
-        <div className="ms-auto flex flex-wrap items-center gap-1.5">
-          <Badge variant="outline" data-slot="match-status" data-status={snapshot.status}>
-            {matchStatus}
           </Badge>
-          <Badge variant="outline" className="hidden sm:inline-flex">
-            {t("Dealer position {n}", { n: String(snapshot.dealerSeat + 1) })}
+        ) : null}
+        {isPending ? (
+          <Badge variant="secondary" aria-live="polite">
+            <RefreshCwIcon className="size-3 animate-spin" aria-hidden />
+            <span className="hidden sm:inline">{t("Updating")}</span>
           </Badge>
-          {activePlayer ? (
-            <Badge variant="default" className="max-w-48">
-              <UserRoundIcon className="size-3" aria-hidden />
-              <span className="truncate">
-                {t("Turn: {name}", { name: activePlayer.displayName })}
-              </span>
-            </Badge>
-          ) : null}
-          {isPending ? (
-            <Badge variant="secondary" aria-live="polite">
-              <RefreshCwIcon className="size-3 animate-spin" aria-hidden />
-              <span className="hidden sm:inline">{t("Updating")}</span>
-            </Badge>
-          ) : null}
-        </div>
+        ) : null}
       </div>
+    </div>
+  );
+}
 
-      <div className="grid gap-3 border-t border-border px-4 py-2.5 sm:grid-cols-2 sm:px-5">
-        <div className="space-y-0.5">
-          <div className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {t("Table call")}
-          </div>
-          <div className="text-sm leading-snug text-foreground">{callText}</div>
-          {viewerPlayer ? (
-            <div className="text-xs text-muted-foreground">
-              {t("You are playing as {name}", { name: viewerPlayer.displayName })}
-            </div>
-          ) : (
-            <div className="text-xs text-muted-foreground">
-              {t("Join this game on this device to take turns.")}
-            </div>
-          )}
-        </div>
-        <div className="space-y-0.5 border-t border-border pt-2.5 sm:border-s sm:border-t-0 sm:ps-4 sm:pt-0">
-          <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            <AlertTriangleIcon className="size-3" aria-hidden />
-            {t("Latest resolution")}
-          </div>
-          <div data-slot="game-latest-resolution" className="text-sm leading-snug text-foreground">
-            {latestBody}
-          </div>
-          {snapshot.latestEvent?.playerNames ? (
-            <div className="text-xs text-muted-foreground">{snapshot.latestEvent.playerNames}</div>
-          ) : null}
-        </div>
+type TableCallProps = {
+  callText: string;
+  viewerPlayer: HudPlayer | undefined;
+};
+
+function TableCall({ callText, viewerPlayer }: TableCallProps) {
+  const t = useExtracted("GameTable");
+
+  return (
+    <div className="space-y-0.5">
+      <div className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+        {t("Table call")}
       </div>
-    </section>
+      <div className="text-sm leading-snug text-foreground">{callText}</div>
+      {viewerPlayer ? (
+        <div className="text-xs text-muted-foreground">
+          {t("You are playing as {name}", { name: viewerPlayer.displayName })}
+        </div>
+      ) : (
+        <div className="text-xs text-muted-foreground">
+          {t("Join this game on this device to take turns.")}
+        </div>
+      )}
+    </div>
+  );
+}
+
+type LatestResolutionProps = {
+  latestBody: string;
+  latestPlayerNames: string | undefined;
+};
+
+function LatestResolution({ latestBody, latestPlayerNames }: LatestResolutionProps) {
+  const t = useExtracted("GameTable");
+
+  return (
+    <div className="space-y-0.5 border-t border-border pt-2.5 sm:border-s sm:border-t-0 sm:ps-4 sm:pt-0">
+      <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+        <AlertTriangleIcon className="size-3" aria-hidden />
+        {t("Latest resolution")}
+      </div>
+      <div data-slot="game-latest-resolution" className="text-sm leading-snug text-foreground">
+        {latestBody}
+      </div>
+      {latestPlayerNames ? (
+        <div className="text-xs text-muted-foreground">{latestPlayerNames}</div>
+      ) : null}
+    </div>
   );
 }
 
