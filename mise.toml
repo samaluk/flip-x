@@ -1,6 +1,6 @@
 [tools]
 hk = "1.56.1"
-"github:mongodb/kingfisher" = "2.0.0"
+"github:mongodb/kingfisher" = "2.1.0"
 
 [env]
 HK_MISE = "1"
