@@ -147,6 +147,58 @@ function PlayerLaneBadges({
   );
 }
 
+function PlayerIdentity({ player, compact }: { player: SnapshotPlayer; compact: boolean }) {
+  const t = useExtracted("PlayerLane");
+  const playerColor = getPlayerColor(player.colorId, player.seatIndex);
+  const initials = playerInitials(player.displayName);
+
+  return (
+    <div className="flex min-w-0 items-center gap-2.5">
+      <Avatar
+        size="lg"
+        className={cn("shadow-sm ring-2 ring-border/80", compact ? "size-11" : "size-14")}
+      >
+        <AvatarFallback
+          className="text-base font-semibold tracking-tight"
+          style={
+            {
+              backgroundColor: playerColor.background,
+              color: playerColor.foreground,
+            } satisfies CSSProperties
+          }
+        >
+          {initials}
+        </AvatarFallback>
+        {player.isOnline ? (
+          <AvatarBadge className="border border-background bg-primary ring-background" />
+        ) : null}
+      </Avatar>
+
+      <div className="min-w-0 flex-1 text-start">
+        <h3 className="truncate font-heading text-sm leading-5 font-medium tracking-tight text-foreground">
+          {player.displayName}
+        </h3>
+        <div className="truncate text-xs leading-4 text-muted-foreground tabular-nums">
+          {t("Total score {score}", { score: String(player.totalScore) })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PointsAtRisk({ pointsAtRisk }: { pointsAtRisk: number }) {
+  const t = useExtracted("PlayerLane");
+
+  return (
+    <div className="flex items-end justify-between gap-2 rounded-md border border-border/55 bg-card/55 px-2 py-1.5">
+      <div className="min-w-0 text-xs leading-4 text-muted-foreground">{t("Points at risk")}</div>
+      <div className="text-lg leading-5 font-semibold text-foreground tabular-nums">
+        {pointsAtRisk}
+      </div>
+    </div>
+  );
+}
+
 function PlayerLaneSidebar({
   player,
   compact,
@@ -157,10 +209,7 @@ function PlayerLaneSidebar({
   incomingActionKind,
   flip3Remaining,
 }: PlayerLaneSidebarProps) {
-  const t = useExtracted("PlayerLane");
   const roundStatusLabel = useRoundStatusLabel(displayStatus);
-  const playerColor = getPlayerColor(player.colorId, player.seatIndex);
-  const initials = playerInitials(player.displayName);
 
   return (
     <aside
@@ -169,44 +218,8 @@ function PlayerLaneSidebar({
         compact ? "sm:w-30" : "sm:w-39",
       )}
     >
-      <div className="flex min-w-0 items-center gap-2.5">
-        <Avatar
-          size="lg"
-          className={cn("shadow-sm ring-2 ring-border/80", compact ? "size-11" : "size-14")}
-        >
-          <AvatarFallback
-            className="text-base font-semibold tracking-tight"
-            style={
-              {
-                backgroundColor: playerColor.background,
-                color: playerColor.foreground,
-              } satisfies CSSProperties
-            }
-          >
-            {initials}
-          </AvatarFallback>
-          {player.isOnline ? (
-            <AvatarBadge className="border border-background bg-primary ring-background" />
-          ) : null}
-        </Avatar>
-
-        <div className="min-w-0 flex-1 text-start">
-          <h3 className="truncate font-heading text-sm leading-5 font-medium tracking-tight text-foreground">
-            {player.displayName}
-          </h3>
-          <div className="truncate text-xs leading-4 text-muted-foreground tabular-nums">
-            {t("Total score {score}", { score: String(player.totalScore) })}
-          </div>
-        </div>
-      </div>
-
-      <div className="flex items-end justify-between gap-2 rounded-md border border-border/55 bg-card/55 px-2 py-1.5">
-        <div className="min-w-0 text-xs leading-4 text-muted-foreground">{t("Points at risk")}</div>
-        <div className="text-lg leading-5 font-semibold text-foreground tabular-nums">
-          {player.pointsAtRisk}
-        </div>
-      </div>
-
+      <PlayerIdentity player={player} compact={compact} />
+      <PointsAtRisk pointsAtRisk={player.pointsAtRisk} />
       <PlayerLaneBadges
         roundStatusLabel={roundStatusLabel}
         displayStatus={displayStatus}
