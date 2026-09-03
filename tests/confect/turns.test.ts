@@ -1,12 +1,13 @@
 import { describe, it } from "@effect/vitest";
 import { assertEquals } from "@effect/vitest/utils";
-import { Effect } from "effect";
+import { Cause, Effect, Exit } from "effect";
 
 import type { Card } from "@/game/logic/card-types";
 import refs from "@/confect/_generated/refs";
 
 import * as TestConfect from "./TestConfect";
 import {
+  createStartedMatch,
   createStartedMatchWithOptions,
   getSnapshotForAnySession,
   requireActiveSessionForSnapshot,
@@ -51,6 +52,39 @@ describe("Confect turns", () => {
       if (!updated.latestEvent) {
         throw new Error("Expected latest event after takeTurn");
       }
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("rejects non-active player taking turn", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+      const { matchId, sessions, started } = yield* createStartedMatch(["Host", "Guest"]);
+      const activeSession = requireActiveSessionForSnapshot(
+        started,
+        sessions,
+        "Expected the active session for the rejection test",
+      );
+      const inactiveSession = sessions.find((session) => session.name !== activeSession.name);
+
+      if (!inactiveSession) {
+        throw new Error("Expected an inactive session");
+      }
+
+      const exit = yield* client
+        .mutation(refs.public.turns.takeTurn, {
+          matchId,
+          action: "hit",
+          sessionId: inactiveSession.sessionId,
+          expectedVersion: started.version,
+          idempotencyKey: "turns-inactive-turn",
+        })
+        .pipe(Effect.exit);
+
+      if (Exit.isSuccess(exit)) {
+        throw new Error("Expected inactive player turn to fail");
+      }
+
+      assertEquals(Cause.pretty(exit.cause).includes("InvalidTurn"), true);
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 });

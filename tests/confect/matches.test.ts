@@ -1,5 +1,5 @@
 import { describe, it } from "@effect/vitest";
-import { assertEquals } from "@effect/vitest/utils";
+import { assertEquals, assertInclude } from "@effect/vitest/utils";
 import { Cause, Effect, Exit } from "effect";
 
 import refs from "@/confect/_generated/refs";
@@ -105,6 +105,37 @@ describe("Confect matches", () => {
       }
 
       assertEquals(Cause.pretty(exit.cause).includes("PlayerColorAlreadyTaken"), true);
+    }).pipe(Effect.provide(TestConfect.layer())),
+  );
+
+  it.effect("rejects join with duplicate name from different session", () =>
+    Effect.gen(function* () {
+      const client = yield* TestConfect.TestConfect;
+
+      const created = yield* client.mutation(refs.public.matches.createMatch, {
+        hostName: "Host",
+        sessionId: "session-host",
+      });
+
+      yield* client.mutation(refs.public.matches.joinMatch, {
+        matchId: created.matchId,
+        playerName: "Guest",
+        sessionId: "session-guest-a",
+      });
+
+      const exit = yield* client
+        .mutation(refs.public.matches.joinMatch, {
+          matchId: created.matchId,
+          playerName: "guest",
+          sessionId: "session-guest-b",
+        })
+        .pipe(Effect.exit);
+
+      if (Exit.isSuccess(exit)) {
+        throw new Error("Expected duplicate name join to fail");
+      }
+
+      assertInclude(Cause.pretty(exit.cause), "NAME_ALREADY_TAKEN");
     }).pipe(Effect.provide(TestConfect.layer())),
   );
 

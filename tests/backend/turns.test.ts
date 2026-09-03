@@ -10,6 +10,7 @@ import {
   commandMetadata,
   createStartedMatch,
   createTestClient,
+  expectRejectWithCode,
   resetTestClient,
 } from "./convex-test-helper";
 
@@ -74,13 +75,15 @@ describe("Convex preview smoke: turns", () => {
 
     expect(inactiveSession).toBeDefined();
 
-    await expect(
-      client.mutation(api.turns.takeTurn, {
-        matchId,
-        action: "hit",
-        sessionId: inactiveSession!.sessionId,
-        ...commandMetadata(started.version),
-      }),
-    ).rejects.toThrow("INVALID_TURN");
+    await expectRejectWithCode(
+      () =>
+        client.mutation(api.turns.takeTurn, {
+          matchId,
+          action: "hit",
+          sessionId: inactiveSession!.sessionId,
+          ...commandMetadata(started.version),
+        }),
+      "INVALID_TURN",
+    );
   });
 });

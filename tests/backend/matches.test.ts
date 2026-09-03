@@ -48,25 +48,4 @@ describe("Convex preview smoke: matches", () => {
     expect(started.players).toHaveLength(2);
     expect(started.latestEvent).not.toBeNull();
   });
-
-  it("rejects join with duplicate name from different session", async () => {
-    const created = await client.mutation(api.matches.createMatch, {
-      hostName: "Host",
-      sessionId: asSessionId("session-host"),
-    });
-
-    await client.mutation(api.matches.joinMatch, {
-      matchId: created.matchId as Id<"matches">,
-      playerName: "Guest",
-      sessionId: asSessionId("session-guest-a"),
-    });
-
-    await expect(
-      client.mutation(api.matches.joinMatch, {
-        matchId: created.matchId as Id<"matches">,
-        playerName: "guest",
-        sessionId: asSessionId("session-guest-b"),
-      }),
-    ).rejects.toThrow("NAME_ALREADY_TAKEN");
-  });
 });
