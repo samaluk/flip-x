@@ -54,6 +54,8 @@ export {
   EXTRA_STEP_REPLAY_SCENARIO,
 } from "./divergence-scenarios";
 
+export { createStubReplayHarness } from "./replay-snapshot-fixture";
+
 export type {
   DeterministicRoundSeed,
   DeterministicStartOptions,
