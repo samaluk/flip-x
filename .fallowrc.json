@@ -6,7 +6,7 @@
     "convex/**/*.ts",
     "shared/i18n/request.ts"
   ],
-  "ignorePatterns": [".next/**", "e2e/**", "scripts/**"],
+  "ignorePatterns": [".next/**", "e2e/**", "scripts/**", ".eloqnt/**"],
   "ignoreFindings": ["convex/_generated/**", "confect/_generated/**"],
   "dynamicallyLoaded": ["confect/**/*.impl.ts", "confect/impl.ts", "confect/spec.ts"],
   "ignoreExports": [
