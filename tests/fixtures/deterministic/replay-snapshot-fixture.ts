@@ -4,7 +4,7 @@ import type { ReplayExpectedState, ReplayHarness } from "./scenario-types";
 const STUB_PLAYER_NAMES = ["Host", "Guest", "Third"] as const;
 
 /** Canonical snapshot conversion for stub replay harnesses (test-only). */
-export function snapshotFromExpectedFacts(state: ReplayExpectedState): ConfectMatchSnapshot {
+function snapshotFromExpectedFacts(state: ReplayExpectedState): ConfectMatchSnapshot {
   const playerIds = new Map(STUB_PLAYER_NAMES.map((name, index) => [name, `p${index + 1}`]));
   const activePlayer = state.activePlayer ?? null;
 
