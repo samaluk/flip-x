@@ -152,6 +152,7 @@ function getSessionForPlayerId(
   );
 }
 
+// fallow-ignore-next-line complexity -- backend smoke harness helper; covered by backend preview suite, not local coverage
 export async function advanceOneGameplayStep(
   client: ConvexTestingHelper,
   matchId: Id<"matches">,
@@ -194,6 +195,7 @@ export async function advanceOneGameplayStep(
   );
 }
 
+// fallow-ignore-next-line complexity -- backend smoke harness helper; covered by backend preview suite, not local coverage
 export async function waitForPendingAction(
   client: ConvexTestingHelper,
   matchId: Id<"matches">,
@@ -233,6 +235,7 @@ export async function waitForPendingAction(
   throw new Error(`Timed out while waiting for a pending action after ${guardLimit} steps`);
 }
 
+// fallow-ignore-next-line complexity -- backend smoke harness helper; covered by backend preview suite, not local coverage
 export async function advanceUntilRoundBoundary(
   client: ConvexTestingHelper,
   matchId: Id<"matches">,
