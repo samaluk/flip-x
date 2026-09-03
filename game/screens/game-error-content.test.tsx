@@ -16,13 +16,16 @@ vi.mock("@posthog/next", () => ({
 
 describe("GameErrorContent", () => {
   const originalPostHogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     captureException.mockClear();
     process.env.NEXT_PUBLIC_POSTHOG_KEY = "test-posthog-key";
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
+    consoleErrorSpy.mockRestore();
     if (originalPostHogKey === undefined) {
       delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
       return;

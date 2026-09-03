@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GameSettingsPanel } from "@/game/screens/game-settings-panel";
@@ -43,7 +43,9 @@ describe("GameSettingsPanel", () => {
   it("lets the host apply a preset immediately", async () => {
     render(withIntlEn(<GameSettingsPanel snapshot={setupSnapshot(true)} />));
 
-    fireEvent.click(screen.getByRole("button", { name: /extended/i }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: /extended/i }));
+    });
 
     expect(updateMatchSettings).toHaveBeenCalledWith({
       matchId: "match-1",
