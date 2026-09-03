@@ -244,13 +244,4 @@ describe("useLatestRoundEventBody", () => {
       }),
     ).toBe("Round scored at 45 points.");
   });
-
-  it("falls back to generic message for unhandled event types", () => {
-    const unknownEvent = {
-      type: "unknown_custom_type",
-      payload: {},
-    } as unknown as LatestRoundEvent;
-
-    expect(formatEvent(unknownEvent)).toBe("Table event recorded.");
-  });
 });

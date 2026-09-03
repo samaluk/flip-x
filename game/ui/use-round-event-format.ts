@@ -145,9 +145,5 @@ export function useLatestRoundEventBody(latest: MatchSnapshot["latestEvent"]): s
       }),
   };
 
-  const formatter = formatters[latest.type];
-  if (!formatter) {
-    return tEvents("Table event recorded.");
-  }
-  return formatter(latest);
+  return formatters[latest.type](latest);
 }
