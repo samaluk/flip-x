@@ -49,15 +49,19 @@ describe("useMatchPresence", () => {
 
     expect(heartbeat).toHaveBeenCalledTimes(1);
 
-    await act(() => vi.advanceTimersByTimeAsync(30_000));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(30_000);
+    });
 
     expect(heartbeat).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       resolveHeartbeat?.({ roomToken: "room-1", sessionToken: "session-token-1" });
-      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(0);
     });
-    await act(() => vi.advanceTimersByTimeAsync(10_000));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10_000);
+    });
 
     expect(heartbeat).toHaveBeenCalledTimes(2);
   });
@@ -69,18 +73,23 @@ describe("useMatchPresence", () => {
 
     renderHook(() => useMatchPresence("match-1", playerId));
     await act(async () => {
-      await Promise.resolve();
-      await Promise.resolve();
+      await vi.advanceTimersByTimeAsync(0);
     });
 
     expect(heartbeat).toHaveBeenCalledTimes(1);
 
-    await act(() => vi.advanceTimersByTimeAsync(10_000));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(10_000);
+    });
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
 
     expect(heartbeat).toHaveBeenCalledTimes(2);
   });
 
-  it("waits for the viewer player identity before joining presence", () => {
+  it("waits for the viewer player identity before joining presence", async () => {
     heartbeat.mockResolvedValue({ roomToken: "room-1", sessionToken: "session-token-1" });
     const { rerender } = renderHook(
       ({ viewerPlayerId }: { viewerPlayerId: Id<"players"> | undefined }) =>
@@ -94,5 +103,9 @@ describe("useMatchPresence", () => {
     act(() => rerender({ viewerPlayerId: playerId }));
 
     expect(heartbeat).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
   });
 });
