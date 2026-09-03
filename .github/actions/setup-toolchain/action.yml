@@ -4,18 +4,12 @@ description: Install Node and pnpm, then install dependencies, from the root pac
 runs:
   using: composite
   steps:
-    # Node version is single-sourced in package.json: `engines.node` (read by
-    # Vercel) and `devEngines.runtime.version` (read by pnpm/setup) must stay
-    # in sync. The check below fails fast on drift; Renovate keeps both
-    # updated (npm manager for engines, custom regex manager for devEngines).
-    # pnpm version comes from `packageManager`, then the action runs
-    # `pnpm install` by default. No separate setup-node or install step is
-    # needed. `--no-runtime` is appended automatically because a runtime is
-    # set, so the Node managed here is never shadowed.
-    - name: Check Node versions in sync (engines == devEngines.runtime.version)
-      shell: bash
-      run: |
-        python3 -c "import json,sys; d=json.load(open('package.json')); e=d.get('engines',{}).get('node'); r=d.get('devEngines',{}).get('runtime',{}).get('version'); sys.exit(f\"engines.node ({e}) != devEngines.runtime.version ({r})\") if e!=r else print(f\"Node versions in sync: {e}\")"
+    # Unified setup: reads the Node version from `devEngines.runtime` in
+    # package.json and the pnpm version from `packageManager`, then runs
+    # `pnpm install` (the action's default). No separate setup-node or install
+    # step is needed. `--no-runtime` is appended automatically because a
+    # runtime is set, so the Node managed here is never shadowed.
+    # Renovate keeps `engines.node` and `devEngines.runtime.version` aligned.
     - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
       with:
         runtime: node

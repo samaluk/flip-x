@@ -50,6 +50,9 @@ jobs:
           v="$(grep -m1 -oE '^  react-doctor@[0-9]+\.[0-9]+\.[0-9]+' pnpm-lock.yaml | cut -d@ -f2-)"
           if [ -z "$v" ]; then echo "::error::react-doctor version not found in pnpm-lock.yaml"; exit 1; fi
           echo "version=$v" >> "$GITHUB_OUTPUT"
+          node_ver="$(sed -n '/"engines"/,/}/s/.*"node": "\([^"]*\)".*/\1/p' package.json | head -1)"
+          if [ -z "$node_ver" ]; then echo "::error::engines.node not found in package.json"; exit 1; fi
+          echo "node=$node_ver" >> "$GITHUB_OUTPUT"
 
       - id: seen
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
@@ -70,6 +73,7 @@ jobs:
           # Scan with the exact react-doctor CLI resolved from pnpm-lock.yaml -
           # the same version this workflow's cache key tracks.
           version: ${{ steps.rdver.outputs.version }}
+          node-version: ${{ steps.rdver.outputs.node }}
           # No PR feedback surface exists here; the commit status on master is
           # the drift trend marker.
           comment: false
