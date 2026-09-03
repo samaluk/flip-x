@@ -86,12 +86,6 @@
     "thresholdOverrides": [
       {
         "files": ["game/ui/player-lane.tsx"],
-        "functions": ["PlayerLaneSidebar"],
-        "maxCognitive": 17,
-        "reason": "The sidebar intentionally renders independent status, role, target, action, and animation badges."
-      },
-      {
-        "files": ["game/ui/player-lane.tsx"],
         "functions": ["PlayerLane"],
         "maxCognitive": 24,
         "reason": "The lane combines orthogonal interaction states that cannot be represented as one discriminated variant."
