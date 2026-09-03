@@ -22,6 +22,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json"],
+      exclude: ["**/node_modules/**", "**/.next/**", "**/_generated/**", "tests/backend/**"],
     },
     projects: [
       {
