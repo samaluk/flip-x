@@ -37,16 +37,16 @@ spacing:
 typography:
   body-md:
     fontFamily: "var(--font-sans)"
-    size: "1rem"
+    fontSize: "1rem"
     lineHeight: "1.5"
   heading-lg:
     fontFamily: "var(--font-heading)"
-    size: "1.875rem"
+    fontSize: "1.875rem"
     lineHeight: "2.25rem"
     fontWeight: "600"
   code-sm:
     fontFamily: "var(--font-mono)"
-    size: "0.875rem"
+    fontSize: "0.875rem"
     lineHeight: "1.25rem"
 ---
 
