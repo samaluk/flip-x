@@ -11,7 +11,10 @@ export function HomeClient() {
   const { labels } = setup;
 
   return (
-    <main className="relative flex min-h-dvh flex-1 items-center justify-center px-6 selection:bg-primary/20">
+    <main
+      data-session-ready={setup.sessionId ? "true" : "false"}
+      className="relative flex min-h-dvh flex-1 items-center justify-center px-6 selection:bg-primary/20"
+    >
       <div className="w-full max-w-md space-y-10">
         <HomeHeader
           title={labels.title}

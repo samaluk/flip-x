@@ -19,6 +19,15 @@ export function matchSetupForm(page: Page) {
   return page.locator("main:has(#playerName)");
 }
 
+/** Home-page match setup form once the client session and state are ready. */
+export async function waitForHydratedHomeForm(page: Page) {
+  const form = matchSetupForm(page);
+  await expect(form).toHaveAttribute("data-session-ready", "true", {
+    timeout: SESSION_READY_TIMEOUT_MS,
+  });
+  return form;
+}
+
 /** Home-page join-by-code form after the lobby code from the URL has hydrated into the input. */
 export async function waitForHydratedJoinByCodeForm(page: Page, lobbyCode: string) {
   const form = matchSetupForm(page);
@@ -26,6 +35,9 @@ export async function waitForHydratedJoinByCodeForm(page: Page, lobbyCode: strin
 
   await expect(joinCodeInput).toBeVisible({ timeout: SESSION_READY_TIMEOUT_MS });
   await expect(joinCodeInput).toHaveValue(lobbyCode, { timeout: SESSION_READY_TIMEOUT_MS });
+  await expect(form).toHaveAttribute("data-session-ready", "true", {
+    timeout: SESSION_READY_TIMEOUT_MS,
+  });
 
   return form;
 }
@@ -71,8 +83,11 @@ export async function waitForEnabled(button: Locator) {
 
 export async function createLobbyAsHost(page: Page, hostName: string) {
   await page.goto("/");
-  await page.locator("#playerName").fill(hostName);
-  const createButton = page.getByRole("button", { name: /Create New Game/i });
+  const form = await waitForHydratedHomeForm(page);
+  const nameInput = form.locator("#playerName");
+  await nameInput.fill(hostName);
+  await expect(nameInput).toHaveValue(hostName);
+  const createButton = form.getByRole("button", { name: /Create New Game/i });
   await waitForEnabled(createButton);
   await createButton.click();
   await page.waitForURL(/\/game\/[^/?#]+/);
