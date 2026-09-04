@@ -5,6 +5,7 @@ import {
   createLobbyAsHost,
   getLobbyCode,
   waitForEnabled,
+  waitForHydratedHomeForm,
   waitForHydratedJoinByCodeForm,
 } from "./helpers/match";
 
@@ -16,9 +17,12 @@ test.describe("instant navigation", () => {
     const hostName = `Host ${Date.now()}`;
 
     await page.goto("/");
-    await page.locator("#playerName").fill(hostName);
+    const form = await waitForHydratedHomeForm(page);
+    const nameInput = form.locator("#playerName");
+    await nameInput.fill(hostName);
+    await expect(nameInput).toHaveValue(hostName);
 
-    const createButton = page.getByRole("button", { name: /Create New Game/i });
+    const createButton = form.getByRole("button", { name: /Create New Game/i });
     await waitForEnabled(createButton);
 
     await instant(page, async () => {
@@ -49,7 +53,9 @@ test.describe("instant navigation", () => {
     const joinForm = await waitForHydratedJoinByCodeForm(guestPage, lobbyCode);
     const guestName = `Guest ${suffix}`;
 
-    await joinForm.locator("#playerName").fill(guestName);
+    const nameInput = joinForm.locator("#playerName");
+    await nameInput.fill(guestName);
+    await expect(nameInput).toHaveValue(guestName);
     const guestColor = joinForm.getByRole("radio", { name: "Emerald" });
     await guestColor.click();
 

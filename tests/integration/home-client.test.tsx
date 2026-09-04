@@ -96,6 +96,7 @@ describe("HomeClient", () => {
 
     render(withIntlEn(<HomeClient />));
 
+    expect(screen.getByRole("main")).toHaveAttribute("data-session-ready", "true");
     expect(screen.getByRole("heading", { name: "flip-x" })).toBeInTheDocument();
     expect(screen.getByText("Create a game or join an existing one")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Create New Game" })).toBeInTheDocument();
@@ -181,6 +182,8 @@ describe("HomeClient", () => {
     mockSessionId = null;
 
     render(withIntlEn(<HomeClient />));
+
+    expect(screen.getByRole("main")).toHaveAttribute("data-session-ready", "false");
 
     const nameInput = screen.getByLabelText("Your name");
     fireEvent.change(nameInput, { target: { value: "Taylor" } });
