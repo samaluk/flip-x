@@ -8,7 +8,7 @@ export async function AnalyticsProvider({ children }: { children: ReactNode }) {
 
   return (
     <PostHogProvider clientOptions={{ api_host: "/ingest", capture_exceptions: true }}>
-      <PostHogPageView />
+      <PostHogPageView captureRouteTemplate />
       {children}
     </PostHogProvider>
   );
