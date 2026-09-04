@@ -100,8 +100,8 @@ importers:
         specifier: 0.30.0
         version: 0.30.0(effect@3.22.1)(vitest@4.1.11)
       '@eloqnt/cli':
-        specifier: 0.6.28
-        version: 0.6.28(@swc/helpers@0.5.23)
+        specifier: 0.6.29
+        version: 0.6.29(@swc/helpers@0.5.23)
       '@google/design.md':
         specifier: 0.4.0
         version: 0.4.0(supports-color@10.2.2)
@@ -631,30 +631,21 @@ packages:
       '@effect/rpc': ^0.76.2
       effect: ^3.22.1
 
-  '@eloqnt/cli@0.6.28':
-    resolution: {integrity: sha512-5L3nSgKn3WFijkBeLCQsAtyXQ1T+ZgsGo8KNAVxaHr5ZWMyH80r7nD5oFvczMBz/X+t9DnNaN3dqnbPNwCWSwQ==}
+  '@eloqnt/cli@0.6.29':
+    resolution: {integrity: sha512-IEqOlk6vEBYTzgTRzhNNOoSLXKafJuudigC9hZSOQKTblMGZ+2Vy7I7oI/Jj2Lq/sDFPpSgN7jEuT4La2SDGQA==}
     hasBin: true
-
-  '@eloqnt/config@0.0.3':
-    resolution: {integrity: sha512-lA6UoQJe58f4i/dVQyOnrYoFrXGGlNPgPZKnvy2lcCL2QLkR0k+woa3FECGyVVu5p8sfzmw8+kmApgxu465Bkw==}
 
   '@eloqnt/config@0.1.0':
     resolution: {integrity: sha512-SLR6ZSHxu6XdZtmOz3xRmC3gsY/sCzqtLMD1gxbW2I3XXPBbupwL5RZbkLU/NcZm74AKZrIUPfz3CtEJfxUKqQ==}
 
-  '@eloqnt/format-json@0.0.4':
-    resolution: {integrity: sha512-mXge0s21FXa0wsjQGUP2d2pjZZB0gejESENlqpVGzFJ78Nht1csxoBpYqzEEaFr9VC8rxr/lAQaQrVAYUnwB2A==}
-
   '@eloqnt/format-json@0.1.0':
     resolution: {integrity: sha512-4Pkb+HyzgWNJXoU48aJhUyNZSjZvMGooPCNG1ZFmBm55xTiNNPQCNXH66Ob6sXS6RvbWZrRpCf+Uo/Jz9K9g+A==}
-
-  '@eloqnt/format-po@0.0.6':
-    resolution: {integrity: sha512-fhq1JxH+JtizPOYKnSX//6J5ChfUaQQXUK6GDEk3ivdp0DzEGdKTBog3k76mHMzsn4Bxbg/Jpr1cde1lOHHbtA==}
 
   '@eloqnt/format-po@0.1.0':
     resolution: {integrity: sha512-odgtuICWs67GdkNqY51/d2vaIukuOdlGalKASUGkI5c4cyWOmv/WIVyk5gZyn3xr614RzwWp57s9WB40lRLlBw==}
 
-  '@eloqnt/sdk@0.6.26':
-    resolution: {integrity: sha512-Q5TFoGkxuC1i+D07cea0Tw/orsp65za3XjXb9+ELy/WxP1+yCkKIiFX0RDVBfbWkh8UfsOAbCDSNHum4UQvHvg==}
+  '@eloqnt/sdk@0.6.27':
+    resolution: {integrity: sha512-dIvAXFXyAYOdoCIc+RQk+q1avI7wb8e5VSbQyYy08UVbmjXilmyNl/hey5LuqWK1ZZZ5Qw3EajfyKQt92GFtVA==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -4586,9 +4577,6 @@ packages:
   neo-async@2.6.2:
     resolution: {integrity: sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==}
 
-  next-intl-swc-plugin-extractor@4.14.1:
-    resolution: {integrity: sha512-ixZCS/z1Nx0sto4rWFfoCqahzqXjdhVuQzYrITVwXsrVzYi1ZKrWP8evoXTB5+F+j9FpLQIMIYB6gp3k+zePWA==}
-
   next-intl-swc-plugin-extractor@4.14.2:
     resolution: {integrity: sha512-R+i9Xw6XKyn1QVx+I5IDZQNGQBwT79ugGwzbuJudgejob/IYnXXrRKMlLhmMxLdKH8jUWh92nqwNnp+5rtSVJA==}
 
@@ -6382,49 +6370,38 @@ snapshots:
       '@effect/rpc': 0.76.2(@effect/platform@0.97.1(effect@3.22.1))(effect@3.22.1)
       effect: 3.22.1
 
-  '@eloqnt/cli@0.6.28(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.6.29(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.6.26(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.27(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@eloqnt/config@0.0.3': {}
-
   '@eloqnt/config@0.1.0': {}
-
-  '@eloqnt/format-json@0.0.4':
-    dependencies:
-      '@eloqnt/config': 0.0.3
 
   '@eloqnt/format-json@0.1.0':
     dependencies:
       '@eloqnt/config': 0.1.0
-
-  '@eloqnt/format-po@0.0.6':
-    dependencies:
-      '@eloqnt/config': 0.0.3
-      po-parser: 2.2.0
 
   '@eloqnt/format-po@0.1.0':
     dependencies:
       '@eloqnt/config': 0.1.0
       po-parser: 2.2.0
 
-  '@eloqnt/sdk@0.6.26(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.6.27(@swc/helpers@0.5.23)':
     dependencies:
-      '@eloqnt/config': 0.0.3
-      '@eloqnt/format-json': 0.0.4
-      '@eloqnt/format-po': 0.0.6
+      '@eloqnt/config': 0.1.0
+      '@eloqnt/format-json': 0.1.0
+      '@eloqnt/format-po': 0.1.0
       '@formatjs/icu-messageformat-parser': 3.5.17
       '@swc/core': 1.16.1(@swc/helpers@0.5.23)
       ai: 7.0.79(zod@4.4.3)
       jiti: 2.7.0
       magic-string: 0.30.21
-      next-intl-swc-plugin-extractor: 4.14.1
+      next-intl-swc-plugin-extractor: 4.14.2
       tinyglobby: 0.2.17
       yaml: 2.9.0
       zod: 4.4.3
@@ -9806,8 +9783,6 @@ snapshots:
   negotiator@1.0.0: {}
 
   neo-async@2.6.2: {}
-
-  next-intl-swc-plugin-extractor@4.14.1: {}
 
   next-intl-swc-plugin-extractor@4.14.2: {}
 
