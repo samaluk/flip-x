@@ -63,8 +63,8 @@ importers:
         specifier: 16.3.4
         version: 16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       next-intl:
-        specifier: 4.14.1
-        version: 4.14.1(@swc/helpers@0.5.23)(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+        specifier: 4.14.2
+        version: 4.14.2(@swc/helpers@0.5.23)(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
       nuqs:
         specifier: 2.10.1
         version: 2.10.1(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -635,23 +635,23 @@ packages:
     resolution: {integrity: sha512-5L3nSgKn3WFijkBeLCQsAtyXQ1T+ZgsGo8KNAVxaHr5ZWMyH80r7nD5oFvczMBz/X+t9DnNaN3dqnbPNwCWSwQ==}
     hasBin: true
 
-  '@eloqnt/config@0.0.2':
-    resolution: {integrity: sha512-xz86UU1TJQPSzb0XJ3PkoyDlv3wdIiHfuu2wD/8m9ponHx0uSasYRDj4S+dpwQkIQaPYibN1oRr5HBll2GQkog==}
-
   '@eloqnt/config@0.0.3':
     resolution: {integrity: sha512-lA6UoQJe58f4i/dVQyOnrYoFrXGGlNPgPZKnvy2lcCL2QLkR0k+woa3FECGyVVu5p8sfzmw8+kmApgxu465Bkw==}
 
-  '@eloqnt/format-json@0.0.3':
-    resolution: {integrity: sha512-zgDUVryBYQyM0WZGAoVr+FXjrzRjKkBGJran0E3i5LBcvTycl9ScFVhkF7aRBg8mHrU9xxvclUtSDIYg2mRTQg==}
+  '@eloqnt/config@0.1.0':
+    resolution: {integrity: sha512-SLR6ZSHxu6XdZtmOz3xRmC3gsY/sCzqtLMD1gxbW2I3XXPBbupwL5RZbkLU/NcZm74AKZrIUPfz3CtEJfxUKqQ==}
 
   '@eloqnt/format-json@0.0.4':
     resolution: {integrity: sha512-mXge0s21FXa0wsjQGUP2d2pjZZB0gejESENlqpVGzFJ78Nht1csxoBpYqzEEaFr9VC8rxr/lAQaQrVAYUnwB2A==}
 
-  '@eloqnt/format-po@0.0.3':
-    resolution: {integrity: sha512-4r36qEd7KJFV+IMKUv5czNXbGVys8ahxlQKWoUDV20eGl4Oxr+YZ2O5IEQU09S+d7FvPJ1USnyc/wtCLNCo1Ng==}
+  '@eloqnt/format-json@0.1.0':
+    resolution: {integrity: sha512-4Pkb+HyzgWNJXoU48aJhUyNZSjZvMGooPCNG1ZFmBm55xTiNNPQCNXH66Ob6sXS6RvbWZrRpCf+Uo/Jz9K9g+A==}
 
   '@eloqnt/format-po@0.0.6':
     resolution: {integrity: sha512-fhq1JxH+JtizPOYKnSX//6J5ChfUaQQXUK6GDEk3ivdp0DzEGdKTBog3k76mHMzsn4Bxbg/Jpr1cde1lOHHbtA==}
+
+  '@eloqnt/format-po@0.1.0':
+    resolution: {integrity: sha512-odgtuICWs67GdkNqY51/d2vaIukuOdlGalKASUGkI5c4cyWOmv/WIVyk5gZyn3xr614RzwWp57s9WB40lRLlBw==}
 
   '@eloqnt/sdk@0.6.26':
     resolution: {integrity: sha512-Q5TFoGkxuC1i+D07cea0Tw/orsp65za3XjXb9+ELy/WxP1+yCkKIiFX0RDVBfbWkh8UfsOAbCDSNHum4UQvHvg==}
@@ -3910,8 +3910,8 @@ packages:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
 
-  icu-minify@4.14.1:
-    resolution: {integrity: sha512-I8lz1epVvPmTSCfElYrOVZPMlxXYO6u/HDAd8bAksU0WmL8774lqg/h4PSHIisEYbqYcxXGU2y5b5sbhzCIi0A==}
+  icu-minify@4.14.2:
+    resolution: {integrity: sha512-2eJ9ooR8xXWbe0IivG58TFL96AUp5ts8FJ4qSMzn8YRJXpLmtPNWcUkIZ8t3iz0+eaVzG+mN+rdNIigHDvYa2Q==}
 
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
@@ -4589,8 +4589,11 @@ packages:
   next-intl-swc-plugin-extractor@4.14.1:
     resolution: {integrity: sha512-ixZCS/z1Nx0sto4rWFfoCqahzqXjdhVuQzYrITVwXsrVzYi1ZKrWP8evoXTB5+F+j9FpLQIMIYB6gp3k+zePWA==}
 
-  next-intl@4.14.1:
-    resolution: {integrity: sha512-7o7ZyYIWoB0w87n13sezA8r1uLH0ipZCGrMHFKVhwFnwUI1/tym04P/T5NiyULaXUQ276m60xsmInE+HnfAq3A==}
+  next-intl-swc-plugin-extractor@4.14.2:
+    resolution: {integrity: sha512-R+i9Xw6XKyn1QVx+I5IDZQNGQBwT79ugGwzbuJudgejob/IYnXXrRKMlLhmMxLdKH8jUWh92nqwNnp+5rtSVJA==}
+
+  next-intl@4.14.2:
+    resolution: {integrity: sha512-rIq8me1uOa2qXnttJ6dUGYnHHL63Rh1FAIIDTJP5av5KSBmUzNBS17QAi07QDrUMY6KxFNeoCTRzSZRPUc97lg==}
     peerDependencies:
       next: ^12.0.0 || ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
@@ -5592,8 +5595,8 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  use-intl@4.14.1:
-    resolution: {integrity: sha512-p6Ggq6AZJDJQpjj4WEjByfid1IEifH7OYpL283y29dzVT2M6vbMoHmYA9KQ/L1A9jHED8uzCNvWic0mJ23kU5A==}
+  use-intl@4.14.2:
+    resolution: {integrity: sha512-XffvbD4q4uZjRbuO8CgK6Ei8hvYn7aegoSad2YPho1ZRjYEs+k4erhYq0vfm5ttF4lnja3riXCeJrtUdNdQG3g==}
     peerDependencies:
       react: ^17.0.0 || ^18.0.0 || >=19.0.0-rc <19.0.0 || ^19.0.0
 
@@ -6389,26 +6392,26 @@ snapshots:
     transitivePeerDependencies:
       - '@swc/helpers'
 
-  '@eloqnt/config@0.0.2': {}
-
   '@eloqnt/config@0.0.3': {}
 
-  '@eloqnt/format-json@0.0.3':
-    dependencies:
-      '@eloqnt/config': 0.0.2
+  '@eloqnt/config@0.1.0': {}
 
   '@eloqnt/format-json@0.0.4':
     dependencies:
       '@eloqnt/config': 0.0.3
 
-  '@eloqnt/format-po@0.0.3':
+  '@eloqnt/format-json@0.1.0':
     dependencies:
-      '@eloqnt/config': 0.0.2
-      po-parser: 2.2.0
+      '@eloqnt/config': 0.1.0
 
   '@eloqnt/format-po@0.0.6':
     dependencies:
       '@eloqnt/config': 0.0.3
+      po-parser: 2.2.0
+
+  '@eloqnt/format-po@0.1.0':
+    dependencies:
+      '@eloqnt/config': 0.1.0
       po-parser: 2.2.0
 
   '@eloqnt/sdk@0.6.26(@swc/helpers@0.5.23)':
@@ -9039,7 +9042,7 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
-  icu-minify@4.14.1:
+  icu-minify@4.14.2:
     dependencies:
       '@formatjs/icu-messageformat-parser': 3.5.17
 
@@ -9806,20 +9809,22 @@ snapshots:
 
   next-intl-swc-plugin-extractor@4.14.1: {}
 
-  next-intl@4.14.1(@swc/helpers@0.5.23)(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8):
+  next-intl-swc-plugin-extractor@4.14.2: {}
+
+  next-intl@4.14.2(@swc/helpers@0.5.23)(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8):
     dependencies:
-      '@eloqnt/config': 0.0.2
-      '@eloqnt/format-json': 0.0.3
-      '@eloqnt/format-po': 0.0.3
+      '@eloqnt/config': 0.1.0
+      '@eloqnt/format-json': 0.1.0
+      '@eloqnt/format-po': 0.1.0
       '@formatjs/intl-localematcher': 0.8.2
       '@parcel/watcher': 2.5.6
       '@swc/core': 1.16.1(@swc/helpers@0.5.23)
-      icu-minify: 4.14.1
+      icu-minify: 4.14.2
       negotiator: 1.0.0
       next: 16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      next-intl-swc-plugin-extractor: 4.14.1
+      next-intl-swc-plugin-extractor: 4.14.2
       react: 19.2.8
-      use-intl: 4.14.1(react@19.2.8)
+      use-intl: 4.14.2(react@19.2.8)
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -10841,11 +10846,11 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-intl@4.14.1(react@19.2.8):
+  use-intl@4.14.2(react@19.2.8):
     dependencies:
       '@formatjs/fast-memoize': 3.1.1
       '@schummar/icu-type-parser': 1.21.5
-      icu-minify: 4.14.1
+      icu-minify: 4.14.2
       intl-messageformat: 11.2.0
       react: 19.2.8
 
