@@ -114,7 +114,7 @@
     "oxlint-tailwindcss": "1.10.2",
     "oxlint-tsgolint": "7.0.2001",
     "portless": "0.15.6",
-    "react-doctor": "0.9.12",
+    "react-doctor": "0.9.13",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2",
     "vitest": "4.1.11"
