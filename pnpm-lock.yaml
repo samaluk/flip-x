@@ -112,8 +112,8 @@ importers:
         specifier: 1.62.1
         version: 1.62.1
       '@posthog/nextjs-config':
-        specifier: 1.10.0
-        version: 1.10.0(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
+        specifier: 1.11.0
+        version: 1.11.0(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
       '@tailwindcss/postcss':
         specifier: 4.3.3
         version: 4.3.3
@@ -2256,8 +2256,8 @@ packages:
   '@posthog/browser-common@0.7.1':
     resolution: {integrity: sha512-JO/5dIVx3NTrbg0W2VciDDmmizsvwaYYHE5cnJE1Gra+UqBnEuVGH9DTE/kBFgVMp+08z5uj/aAprsYD2WG/QQ==}
 
-  '@posthog/cli@0.14.1':
-    resolution: {integrity: sha512-gTzcKpl9TZLf0LrlLHEjChlPc9LIK1gdQG0alMnX6+b+W1mTD+6nTN0W/MeEzjT4DiKDeK8FPhc1n7dT1tWKFw==}
+  '@posthog/cli@0.16.2':
+    resolution: {integrity: sha512-h8bpf9ffBUH/Z9IoyGV+wiI+vS8rIPorKT3eKQXuzuwawO0G7Qvy+hDd7HQ9YJjHByYZ77yPPQvrSs4WsqTUCg==}
     engines: {node: '>=14.14', npm: '>=6'}
     hasBin: true
 
@@ -2265,9 +2265,6 @@ packages:
     resolution: {integrity: sha512-oYSc5sCJ2cxndlo+CyeFnjsyOII5qPD6gHM1n8B+49s9zPO8ChDmCF2244fXeBFw+JoUAWwIBh0pldFkSbxJRA==}
     peerDependencies:
       convex: ^1.39.0
-
-  '@posthog/core@1.48.8':
-    resolution: {integrity: sha512-LAOBOjMQrQmgcbZxnubl74l2GQd5OWqxCJJ8mzcWdZRWbfO6Y/A6E3fqWjDtm68hY4LxC/bbopG60cxZW8cfWw==}
 
   '@posthog/core@1.50.2':
     resolution: {integrity: sha512-El7y/ipZ45OFBRTN/+ixat9Nw21bW+pKKnX0G+rG4rWxBtDA47Ub/ZUnHvZNhAufNInQr4AYCUeWQsuJsTcoKg==}
@@ -2283,14 +2280,14 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.10.0':
-    resolution: {integrity: sha512-BlAd8WJlZKvBrKtJjbRNUWAp/KtRMrZrXjwhpfeCj68/cphulOaxig7by84YN7Vsyfk9DMQNGJrJTcE+lcLT7g==}
+  '@posthog/nextjs-config@1.11.0':
+    resolution: {integrity: sha512-/bK8FZRkAb5pQPaPyKADvypeWi5k3Ep51v02CaPtH7LxcSP3lSUrJisWOWeHHfPd7SDtUrvYnGLWjfKk2uVMtw==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
 
-  '@posthog/plugin-utils@1.2.0':
-    resolution: {integrity: sha512-SXG2oVxPnliYKmixyIYqPv1CA4UYPZy9fQL5H+mvN/OQpKioRTawp8I2ofQmf6SfiYpnf+KAzLiRUlK7S3rOCw==}
+  '@posthog/plugin-utils@2.0.0':
+    resolution: {integrity: sha512-PC94+3zeEQ2IkhiU+pskOIOEkAFKZvwVixvrwpRfy+cl4b6gkTuHN44vp5OeG5ndfQOLJQF5onx8/K7yZC3i1g==}
 
   '@posthog/react@1.10.5':
     resolution: {integrity: sha512-lehh9+mJwb6iEjRBkIvh8olnJ6RV+YgQgdgJ6fdTr+T7EMoml/G1k+q92Oil8vZPcA9Dzg+2n0xaLY5yZrY3YA==}
@@ -2305,8 +2302,8 @@ packages:
   '@posthog/types@1.408.0':
     resolution: {integrity: sha512-xMY8QrRKsTYu4A4Of7XF/xEt0HcnZOWwnICm3do7tGKA0lTlnnr4YW0AHQN1Uv2P3BDqf5GQoqh91MKE+dgdcA==}
 
-  '@posthog/webpack-plugin@1.6.0':
-    resolution: {integrity: sha512-bzecfl7al1xyzjC/hZZv6j8Q+jBEe5FIY1p6ggmMwl614Np9HjqV0Am18Gdc0ImEaL12iBxbpx7i9zUc3c/+bw==}
+  '@posthog/webpack-plugin@1.7.0':
+    resolution: {integrity: sha512-1aY+wwhEhZBl6Y8Khj2Cbe62lB4OsyLCD7mwotpk/edlEJi6d8RIYcVwom28Ao2HRo1jDd1MQkr0pqW4miWxRQ==}
     peerDependencies:
       webpack: ^5
 
@@ -7415,7 +7412,7 @@ snapshots:
       '@posthog/core': 1.50.2
       '@posthog/types': 1.408.0
 
-  '@posthog/cli@0.14.1':
+  '@posthog/cli@0.16.2':
     dependencies:
       detect-libc: 2.1.2
 
@@ -7426,10 +7423,6 @@ snapshots:
       posthog-node: 5.51.6
     transitivePeerDependencies:
       - rxjs
-
-  '@posthog/core@1.48.8':
-    dependencies:
-      '@posthog/types': 1.408.0
 
   '@posthog/core@1.50.2':
     dependencies:
@@ -7450,17 +7443,17 @@ snapshots:
       - preact-render-to-string
       - rxjs
 
-  '@posthog/nextjs-config@1.10.0(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
+  '@posthog/nextjs-config@1.11.0(next@16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
     dependencies:
-      '@posthog/cli': 0.14.1
-      '@posthog/plugin-utils': 1.2.0
-      '@posthog/webpack-plugin': 1.6.0(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
+      '@posthog/cli': 0.16.2
+      '@posthog/plugin-utils': 2.0.0
+      '@posthog/webpack-plugin': 1.7.0(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
       next: 16.3.4(@babel/core@7.29.0(supports-color@10.2.2))(@opentelemetry/api@1.9.1)(@playwright/test@1.62.1)(@types/node@24.13.3)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       semver: 7.8.5
     transitivePeerDependencies:
       - webpack
 
-  '@posthog/plugin-utils@1.2.0':
+  '@posthog/plugin-utils@2.0.0':
     dependencies:
       cross-spawn: 7.0.6
 
@@ -7473,11 +7466,11 @@ snapshots:
 
   '@posthog/types@1.408.0': {}
 
-  '@posthog/webpack-plugin@1.6.0(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
+  '@posthog/webpack-plugin@1.7.0(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
     dependencies:
-      '@posthog/cli': 0.14.1
-      '@posthog/core': 1.48.8
-      '@posthog/plugin-utils': 1.2.0
+      '@posthog/cli': 0.16.2
+      '@posthog/core': 1.50.2
+      '@posthog/plugin-utils': 2.0.0
       webpack: 5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23)
 
   '@rolldown/binding-android-arm64@1.0.0-rc.15':
