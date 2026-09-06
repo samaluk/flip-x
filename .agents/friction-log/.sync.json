@@ -15,6 +15,10 @@
     {
       "issue": "samaluk/flip-x#614",
       "path": ".agents/friction-log/20260819062229-pre-commit-hook/friction.md"
+    },
+    {
+      "issue": "samaluk/flip-x#730",
+      "path": ".agents/friction-log/20260903042521-pr-cockpit-edit/friction.md"
     }
   ],
   "version": 1
