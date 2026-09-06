@@ -5,12 +5,17 @@ runs:
   using: composite
   steps:
     # Unified setup: reads the Node version from `devEngines.runtime` in
-    # package.json and the pnpm version from `packageManager`, then runs
-    # `pnpm install` (the action's default). No separate setup-node or install
-    # step is needed. `--no-runtime` is appended automatically because a
-    # runtime is set, so the Node managed here is never shadowed.
+    # package.json and the pnpm version from `packageManager`. Keep dependency
+    # installation explicit below so pnpm refreshes the workspace validation
+    # state used by `verifyDepsBeforeRun` before later `pnpm run`/`pnpm exec`
+    # steps.
     # Renovate keeps `engines.node` and `devEngines.runtime.version` aligned.
     - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
       with:
         runtime: node
         cache: true
+        install: false
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install --frozen-lockfile
