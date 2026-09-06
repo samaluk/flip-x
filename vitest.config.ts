@@ -26,7 +26,6 @@ export default defineConfig({
     },
     projects: [
       {
-        extends: true,
         test: {
           name: "engine",
           environment: "node",
@@ -34,7 +33,6 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "infrastructure",
           environment: "node",
@@ -42,7 +40,6 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "contract",
           environment: "node",
@@ -50,7 +47,6 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "ui",
           environment: "jsdom",
@@ -59,7 +55,6 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "confect",
           environment: "node",
@@ -70,7 +65,6 @@ export default defineConfig({
         },
       },
       {
-        extends: true,
         test: {
           name: "browser",
           browser: {
