@@ -27,6 +27,7 @@ export type PlayerColor = {
 };
 
 export const PLAYER_COLORS: readonly PlayerColor[] = [
+  // fallow-ignore-next-line code-duplication -- static swatch rows; require-static-classes forbids a shared `bg-player-${id}` template
   { id: "cyan", label: "Cyan", swatchClass: "bg-player-cyan text-player-cyan-foreground" },
   { id: "mint", label: "Mint", swatchClass: "bg-player-mint text-player-mint-foreground" },
   {
@@ -41,6 +42,7 @@ export const PLAYER_COLORS: readonly PlayerColor[] = [
   { id: "coral", label: "Coral", swatchClass: "bg-player-coral text-player-coral-foreground" },
   { id: "rose", label: "Rose", swatchClass: "bg-player-rose text-player-rose-foreground" },
   { id: "pink", label: "Pink", swatchClass: "bg-player-pink text-player-pink-foreground" },
+  // fallow-ignore-next-line code-duplication -- static swatch rows; require-static-classes forbids a shared `bg-player-${id}` template
   {
     id: "fuchsia",
     label: "Fuchsia",

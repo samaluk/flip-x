@@ -46,6 +46,7 @@ function AvatarFallback({
     <AvatarPrimitive.Fallback
       data-slot="avatar-fallback"
       className={cn(
+        // fallow-ignore-next-line code-duplication -- shadcn primitive wrappers keep library-required markup; Accordion and Avatar do not share a contract
         "flex size-full items-center justify-center rounded-full bg-muted text-sm font-semibold tracking-tight text-muted-foreground group-data-[size=lg]/avatar:text-base group-data-[size=sm]/avatar:text-xs",
         className,
       )}

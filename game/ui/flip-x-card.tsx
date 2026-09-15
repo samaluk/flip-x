@@ -11,7 +11,7 @@ import type { ModifierCard } from "@/game/logic/card-types";
 import { cn } from "@/shared/lib/utils";
 
 /** Scales the default 8×10rem face to fit narrow sidebars without reflowing inner SVGs. */
-const COMPACT_CARD_SCALE_CLASS = "w-32 origin-top-left scale-[0.46]";
+const COMPACT_CARD_SCALE_CLASS = "w-32 origin-top-left scale-compact-card";
 
 /**
  * Shared shape of the FlipXCard memo comparison: both cards only depend on

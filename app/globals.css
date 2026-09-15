@@ -42,8 +42,10 @@
   --color-player-cyan: #4dd0e1;
   --color-player-cyan-foreground: #001f2c;
   --color-player-mint: #6ee7b7;
+  /* fallow-ignore-next-line css-token-drift -- per-swatch contrast pair; mint and emerald stay independent player identities */
   --color-player-mint-foreground: #052e1a;
   --color-player-emerald: #34d399;
+  /* fallow-ignore-next-line css-token-drift -- per-swatch contrast pair; mint and emerald stay independent player identities */
   --color-player-emerald-foreground: #042f1d;
   --color-player-lime: #a3e635;
   --color-player-lime-foreground: #1f2a05;
@@ -54,6 +56,7 @@
   --color-player-orange: #fb923c;
   --color-player-orange-foreground: #301000;
   --color-player-coral: #fb7185;
+  /* fallow-ignore-next-line css-token-drift -- per-swatch contrast pair; coral and red stay independent player identities */
   --color-player-coral-foreground: #3b0611;
   --color-player-rose: #f43f5e;
   --color-player-rose-foreground: #fff1f2;
@@ -78,7 +81,9 @@
   --color-player-stone: #a8a29e;
   --color-player-stone-foreground: #1c1917;
   --color-player-red: #f87171;
+  /* fallow-ignore-next-line css-token-drift -- per-swatch contrast pair; coral and red stay independent player identities */
   --color-player-red-foreground: #3f0707;
+  --scale-compact-card: 0.46;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
