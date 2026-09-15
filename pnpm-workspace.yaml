@@ -20,6 +20,9 @@ minimumReleaseAge: 1440
 minimumReleaseAgeStrict: true
 minimumReleaseAgeExclude:
   - "@next/playwright@16.3.3"
+  # @shadcn/lint@0.1.0 was published inside the 24h window. Drop this pin
+  # after 2026-09-16, or when Renovate replaces 0.1.0 (its 3-day age already
+  # outlasts pnpm's, so later young releases will not need an exclude).
   - "@shadcn/lint@0.1.0"
 trustPolicy: no-downgrade
 # semver@6.3.1 is the standard CVE-2022-25883 backport (published 2023 without
