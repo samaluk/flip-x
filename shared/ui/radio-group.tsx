@@ -24,7 +24,7 @@ const radioGroupItemVariants = cva(
         default:
           "aspect-square size-4 rounded-full border border-input after:absolute after:-inset-x-3 after:-inset-y-2 dark:bg-input/30 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground dark:data-checked:bg-primary",
         swatch:
-          "size-7 rounded-md border border-border transition-all [&_[data-slot=radio-group-indicator]]:hidden data-checked:border-foreground data-checked:ring-2 data-checked:ring-primary/70 disabled:opacity-25 disabled:grayscale",
+          "size-7 rounded-md border border-border transition-all after:absolute after:-inset-x-3 after:-inset-y-2 [&_[data-slot=radio-group-indicator]]:hidden data-checked:border-foreground data-checked:ring-2 data-checked:ring-primary/70 disabled:opacity-25 disabled:grayscale",
       },
     },
     defaultVariants: {
