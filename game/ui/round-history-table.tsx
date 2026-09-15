@@ -108,7 +108,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                       className={cn(
                         "border-b p-4",
                         entry.phase === "projected" && "border-dashed bg-primary/5",
-                        score.reachedTarget && "bg-emerald-500/10",
+                        score.reachedTarget && "bg-primary/10",
                       )}
                       aria-label={t("{player}, {round}. Total {total}, round +{gain}. {status}", {
                         player: player.displayName,
@@ -132,9 +132,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                         <div
                           className={cn(
                             "text-xs",
-                            score.reachedTarget
-                              ? "text-emerald-700 dark:text-emerald-300"
-                              : "text-muted-foreground",
+                            score.reachedTarget ? "text-primary" : "text-muted-foreground",
                           )}
                         >
                           {score.reachedTarget

@@ -4,7 +4,6 @@ import { CrosshairIcon, RefreshCwIcon, UserIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import {
   memo,
-  type CSSProperties,
   type KeyboardEvent,
   type ReactElement,
   useEffect,
@@ -106,39 +105,27 @@ function PlayerLaneBadges({
   return (
     <div className="flex w-full flex-wrap gap-1">
       {roundStatusLabel ? (
-        <Badge variant={statusVariant(displayStatus)} className="max-w-full text-xs">
+        <Badge variant={statusVariant(displayStatus)} className="max-w-full">
           {roundStatusLabel}
         </Badge>
       ) : null}
-      {isDealer ? (
-        <Badge variant="default" className="text-xs">
-          {t("Dealer")}
-        </Badge>
-      ) : null}
-      {isViewer ? (
-        <Badge variant="default" className="border-primary/30 bg-primary/15 text-xs text-primary">
-          {t("You")}
-        </Badge>
-      ) : null}
-      {isOnline && !isViewer ? (
-        <Badge variant="secondary" className="text-xs">
-          {t("Online")}
-        </Badge>
-      ) : null}
+      {isDealer ? <Badge variant="default">{t("Dealer")}</Badge> : null}
+      {isViewer ? <Badge variant="soft">{t("You")}</Badge> : null}
+      {isOnline && !isViewer ? <Badge variant="secondary">{t("Online")}</Badge> : null}
       {isSelfTargeting ? (
-        <Badge variant="outline" className="text-xs">
+        <Badge variant="outline">
           <UserIcon className="size-3" />
           {t("Self")}
         </Badge>
       ) : null}
       {incomingActionKind ? (
-        <Badge variant="destructive" className="text-xs">
+        <Badge variant="destructive">
           <CrosshairIcon className="size-3" />
           {t("Incoming")}
         </Badge>
       ) : null}
       {flip3Remaining !== null && flip3Remaining > 0 ? (
-        <Badge variant="outline" className="text-xs">
+        <Badge variant="outline">
           <RefreshCwIcon className="size-3 animate-spin" />
           {t("{count} to draw", { count: String(flip3Remaining) })}
         </Badge>
@@ -154,24 +141,11 @@ function PlayerIdentity({ player, compact }: { player: SnapshotPlayer; compact: 
 
   return (
     <div className="flex min-w-0 items-center gap-2.5">
-      <Avatar
-        size="lg"
-        className={cn("shadow-sm ring-2 ring-border/80", compact ? "size-11" : "size-14")}
-      >
-        <AvatarFallback
-          className="text-base font-semibold tracking-tight"
-          style={
-            {
-              backgroundColor: playerColor.background,
-              color: playerColor.foreground,
-            } satisfies CSSProperties
-          }
-        >
-          {initials}
-        </AvatarFallback>
-        {player.isOnline ? (
-          <AvatarBadge className="border border-background bg-primary ring-background" />
-        ) : null}
+      <Avatar size="lg" className={compact ? "size-11" : "size-14"}>
+        {/* Theme swatch tokens are selected from a closed PlayerColorId map. */}
+        {/* oxlint-disable-next-line shadcn/require-static-classes */}
+        <AvatarFallback className={playerColor.swatchClass}>{initials}</AvatarFallback>
+        {player.isOnline ? <AvatarBadge /> : null}
       </Avatar>
 
       <div className="min-w-0 flex-1 text-start">

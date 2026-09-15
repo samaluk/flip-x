@@ -50,12 +50,7 @@ function CompletedRoundControls({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button
-        onClick={onStartNextRound}
-        disabled={!phase.hasViewer}
-        size="lg"
-        className="rounded-full px-6"
-      >
+      <Button onClick={onStartNextRound} disabled={!phase.hasViewer} size="pill">
         <SparklesIcon />
         {t("Start next round")}
       </Button>
@@ -138,12 +133,7 @@ function ActiveTurnControls({
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <Button
-        onClick={onHit}
-        disabled={!phase.viewerControlsTurn || turnPending}
-        size="lg"
-        className="rounded-full px-6"
-      >
+      <Button onClick={onHit} disabled={!phase.viewerControlsTurn || turnPending} size="pill">
         <HandIcon />
         {phase.optimisticAction === "hit"
           ? t("Drawing...")
@@ -155,8 +145,7 @@ function ActiveTurnControls({
         variant="outline"
         onClick={onStay}
         disabled={!phase.viewerControlsTurn || phase.isInFlip3 || turnPending}
-        size="lg"
-        className="rounded-full px-6"
+        size="pill"
       >
         <BanIcon />
         {phase.optimisticAction === "stay"
