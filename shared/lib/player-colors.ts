@@ -23,31 +23,38 @@ export type PlayerColorId =
 export type PlayerColor = {
   id: PlayerColorId;
   label: string;
-  background: string;
-  foreground: string;
+  swatchClass: string;
 };
 
 export const PLAYER_COLORS: readonly PlayerColor[] = [
-  { id: "cyan", label: "Cyan", background: "#4dd0e1", foreground: "#001f2c" },
-  { id: "mint", label: "Mint", background: "#6ee7b7", foreground: "#052e1a" },
-  { id: "emerald", label: "Emerald", background: "#34d399", foreground: "#042f1d" },
-  { id: "lime", label: "Lime", background: "#a3e635", foreground: "#1f2a05" },
-  { id: "yellow", label: "Yellow", background: "#facc15", foreground: "#2d2400" },
-  { id: "amber", label: "Amber", background: "#f59e0b", foreground: "#2b1700" },
-  { id: "orange", label: "Orange", background: "#fb923c", foreground: "#301000" },
-  { id: "coral", label: "Coral", background: "#fb7185", foreground: "#3b0611" },
-  { id: "rose", label: "Rose", background: "#f43f5e", foreground: "#fff1f2" },
-  { id: "pink", label: "Pink", background: "#f472b6", foreground: "#3b0824" },
-  { id: "fuchsia", label: "Fuchsia", background: "#e879f9", foreground: "#35063c" },
-  { id: "purple", label: "Purple", background: "#c084fc", foreground: "#2e0a4f" },
-  { id: "violet", label: "Violet", background: "#a78bfa", foreground: "#1e1245" },
-  { id: "indigo", label: "Indigo", background: "#818cf8", foreground: "#111947" },
-  { id: "blue", label: "Blue", background: "#60a5fa", foreground: "#061b3a" },
-  { id: "sky", label: "Sky", background: "#38bdf8", foreground: "#06283a" },
-  { id: "teal", label: "Teal", background: "#2dd4bf", foreground: "#032d28" },
-  { id: "slate", label: "Slate", background: "#94a3b8", foreground: "#111827" },
-  { id: "stone", label: "Stone", background: "#a8a29e", foreground: "#1c1917" },
-  { id: "red", label: "Red", background: "#f87171", foreground: "#3f0707" },
+  { id: "cyan", label: "Cyan", swatchClass: "bg-player-cyan text-player-cyan-foreground" },
+  { id: "mint", label: "Mint", swatchClass: "bg-player-mint text-player-mint-foreground" },
+  {
+    id: "emerald",
+    label: "Emerald",
+    swatchClass: "bg-player-emerald text-player-emerald-foreground",
+  },
+  { id: "lime", label: "Lime", swatchClass: "bg-player-lime text-player-lime-foreground" },
+  { id: "yellow", label: "Yellow", swatchClass: "bg-player-yellow text-player-yellow-foreground" },
+  { id: "amber", label: "Amber", swatchClass: "bg-player-amber text-player-amber-foreground" },
+  { id: "orange", label: "Orange", swatchClass: "bg-player-orange text-player-orange-foreground" },
+  { id: "coral", label: "Coral", swatchClass: "bg-player-coral text-player-coral-foreground" },
+  { id: "rose", label: "Rose", swatchClass: "bg-player-rose text-player-rose-foreground" },
+  { id: "pink", label: "Pink", swatchClass: "bg-player-pink text-player-pink-foreground" },
+  {
+    id: "fuchsia",
+    label: "Fuchsia",
+    swatchClass: "bg-player-fuchsia text-player-fuchsia-foreground",
+  },
+  { id: "purple", label: "Purple", swatchClass: "bg-player-purple text-player-purple-foreground" },
+  { id: "violet", label: "Violet", swatchClass: "bg-player-violet text-player-violet-foreground" },
+  { id: "indigo", label: "Indigo", swatchClass: "bg-player-indigo text-player-indigo-foreground" },
+  { id: "blue", label: "Blue", swatchClass: "bg-player-blue text-player-blue-foreground" },
+  { id: "sky", label: "Sky", swatchClass: "bg-player-sky text-player-sky-foreground" },
+  { id: "teal", label: "Teal", swatchClass: "bg-player-teal text-player-teal-foreground" },
+  { id: "slate", label: "Slate", swatchClass: "bg-player-slate text-player-slate-foreground" },
+  { id: "stone", label: "Stone", swatchClass: "bg-player-stone text-player-stone-foreground" },
+  { id: "red", label: "Red", swatchClass: "bg-player-red text-player-red-foreground" },
 ];
 
 const PLAYER_COLOR_IDS = new Set<string>(PLAYER_COLORS.map((color) => color.id));
