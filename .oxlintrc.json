@@ -10,6 +10,11 @@
   },
   "plugins": ["typescript", "react", "jsx-a11y", "unicorn"],
   "jsPlugins": ["eslint-plugin-i18next", "@shadcn/lint"],
+  "settings": {
+    "shadcn": {
+      "note": "See DESIGN.md for palette, spacing, and approved component treatments."
+    }
+  },
   "rules": {
     "react/react-in-jsx-scope": "off",
     // React Compiler strict rules (oxlint 1.79+): `correctness` and
@@ -51,6 +56,38 @@
     "typescript/no-redundant-type-constituents": "warn",
     "typescript/no-misused-promises": "warn",
     "typescript/no-floating-promises": "error",
-    "i18next/no-literal-string": ["error", { "markupOnly": true }]
-  }
+    "i18next/no-literal-string": ["error", { "markupOnly": true }],
+    "shadcn/no-restyle": [
+      "error",
+      {
+        "allow": ["layout"],
+        "contracts": [
+          { "pattern": "^RadioGroupItem$", "allow": ["layout", "color"] },
+          { "pattern": "^AvatarFallback$", "allow": ["layout", "color"] }
+        ]
+      }
+    ],
+    "shadcn/no-raw-colors": "error",
+    "shadcn/no-arbitrary-values": ["error", { "allow": ["layout"] }],
+    "shadcn/no-inline-styles": "error",
+    "shadcn/require-static-classes": "error",
+    "shadcn/no-unknown-classes": "error"
+  },
+  "overrides": [
+    {
+      "files": ["shared/ui/**"],
+      "rules": {
+        "shadcn/no-restyle": "off",
+        "shadcn/no-arbitrary-values": "off",
+        "shadcn/require-static-classes": "off"
+      }
+    },
+    {
+      "files": ["game/cards/**"],
+      "rules": {
+        "shadcn/no-inline-styles": "off",
+        "shadcn/no-raw-colors": "off"
+      }
+    }
+  ]
 }

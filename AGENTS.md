@@ -81,7 +81,10 @@ Useful development commands:
 - `pnpm lint`: run oxlint with `oxlint-tsgolint` type-aware rules and
   `--type-check` (typescript-go compiler diagnostics). Production sources use
   [tsconfig.json](tsconfig.json); tests and `*.test.*` files are excluded from
-  that project so type-check matches `tsc` on the same graph.
+  that project so type-check matches `tsc` on the same graph. After UI
+  changes, fix `@shadcn/lint` errors (all `shadcn/*` rules are errors).
+  `shared/ui/` may restyle itself; callers must use variants and theme
+  tokens instead of restyling primitives.
 - `pnpm lint:fix`: run oxlint autofixes with the same type-aware and type-check
   setup.
 - `pnpm exec tsc --project tsconfig.json --noEmit`: TypeScript 7 check against
