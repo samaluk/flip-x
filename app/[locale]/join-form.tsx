@@ -37,27 +37,16 @@ export function JoinForm({
           value={joinCode}
           onChange={(e) => onJoinCodeChange(e.target.value.toUpperCase())}
           placeholder={codePlaceholder}
+          variant="code"
           maxLength={4}
-          className="h-12 text-center font-mono text-2xl tracking-widest uppercase"
         />
       </div>
 
       <div className="flex gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          className="h-12 flex-1"
-          onClick={onCancel}
-        >
+        <Button type="button" variant="outline" size="xl" className="flex-1" onClick={onCancel}>
           {cancelLabel}
         </Button>
-        <Button
-          type="submit"
-          size="lg"
-          className="h-12 flex-1 text-base font-medium"
-          disabled={disabled}
-        >
+        <Button type="submit" size="xl" className="flex-1" disabled={disabled}>
           {joinButtonLabel}
         </Button>
       </div>

@@ -148,7 +148,7 @@ function GameJoinForm({
             maxLength={20}
             className="max-w-xs"
           />
-          <Button type="submit" disabled={isJoining || !playerName.trim()} className="font-medium">
+          <Button type="submit" disabled={isJoining || !playerName.trim()}>
             {t("Join Game")}
           </Button>
         </div>

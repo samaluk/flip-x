@@ -639,15 +639,13 @@ function RoundHistorySection({ snapshot }: RoundHistorySectionProps) {
       <CardContent>
         <Accordion value={expandedSections} onValueChange={setExpandedSections}>
           <AccordionItem value="history">
-            <AccordionTrigger className="text-xl">{tHistory("Score by round")}</AccordionTrigger>
+            <AccordionTrigger size="lg">{tHistory("Score by round")}</AccordionTrigger>
             <AccordionContent>
               <RoundHistoryTable history={snapshot.roundHistory} players={snapshot.players} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="breakdown">
-            <AccordionTrigger className="text-xl">
-              {tHistory("Current round breakdown")}
-            </AccordionTrigger>
+            <AccordionTrigger size="lg">{tHistory("Current round breakdown")}</AccordionTrigger>
             <AccordionContent>
               <div className="px-5 pt-2">
                 <p className="text-sm text-muted-foreground">

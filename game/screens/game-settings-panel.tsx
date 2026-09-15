@@ -13,7 +13,6 @@ import {
   TARGET_SCORE_OPTIONS,
 } from "@/game/logic/game-settings";
 import type { MatchSnapshot } from "@/game/logic/view-models";
-import { cn } from "@/shared/lib/utils";
 import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
@@ -138,13 +137,10 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                   <Button
                     key={preset.id}
                     type="button"
-                    variant={isActive ? "default" : "outline"}
+                    variant={isActive ? "default" : isRecommended ? "outline-accent" : "outline"}
+                    size="tile"
                     disabled={isUpdating}
                     onClick={() => updateSettings(preset.settings)}
-                    className={cn(
-                      "h-auto min-h-20 flex-col items-start justify-start gap-1 rounded-xl p-3 text-start whitespace-normal",
-                      isRecommended && !isActive ? "border-primary/70" : "",
-                    )}
                   >
                     <span className="flex w-full items-center justify-between gap-2">
                       <span>{presetLabel(preset.id)}</span>
