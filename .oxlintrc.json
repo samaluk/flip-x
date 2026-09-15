@@ -9,7 +9,7 @@
     "suspicious": "error"
   },
   "plugins": ["typescript", "react", "jsx-a11y", "unicorn"],
-  "jsPlugins": ["eslint-plugin-i18next"],
+  "jsPlugins": ["eslint-plugin-i18next", "@shadcn/lint"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     // React Compiler strict rules (oxlint 1.79+): `correctness` and
