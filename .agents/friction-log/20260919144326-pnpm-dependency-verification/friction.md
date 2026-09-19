@@ -1,6 +1,7 @@
 ---
 title: 'pnpm dependency verification rejects shared node_modules in temporary hook test repos'
 severity: 'minor'
+issue: 'samaluk/flip-x#811'
 ---
 
 ## Expected Behavior
