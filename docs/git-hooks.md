@@ -30,6 +30,11 @@ mise install
 
 ## Hook behavior
 
+The hk v2 top-level `steps` block shares formatting, core lint, i18n, and the
+staged Fallow audit across `hk check`, `hk fix`, and pre-commit. Secret scanning
+runs in `check` and pre-commit; staged React Doctor runs only in pre-commit.
+Pre-push keeps its own broader set of checks.
+
 Pre-commit uses `hk`'s fix mode and safe unstaged-change stashing. It formats
 staged files, stages formatter changes, and runs the core lint, i18n, and staged
 React Doctor checks. Independent read-only checks run concurrently; formatting
@@ -48,6 +53,12 @@ mise run pre-push
 hk run pre-commit --plan
 hk run pre-push --plan
 ```
+
+In [hk v2](https://hk.jdx.dev/migration-v2), `hk fix` leaves formatter changes
+unstaged. Review and stage them yourself, or use `hk fix --stage` to opt into
+staging. Pre-commit explicitly enables staging; check and pre-push leave the
+index alone. A step's `stage` patterns only filter paths eligible for staging
+and do not enable staging by themselves.
 
 For a one-off bypass, use `HK=0 git commit` or `HK=0 git push`. Prefer fixing a
 failed gate; the escape hatch is intended for diagnosing hook infrastructure.

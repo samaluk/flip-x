@@ -1,8 +1,8 @@
 /// Git lifecycle checks for flip-x.
-amends "package://github.com/jdx/hk/releases/download/v1.58.1/hk@1.58.1#/Config.pkl"
-import "package://github.com/jdx/hk/releases/download/v1.58.1/hk@1.58.1#/Builtins.pkl"
+amends "package://github.com/jdx/hk/releases/download/v2.0.1/hk@2.0.1#/Config.pkl"
+import "package://github.com/jdx/hk/releases/download/v2.0.1/hk@2.0.1#/Builtins.pkl"
 
-min_hk_version = "1.58.1"
+min_hk_version = "2.0.1"
 fail_fast = false
 
 local format = (Builtins.oxfmt) {
@@ -11,7 +11,8 @@ local format = (Builtins.oxfmt) {
   check_list_files = null
 }
 
-local commit_checks = new Mapping<String, Step> {
+// Shared by check, fix, and pre-commit; pre-push keeps its broader checks below.
+steps {
   ["format"] = format
   ["lint"] {
     check = new CommandSpec {
@@ -83,9 +84,9 @@ local push_checks = new Mapping<String, Step> {
 hooks {
   ["pre-commit"] {
     fix = true
+    stage = true
     stash = "git"
     steps {
-      ...commit_checks
       ...secrets
       ["react-doctor"] {
         types = List("javascript", "typescript")
@@ -101,12 +102,7 @@ hooks {
   }
   ["check"] {
     steps {
-      ...commit_checks
       ...secrets
     }
-  }
-  ["fix"] {
-    fix = true
-    steps = commit_checks
   }
 }
