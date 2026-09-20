@@ -1,12 +1,7 @@
 {
   "$schema": "./node_modules/fallow/schema.json",
-  "entry": [
-    "app/**/{page,layout,loading,error,not-found,route,default}.{ts,tsx}",
-    "confect/tables/**/*.ts",
-    "convex/**/*.ts",
-    "shared/i18n/request.ts"
-  ],
-  "ignorePatterns": [".next/**", "e2e/**", "scripts/**", ".eloqnt/**"],
+  "entry": ["confect/tables/**/*.ts", "shared/i18n/request.ts"],
+  "ignorePatterns": ["e2e/**", "scripts/**", ".eloqnt/**"],
   "ignoreFindings": ["convex/_generated/**", "confect/_generated/**"],
   "dynamicallyLoaded": ["confect/**/*.impl.ts", "confect/impl.ts", "confect/spec.ts"],
   "ignoreExports": [
@@ -75,10 +70,6 @@
     ]
   },
   "health": {
-    "maxCyclomatic": 20,
-    "maxCognitive": 15,
-    "maxCrap": 30,
-    "maxUnitSize": 60,
     "coverage": "coverage/coverage-final.json",
     "thresholdOverrides": [
       {
@@ -221,7 +212,6 @@
     }
   },
   "audit": {
-    "typeAware": true,
     "gate": "all"
   }
 }

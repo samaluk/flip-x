@@ -1,182 +1,121 @@
-# Fallow zero-debt gate
+# Fallow quality gates
 
-Flip-x uses the Fallow version pinned in `package.json` as a strict repository-quality gate. The repository
-does not carry a debt baseline or a regression-count allowance. Existing
-dead-code and health findings are rejected directly, while reviewed framework
-patterns remain narrowly configured or suppressed with reasons.
+Flip-x pins Fallow in `package.json` and the GitHub Action by release SHA.
+`.fallowrc.json` owns the shared policy: complete type-aware evidence, architecture
+boundaries, reasoned suppressions, coverage, and `audit.gate: "all"`. Local
+commands and CI inherit it.
 
-The workflow follows [fintual-api #405](https://github.com/samaluk/fintual-api/pull/405):
-the native changed-file audit uses `gate: all`, and full-repository checks run
-as separate commands so type-aware completeness and coverage failures cannot be
-hidden by a combined fallback path.
-
-## Gate Commands
-
-Generate coverage before running the coverage-aware commands:
+## Commands
 
 ```bash
 pnpm test:coverage
-pnpm fallow:audit
-pnpm fallow:dead-code
-pnpm fallow:dupes
-pnpm fallow:health
+pnpm fallow:audit        # Changed-file gate against the detected base
+pnpm fallow:full         # Full-repository dead-code, duplication, and health gates
+pnpm fallow:staged       # Changed-file gate against HEAD; used by hk
 ```
 
-The authoritative local and CI composition is:
+The three repository gates remain individually runnable as
+`pnpm fallow:dead-code`, `pnpm fallow:dupes`, and `pnpm fallow:health`.
+`pnpm ci:local` and pre-push generate coverage, then run the audit and full gate.
+Native exit codes propagate: `0` passes, `1` blocks on findings, and `2` reports
+an analyzer/configuration error.
+
+Use `pnpm fallow <command>` for other native commands instead of maintaining
+one package script for every Fallow feature:
 
 ```bash
-pnpm fallow:full
-```
-
-which expands to:
-
-```bash
-pnpm fallow:audit && pnpm fallow:dead-code && pnpm fallow:dupes && pnpm fallow:health
-```
-
-The commands have distinct responsibilities:
-
-- `fallow audit --gate all` blocks every error-severity finding in changed files.
-- `fallow dead-code --type-aware --fail-on-issues` blocks dead code, duplicate exports, boundary violations, private-type leaks, and incomplete semantic evidence.
-- `fallow dupes --fail-on-issues` reports the full semantic and near-miss duplication surface. It uses the narrow `duplicates.threshold` ceiling configured in `.fallowrc.json` only because Fallow reassigns ordinal `dup:c77b3abb6f87acd9-N` fingerprints when the reviewed suppression set changes; the ceiling equals the current measured value and leaves no headroom.
-- `fallow health --coverage coverage/coverage-final.json --coverage-root "$PWD" --fail-on-issues` blocks complexity, CRAP, and unit-size findings using the same Istanbul artifact produced by the test job.
-
-Fallow exit codes are native: `0` is clean, `1` is a finding, and `2` is an
-analyzer or configuration error. Run `pnpm fallow:status` to verify the
-version-matched TypeScript-Go companion before diagnosing a semantic result.
-
-## CI And Coverage
-
-`.github/workflows/fallow.yml` is the dedicated Fallow workflow and shares one
-coverage artifact across its jobs:
-
-- **Test with coverage** runs `pnpm test:coverage` and uploads `coverage/coverage-final.json`.
-- **Fallow gate** downloads the artifact and runs `pnpm fallow:full`, which composes the strict audit, dead-code, duplication, and health commands.
-- **Fallow PR review** runs one immutable native Fallow Action analysis with `gate: all`, type-aware analysis, and the same coverage artifact. It renders the sticky summary, Check Run, inline review comments, and review guidance.
-
-Within that workflow, no job reinstalls dependencies or reruns the test suite
-solely to obtain Fallow coverage. The audit and health commands both receive
-repository-relative coverage evidence; the Action receives the workspace root
-through `coverage-root`.
-
-### Version Drift
-
-`.github/workflows/fallow-drift.yml` runs once per exact Fallow version resolved
-from `pnpm-lock.yaml`, rather than on a cron. On a cache miss it checks out full
-history, sets up the repository's pinned Node and pnpm versions, installs with
-`pnpm install --frozen-lockfile`, verifies the installed CLI matches the
-lockfile version, generates fresh coverage, and runs `pnpm fallow:full`.
-
-The version-keyed cache marker is saved by GitHub only after the entire job
-succeeds. A failed install, test, or gate therefore remains retryable, while a
-successful same-version rerun is a cache-hit no-op. The native Fallow Action
-remains the PR feedback surface in `.github/workflows/fallow.yml`; it does not
-define a separate drift verdict.
-
-The exact duplication percentage bound remains only the documented workaround
-for Fallow's unstable ordinal clone fingerprints. It is independent of the
-version-drift cache and execution mechanics.
-
-## Configuration
-
-Type-aware analysis is required and complete for:
-
-- `tsconfig.json`
-- `tsconfig.tests.json`
-- `convex/tsconfig.json`
-
-Architecture boundaries cover generated, test, adapter, logic, application,
-infrastructure, backend, shared, and UI zones. `requireAllFiles` remains enabled
-with only the documented tooling exclusions, and the full boundary scan passes.
-
-Duplication uses semantic mode with near-miss detection, eight-line/60-token
-floors, pair-level `minOccurrences: 2`, and import wiring ignored. The stable
-`ignoredClones` fingerprints are narrow and change-sensitive: a content or
-occurrence-count change makes the clone reportable again. Fallow's ordinal
-`dup:c77b3abb6f87acd9-N` fingerprints are not stable when the suppression set
-changes, so those intentional groups remain visible and are covered by the
-`duplicates.threshold` measurement bound configured in `.fallowrc.json` and described below. The reviewed groups are:
-
-| Fingerprints and counts | Classification and reason |
-| --- | --- |
-| `dup:2e174d80:2`, `dup:33a7c5c4:2`, `dup:8691c349:2`, `dup:9ed7c5ca:2` | Stable hash fingerprints for repeated CSS token and utility blocks in `app/globals.css`; nearby declarations remain explicit for cascade readability. |
-| `dup:146daa20:2`, `dup:ec5a72c6:2` | Stable hash fingerprints for generated Confect service declarations and adjacent domain operation branches. |
-| `dup:65e19125:2` | Stable hash fingerprint for latest-event handlers that preserve explicit event-family dispatch and exhaustive ordering. |
-| `dup:66964408:2`, `dup:776beb96:2` | Stable hash fingerprints for VRT cases that repeat the render, viewport, and screenshot scaffold while varying the visual scenario. |
-| `dup:c77b3abb6f87acd9-1:2`, `dup:c77b3abb6f87acd9-25:2`, `dup:c77b3abb6f87acd9-13:2`, `dup:c77b3abb6f87acd9-2:3`, `dup:c77b3abb6f87acd9-21:2` | Ordinal groups for Effect `Schema.TaggedError` declarations; each error retains its own stable class and constructor. |
-| `dup:c77b3abb6f87acd9-19:3`, `dup:c77b3abb6f87acd9-8:2`, `dup:c77b3abb6f87acd9-26:2`, `dup:c77b3abb6f87acd9-9:2`, `dup:c77b3abb6f87acd9-24:2` | Ordinal groups for standard shadcn/Base UI primitive wrappers; each exported primitive keeps its library-required markup and slot contract. |
-| `dup:c77b3abb6f87acd9-20:2`, `dup:c77b3abb6f87acd9-28:2`, `dup:c77b3abb6f87acd9-6:2` | Ordinal groups for static player-color data and semantic object-shape normalization false positives. |
-| `dup:c77b3abb6f87acd9-23:2`, `dup:c77b3abb6f87acd9-22:3`, `dup:c77b3abb6f87acd9-11:3`, `dup:c77b3abb6f87acd9-14:2`, `dup:c77b3abb6f87acd9-16:2` | Ordinal groups for Confect `FunctionImpl` and `GroupImpl` registration symmetry; framework-owned wiring remains explicit at each entrypoint. |
-| `dup:c77b3abb6f87acd9-7:3`, `dup:c77b3abb6f87acd9-17:2` | Ordinal groups for VRT cases that intentionally keep each visual scenario readable and independently asserted. |
-| `dup:c77b3abb6f87acd9-12:2` | Ordinal group for geometry-specific card SVGs with similar parameterized path markup but different motifs. |
-| `dup:c77b3abb6f87acd9-18:2` | Ordinal group for table-specific indexed reads reported by semantic normalization; the operations have different boundaries. |
-| `dup:c77b3abb6f87acd9-15:2` | Ordinal group for card and player memo comparators that compare different domain props and remain separate by component boundary. |
-| `dup:c77b3abb6f87acd9-5:2`, `dup:c77b3abb6f87acd9-27:2` | Ordinal groups for deterministic replay and Confect test fixtures; repeated snapshots and interface methods remain independently readable. |
-| `dup:c77b3abb6f87acd9-10:2` | Ordinal group for separate command handlers with the same transition scaffold but different validation and resolution semantics. |
-| `dup:c77b3abb6f87acd9-4:2`, `dup:c77b3abb6f87acd9-3:2` | Ordinal groups for event decoding and pending-action state transitions; these are distinct discriminated-union branches and a semantic false positive. |
-
-No remaining group is extractable authored duplication. New clone content or
-an occurrence-count change is intentionally reportable rather than absorbed by
-aggregate headroom.
-
-### Fallow Fingerprint Limitation
-
-This bound is reproducible without source changes. Run the semantic-plus-near
-scan with only the stable hash fingerprints above; it reports the value
-configured as `duplicates.threshold` in `.fallowrc.json`. Adding an ordinal
-`dup:c77b3abb6f87acd9-N` fingerprint changes the ordinal assigned to other
-source ranges, so the same source can receive a different fingerprint when the
-suppression set changes. The configured threshold equals the current report with
-only stable suppressions, so any measurable increase remains blocking.
-
-The generated Confect services expose service tags and identifiers named
-`DatabaseReader` and `DatabaseWriter`. `confect/lib/types.ts` intentionally
-derives the corresponding Effect success types under the same public names;
-the narrow `ignoreExports` entry prevents Fallow from treating those two
-framework surfaces as an ambiguous barrel.
-
-Health uses these thresholds:
-
-- cyclomatic complexity: `20`
-- cognitive complexity: `15`
-- CRAP: `30`
-- unit size: `60` lines
-
-The two player-lane components keep exact, reasoned health threshold overrides
-because their conditional badges and orthogonal interaction states are the
-component's responsibility. The overrides match the current measurements, so
-any further complexity increase remains blocking. Inline suppression reasons
-are still required elsewhere, and stale suppressions remain errors.
-
-Structural coverage gaps remain advisory. Istanbul coverage is enforced through
-CRAP scoring, while the repository does not pretend that static dependency
-paths are equivalent to runtime test coverage.
-
-## Hooks
-
-`hk` is the only hook manager:
-
-- **Pre-commit** runs `pnpm fallow:staged`, which pipes `git diff --cached` into `fallow audit --diff-file - --base HEAD --gate all --type-aware` so findings are scoped line-level to staged hunks. Staged diffs that add no lines (pure renames, pure deletions, binary-only changes) fall back to plain file-scoped auditing instead of passing through the empty diff filter (`scripts/fallow-staged.sh`).
-- **Pre-push** fetches `origin/master` first (so base resolution sees current master), then runs coverage and the complete `pnpm fallow:full` composition alongside the normal project checks; the fallow step depends on the `fetch` step.
-
-There is no baseline updater, regression-count wrapper, freshness check, or
-custom Fallow orchestration layer.
-
-## Review And Investigation
-
-Use `fallow review` for an advisory, graph-grounded orientation brief. It is
-not a gate and always exits zero. Use `fallow audit` for the blocking changed-
-file verdict.
-
-```bash
+pnpm fallow doctor
+pnpm fallow type-aware status
+pnpm fallow recommend
+pnpm fallow config
+pnpm fallow list --boundaries
 pnpm fallow review --base origin/master
-pnpm exec fallow dead-code --trace <file>:<export>
-pnpm exec fallow dead-code --type-aware --symbol-impact <file>:<export>
-pnpm exec fallow dupes --trace dup:<fingerprint>
-pnpm exec fallow health --hotspots --targets
-pnpm exec fallow guard <files>
-pnpm fallow:suppressions
+pnpm fallow dead-code --trace <file>:<export>
+pnpm fallow dupes --trace dup:<fingerprint>
+pnpm fallow health --hotspots --targets
+pnpm fallow suppressions
+pnpm fallow fix --dry-run
+# Review the preview before applying:
+pnpm fallow fix --yes
 ```
 
-The reproducible negative-test matrix is recorded in
-[`fallow-zero-debt-proof.md`](fallow-zero-debt-proof.md).
+`review` is advisory and always exits zero; `audit` is the blocking command.
+
+## CI and hooks
+
+`.github/workflows/fallow.yml` retains the three required status-check names:
+
+| Check | Responsibility |
+| --- | --- |
+| Test with coverage | Run the fast Vitest projects once and upload Istanbul coverage. |
+| Fallow gate | Download coverage and run the three full-repository gates. |
+| Fallow PR review | Download coverage and run one native Action audit, including the sticky summary, Check Run, inline comments, and review guidance. |
+
+The Action reads the CLI version from `package.json` and provisions its matching
+TypeScript companion from `typeAware.enabled`. Coverage comes from
+`health.coverage`; both consumers rebase its absolute paths using the producing
+job's checkout root. Renovate updates the package and Action together.
+
+The Action receives an explicit audit base SHA with `auto-changed-since: false`.
+Its automatic mode also supplies a line-diff filter, which would narrow the
+`all` gate to edited hunks. Explicit file scoping preserves the local gate's
+behavior while native renderers place review comments on eligible diff lines.
+
+The full gate runs on every PR and push to master/main, including dependency
+updates. A separate version-drift workflow would repeat the same tests and
+gates, so none is needed.
+
+`hk` remains the only hook manager. Pre-commit stashes unstaged changes and runs
+`fallow audit --base HEAD` against the staged snapshot. The audit deliberately
+checks whole changed files, including pre-existing findings in them. There is
+no line-diff pipe or empty-diff fallback to maintain; deletion-only changes use
+the same native path. Pre-push fetches the current base, generates coverage,
+and runs both the changed-file audit and the repository gates.
+
+Running `pnpm fallow:staged` directly does not stash: it examines working-tree
+changes against HEAD. Use `mise run pre-commit` when partial staging matters.
+
+## Project-specific configuration
+
+Next.js and Convex entries and the `.next` exclusion come from native discovery.
+Only Confect table definitions and the custom `shared/i18n/request.ts` path need
+manual entries. Confect implementation registration remains dynamically loaded.
+Generated-code findings, external UI primitive exports, generated locale imports,
+and tooling-only dependencies retain their narrow exceptions.
+
+Type-aware analysis requires complete evidence across `tsconfig.json`,
+`tsconfig.tests.json`, and `convex/tsconfig.json`. Architecture boundaries still
+cover the logic, application, infrastructure, backend, shared, UI, adapter,
+generated, and test zones, with `requireAllFiles` enabled.
+
+Health uses Fallow's defaults: cyclomatic `20`, cognitive `15`, CRAP `30`, and
+unit size `60`. Exact, reasoned per-function overrides remain in the config.
+Istanbul coverage supplies CRAP scoring; structural coverage gaps stay advisory.
+
+Duplication retains semantic mode, near-miss detection, eight-line/60-token
+floors, pairs, and ignored imports. Reviewed `ignoredClones` entries and the
+existing `6.08%` ceiling remain unchanged. That ceiling is an aggregate guard,
+not a claim of zero clone debt or an exact current measurement. The changed-file
+`audit` reports clones in touched files and also uses the configured percentage
+to decide whether duplication warns or fails. A new clone below the ceiling can
+therefore warn without failing; `gate: all` does not change that threshold.
+
+Fallow 3.23 replaced old numeric collision handles with report-scoped `-rN`
+handles ordered by canonical fragments and locations. Those handles can still
+change with the report's group set, so this setup does not replace the ceiling
+with a newly generated suppression list. Existing reviewed patterns include
+Effect error classes, Confect registration, UI primitives, CSS tokens, and test
+fixtures. Review a group with `dupes --trace` before changing its exception.
+
+## Why keep standalone gates?
+
+The [3.27 release](https://github.com/fallow-rs/fallow/releases/tag/v3.27.0)
+propagates native gate outcomes through the Action. Its combined command still
+reports the duplication threshold as **not enforced**, so bare `fallow` cannot
+replace `fallow:full`. Keep `dupes` as a standalone gate and let the Action own
+the changed-code audit once.
+
+Upstream references: [CI setup](https://github.com/fallow-rs/fallow/tree/v3.27.0#ci),
+[Action inputs](https://github.com/fallow-rs/fallow/blob/v3.27.0/action.yml), and
+[configuration](https://docs.fallow.tools/configuration/overview).
+See [gate verification](fallow-zero-debt-proof.md) for regression probes.

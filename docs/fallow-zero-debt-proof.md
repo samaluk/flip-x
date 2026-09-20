@@ -1,79 +1,49 @@
-# Fallow Zero-Debt Proof
+# Fallow gate verification
 
-This document records the negative checks for the steady-state Fallow gate.
-Each probe is introduced in a disposable worktree or temporary copy and
-removed before the next case. The repository is clean before the probes.
+Run probes in a disposable checkout with installed dependencies, the current
+`.fallowrc.json`, and fresh `pnpm test:coverage` output. Verify the expected
+advisory or blocking verdict, then remove each probe to restore a clean result.
 
-## Matrix
+| Probe | Command | Expected result |
+| --- | --- | --- |
+| Add an unused production export | `pnpm fallow:dead-code` | Exit `1`, unused export reported. |
+| Add a semantic clone below the percentage ceiling | `pnpm fallow:staged` | Exit `0`, audit verdict `warn`, clones reported. |
+| Lower the ceiling below that clone report's percentage | `pnpm fallow:staged` | Exit `1`, audit verdict `fail`. |
+| Set a temporary duplication ceiling below the measured percentage | `pnpm fallow:dupes` | Exit `1`, enforced threshold gate fails. |
+| Add a function above the cognitive threshold | `pnpm fallow:health` | Exit `1`, complexity finding reported. |
+| Make semantic evidence unavailable while an unused export needs refinement | `pnpm fallow:dead-code` | Nonzero exit under `typeAware.require: "complete"`. |
+| Remove only a consumer line, leaving an unused export in the same changed file | `pnpm fallow:staged` | Exit `1`; deletion-only diffs cannot hide the finding. |
 
-| Probe | Blocking command | Expected result | What it proves |
-| --- | --- | --- | --- |
-| Add an unused production export | `pnpm fallow:dead-code` | Exit `1` | Dead-code findings are not accepted by the full-repository gate. |
-| Add a semantic clone to changed code | `pnpm fallow:dupes` and `pnpm fallow:staged` | Audit verdict `fail`; the clone must be reviewed before adding an exact fingerprint/count | The `all` audit gate blocks duplication introduced by the staged change, while the full duplication report exposes new clone debt without an aggregate allowance. |
-| Add a function above the cognitive threshold | `pnpm fallow:health` | Exit `1` | Coverage-aware health findings block the repository gate. |
-| Remove each probe | The same command for each row | Exit `0` | The gate returns to clean after the debt is removed. |
+`fallow:staged` uses native file scoping against HEAD. In pre-commit, hk stashes
+unstaged changes so the audited working tree matches the index. Direct invocations
+include unstaged changes too.
 
-The repository uses the narrow `duplicates.threshold` ceiling configured in
-`.fallowrc.json` because Fallow reassigns ordinal clone fingerprints when
-the reviewed `ignoredClones` set changes. The ceiling equals the current
-measured value and leaves no generic headroom. The
-changed-file `audit --gate all` is the strict blocking proof for an introduced
-clone, and the standalone command remains the full repository duplication
-report.
+Both duplication verdicts use the configured percentage ceiling;
+`--fail-on-issues` and `audit --gate all` do not reject every clone group.
+Do not replace the full gate with the bare combined command: Fallow 3.27
+explicitly reports its duplication threshold as unenforced.
 
-## Reproduction Shape
+## Setup regression checks
 
-The probes need only use the native commands and the repository configuration:
+- `pnpm fallow list --entry-points` still discovers all application entries after
+  removing redundant Next.js and Convex globs. Keep the custom i18n request entry.
+- `pnpm fallow type-aware status` resolves the version-matched companion;
+  `pnpm fallow config` retains complete semantic evidence and the `all` audit gate.
+- `pnpm fallow:health --format json` reports Istanbul coverage with the same
+  matched files and thresholds before and after configuration simplification.
+  In a second checkout, set `FALLOW_COVERAGE_ROOT` to the producing checkout's
+  absolute path, as CI does through the coverage job output.
+- `pnpm fallow:audit` and `pnpm fallow:full` pass with the clean source tree.
+- `actionlint .github/workflows/fallow.yml` passes and all three required job names
+  remain: `Test with coverage`, `Fallow gate`, and `Fallow PR review`.
+- The native Action installer with `FALLOW_INSTALL_DRY_RUN=true` resolves the
+  package's pinned CLI and matching sidecar from project configuration.
 
-```bash
-# Run the clean baseline first.
-pnpm test:coverage
-pnpm fallow:dead-code
-pnpm fallow:dupes
-pnpm fallow:health
+The regular workflow runs the full gate on dependency PRs and pushes, covering
+version drift without a separate workflow or version-keyed cache marker.
 
-# After adding one probe, stage it and run the matching command.
-pnpm fallow:dead-code
-pnpm fallow:dupes
-pnpm fallow:staged
-pnpm fallow:health
-
-# Remove the probe, regenerate coverage when health was exercised, and rerun.
-pnpm test:coverage
-pnpm fallow:dead-code
-pnpm fallow:dupes
-pnpm fallow:health
-```
-
-The audit probe is run against `HEAD` so it examines exactly the staged
-changes. CI uses the same `all` gate against the pull request's changed files.
-Staged diffs without added lines (pure renames, deletions, binary-only
-changes) are audited file-scoped rather than through fallow's empty diff
-filter.
-
-## Completeness Checks
-
-The strict composition also proves the supporting evidence paths:
-
-- `pnpm fallow:status` reports the version-matched TypeScript-Go companion with protocol 7.
-- `pnpm fallow:dead-code` requires `typeAware.require: "complete"` across all three configured projects.
-- `pnpm fallow:boundaries` validates the configured architecture zones.
-- `pnpm fallow:health` consumes `coverage/coverage-final.json` from Vitest's Istanbul reporter.
-- The CI gate downloads that same artifact instead of producing a second coverage run.
-
-These checks are deliberately separate. A combined fallback analysis must not
-be allowed to turn an incomplete configured semantic project into a successful
-repository gate.
-
-## Version Drift Checks
-
-The version-drift workflow preserves the same contract on a cache miss:
-
-- The lockfile parser's result matches the first line of `pnpm exec fallow --version` after `pnpm install --frozen-lockfile`.
-- `coverage/coverage-final.json` exists after `pnpm test:coverage`, before the workflow invokes `pnpm fallow:full`.
-- `pnpm fallow:full` expands to audit, dead-code, duplication, and health in that order.
-- A temporary unused export makes `pnpm fallow:full` exit `1`; removing it returns the command to exit `0`.
-- The marker and every setup, install, coverage, and gate step use the same cache-miss condition. GitHub only saves the marker after job success, so failures remain retryable and a successful same-version rerun skips the guarded steps.
-
-The workflow itself passes `actionlint`. Temporary findings are removed after
-validation.
+Verified with Fallow 3.27.0 on 2026-09-20: every probe above produced the expected
+exit/verdict and returned to clean after removal. All 131 Istanbul files matched
+in both checkout locations. The native Action analysis script also rejected an
+existing unused export outside the edited hunk with automatic diff scoping off.
+The coverage run passed 212 tests across 52 files.
