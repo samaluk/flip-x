@@ -89,7 +89,7 @@
     "@confect/cli": "9.4.3",
     "@confect/test": "9.4.3",
     "@effect/vitest": "0.30.0",
-    "@eloqnt/cli": "0.6.29",
+    "@eloqnt/cli": "0.6.30",
     "@google/design.md": "0.4.0",
     "@next/playwright": "16.3.5",
     "@playwright/test": "1.63.0",
