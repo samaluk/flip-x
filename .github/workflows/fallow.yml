@@ -29,6 +29,8 @@ jobs:
     # Fork-safe runner selection, matching the other quality workflows.
     runs-on: ${{ github.event.pull_request.head.repo.fork && 'ubuntu-latest' || (vars.USE_SELF_HOSTED_RUNNERS == 'true' && fromJSON('["self-hosted","macOS","ARM64"]') || 'ubuntu-latest') }}
     timeout-minutes: 20
+    outputs:
+      coverage-root: ${{ steps.coverage.outputs.root }}
 
     steps:
       - name: Checkout
@@ -40,7 +42,10 @@ jobs:
       - uses: ./.github/actions/setup-toolchain
 
       - name: Test with coverage
-        run: pnpm test:coverage
+        id: coverage
+        run: |
+          pnpm test:coverage
+          echo "root=$GITHUB_WORKSPACE" >> "$GITHUB_OUTPUT"
 
       - name: Upload coverage
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -50,9 +55,8 @@ jobs:
           if-no-files-found: error
           retention-days: 1
 
-  # Authoritative strict Fallow gate: changed-file audit plus the full-repository
-  # dead-code, duplication, and health checks via pnpm fallow:full. The review
-  # job owns PR feedback.
+  # Full-repository dead-code, duplication, and health gates. The review job
+  # runs the changed-code audit once and owns PR feedback.
   gate:
     name: Fallow gate
     needs: test
@@ -80,7 +84,7 @@ jobs:
       - name: Fallow CI gate
         run: pnpm fallow:full
         env:
-          FALLOW_AUDIT_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || 'origin/master' }}
+          FALLOW_COVERAGE_ROOT: ${{ needs.test.outputs.coverage-root }}
 
   # One immutable Fallow Action analysis. It renders the compact sticky
   # summary, Check Run, inline review comments, and review guidance directly.
@@ -121,13 +125,15 @@ jobs:
           path: coverage
 
       - name: Fallow changed-code audit
-        uses: fallow-rs/fallow@4f3bd9720ca6b22c8547adb7f1d225f57fc502d4 # v3.26.0
+        uses: fallow-rs/fallow@adff2c9f20fe769e2e093b2e99ee09723f6310bd # v3.27.0
         with:
           command: audit
           gate: all
-          type-aware: true
-          coverage: coverage/coverage-final.json
-          coverage-root: ${{ github.workspace }}
+          # Keep the all gate file-scoped. Automatic changed-since also adds
+          # a line-diff filter, which can hide findings outside edited hunks.
+          auto-changed-since: false
+          args: --base ${{ github.event.pull_request.base.sha }}
+          coverage-root: ${{ needs.test.outputs.coverage-root }}
           comment: true
           comment-layout: compact
           branded-token: false
