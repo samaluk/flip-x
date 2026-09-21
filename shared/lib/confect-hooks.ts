@@ -122,8 +122,8 @@ function wrapSessionOptimisticLocalStore(
   sessionId: string,
 ): SessionConfectOptimisticLocalStore {
   return {
+    // oxlint-disable-next-line typescript/no-unsafe-return -- tsgolint cannot resolve Ref.Returns<Query> for generic Query and reports the decoded value as `any`
     getQuery: (ref, args) =>
-      // oxlint-disable-next-line typescript/no-unsafe-return
       Option.getOrUndefined(localStore.getQuery(ref, withSessionArgs(args, sessionId))),
     getAllQueries: (ref) =>
       localStore.getAllQueries(ref).map(({ args, value }) => ({
