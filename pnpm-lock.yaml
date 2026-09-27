@@ -258,8 +258,8 @@ importers:
         specifier: 0.30.0
         version: 0.30.0(effect@3.22.2)(vitest@5.0.1)
       '@eloqnt/cli':
-        specifier: 0.6.31
-        version: 0.6.31(@swc/helpers@0.5.23)
+        specifier: 0.6.32
+        version: 0.6.32(@swc/helpers@0.5.23)
       '@google/design.md':
         specifier: 0.4.0
         version: 0.4.0(supports-color@10.2.2)
@@ -801,8 +801,8 @@ packages:
       '@effect/rpc': ^0.76.2
       effect: ^3.22.1
 
-  '@eloqnt/cli@0.6.31':
-    resolution: {integrity: sha512-V0pAvU+SF8jKcOqGPoYr8PtQw0SWP/woN9MHweWyDN7p3XrrozZrGdtWKHheObx3msDUG3sgXSrXR/bb64VAyw==}
+  '@eloqnt/cli@0.6.32':
+    resolution: {integrity: sha512-zURO4T1n9yiyxN+gBF1aFFtViaE6Ls3HDi5iHbbNmkztrf3vd+8PqEDlr31ubs2R5EVwHQeG+kEDJYE1LRKbMQ==}
     hasBin: true
 
   '@eloqnt/config@0.1.0':
@@ -814,8 +814,8 @@ packages:
   '@eloqnt/format-po@0.1.0':
     resolution: {integrity: sha512-odgtuICWs67GdkNqY51/d2vaIukuOdlGalKASUGkI5c4cyWOmv/WIVyk5gZyn3xr614RzwWp57s9WB40lRLlBw==}
 
-  '@eloqnt/sdk@0.6.29':
-    resolution: {integrity: sha512-oXoFnvBhqdvUD07ntIk51cT93lp2mJL41EyoQP1ZNP30Fe2RMPTm/tc7vymqotI+PZVEhyEgfPRpr9UbaQHAzA==}
+  '@eloqnt/sdk@0.6.30':
+    resolution: {integrity: sha512-70XQNKOH1VlvFpv+dy1aksVeH77GFzS2xhWk6rrWBTFXs3G3Tei2EcEGFVBVh0RVmoBEVPko/ymWWTL+T8KqOg==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -6601,10 +6601,10 @@ snapshots:
       '@effect/rpc': 0.76.2(@effect/platform@0.97.1(effect@3.22.2))(effect@3.22.2)
       effect: 3.22.2
 
-  '@eloqnt/cli@0.6.31(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.6.32(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.6.29(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.6.30(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.0
       picocolors: 1.1.1
@@ -6622,7 +6622,7 @@ snapshots:
       '@eloqnt/config': 0.1.0
       po-parser: 2.2.0
 
-  '@eloqnt/sdk@0.6.29(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.6.30(@swc/helpers@0.5.23)':
     dependencies:
       '@eloqnt/config': 0.1.0
       '@eloqnt/format-json': 0.1.0
