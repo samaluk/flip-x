@@ -22,5 +22,12 @@ trustPolicy: no-downgrade
 # semver@6.3.1 is the standard CVE-2022-25883 backport (published 2023 without
 # provenance, unlike 6.3.0); the no-downgrade policy reads that age gap as a
 # possible takeover, so pin the exception to the exact vetted version.
+# why-is-node-running@3.2.2 is the Vitest 5.0.2 transitive requirement
+# (vitest declares ^3.2.1): legitimate maintainer handoff from mafintosh to
+# veteran account jkoops (member since 2010), who modernized the package
+# (ESM, zero deps, provenance on 3.2.x) across PRs #66-#83 with 75M+ weekly
+# downloads. The no-downgrade policy reads the publisher change as a possible
+# takeover, so pin the exception to the exact vetted version.
 trustPolicyExclude:
   - "semver@6.3.1"
+  - "why-is-node-running@3.2.2"
