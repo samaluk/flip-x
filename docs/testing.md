@@ -87,6 +87,13 @@ This suite is destructive for its target deployment. The wrapper clears all app 
 - Owns: critical browser journeys (create/join/start/hit, join-by-code seat claim) and instant-navigation shell regressions (`e2e/instant-navigation.spec.ts`, #487).
 - Delete duplicate coverage when it tests game rules better covered by engine or Confect tests.
 
+CI and deployment-backed E2E runs launch Next.js directly with Node so Playwright
+can stop the entire server process group. Do not wrap that `webServer.command`
+in `pnpm run` or `pnpm exec`: pnpm 12.6.0 isolates the child process group,
+leaving Next.js alive and Playwright waiting on its output pipes during teardown
+([pnpm#15555](https://github.com/pnpm/pnpm/issues/15555)). CI prints individual
+test results as well as GitHub annotations, and bounds the E2E step to 15 minutes.
+
 ## Backend and E2E: local vs preview
 
 [`scripts/convex-preview-test.sh`](scripts/convex-preview-test.sh) prepares the deployment and runs your command (Vitest or Playwright).

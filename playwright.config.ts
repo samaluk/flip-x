@@ -64,7 +64,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: 0,
   workers: 1,
-  reporter: process.env.CI ? "github" : "list",
+  reporter: process.env.CI ? [["list"], ["github"]] : "list",
   use: {
     baseURL: e2eBaseUrl,
     trace: "retain-on-failure",
@@ -73,8 +73,11 @@ export default defineConfig({
   },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
+    // pnpm 12.6 puts scripts in a separate process group, so Playwright's
+    // SIGKILL leaves Next.js alive with open output pipes and hangs teardown.
+    // Launch Next directly so Playwright owns its process group (pnpm/pnpm#15555).
     command: useDedicatedE2eServer
-      ? `node scripts/stop-next-dev.mjs && pnpm dev:app --port ${e2ePort}`
+      ? `node scripts/stop-next-dev.mjs && node node_modules/next/dist/bin/next dev --port ${e2ePort}`
       : `node scripts/stop-next-dev.mjs && pnpm dev`,
     url: e2eBaseUrl,
     reuseExistingServer: !process.env.CI && !convexUrlFromPreviewCmd,

@@ -145,4 +145,7 @@ jobs:
         run: pnpm test:backend
 
       - name: Run E2E (Convex preview)
+        # Four tests have a three-minute budget each. Leave time for deployment
+        # and server startup, but do not spend the full hour on a teardown hang.
+        timeout-minutes: 15
         run: pnpm test:e2e
