@@ -79,7 +79,7 @@
   "devDependencies": {
     "@confect/cli": "9.4.4",
     "@confect/test": "9.4.4",
-    "@effect/vitest": "0.30.0",
+    "@effect/vitest": "4.0.0",
     "@eloqnt/cli": "0.6.33",
     "@google/design.md": "0.4.0",
     "@next/playwright": "16.3.8",

@@ -255,8 +255,8 @@ importers:
         specifier: 9.4.4
         version: 9.4.4(@confect/core@9.4.4(convex@1.46.0(react@19.3.0))(effect@3.22.2))(@confect/server@9.4.4(cc03f59346a274765c2abf9619843b51))(convex-test@0.0.60(convex@1.46.0(react@19.3.0)))(convex@1.46.0(react@19.3.0))(effect@3.22.2)
       '@effect/vitest':
-        specifier: 0.30.0
-        version: 0.30.0(effect@3.22.2)(vitest@5.0.3)
+        specifier: 4.0.0
+        version: 4.0.0(effect@3.22.2)(vitest@5.0.3)
       '@eloqnt/cli':
         specifier: 0.6.33
         version: 0.6.33(@swc/helpers@0.5.23)
@@ -787,11 +787,11 @@ packages:
     peerDependencies:
       effect: ^3.22.0
 
-  '@effect/vitest@0.30.0':
-    resolution: {integrity: sha512-2qcK7F4XSwOn7Ye9vgEkrndHiiHVf9Nl+U5jvvLBKeYx4+8++O5Y8RFezaQzs/rWx8GkdlStv/s+HYMHZ/2/AQ==}
+  '@effect/vitest@4.0.0':
+    resolution: {integrity: sha512-kGElCPFGtP+CgMCwV/HjJWqtE3zYo6I1+8MSA54l+EI24lPU9p2Efa+TBp1jfkg9j711KKzEqgSAy3VzTsb76Q==}
     peerDependencies:
-      effect: ^3.22.0
-      vitest: ^3.2.0
+      effect: ^4.0.0
+      vitest: '>=5.0.0 <6.0.0'
 
   '@effect/workflow@0.19.1':
     resolution: {integrity: sha512-irU6ddHdIxYOhv0cJiJTk2AUxRmPYjRJ5JdB5UCvpJC4vLCyR2XyKspiCNDiEX1aSGPhVWEXhVMWXR1cErMS3A==}
@@ -6565,7 +6565,7 @@ snapshots:
     dependencies:
       effect: 3.22.2
 
-  '@effect/vitest@0.30.0(effect@3.22.2)(vitest@5.0.3)':
+  '@effect/vitest@4.0.0(effect@3.22.2)(vitest@5.0.3)':
     dependencies:
       effect: 3.22.2
       vitest: 5.0.3(@opentelemetry/api@1.9.1)(@types/node@24.19.0)(@vitest/browser-playwright@5.0.3)(@vitest/coverage-v8@5.0.3)(@vitest/ui@5.0.3)(jsdom@30.1.1(@noble/hashes@1.8.0))(msw@2.13.2(@types/node@24.19.0)(typescript@7.0.2))(vite@8.0.8(@types/node@24.19.0)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
