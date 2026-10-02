@@ -32,6 +32,14 @@
   ],
   "packageRules": [
     {
+      "description": "Keep Effect and its Confect integration on compatible versions",
+      "matchPackageNames": ["effect", "@effect/*", "@confect/*"],
+      "groupName": "Effect and Confect",
+      "groupSlug": "effect-confect",
+      "groupSingleUpdates": true,
+      "separateMajorMinor": false
+    },
+    {
       "description": "Keep engines.node and devEngines.runtime.version together",
       "matchPackageNames": ["node"],
       "groupName": "Node",
