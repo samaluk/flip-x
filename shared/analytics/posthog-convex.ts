@@ -1,11 +1,11 @@
 import { Effect, Layer } from "effect";
 
-import type { MutationCtx } from "../../convex/_generated/server";
+import { env, type MutationCtx } from "../../convex/_generated/server";
 import { posthog } from "../../confect/lib/posthog";
 import { AnalyticsSink } from "./service";
 
 export function makePostHogConvexAnalyticsLayer(ctx: MutationCtx): Layer.Layer<AnalyticsSink> {
-  const enabled = Boolean(process.env.POSTHOG_PROJECT_TOKEN);
+  const enabled = Boolean(env.POSTHOG_PROJECT_TOKEN);
 
   return Layer.succeed(AnalyticsSink, {
     capture: (event) =>

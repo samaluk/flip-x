@@ -13,7 +13,7 @@ import {
   TARGET_SCORE_OPTIONS,
 } from "@/game/logic/game-settings";
 import type { MatchSnapshot } from "@/game/logic/view-models";
-import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
+import { toastResultMutationFailure } from "@/shared/lib/result-mutation-toast";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import {
@@ -74,7 +74,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
 
   function updateSettings(patch: SettingsPatch) {
     startTransition(async () => {
-      await toastEitherMutationFailure(
+      await toastResultMutationFailure(
         updateMatchSettings({
           matchId: snapshot.matchId,
           expectedVersion: snapshot.version,

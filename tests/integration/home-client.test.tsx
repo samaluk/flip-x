@@ -1,6 +1,6 @@
 import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import * as Either from "effect/Either";
+import * as Result from "effect/Result";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useState } from "react";
 
@@ -92,7 +92,7 @@ describe("HomeClient", () => {
   });
 
   it("renders default create game flow and handles successful creation", async () => {
-    mockCreateMatch.mockResolvedValue(Either.right({ matchId: "match-123" }));
+    mockCreateMatch.mockResolvedValue(Result.succeed({ matchId: "match-123" }));
 
     render(withIntlEn(<HomeClient />));
 
@@ -121,9 +121,9 @@ describe("HomeClient", () => {
 
   it("switches to join flow, executes lookup then join, and navigates", async () => {
     mockJoinByCode.mockResolvedValue(
-      Either.right({ matchId: "match-join-456", lobbyCode: "JOIN" }),
+      Result.succeed({ matchId: "match-join-456", lobbyCode: "JOIN" }),
     );
-    mockJoinMatch.mockResolvedValue(Either.right({ matchId: "match-join-456" }));
+    mockJoinMatch.mockResolvedValue(Result.succeed({ matchId: "match-join-456" }));
 
     render(withIntlEn(<HomeClient />));
 
@@ -218,7 +218,7 @@ describe("HomeClient", () => {
   });
 
   it("translates domain errors returned from create mutation", async () => {
-    mockCreateMatch.mockResolvedValue(Either.left(nameAlreadyTaken({ name: "Alex" })));
+    mockCreateMatch.mockResolvedValue(Result.fail(nameAlreadyTaken({ name: "Alex" })));
 
     render(withIntlEn(<HomeClient />));
 
@@ -234,7 +234,7 @@ describe("HomeClient", () => {
   });
 
   it("translates domain errors returned from joinByCode mutation", async () => {
-    mockJoinByCode.mockResolvedValue(Either.left(lobbyNotFound()));
+    mockJoinByCode.mockResolvedValue(Result.fail(lobbyNotFound()));
 
     render(withIntlEn(<HomeClient />));
 
@@ -256,8 +256,8 @@ describe("HomeClient", () => {
   });
 
   it("translates domain errors returned from joinMatch mutation", async () => {
-    mockJoinByCode.mockResolvedValue(Either.right({ matchId: "match-1", lobbyCode: "GAME" }));
-    mockJoinMatch.mockResolvedValue(Either.left(nameAlreadyTaken({ name: "Alex" })));
+    mockJoinByCode.mockResolvedValue(Result.succeed({ matchId: "match-1", lobbyCode: "GAME" }));
+    mockJoinMatch.mockResolvedValue(Result.fail(nameAlreadyTaken({ name: "Alex" })));
 
     render(withIntlEn(<HomeClient />));
 

@@ -12,25 +12,23 @@ const CommandMetadata = {
 
 const takeTurn = FunctionSpec.publicMutation({
   name: "takeTurn",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      matchId: Schema.String,
-      ...CommandMetadata,
-      action: Schema.Literal("hit", "stay"),
-    }),
+  args: () => ({
+    ...SessionIdField,
+    matchId: Schema.String,
+    ...CommandMetadata,
+    action: Schema.Literals(["hit", "stay"]),
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });
 const resolveAction = FunctionSpec.publicMutation({
   name: "resolveAction",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      matchId: Schema.String,
-      ...CommandMetadata,
-      targetPlayerId: Schema.String,
-    }),
+  args: () => ({
+    ...SessionIdField,
+    matchId: Schema.String,
+    ...CommandMetadata,
+    targetPlayerId: Schema.String,
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });

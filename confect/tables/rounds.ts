@@ -8,20 +8,20 @@ export default Table.make(() =>
   Schema.Struct({
     matchId: Id("matches"),
     roundNumber: Schema.Number,
-    phase: Schema.Literal("dealing", "player_turns", "resolving_action", "scoring", "completed"),
+    phase: Schema.Literals(["dealing", "player_turns", "resolving_action", "scoring", "completed"]),
     dealerSeat: Schema.Number,
     activePlayerId: Schema.optional(Id("players")),
     drawPile: Schema.Array(CardValue),
     discardPile: Schema.Array(CardValue),
     openingSeatIndex: Schema.Number,
     turnSeatIndex: Schema.Number,
-    endedBy: Schema.Literal("all_inactive", "flip7", "unknown"),
+    endedBy: Schema.Literals(["all_inactive", "flip7", "unknown"]),
     pendingAction: Schema.optional(
       Schema.Struct({
         sourcePlayerId: Id("players"),
-        actionKind: Schema.Literal("flip_three", "freeze"),
+        actionKind: Schema.Literals(["flip_three", "freeze"]),
         eligibleTargetIds: Schema.Array(Id("players")),
-        resume: Schema.Literal("dealing", "turns"),
+        resume: Schema.Literals(["dealing", "turns"]),
       }),
     ),
     pendingFlip3: Schema.optional(

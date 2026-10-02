@@ -33,8 +33,8 @@ import {
   DatabaseWriter as DatabaseWriterService,
 } from "./_generated/services";
 
-type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
-type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
+type DatabaseReader = Effect.Success<typeof DatabaseReaderService>;
+type DatabaseWriter = Effect.Success<typeof DatabaseWriterService>;
 
 function normalizePlayerColorId(colorId: string | undefined, takenColorIds: string[]) {
   return Effect.gen(function* () {

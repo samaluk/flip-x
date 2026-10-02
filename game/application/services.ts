@@ -17,21 +17,21 @@ import {
 import type { MatchSnapshot } from "../logic/view-models";
 import type { GameCommand } from "./game-command";
 
-export class MatchAggregateStore extends Context.Tag("MatchAggregateStore")<
+export class MatchAggregateStore extends Context.Service<
   MatchAggregateStore,
   {
     load: (matchId: Id<"matches">, sessionId: SessionId) => Effect.Effect<MatchAggregate, AppError>;
   }
->() {}
+>()("MatchAggregateStore") {}
 
-export class CommandResultStore extends Context.Tag("CommandResultStore")<
+export class CommandResultStore extends Context.Service<
   CommandResultStore,
   {
     save: (input: SaveCommandResultInput) => Effect.Effect<void, AppError>;
   }
->() {}
+>()("CommandResultStore") {}
 
-export class MatchSnapshotStore extends Context.Tag("MatchSnapshotStore")<
+export class MatchSnapshotStore extends Context.Service<
   MatchSnapshotStore,
   {
     buildLatest: (
@@ -39,9 +39,9 @@ export class MatchSnapshotStore extends Context.Tag("MatchSnapshotStore")<
       sessionId: SessionId,
     ) => Effect.Effect<MatchSnapshot | null, AppError>;
   }
->() {}
+>()("MatchSnapshotStore") {}
 
-export class IdempotencyStore extends Context.Tag("IdempotencyStore")<
+export class IdempotencyStore extends Context.Service<
   IdempotencyStore,
   {
     get: (
@@ -58,14 +58,14 @@ export class IdempotencyStore extends Context.Tag("IdempotencyStore")<
       nowMillis: number,
     ) => Effect.Effect<void, AppError>;
   }
->() {}
+>()("IdempotencyStore") {}
 
-export class AppClock extends Context.Tag("AppClock")<
+export class AppClock extends Context.Service<
   AppClock,
   {
     nowMillis: Effect.Effect<number>;
   }
->() {}
+>()("AppClock") {}
 
 export type RunGameCommandServices =
   | MatchAggregateStore

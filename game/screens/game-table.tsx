@@ -1,6 +1,6 @@
 "use client";
 
-import * as Either from "effect/Either";
+import * as Result from "effect/Result";
 import { useTransition } from "react";
 
 import refs from "@/confect/_generated/refs";
@@ -12,7 +12,7 @@ import {
 } from "@/shared/lib/confect-hooks";
 import type { AppError } from "@/shared/lib/errors/domain";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
-import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
+import { toastResultMutationFailure } from "@/shared/lib/result-mutation-toast";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 type TakeTurnArgs = {
@@ -74,11 +74,11 @@ export function GameTable({ snapshot }: { snapshot: MatchSnapshot }) {
   const { gameActionFailed, translateToast: translateError } = useAppErrors();
   const [isPending, startTransition] = useTransition();
 
-  function runMutation(action: () => Promise<Either.Either<unknown, AppError>>) {
+  function runMutation(action: () => Promise<Result.Result<unknown, AppError>>) {
     const result = action();
 
     startTransition(async () => {
-      await toastEitherMutationFailure(result, {
+      await toastResultMutationFailure(result, {
         missingMessage: gameActionFailed,
         translateError,
       });

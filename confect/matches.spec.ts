@@ -24,28 +24,26 @@ const GameSettingsPatch = Schema.Struct({
 const MatchLookupResult = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.String,
-  status: Schema.Literal("setup", "in_progress"),
+  status: Schema.Literals(["setup", "in_progress"]),
   usedColorIds: Schema.Array(Schema.String),
 });
 
 const getMatchByCode = FunctionSpec.publicQuery({
   name: "getMatchByCode",
-  args: () =>
-    Schema.Struct({
-      lobbyCode: Schema.String,
-    }),
-  returns: () => Schema.Union(Schema.Null, MatchLookupResult),
+  args: () => ({
+    lobbyCode: Schema.String,
+  }),
+  returns: () => Schema.Union([Schema.Null, MatchLookupResult]),
   error: () => AppErrorSchema,
 });
 
 const createMatch = FunctionSpec.publicMutation({
   name: "createMatch",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      hostName: Schema.String,
-      hostColorId: Schema.optional(Schema.String),
-    }),
+  args: () => ({
+    ...SessionIdField,
+    hostName: Schema.String,
+    hostColorId: Schema.optional(Schema.String),
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });
@@ -53,11 +51,10 @@ const getMatchSnapshotSpec =
   FunctionSpec.convexPublicQuery<typeof getMatchSnapshot>()("getMatchSnapshot");
 const joinByCode = FunctionSpec.publicMutation({
   name: "joinByCode",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      lobbyCode: Schema.String,
-    }),
+  args: () => ({
+    ...SessionIdField,
+    lobbyCode: Schema.String,
+  }),
   returns: () =>
     Schema.Struct({
       matchId: Schema.String,
@@ -67,37 +64,34 @@ const joinByCode = FunctionSpec.publicMutation({
 });
 const joinMatch = FunctionSpec.publicMutation({
   name: "joinMatch",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      matchId: Schema.String,
-      playerName: Schema.String,
-      playerColorId: Schema.optional(Schema.String),
-    }),
+  args: () => ({
+    ...SessionIdField,
+    matchId: Schema.String,
+    playerName: Schema.String,
+    playerColorId: Schema.optional(Schema.String),
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });
 const startMatch = FunctionSpec.publicMutation({
   name: "startMatch",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      matchId: Schema.String,
-      ...CommandMetadata,
-      deterministicStart: Schema.optional(DeterministicStartOptions),
-    }),
+  args: () => ({
+    ...SessionIdField,
+    matchId: Schema.String,
+    ...CommandMetadata,
+    deterministicStart: Schema.optional(DeterministicStartOptions),
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });
 const updateMatchSettings = FunctionSpec.publicMutation({
   name: "updateMatchSettings",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      matchId: Schema.String,
-      ...VersionMetadata,
-      patch: GameSettingsPatch,
-    }),
+  args: () => ({
+    ...SessionIdField,
+    matchId: Schema.String,
+    ...VersionMetadata,
+    patch: GameSettingsPatch,
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });

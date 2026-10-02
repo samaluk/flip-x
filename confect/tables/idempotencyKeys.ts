@@ -7,7 +7,12 @@ export default Table.make(() =>
   Schema.Struct({
     matchId: Id("matches"),
     idempotencyKey: Schema.String,
-    commandType: Schema.Literal("START_MATCH", "START_NEXT_ROUND", "TAKE_TURN", "RESOLVE_ACTION"),
+    commandType: Schema.Literals([
+      "START_MATCH",
+      "START_NEXT_ROUND",
+      "TAKE_TURN",
+      "RESOLVE_ACTION",
+    ]),
     commandResult: Schema.Any,
     expiresAt: Schema.Number,
     createdAt: Schema.Number,

@@ -8,7 +8,7 @@ export default Table.make(() =>
   Schema.Struct({
     roundId: Id("rounds"),
     playerId: Id("players"),
-    status: Schema.Literal("waiting", "active", "stayed", "busted", "frozen", "completed"),
+    status: Schema.Literals(["waiting", "active", "stayed", "busted", "frozen", "completed"]),
     numberCards: Schema.Array(CardValue),
     modifierCards: Schema.Array(CardValue),
     heldActionCards: Schema.Array(CardValue),

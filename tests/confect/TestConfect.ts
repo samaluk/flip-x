@@ -5,7 +5,6 @@ import type { TestConvexForDataModel, TestConvexForDataModelAndIdentity } from "
 import { convexTest } from "convex-test";
 import type { GenericMutationCtx, UserIdentity } from "convex/server";
 import type { Value } from "convex/values";
-import type { ParseResult } from "effect";
 import { Context, Effect, Layer, Schema } from "effect";
 
 import convexSchema from "../../confect/_generated/convexSchema";
@@ -25,23 +24,23 @@ type TestConfectWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWithProp
   query: <QueryRef extends Ref.AnyQuery>(
     queryRef: QueryRef,
     args: Ref.Args<QueryRef>,
-  ) => Effect.Effect<Ref.Returns<QueryRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<QueryRef>, Ref.Error<QueryRef> | Schema.SchemaError>;
   mutation: <MutationRef extends Ref.AnyMutation>(
     mutationRef: MutationRef,
     args: Ref.Args<MutationRef>,
-  ) => Effect.Effect<Ref.Returns<MutationRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<MutationRef>, Ref.Error<MutationRef> | Schema.SchemaError>;
   action: <ActionRef extends Ref.AnyAction>(
     actionRef: ActionRef,
     args: Ref.Args<ActionRef>,
-  ) => Effect.Effect<Ref.Returns<ActionRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<ActionRef>, Ref.Error<ActionRef> | Schema.SchemaError>;
   run: {
     <E>(
       handler: Effect.Effect<void, E, RegisteredConvexFunction.MutationServices<ConfectSchema>>,
     ): Effect.Effect<void>;
     <A, B extends Value, E>(
       handler: Effect.Effect<A, E, RegisteredConvexFunction.MutationServices<ConfectSchema>>,
-      returns: Schema.Schema<A, B>,
-    ): Effect.Effect<A, ParseResult.ParseError>;
+      returns: Schema.Codec<A, B>,
+    ): Effect.Effect<A, Schema.SchemaError>;
   };
   fetch: (pathQueryFragment: string, init?: RequestInit) => Effect.Effect<Response>;
   finishInProgressScheduledFunctions: () => Effect.Effect<void>;
@@ -52,7 +51,7 @@ type TestConfectService<ConfectSchema extends DatabaseSchema.AnyWithProps> = {
   withIdentity: (userIdentity: Partial<UserIdentity>) => TestConfectWithoutIdentity<ConfectSchema>;
 } & TestConfectWithoutIdentity<ConfectSchema>;
 
-export const TestConfect = Context.GenericTag<TestConfectService<typeof confectSchema>>(
+export const TestConfect = Context.Service<TestConfectService<typeof confectSchema>>(
   "@/tests/confect/TestConfect",
 );
 
@@ -69,7 +68,7 @@ class TestConfectImplWithoutIdentity<
   readonly query = <QueryRef extends Ref.AnyQuery>(queryRef: QueryRef, args: Ref.Args<QueryRef>) =>
     Ref.runWithCodec(queryRef, args, (functionReference, encodedArgs) =>
       (this.testConvex.query as any)(functionReference, encodedArgs),
-    ) as Effect.Effect<Ref.Returns<QueryRef>, ParseResult.ParseError>;
+    );
 
   readonly mutation = <MutationRef extends Ref.AnyMutation>(
     mutationRef: MutationRef,
@@ -77,7 +76,7 @@ class TestConfectImplWithoutIdentity<
   ) =>
     Ref.runWithCodec(mutationRef, args, (functionReference, encodedArgs) =>
       (this.testConvex.mutation as any)(functionReference, encodedArgs),
-    ) as Effect.Effect<Ref.Returns<MutationRef>, ParseResult.ParseError>;
+    );
 
   readonly action = <ActionRef extends Ref.AnyAction>(
     actionRef: ActionRef,
@@ -85,11 +84,11 @@ class TestConfectImplWithoutIdentity<
   ) =>
     Ref.runWithCodec(actionRef, args, (functionReference, encodedArgs) =>
       (this.testConvex.action as any)(functionReference, encodedArgs),
-    ) as Effect.Effect<Ref.Returns<ActionRef>, ParseResult.ParseError>;
+    );
 
   readonly run: TestConfectWithoutIdentity<ConfectSchema>["run"] = (<A, B extends Value, E>(
     handler: Effect.Effect<A, E, RegisteredConvexFunction.MutationServices<ConfectSchema>>,
-    returns?: Schema.Schema<A, B>,
+    returns?: Schema.Codec<A, B>,
   ) => {
     const makeMutationLayer = (
       mutationCtx: GenericMutationCtx<DataModel.ToConvex<DataModel.FromSchema<ConfectSchema>>>,
@@ -110,12 +109,12 @@ class TestConfectImplWithoutIdentity<
           this.testConvex.run((mutationCtx) =>
             Effect.runPromise(
               handler.pipe(
-                Effect.andThen(Schema.encode(returns)),
+                Effect.andThen(Schema.encodeEffect(returns)),
                 Effect.provide(makeMutationLayer(mutationCtx)),
               ),
             ),
           ),
-        ).pipe(Effect.andThen(Schema.decode(returns)));
+        ).pipe(Effect.andThen(Schema.decodeEffect(returns)));
   }) as TestConfectWithoutIdentity<ConfectSchema>["run"];
 
   readonly fetch = (pathQueryFragment: string, init?: RequestInit) =>

@@ -1,6 +1,6 @@
 import type { Ref } from "@confect/core";
 import refs from "@/confect/_generated/refs";
-import { Effect, type ParseResult } from "effect";
+import { Effect, type Schema } from "effect";
 
 import {
   classifyRoundBoundaryAdvanceStepOrThrow,
@@ -13,11 +13,11 @@ export type TestClient = {
   mutation: <MutationRef extends Ref.AnyMutation>(
     mutationRef: MutationRef,
     args: Ref.Args<MutationRef>,
-  ) => Effect.Effect<Ref.Returns<MutationRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<MutationRef>, Ref.Error<MutationRef> | Schema.SchemaError>;
   query: <QueryRef extends Ref.AnyQuery>(
     queryRef: QueryRef,
     args: Ref.Args<QueryRef>,
-  ) => Effect.Effect<Ref.Returns<QueryRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<QueryRef>, Ref.Error<QueryRef> | Schema.SchemaError>;
 };
 
 /** Minimal harness for divergence scenarios (no round advancement). */

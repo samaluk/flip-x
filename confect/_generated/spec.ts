@@ -7,14 +7,14 @@ import rounds from "../rounds.spec";
 import settings from "../settings.spec";
 import turns from "../turns.spec";
 
-const spec: Spec.Spec<
-  | GroupSpec.NamedAt<typeof admin, "admin">
-  | GroupSpec.NamedAt<typeof matches, "matches">
-  | GroupSpec.NamedAt<typeof migrations, "migrations">
-  | GroupSpec.NamedAt<typeof presence, "presence">
-  | GroupSpec.NamedAt<typeof rounds, "rounds">
-  | GroupSpec.NamedAt<typeof settings, "settings">
-  | GroupSpec.NamedAt<typeof turns, "turns">
-> = Spec.make().addAt("admin", admin).addAt("matches", matches).addAt("migrations", migrations).addAt("presence", presence).addAt("rounds", rounds).addAt("settings", settings).addAt("turns", turns);
+const spec: Spec.Spec<{
+  readonly admin: GroupSpec.NamedAt<typeof admin, "admin">;
+  readonly matches: GroupSpec.NamedAt<typeof matches, "matches">;
+  readonly migrations: GroupSpec.NamedAt<typeof migrations, "migrations">;
+  readonly presence: GroupSpec.NamedAt<typeof presence, "presence">;
+  readonly rounds: GroupSpec.NamedAt<typeof rounds, "rounds">;
+  readonly settings: GroupSpec.NamedAt<typeof settings, "settings">;
+  readonly turns: GroupSpec.NamedAt<typeof turns, "turns">;
+}> = Spec.make().addAt("admin", admin).addAt("matches", matches).addAt("migrations", migrations).addAt("presence", presence).addAt("rounds", rounds).addAt("settings", settings).addAt("turns", turns);
 
 export default spec;

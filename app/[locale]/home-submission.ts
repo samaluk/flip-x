@@ -1,4 +1,4 @@
-import * as Either from "effect/Either";
+import * as Result from "effect/Result";
 import { toast } from "sonner";
 
 import type { PlayerColorId } from "@/shared/lib/player-colors";
@@ -16,7 +16,7 @@ export interface ExecuteMatchSubmissionOptions<T extends { matchId: string }> {
   getPlayerNameIssueToast: (issue: TrimmedPlayerNameIssue) => string;
   translateError: (error: AppError) => string;
   onSuccess: (matchId: string) => void;
-  perform: (trimmedName: string) => Promise<Either.Either<T, AppError>>;
+  perform: (trimmedName: string) => Promise<Result.Result<T, AppError>>;
   getFallbackErrorToast: () => string;
 }
 
@@ -48,12 +48,12 @@ export async function executeMatchSubmission<T extends { matchId: string }>({
 
   try {
     const result = await perform(trimmedName);
-    if (Either.isLeft(result)) {
-      toast.error(translateError(result.left));
+    if (Result.isFailure(result)) {
+      toast.error(translateError(result.failure));
       return;
     }
 
-    onSuccess(result.right.matchId);
+    onSuccess(result.success.matchId);
   } catch {
     toast.error(getFallbackErrorToast());
   } finally {
@@ -70,29 +70,29 @@ export async function performHomeJoinByCode({
 }: {
   joinByCode: (args: {
     lobbyCode: string;
-  }) => Promise<Either.Either<{ matchId: string }, AppError>>;
+  }) => Promise<Result.Result<{ matchId: string }, AppError>>;
   joinMatch: (args: {
     matchId: string;
     playerName: string;
     playerColorId: PlayerColorId;
-  }) => Promise<Either.Either<{ matchId: string }, AppError>>;
+  }) => Promise<Result.Result<{ matchId: string }, AppError>>;
   lobbyCode: string;
   playerName: string;
   playerColorId: PlayerColorId;
-}): Promise<Either.Either<{ matchId: string }, AppError>> {
+}): Promise<Result.Result<{ matchId: string }, AppError>> {
   const lookup = await joinByCode({
     lobbyCode: lobbyCode.toUpperCase(),
   });
-  if (Either.isLeft(lookup)) {
+  if (Result.isFailure(lookup)) {
     return lookup;
   }
   const joined = await joinMatch({
-    matchId: lookup.right.matchId,
+    matchId: lookup.success.matchId,
     playerName,
     playerColorId,
   });
-  if (Either.isLeft(joined)) {
+  if (Result.isFailure(joined)) {
     return joined;
   }
-  return Either.right({ matchId: lookup.right.matchId });
+  return Result.succeed({ matchId: lookup.success.matchId });
 }

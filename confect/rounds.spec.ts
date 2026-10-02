@@ -13,13 +13,12 @@ const CommandMetadata = {
 
 const startNextRound = FunctionSpec.publicMutation({
   name: "startNextRound",
-  args: () =>
-    Schema.Struct({
-      ...SessionIdField,
-      matchId: Schema.String,
-      ...CommandMetadata,
-      deterministicStart: Schema.optional(DeterministicStartOptions),
-    }),
+  args: () => ({
+    ...SessionIdField,
+    matchId: Schema.String,
+    ...CommandMetadata,
+    deterministicStart: Schema.optional(DeterministicStartOptions),
+  }),
   returns: () => MatchSnapshot,
   error: () => AppErrorSchema,
 });

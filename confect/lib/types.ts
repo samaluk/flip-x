@@ -6,6 +6,6 @@ import {
   DatabaseWriter as DatabaseWriterService,
 } from "../_generated/services";
 
-export type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
-export type DatabaseWriter = Effect.Effect.Success<typeof DatabaseWriterService>;
+export type DatabaseReader = Effect.Success<typeof DatabaseReaderService>;
+export type DatabaseWriter = Effect.Success<typeof DatabaseWriterService>;
 export type Ctx = QueryCtx | MutationCtx;

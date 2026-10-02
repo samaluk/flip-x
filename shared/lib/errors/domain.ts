@@ -151,7 +151,7 @@ export class InvalidConfirmation extends Schema.TaggedError<InvalidConfirmation>
   { message: Schema.String },
 ) {}
 
-export const AppErrorSchema = Schema.Union(
+export const AppErrorSchema = Schema.Union([
   MatchNotFound,
   InvalidTurn,
   InvalidAction,
@@ -173,9 +173,9 @@ export const AppErrorSchema = Schema.Union(
   UnsupportedRelationship,
   UnsupportedTable,
   InvalidConfirmation,
-);
+]);
 
-export type AppError = Schema.Schema.Type<typeof AppErrorSchema>;
+export type AppError = (typeof AppErrorSchema)["Type"];
 
 const isAppError = Schema.is(AppErrorSchema);
 
@@ -183,7 +183,7 @@ export function retainAppErrors<A, E, R>(
   effect: Effect.Effect<A, E, R>,
 ): Effect.Effect<A, AppError, R> {
   return effect.pipe(
-    Effect.catchAll((error) => (isAppError(error) ? Effect.fail(error) : Effect.die(error))),
+    Effect.catch((error) => (isAppError(error) ? Effect.fail(error) : Effect.die(error))),
   );
 }
 
