@@ -13,11 +13,11 @@ export type TestClient = {
   mutation: <MutationRef extends Ref.AnyMutation>(
     mutationRef: MutationRef,
     args: Ref.Args<MutationRef>,
-  ) => Effect.Effect<Ref.Returns<MutationRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<MutationRef>, Ref.Error<MutationRef> | ParseResult.ParseError>;
   query: <QueryRef extends Ref.AnyQuery>(
     queryRef: QueryRef,
     args: Ref.Args<QueryRef>,
-  ) => Effect.Effect<Ref.Returns<QueryRef>, ParseResult.ParseError>;
+  ) => Effect.Effect<Ref.Returns<QueryRef>, Ref.Error<QueryRef> | ParseResult.ParseError>;
 };
 
 /** Minimal harness for divergence scenarios (no round advancement). */
