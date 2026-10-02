@@ -2,12 +2,13 @@ import { FunctionImpl, GroupImpl } from "@confect/server";
 import * as Config from "effect/Config";
 import * as Effect from "effect/Effect";
 import * as Layer from "effect/Layer";
+import * as Schema from "effect/Schema";
 
 import databaseSchema from "./_generated/schema";
 import groupSpec from "./settings.spec";
 
 const getRuntimeConfig = FunctionImpl.make(databaseSchema, groupSpec, "getRuntimeConfig", () =>
-  Config.integer("MATCH_TARGET_SCORE").pipe(
+  Config.schema(Schema.Int, "MATCH_TARGET_SCORE").pipe(
     Config.withDefault(200),
     Effect.map((matchTargetScore) => ({ matchTargetScore })),
     Effect.orDie,

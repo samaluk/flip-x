@@ -1,7 +1,7 @@
 import { FunctionSpec, GroupSpec } from "@confect/core";
 import * as Schema from "effect/Schema";
 
-const EmptyArgs = Schema.Struct({});
+const EmptyArgs = {};
 
 const CleanupCounters = Schema.Struct({
   idempotencyKeys: Schema.Number,
@@ -20,7 +20,7 @@ const ClearAllAppDataResult = Schema.Struct({
   deleted: CleanupCounters,
 });
 
-const RateLimitKey = Schema.Literal("createMatch", "joinByCode", "joinMatch", "startMatch");
+const RateLimitKey = Schema.Literals(["createMatch", "joinByCode", "joinMatch", "startMatch"]);
 
 const listMatchIds = FunctionSpec.internalQuery({
   name: "listMatchIds",
@@ -34,38 +34,34 @@ const listSessionIds = FunctionSpec.internalQuery({
 });
 const resolveDependents = FunctionSpec.internalQuery({
   name: "resolveDependents",
-  args: () =>
-    Schema.Struct({
-      sourceTable: Schema.String,
-      parentTable: Schema.String,
-      parentId: Schema.String,
-    }),
+  args: () => ({
+    sourceTable: Schema.String,
+    parentTable: Schema.String,
+    parentId: Schema.String,
+  }),
   returns: () => Schema.Array(Schema.String),
 });
 const deleteDocument = FunctionSpec.internalMutation({
   name: "deleteDocument",
-  args: () =>
-    Schema.Struct({
-      table: Schema.String,
-      id: Schema.optional(Schema.String),
-    }),
+  args: () => ({
+    table: Schema.String,
+    id: Schema.optional(Schema.String),
+  }),
   returns: () => Schema.Number,
 });
 const removePresenceRoom = FunctionSpec.internalMutation({
   name: "removePresenceRoom",
-  args: () =>
-    Schema.Struct({
-      matchId: Schema.String,
-    }),
+  args: () => ({
+    matchId: Schema.String,
+  }),
   returns: () => Schema.Null,
 });
 const resetRateLimit = FunctionSpec.internalMutation({
   name: "resetRateLimit",
-  args: () =>
-    Schema.Struct({
-      sessionId: Schema.String,
-      key: RateLimitKey,
-    }),
+  args: () => ({
+    sessionId: Schema.String,
+    key: RateLimitKey,
+  }),
   returns: () => Schema.Null,
 });
 const clearAllAppDataViaCli = FunctionSpec.internalMutation({

@@ -23,7 +23,7 @@ import {
   DatabaseWriter as DatabaseWriterService,
 } from "./_generated/services";
 
-type DatabaseReader = Effect.Effect.Success<typeof DatabaseReaderService>;
+type DatabaseReader = Effect.Success<typeof DatabaseReaderService>;
 
 function requireSetupMatchForSettings(match: Doc<"matches"> | null, matchId: Id<"matches">) {
   return Effect.gen(function* () {

@@ -2,7 +2,7 @@ import * as Schema from "effect/Schema";
 
 import { ActionKind, ModifierCard, NumberCard } from "./card-value-schema";
 
-const PendingActionKind = Schema.Literal("flip_three", "freeze");
+const PendingActionKind = Schema.Literals(["flip_three", "freeze"]);
 
 const ActionCardSummary = Schema.Struct({
   label: Schema.String,
@@ -22,7 +22,7 @@ const PendingAction = Schema.Struct({
   sourcePlayerId: Schema.String,
   actionKind: PendingActionKind,
   eligibleTargetIds: Schema.Array(Schema.String),
-  resume: Schema.Literal("dealing", "turns"),
+  resume: Schema.Literals(["dealing", "turns"]),
 });
 
 const PendingFlip3 = Schema.Struct({
@@ -39,7 +39,7 @@ const PlayerSnapshot = Schema.Struct({
   seatIndex: Schema.Number,
   totalScore: Schema.Number,
   isOnline: Schema.Boolean,
-  roundStatus: Schema.Literal("waiting", "active", "stayed", "busted", "frozen", "completed"),
+  roundStatus: Schema.Literals(["waiting", "active", "stayed", "busted", "frozen", "completed"]),
   pointsAtRisk: Schema.Number,
   numberCards: Schema.Array(NumberCard),
   modifierCards: Schema.Array(ModifierCard),
@@ -51,7 +51,7 @@ const PlayerSnapshot = Schema.Struct({
 
 const LatestEvent = Schema.Struct({
   type: Schema.String,
-  payload: Schema.Record({ key: Schema.String, value: Schema.Unknown }),
+  payload: Schema.Record(Schema.String, Schema.Unknown),
   actorPlayerId: Schema.optional(Schema.NullOr(Schema.String)),
   targetPlayerId: Schema.optional(Schema.NullOr(Schema.String)),
   playerNames: Schema.optional(Schema.String),
@@ -59,7 +59,7 @@ const LatestEvent = Schema.Struct({
 
 const RoundHistoryEntry = Schema.Struct({
   roundNumber: Schema.Number,
-  phase: Schema.Literal("completed", "projected"),
+  phase: Schema.Literals(["completed", "projected"]),
   isCurrentRound: Schema.Boolean,
   scores: Schema.Array(
     Schema.Struct({
@@ -91,7 +91,7 @@ export const MatchSnapshot = Schema.Struct({
   matchId: Schema.String,
   lobbyCode: Schema.optional(Schema.String),
   isHost: Schema.optional(Schema.Boolean),
-  status: Schema.Literal("setup", "in_progress", "completed"),
+  status: Schema.Literals(["setup", "in_progress", "completed"]),
   version: Schema.Number,
   targetScore: Schema.Number,
   settings: GameSettingsSnapshot,
@@ -102,9 +102,9 @@ export const MatchSnapshot = Schema.Struct({
   pendingAction: Schema.NullOr(PendingAction),
   pendingFlip3: Schema.NullOr(PendingFlip3),
   roundStatus: Schema.NullOr(
-    Schema.Literal("dealing", "player_turns", "resolving_action", "scoring", "completed"),
+    Schema.Literals(["dealing", "player_turns", "resolving_action", "scoring", "completed"]),
   ),
-  endedBy: Schema.NullOr(Schema.Literal("all_inactive", "flip7", "unknown")),
+  endedBy: Schema.NullOr(Schema.Literals(["all_inactive", "flip7", "unknown"])),
   players: Schema.Array(PlayerSnapshot),
   latestEvent: Schema.NullOr(LatestEvent),
   roundHistory: Schema.Array(RoundHistoryEntry),

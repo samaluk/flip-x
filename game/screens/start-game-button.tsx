@@ -8,7 +8,7 @@ import { useActionState } from "react";
 import refs from "@/confect/_generated/refs";
 import { Button } from "@/shared/ui/button";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
+import { toastResultMutationFailure } from "@/shared/lib/result-mutation-toast";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 
 export interface StartGameButtonProps {
@@ -23,7 +23,7 @@ export function StartGameButton({ matchId, version, isHost, playerCount }: Start
   const t = useExtracted("StartGameButton");
   const { translateToast: translateError } = useAppErrors();
   const [, startGame, isSubmitting] = useActionState(async () => {
-    await toastEitherMutationFailure(
+    await toastResultMutationFailure(
       startMatch({
         matchId,
         expectedVersion: version,

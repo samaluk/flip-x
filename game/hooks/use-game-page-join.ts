@@ -1,7 +1,7 @@
 "use client";
 
 import { useSessionId } from "convex-helpers/react/sessions";
-import * as Either from "effect/Either";
+import * as Result from "effect/Result";
 import { useExtracted } from "next-intl";
 import { useActionState, useState } from "react";
 import { toast } from "sonner";
@@ -13,7 +13,7 @@ import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import type { PlayerColorId } from "@/shared/lib/player-colors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
-import { toastEitherMutationFailure } from "@/shared/lib/either-mutation-toast";
+import { toastResultMutationFailure } from "@/shared/lib/result-mutation-toast";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import {
   getTrimmedPlayerNameIssue,
@@ -62,7 +62,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
       return null;
     }
 
-    const result = await toastEitherMutationFailure(
+    const result = await toastResultMutationFailure(
       joinMatch({
         matchId: matchIdConvex,
         playerName: trimmedName,
@@ -73,7 +73,7 @@ export function useGamePageJoin(matchId: string, players: MatchSnapshot["players
         translateError,
       },
     );
-    if (!result || Either.isLeft(result)) {
+    if (!result || Result.isFailure(result)) {
       return null;
     }
 

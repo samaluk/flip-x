@@ -1,3 +1,4 @@
+import { DatabaseSchema } from "@confect/server";
 import { Presence } from "@convex-dev/presence";
 import * as Effect from "effect/Effect";
 
@@ -36,7 +37,7 @@ type CleanupDeleted = {
   rateLimitKeysReset: number;
 };
 
-const appTableNames = new Set<string>(Object.keys(schema.tables));
+const appTableNames = new Set<string>(Object.keys(DatabaseSchema.tables(schema)));
 const cleanupTableCounters: Partial<Record<AppTableName, keyof CleanupDeleted>> = {
   idempotencyKeys: "idempotencyKeys",
   scoreBreakdowns: "scoreBreakdowns",
@@ -217,7 +218,7 @@ function removePresenceRooms(deps: AdminCleanupDeps, matchIds: readonly string[]
 function deleteAppTables(deps: AdminCleanupDeps, deleted: CleanupDeleted) {
   return Effect.gen(function* () {
     // oxlint-disable-next-line typescript/consistent-type-assertions
-    for (const table of Object.keys(schema.tables) as AppTableName[]) {
+    for (const table of Object.keys(DatabaseSchema.tables(schema)) as AppTableName[]) {
       console.log(`Removing document from table ${table}`);
       const count = yield* deps.deleteAllFromTable(table);
       const counter = cleanupTableCounters[table];

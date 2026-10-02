@@ -5,7 +5,7 @@ import { Id } from "../_generated/id";
 
 export default Table.make(() =>
   Schema.Struct({
-    status: Schema.Literal("setup", "in_progress", "completed"),
+    status: Schema.Literals(["setup", "in_progress", "completed"]),
     lobbyCode: Schema.String,
     hostPlayerId: Schema.optional(Id("players")),
     targetScore: Schema.Number,

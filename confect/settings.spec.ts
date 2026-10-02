@@ -3,7 +3,7 @@ import * as Schema from "effect/Schema";
 
 const getRuntimeConfig = FunctionSpec.publicQuery({
   name: "getRuntimeConfig",
-  args: () => Schema.Struct({}),
+  args: () => ({}),
   returns: () =>
     Schema.Struct({
       matchTargetScore: Schema.Number,

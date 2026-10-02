@@ -141,7 +141,7 @@ describe("runGameCommandProgram", () => {
 
     expect(Exit.isFailure(exit)).toBe(true);
     if (Exit.isFailure(exit)) {
-      expect(Cause.failureOption(exit.cause).pipe((option) => option._tag)).toBe("Some");
+      expect(Cause.findErrorOption(exit.cause).pipe((option) => option._tag)).toBe("Some");
       expect(Cause.squash(exit.cause)).toBeInstanceOf(MatchNotFound);
     }
   });

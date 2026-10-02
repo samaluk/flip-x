@@ -7,7 +7,7 @@ export default Table.make(() =>
   Schema.Struct({
     roundId: Id("rounds"),
     sequence: Schema.Number,
-    eventType: Schema.Literal(
+    eventType: Schema.Literals([
       "initial_deal",
       "hit",
       "flip3_hit",
@@ -26,7 +26,7 @@ export default Table.make(() =>
       "deferred_action",
       "pending_action",
       "round_scored",
-    ),
+    ]),
     actorPlayerId: Schema.optional(Id("players")),
     targetPlayerId: Schema.optional(Id("players")),
     payload: Schema.Any,
