@@ -175,7 +175,7 @@ export const AppErrorSchema = Schema.Union(
   InvalidConfirmation,
 );
 
-export type AppError = Schema.Schema.Type<typeof AppErrorSchema>;
+export type AppError = (typeof AppErrorSchema)["Type"];
 
 const isAppError = Schema.is(AppErrorSchema);
 
