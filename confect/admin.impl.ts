@@ -68,8 +68,8 @@ const clearAllAppDataViaCli = FunctionImpl.make(
   "clearAllAppDataViaCli",
   () =>
     Effect.gen(function* () {
-      const runQuery = yield* QueryRunner;
-      const runMutation = yield* MutationRunner;
+      const { runQuery } = yield* QueryRunner;
+      const { runMutation } = yield* MutationRunner;
 
       const result = yield* adminFns.runClearAllAppData({
         listSessionIds: runQuery(refs.internal.admin.listSessionIds, {}),
