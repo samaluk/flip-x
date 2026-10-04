@@ -180,7 +180,7 @@ importers:
         version: 10.0.0(@confect/core@10.0.0(convex@1.46.0(react@19.3.0))(effect@4.0.0))(@effect/platform-node@4.0.0(effect@4.0.0)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.0)
       '@convex-dev/migrations':
         specifier: 0.3.6
-        version: 0.3.6(convex-helpers@0.1.125(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))
+        version: 0.3.6(convex-helpers@0.1.126(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))
       '@convex-dev/presence':
         specifier: 0.4.0
         version: 0.4.0(convex@1.46.0(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -206,8 +206,8 @@ importers:
         specifier: 1.46.0
         version: 1.46.0(react@19.3.0)
       convex-helpers:
-        specifier: 0.1.125
-        version: 0.1.125(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76)
+        specifier: 0.1.126
+        version: 0.1.126(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76)
       effect:
         specifier: 4.0.0
         version: 4.0.0
@@ -3457,8 +3457,8 @@ packages:
       zod:
         optional: true
 
-  convex-helpers@0.1.125:
-    resolution: {integrity: sha512-sTsP3RlTZkLG2IKV4Jq1s70mvPUU3X/RtA05Insnq/lwKNjH+kjLtHNylG06wtDOcDu3cqxeuHHntS75wN4tPw==}
+  convex-helpers@0.1.126:
+    resolution: {integrity: sha512-CTcQueOxQOOo6dFHYJ3xqBoqcoUboxIETdeBSMIMFXC+aUQBu/2tipjpEy1oHU++pwVrrOJUNR4AlymhwYyMsA==}
     hasBin: true
     peerDependencies:
       '@standard-schema/spec': ^1.0.0
@@ -6351,10 +6351,10 @@ snapshots:
       - typescript
       - zod
 
-  '@convex-dev/migrations@0.3.6(convex-helpers@0.1.125(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))':
+  '@convex-dev/migrations@0.3.6(convex-helpers@0.1.126(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))':
     dependencies:
       convex: 1.46.0(react@19.3.0)
-      convex-helpers: 0.1.125(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76)
+      convex-helpers: 0.1.126(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76)
 
   '@convex-dev/presence@0.4.0(convex@1.46.0(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:
@@ -8496,7 +8496,7 @@ snapshots:
       typescript: 7.0.2
       zod: 3.25.76
 
-  convex-helpers@0.1.125(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76):
+  convex-helpers@0.1.126(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76):
     dependencies:
       convex: 1.46.0(react@19.3.0)
     optionalDependencies:
