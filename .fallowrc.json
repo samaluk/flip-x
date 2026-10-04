@@ -47,6 +47,7 @@
     "stale-suppressions": "error"
   },
   "duplicates": {
+    "ignore": ["convex/_generated/**", "confect/_generated/**"],
     "mode": "semantic",
     "near": true,
     "minLines": 8,
