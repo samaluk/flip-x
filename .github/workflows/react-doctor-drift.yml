@@ -66,7 +66,7 @@ jobs:
 
       - name: React Doctor (full drift scan)
         if: steps.seen.outputs.cache-hit != 'true'
-        uses: millionco/react-doctor@013f7373f91a3b9e68bd1dc7d4d354f4b041b117 # v2.2.9
+        uses: millionco/react-doctor@041d1ab1cd36e6cbf5fab2c044509132d648c1f1 # v2.3.0
         with:
           scope: full
           blocking: warning
