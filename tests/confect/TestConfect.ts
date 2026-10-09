@@ -20,7 +20,7 @@ interface ImportMetaWithGlob extends ImportMeta {
   glob: (pattern: string) => ModuleGlob;
 }
 
-type TestConfectWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWithProps> = {
+export type TestConfectWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWithProps> = {
   query: <QueryRef extends Ref.AnyQuery>(
     queryRef: QueryRef,
     args: Ref.Args<QueryRef>,
@@ -47,7 +47,7 @@ type TestConfectWithoutIdentity<ConfectSchema extends DatabaseSchema.AnyWithProp
   finishAllScheduledFunctions: (advanceTimers: () => void) => Effect.Effect<void>;
 };
 
-type TestConfectService<ConfectSchema extends DatabaseSchema.AnyWithProps> = {
+export type TestConfectService<ConfectSchema extends DatabaseSchema.AnyWithProps> = {
   withIdentity: (userIdentity: Partial<UserIdentity>) => TestConfectWithoutIdentity<ConfectSchema>;
 } & TestConfectWithoutIdentity<ConfectSchema>;
 

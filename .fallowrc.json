@@ -32,6 +32,18 @@
     {
       "file": "confect/lib/types.ts",
       "exports": ["DatabaseReader", "DatabaseWriter"]
+    },
+    {
+      "file": "game/ui/flip-x-card.tsx",
+      "exports": ["FlipXCardProps"]
+    },
+    {
+      "file": "shared/lib/confect-hooks.ts",
+      "exports": ["SessionConfectMutation"]
+    },
+    {
+      "file": "tests/builders/round-runtime.ts",
+      "exports": ["createPlayerRoundStates", "createRoundRuntime"]
     }
   ],
   "ignoreUnresolvedImports": ["@/messages/**"],

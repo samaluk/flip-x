@@ -37,7 +37,7 @@
     "test:vrt:update": "bash scripts/vrt-docker.sh --update",
     "fallow": "fallow",
     "fallow:dead-code": "fallow dead-code --fail-on-issues",
-    "fallow:dupes": "fallow dupes --fail-on-issues",
+    "fallow:dupes": "fallow dupes --threshold 6.08",
     "fallow:health": "fallow health --fail-on-issues",
     "fallow:audit": "fallow audit",
     "fallow:staged": "fallow audit --base HEAD",

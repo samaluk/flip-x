@@ -5,7 +5,7 @@ import { playerRoundState } from "./player-round-state";
 
 export type MatchSnapshotArgs = Parameters<typeof buildMatchSnapshot>[0];
 
-export function matchSnapshotArgs(overrides: Partial<MatchSnapshotArgs> = {}): MatchSnapshotArgs {
+function matchSnapshotArgs(overrides: Partial<MatchSnapshotArgs> = {}): MatchSnapshotArgs {
   return {
     matchId: "match-1" as Id<"matches">,
     status: "in_progress",
