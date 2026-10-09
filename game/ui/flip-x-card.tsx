@@ -27,7 +27,7 @@ export type FlipXCardComparable = {
   actionKind?: string;
 };
 
-type FlipXCardProps = {
+export type FlipXCardProps = {
   label: string;
   faceDown?: boolean;
   dealing?: boolean;

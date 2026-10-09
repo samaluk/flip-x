@@ -99,6 +99,9 @@ not a claim of zero clone debt or an exact current measurement. The changed-file
 `audit` reports clones in touched files and also uses the configured percentage
 to decide whether duplication warns or fails. A new clone below the ceiling can
 therefore warn without failing; `gate: all` does not change that threshold.
+Since Fallow 3.32, `dupes --fail-on-issues` fails on any clone group, so the
+`fallow:dupes` script gates with `--threshold 6.08` instead to keep enforcing
+the ceiling rather than demanding zero clones.
 
 Fallow 3.23 replaced old numeric collision handles with report-scoped `-rN`
 handles ordered by canonical fragments and locations. Those handles can still

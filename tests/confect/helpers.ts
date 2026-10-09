@@ -91,40 +91,6 @@ export function startDeterministicNextRound(
   });
 }
 
-export function takeTurn(
-  matchId: string,
-  sessionId: SessionId,
-  action: "hit" | "stay",
-  expectedVersion: number,
-) {
-  return Effect.gen(function* () {
-    const client = yield* TestConfect;
-    return yield* client.mutation(refs.public.turns.takeTurn, {
-      matchId: matchId as never,
-      sessionId,
-      ...commandMetadata(expectedVersion),
-      action,
-    });
-  });
-}
-
-export function resolveAction(
-  matchId: string,
-  sessionId: SessionId,
-  targetPlayerId: string,
-  expectedVersion: number,
-) {
-  return Effect.gen(function* () {
-    const client = yield* TestConfect;
-    return yield* client.mutation(refs.public.turns.resolveAction, {
-      matchId: matchId as never,
-      sessionId,
-      ...commandMetadata(expectedVersion),
-      targetPlayerId: targetPlayerId as never,
-    });
-  });
-}
-
 export function runCommand(
   matchId: string,
   sessionId: SessionRecord["sessionId"],
