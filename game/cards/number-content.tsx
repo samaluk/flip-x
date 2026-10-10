@@ -164,7 +164,7 @@ export function NumberCardContent({
         </div>
 
         <div className="relative z-1 flex h-full min-h-0 flex-col justify-end">
-          <div className="relative z-2 flex justify-center pt-0.5 pb-1">
+          <div className="relative z-2 flex justify-center pbs-0.5 pbe-1">
             <div
               className={cardTw(
                 compact,

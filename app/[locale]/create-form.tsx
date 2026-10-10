@@ -29,7 +29,7 @@ export function CreateForm({
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t" />
+          <div className="w-full border-bs" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">{dividerLabel}</span>

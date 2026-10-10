@@ -50,14 +50,14 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
         <table className="w-full min-w-2xl border-separate border-spacing-0 text-start">
           <thead>
             <tr className="bg-muted/35">
-              <th className="sticky inset-s-0 z-20 min-w-40 border-b bg-background px-4 py-3 text-xs font-medium tracking-wide uppercase">
+              <th className="sticky inset-s-0 z-20 min-w-40 border-be bg-background px-4 py-3 text-xs font-medium tracking-wide uppercase">
                 {t("Player")}
               </th>
               {history.map((entry) => (
                 <th
                   key={`${entry.phase}-${entry.roundNumber}`}
                   className={cn(
-                    "min-w-40 border-b px-4 py-3 text-xs font-medium tracking-wide uppercase",
+                    "min-w-40 border-be px-4 py-3 text-xs font-medium tracking-wide uppercase",
                     entry.phase === "projected" && "border-dashed bg-primary/5",
                   )}
                 >
@@ -80,7 +80,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
           <tbody>
             {orderedPlayers.map((player) => (
               <tr key={player.playerId} className="align-top">
-                <th className="sticky inset-s-0 z-10 border-b bg-background p-4">
+                <th className="sticky inset-s-0 z-10 border-be bg-background p-4">
                   <div className="text-sm font-medium text-foreground">{player.displayName}</div>
                   <div className="text-xs text-muted-foreground">
                     {t("Seat {seat}", { seat: String(player.seatIndex + 1) })}
@@ -106,7 +106,7 @@ export function RoundHistoryTable({ history, players }: RoundHistoryTableProps) 
                     <td
                       key={`${entry.phase}-${entry.roundNumber}-${player.playerId}`}
                       className={cn(
-                        "border-b p-4",
+                        "border-be p-4",
                         entry.phase === "projected" && "border-dashed bg-primary/5",
                         score.reachedTarget && "bg-primary/10",
                       )}

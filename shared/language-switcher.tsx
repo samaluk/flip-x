@@ -14,7 +14,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
   return (
     <fieldset
       className={cn(
-        "fixed inset-e-4 top-4 z-50 m-0 flex min-w-0 items-center gap-1 rounded-full border border-border bg-background/80 p-1 shadow-sm backdrop-blur-sm",
+        "fixed inset-e-4 inset-bs-4 z-50 m-0 flex min-w-0 items-center gap-1 rounded-full border border-border bg-background/80 p-1 shadow-sm backdrop-blur-sm",
         className,
       )}
       aria-label={t("Language")}

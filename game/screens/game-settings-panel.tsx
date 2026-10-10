@@ -99,7 +99,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                 {t("Game settings")}
               </h2>
               {hostCanEdit && recommendedPreset ? (
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mbs-1 text-xs text-muted-foreground">
                   {t("Recommended for this lobby: {preset}", {
                     preset: presetLabel(recommendedPreset.id),
                   })}
@@ -162,7 +162,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
               <AccordionItem value="advanced">
                 <AccordionTrigger>{t("Advanced")}</AccordionTrigger>
                 <AccordionContent>
-                  <div className="grid gap-4 pt-2 sm:grid-cols-2">
+                  <div className="grid gap-4 pbs-2 sm:grid-cols-2">
                     <SettingsSelect
                       label={t("Points to win")}
                       value={settings.targetScore}
@@ -178,7 +178,7 @@ export function GameSettingsPanel({ snapshot }: GameSettingsPanelProps) {
                       onChange={(maxNumberCardValue) => updateSettings({ maxNumberCardValue })}
                     />
                   </div>
-                  <p className="mt-3 text-sm text-muted-foreground">
+                  <p className="mbs-3 text-sm text-muted-foreground">
                     {t(
                       "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2.",
                       {
@@ -201,7 +201,7 @@ function SettingSummaryItem({ label, value }: { label: string; value: string }) 
   return (
     <div className="rounded-xl border border-border/70 bg-background/30 px-3 py-2">
       <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="mt-0.5 font-medium">{value}</dd>
+      <dd className="mbs-0.5 font-medium">{value}</dd>
     </div>
   );
 }

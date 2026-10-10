@@ -63,7 +63,7 @@ export default async function RootLayout({
                 fallback={
                   <div
                     aria-hidden
-                    className="fixed inset-e-4 top-4 z-50 h-9 w-24 rounded-full border border-border bg-background/80"
+                    className="fixed inset-e-4 inset-bs-4 z-50 h-9 w-24 rounded-full border border-border bg-background/80"
                   />
                 }
               >

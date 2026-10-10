@@ -9,10 +9,10 @@ export function ScoreSummary({ players }: { players: MatchSnapshot["players"] })
 
   return (
     <section className="overflow-hidden rounded-2xl p-5 text-card-foreground">
-      <div className="mt-5 overflow-x-auto">
+      <div className="mbs-5 overflow-x-auto">
         <table className="w-full min-w-2xl text-start">
           <thead>
-            <tr className="border-b border-border text-xs font-medium tracking-wide text-muted-foreground uppercase">
+            <tr className="border-be border-border text-xs font-medium tracking-wide text-muted-foreground uppercase">
               <th className="px-3 py-2.5">{t("Player")}</th>
               <th className="px-3 py-2.5">{t("Numbers")}</th>
               <th className="px-3 py-2.5">{t("×2")}</th>

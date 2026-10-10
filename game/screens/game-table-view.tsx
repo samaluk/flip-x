@@ -169,7 +169,7 @@ function GameTableLayout({
 }: GameTableLayoutProps) {
   return (
     <LazyMotion features={domAnimation}>
-      <div className={cn("flex flex-col gap-4", hasTurnControls ? "pb-36 lg:pb-4" : "pb-4")}>
+      <div className={cn("flex flex-col gap-4", hasTurnControls ? "pbe-36 lg:pbe-4" : "pbe-4")}>
         <GameTableHud
           snapshot={snapshot}
           isPending={isPending}
@@ -288,7 +288,7 @@ function TurnControlsMobile({ controls }: { controls: ReactNode }) {
   return (
     <section
       aria-label={t("Turn actions")}
-      className="fixed inset-x-0 bottom-0 z-30 max-h-svh overflow-y-auto border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
+      className="fixed inset-x-0 inset-be-0 z-30 max-h-svh overflow-y-auto border-bs border-border bg-background/95 px-4 py-3 backdrop-blur-md lg:hidden"
     >
       <div className="mx-auto max-w-5xl">{controls}</div>
     </section>
@@ -356,7 +356,7 @@ function GameTableHud({
       className="surface-elevated overflow-hidden rounded-2xl text-foreground"
     >
       <MatchHeader snapshot={snapshot} isPending={isPending} activePlayer={activePlayer} />
-      <div className="grid gap-3 border-t border-border px-4 py-2.5 sm:grid-cols-2 sm:px-5">
+      <div className="grid gap-3 border-bs border-border px-4 py-2.5 sm:grid-cols-2 sm:px-5">
         <TableCall callText={callText} viewerPlayer={viewerPlayer} />
         <LatestResolution
           latestBody={latestBody}
@@ -477,7 +477,7 @@ function LatestResolution({ latestBody, latestPlayerNames }: LatestResolutionPro
   const t = useExtracted("GameTable");
 
   return (
-    <div className="space-y-0.5 border-t border-border pt-2.5 sm:border-s sm:border-t-0 sm:ps-4 sm:pt-0">
+    <div className="space-y-0.5 border-bs border-border pbs-2.5 sm:border-s sm:border-bs-0 sm:ps-4 sm:pbs-0">
       <div className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
         <AlertTriangleIcon className="size-3" aria-hidden />
         {t("Latest resolution")}
@@ -647,7 +647,7 @@ function RoundHistorySection({ snapshot }: RoundHistorySectionProps) {
           <AccordionItem value="breakdown">
             <AccordionTrigger size="lg">{tHistory("Current round breakdown")}</AccordionTrigger>
             <AccordionContent>
-              <div className="px-5 pt-2">
+              <div className="px-5 pbs-2">
                 <p className="text-sm text-muted-foreground">
                   {tHistory("Detailed scoring for the active or most recently completed round.")}
                 </p>
