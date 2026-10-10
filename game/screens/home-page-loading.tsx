@@ -1,5 +1,6 @@
 import { Skeleton } from "@/shared/ui/skeleton";
 
+// fallow-ignore-next-line code-duplication -- reviewed: independent route loading skeleton shares only the Skeleton idiom with the game loader; merging would couple distinct home and game loading states
 export function HomePageLoading() {
   return (
     <main className="relative flex min-h-dvh flex-1 items-center justify-center px-6">

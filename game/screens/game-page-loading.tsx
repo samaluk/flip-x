@@ -1,5 +1,6 @@
 import { Skeleton } from "@/shared/ui/skeleton";
 
+// fallow-ignore-next-line code-duplication -- reviewed: independent route loading skeleton shares only the Skeleton idiom with the home loader; merging would couple distinct game and home loading states
 export function GamePageLoading() {
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
