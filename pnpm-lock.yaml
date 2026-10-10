@@ -170,14 +170,14 @@ importers:
         specifier: 1.9.0
         version: 1.9.0(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       '@confect/core':
-        specifier: 10.1.0
-        version: 10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+        specifier: 10.2.0
+        version: 10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       '@confect/react':
-        specifier: 10.1.0
-        version: 10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex@1.46.0(react@19.3.0))(effect@4.0.2)(react@19.3.0)
+        specifier: 10.2.0
+        version: 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex@1.46.0(react@19.3.0))(effect@4.0.2)(react@19.3.0)
       '@confect/server':
-        specifier: 10.1.0
-        version: 10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+        specifier: 10.2.0
+        version: 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       '@convex-dev/migrations':
         specifier: 0.3.6
         version: 0.3.6(convex-helpers@0.1.128(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))
@@ -249,11 +249,11 @@ importers:
         version: 3.1.1(react@19.3.0)
     devDependencies:
       '@confect/cli':
-        specifier: 10.1.0
-        version: 10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1))
+        specifier: 10.2.0
+        version: 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1))
       '@confect/test':
-        specifier: 10.1.0
-        version: 10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex-test@0.0.60(convex@1.46.0(react@19.3.0)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+        specifier: 10.2.0
+        version: 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex-test@0.0.60(convex@1.46.0(react@19.3.0)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       '@effect/vitest':
         specifier: 4.0.2
         version: 4.0.2(effect@4.0.2)(vitest@5.0.3)
@@ -570,36 +570,36 @@ packages:
     resolution: {integrity: sha512-y7/yvZ2TPAnR9+jnc00klvNNLkJiXFFrQA/hlLCcxA9a2A4zQIOimyFQ9XfwYKiGD1fb5GY8vbKIIgO8d5Tb2A==}
     engines: {node: '>= 20.12.0'}
 
-  '@confect/cli@10.1.0':
-    resolution: {integrity: sha512-BnqtrJxujP2TIQvCj0Wubn73v5Sx02WUBb47YaOZnl8fqXFzmmPtjqtEUerZqdKiolRy8g31oPG5kwZijhAJfA==}
+  '@confect/cli@10.2.0':
+    resolution: {integrity: sha512-kiB6Z7apVV7SRf9n5k2EwoSOa2CcHrjq1iem22PuOt/KYfjPz0M7h/jwA0JhLqDaUSwyhNWTD+sO7qT46RbBWg==}
     engines: {node: '>=24'}
     hasBin: true
     peerDependencies:
-      '@confect/core': ^10.1.0
-      '@confect/server': ^10.1.0
+      '@confect/core': ^10.2.0
+      '@confect/server': ^10.2.0
       effect: ^4.0.1
 
-  '@confect/core@10.1.0':
-    resolution: {integrity: sha512-4QGFg1du6u+xyTvh4N/K0NJnybdjEftEHSQwW2iI/a83weq7qM9110C8WMxAchghK6CHmvE3A3P+5mv2lEXZSQ==}
+  '@confect/core@10.2.0':
+    resolution: {integrity: sha512-TiI9OROumitmggGPd23qkr8P7V1BzNkzP5cRPyxBj+rfIfY7s3uASKWJS/zCl1IvrNetgBNDQvd2x5dTwoopag==}
     engines: {node: '>=24'}
     peerDependencies:
       convex: ^1.32.0
       effect: ^4.0.0
 
-  '@confect/react@10.1.0':
-    resolution: {integrity: sha512-It5YHlS/EEiWAZKpC1R8clKMmgLMx3gJf30ASYt7tyhA+6IH0tADv+cxPpSN4zgS2iYbIG+AxdIwwEnWeYx9GQ==}
+  '@confect/react@10.2.0':
+    resolution: {integrity: sha512-g3efPUYE+R4q8N9auN/xIC5Lrkx/Pyx/T7D7snHi/mhp/+VatcxT7gF+ermhQa9kcDtHIvWn3HPqFJoXfFxduQ==}
     engines: {node: '>=24'}
     peerDependencies:
-      '@confect/core': ^10.1.0
+      '@confect/core': ^10.2.0
       convex: ^1.36.0
       effect: ^4.0.0
       react: ^18.0.0 || ^19.0.0
 
-  '@confect/server@10.1.0':
-    resolution: {integrity: sha512-TbQR4Sz/7LLelef0gs3868Hpca2dvi8Otw9LcL3foBn/AsoMVa55XGKpoXwVlTWnD6HL8RrMzBp7hMGiS5bZrQ==}
+  '@confect/server@10.2.0':
+    resolution: {integrity: sha512-U/ynrlBnB4dEIonA+a4H1ZJLf8BszBN0KFbpOsQ+ChDpQsJLlaEqrKrEJtGGOL9RompCfujs12bGpR7JwbBjOA==}
     engines: {node: '>=24'}
     peerDependencies:
-      '@confect/core': ^10.1.0
+      '@confect/core': ^10.2.0
       '@effect/platform-node': ^4.0.0
       convex: ^1.45.0
       effect: ^4.0.1
@@ -607,12 +607,12 @@ packages:
       '@effect/platform-node':
         optional: true
 
-  '@confect/test@10.1.0':
-    resolution: {integrity: sha512-fEyEh6fVesByKBXqQaETwp0LK8FQCVBfg3Wi6tgjZpY45h7OBofHpsYgfRqzlxtPrniGm4rq9L0KCgdE+0BK7w==}
+  '@confect/test@10.2.0':
+    resolution: {integrity: sha512-uVBnPQmbhKrlMQhZkdzYX76ZbRChz4geNHREe/7EpMD2oc5C8o3JmbXxjOicF4S8NdMKEsHc+BfW6jEtGbX1EA==}
     engines: {node: '>=24'}
     peerDependencies:
-      '@confect/core': ^10.1.0
-      '@confect/server': ^10.1.0
+      '@confect/core': ^10.2.0
+      '@confect/server': ^10.2.0
       convex: ^1.32.0
       convex-test: '>=0.0.50 <0.1.0'
       effect: ^4.0.0
@@ -6230,10 +6230,10 @@ snapshots:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
-  '@confect/cli@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1))':
+  '@confect/cli@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1))':
     dependencies:
-      '@confect/core': 10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
-      '@confect/server': 10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+      '@confect/core': 10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+      '@confect/server': 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       '@effect/platform-node': 4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1))
       bundle-require: 5.1.0(esbuild@0.27.7)
       code-block-writer: 13.0.3
@@ -6245,21 +6245,21 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)':
+  '@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)':
     dependencies:
       convex: 1.46.0(react@19.3.0)
       effect: 4.0.2
 
-  '@confect/react@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex@1.46.0(react@19.3.0))(effect@4.0.2)(react@19.3.0)':
+  '@confect/react@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex@1.46.0(react@19.3.0))(effect@4.0.2)(react@19.3.0)':
     dependencies:
-      '@confect/core': 10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+      '@confect/core': 10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       convex: 1.46.0(react@19.3.0)
       effect: 4.0.2
       react: 19.3.0
 
-  '@confect/server@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)':
+  '@confect/server@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)':
     dependencies:
-      '@confect/core': 10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+      '@confect/core': 10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       '@effect/ai-openai-compat': 4.0.1(effect@4.0.2)
       '@effect/ai-openrouter': 4.0.1(effect@4.0.2)
       convex: 1.46.0(react@19.3.0)
@@ -6267,10 +6267,10 @@ snapshots:
     optionalDependencies:
       '@effect/platform-node': 4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1))
 
-  '@confect/test@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex-test@0.0.60(convex@1.46.0(react@19.3.0)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)':
+  '@confect/test@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@confect/server@10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2))(convex-test@0.0.60(convex@1.46.0(react@19.3.0)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)':
     dependencies:
-      '@confect/core': 10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
-      '@confect/server': 10.1.0(@confect/core@10.1.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+      '@confect/core': 10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2)
+      '@confect/server': 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       convex: 1.46.0(react@19.3.0)
       convex-test: 0.0.60(convex@1.46.0(react@19.3.0))
       effect: 4.0.2
