@@ -323,7 +323,7 @@ function PlayerLaneCardStack({
     </div>
   );
 
-  return <div className="min-w-0 flex-1 pb-1">{cardRow}</div>;
+  return <div className="min-w-0 flex-1 pbe-1">{cardRow}</div>;
 }
 
 // why: these are independent orthogonal lane states (active ring, dealer

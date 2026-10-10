@@ -53,7 +53,7 @@ export function GamePageContent({
   const isSetup = snapshot.status === "setup";
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 pt-4 pb-6 sm:gap-5 sm:px-5 sm:pt-5 sm:pb-8 lg:px-6">
+    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-4 px-3 pbs-4 pbe-6 sm:gap-5 sm:px-5 sm:pbs-5 sm:pbe-8 lg:px-6">
       <GamePageHeader snapshot={snapshot} matchId={matchId} onCopyInvite={onCopyInvite} />
       {isSetup && !snapshot.viewerPlayerId ? (
         <GameJoinForm
@@ -136,7 +136,7 @@ function GameJoinForm({
       <h2 className="font-heading text-lg font-medium tracking-tight text-foreground">
         {t("Join the game")}
       </h2>
-      <p className="mt-1 mb-4 text-sm text-muted-foreground">
+      <p className="mbs-1 mbe-4 text-sm text-muted-foreground">
         {t("Enter your name to claim a seat at the table.")}
       </p>
       <form action={joinFormAction} className="flex flex-col gap-4 sm:max-w-md">

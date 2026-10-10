@@ -18,7 +18,7 @@ export function OfflineBanner({ className }: { className?: string }) {
     <div
       role="status" // oxlint-disable-line jsx-a11y/prefer-tag-over-role -- live status region; output is for calculation results
       className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b border-border bg-background/80 px-4 py-2 text-center text-sm text-muted-foreground backdrop-blur-sm",
+        "fixed inset-x-0 inset-bs-0 z-50 border-be border-border bg-background/80 px-4 py-2 text-center text-sm text-muted-foreground backdrop-blur-sm",
         className,
       )}
     >
@@ -38,11 +38,11 @@ export function ConnectivityLoadingShell({
   const t = useExtracted("Connectivity");
 
   return (
-    <div className={cn(isOffline && "pt-14", className)}>
+    <div className={cn(isOffline && "pbs-14", className)}>
       {isOffline ? (
         <div
           role="status" // oxlint-disable-line jsx-a11y/prefer-tag-over-role -- live status region; output is for calculation results
-          className="pointer-events-none mb-4 text-center text-sm text-muted-foreground"
+          className="pointer-events-none mbe-4 text-center text-sm text-muted-foreground"
         >
           {t("Waiting for connection…")}
         </div>
