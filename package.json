@@ -48,7 +48,7 @@
     "react-doctor:full": "react-doctor --scope full --yes --no-score --blocking warning --project flip-x"
   },
   "dependencies": {
-    "@base-ui/react": "1.8.0",
+    "@base-ui/react": "1.9.0",
     "@confect/core": "10.1.0",
     "@confect/react": "10.1.0",
     "@confect/server": "10.1.0",
