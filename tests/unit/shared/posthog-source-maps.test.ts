@@ -13,7 +13,7 @@ afterEach(() => {
 
 test("the production hook injects IDs into server chunks before uploading source maps", async () => {
   const releaseId = "00000000-0000-4000-8000-000000000001";
-  const uploadBatches: { chunk_id: string; release_id: string }[][] = [];
+  const uploadBatches: { chunk_id: string; release_id: string; content_hash: string }[][] = [];
   const server = createServer(async (request, response) => {
     response.setHeader("Content-Type", "application/json");
     if (request.url?.includes("/error_tracking/releases/")) {
