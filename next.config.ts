@@ -51,6 +51,9 @@ export default withPostHogConfig(withNextIntl(nextConfig), {
   sourcemaps: {
     enabled: posthogSourceMapsEnabled,
     releaseName: "flip-x",
+    // Server chunks can lack Turbopack debug IDs. Keep CLI injection before
+    // upload; event mode in @posthog/nextjs-config 1.11.2 skips that step.
+    releaseMode: "symbol-set",
     deleteAfterUpload: true,
   },
 });
