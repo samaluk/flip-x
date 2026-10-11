@@ -179,8 +179,8 @@ importers:
         specifier: 10.2.0
         version: 10.2.0(@confect/core@10.2.0(convex@1.46.0(react@19.3.0))(effect@4.0.2))(@effect/platform-node@4.0.2(effect@4.0.2)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.46.0(react@19.3.0))(effect@4.0.2)
       '@convex-dev/migrations':
-        specifier: 0.3.6
-        version: 0.3.6(convex-helpers@0.1.128(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))
+        specifier: 0.3.7
+        version: 0.3.7(convex-helpers@0.1.128(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))
       '@convex-dev/presence':
         specifier: 0.4.0
         version: 0.4.0(convex@1.46.0(react@19.3.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -628,8 +628,8 @@ packages:
     peerDependencies:
       convex: ^1.43.0
 
-  '@convex-dev/migrations@0.3.6':
-    resolution: {integrity: sha512-cURYG4uy323MDi55QWNF5HAGemS4QspSgJ4uP+gGPAJdBLBbk2KFO7toFlKhacc1NinJQiG6+D/YEFyFyBS1/A==}
+  '@convex-dev/migrations@0.3.7':
+    resolution: {integrity: sha512-B5psv+FhfFLu2ttusIMcWiHS2fpxOiqWrvHl9wOjgcCwTy1Lqhvn2rY7LBQ8O6hVF5dPm8uoEbaNKPSHxkiD7A==}
     peerDependencies:
       convex: ^1.42.0
       convex-helpers: ^0.1.115
@@ -6323,7 +6323,7 @@ snapshots:
       - typescript
       - zod
 
-  '@convex-dev/migrations@0.3.6(convex-helpers@0.1.128(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))':
+  '@convex-dev/migrations@0.3.7(convex-helpers@0.1.128(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76))(convex@1.46.0(react@19.3.0))':
     dependencies:
       convex: 1.46.0(react@19.3.0)
       convex-helpers: 0.1.128(@standard-schema/spec@1.1.0)(convex@1.46.0(react@19.3.0))(hono@4.12.12)(react@19.3.0)(typescript@7.0.2)(zod@3.25.76)
@@ -9215,7 +9215,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 24.19.1
+      '@types/node': 24.19.2
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
