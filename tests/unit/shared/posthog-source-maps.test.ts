@@ -13,7 +13,12 @@ afterEach(() => {
 
 test("the production hook injects IDs into server chunks before uploading source maps", async () => {
   const releaseId = "00000000-0000-4000-8000-000000000001";
-  const uploadBatches: { chunk_id: string; release_id: string; content_hash: string }[][] = [];
+  const uploadBatches: {
+    chunk_id: string;
+    release_id: string;
+    content_hash: string;
+    content_length: number;
+  }[][] = [];
   const server = createServer(async (request, response) => {
     response.setHeader("Content-Type", "application/json");
     if (request.url?.includes("/error_tracking/releases/")) {
@@ -82,7 +87,12 @@ test("the production hook injects IDs into server chunks before uploading source
     await hook({ distDir, projectDir: process.cwd() });
 
     expect(uploadBatches.flat()).toEqual([
-      { chunk_id: expect.any(String), release_id: releaseId, content_hash: expect.any(String) },
+      {
+        chunk_id: expect.any(String),
+        release_id: releaseId,
+        content_hash: expect.any(String),
+        content_length: expect.any(Number),
+      },
     ]);
     const chunk = await readFile(chunkPath, "utf8");
     expect(chunk).toContain("_posthogChunkIds");
