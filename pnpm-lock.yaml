@@ -270,8 +270,8 @@ importers:
         specifier: 1.64.1
         version: 1.64.1
       '@posthog/nextjs-config':
-        specifier: 1.11.2
-        version: 1.11.2(next@16.4.1(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(posthog-js@1.438.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
+        specifier: 1.11.3
+        version: 1.11.3(next@16.4.1(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(posthog-js@1.438.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
       '@shadcn/lint':
         specifier: 0.2.1
         version: 0.2.1(eslint@10.4.1(jiti@2.7.0)(supports-color@8.1.1))
@@ -2378,15 +2378,12 @@ packages:
       '@vercel/functions':
         optional: true
 
-  '@posthog/nextjs-config@1.11.2':
-    resolution: {integrity: sha512-j/a5Nub3ThVRtih5hT/WgytHndz/dA61+FZi/sr0Y9HELpb1OgOan535UYpWhB6SKZw0GgG+etp7Aic8gb1A6A==}
+  '@posthog/nextjs-config@1.11.3':
+    resolution: {integrity: sha512-ybsYEQmDJwRtePYvhn/arbez7KTMQQ4s1brhSoIXt8SnUCQGbL36VEKr9gvzgrBswbC7bjjhQ8REHgONuOOwlw==}
     engines: {node: ^20.20.0 || >=22.22.0}
     peerDependencies:
       next: '>12.1.0'
       posthog-js: '>=1.438.5'
-
-  '@posthog/plugin-utils@2.0.0':
-    resolution: {integrity: sha512-PC94+3zeEQ2IkhiU+pskOIOEkAFKZvwVixvrwpRfy+cl4b6gkTuHN44vp5OeG5ndfQOLJQF5onx8/K7yZC3i1g==}
 
   '@posthog/plugin-utils@2.0.1':
     resolution: {integrity: sha512-ZiQfUcgY65EjF2vkqL4Aau6sx0aqvSWoXaGSGu9Solnmv6e6VRjQbAU0SCKbxpJxcEsCJof9vmvnrFTQIEOUAQ==}
@@ -7553,7 +7550,7 @@ snapshots:
       - preact-render-to-string
       - rxjs
 
-  '@posthog/nextjs-config@1.11.2(next@16.4.1(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(posthog-js@1.438.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
+  '@posthog/nextjs-config@1.11.3(next@16.4.1(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@24.19.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(posthog-js@1.438.5(@types/react@19.3.0)(react@19.3.1))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
     dependencies:
       '@posthog/cli': 0.18.10
       '@posthog/plugin-utils': 2.0.1
@@ -7563,10 +7560,6 @@ snapshots:
       semver: 7.8.5
     transitivePeerDependencies:
       - webpack
-
-  '@posthog/plugin-utils@2.0.0':
-    dependencies:
-      cross-spawn: 7.0.6
 
   '@posthog/plugin-utils@2.0.1':
     dependencies:
@@ -7588,8 +7581,8 @@ snapshots:
   '@posthog/webpack-plugin@1.7.1(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
     dependencies:
       '@posthog/cli': 0.16.2
-      '@posthog/core': 1.55.1
-      '@posthog/plugin-utils': 2.0.0
+      '@posthog/core': 1.57.4
+      '@posthog/plugin-utils': 2.0.1
       webpack: 5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23)
 
   '@redis/bloom@6.3.0(@redis/client@6.3.0(@opentelemetry/api@1.9.1))':
