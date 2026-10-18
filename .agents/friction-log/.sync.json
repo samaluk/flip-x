@@ -19,6 +19,10 @@
     {
       "issue": "samaluk/flip-x#730",
       "path": ".agents/friction-log/20260903042521-pr-cockpit-edit/friction.md"
+    },
+    {
+      "issue": "samaluk/flip-x#811",
+      "path": ".agents/friction-log/20260919144326-pnpm-dependency-verification/friction.md"
     }
   ],
   "version": 1
