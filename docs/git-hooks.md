@@ -121,3 +121,72 @@ fail clearly instead of interpreting a newer config. See `hk`'s official
 [configuration reference](https://hk.jdx.dev/configuration.html) and
 [mise integration guide](https://hk.jdx.dev/mise_integration.html) for the
 underlying behavior.
+
+## Disposable hook test repositories
+
+For an individual step's check/fix behavior, hk provides
+[step-defined tests](https://hk.jdx.dev/cli/test.html) with temporary sandboxes,
+fixture inputs, and output assertions. See the
+[custom-linter example](https://hk.jdx.dev/reference/examples/custom-linters.html).
+The tools must be installed and available to the sandbox; the
+[JavaScript guide](https://hk.jdx.dev/reference/examples/javascript-project.html)
+describes exposing `node_modules/.bin` on `PATH`. Step tests do not exercise a
+whole Git hook's staging behavior.
+
+For checks that need a separate Git repository and the real `pnpm exec` commands,
+give that repository its own installation. pnpm's
+[project virtual store](https://pnpm.io/settings/node-modules#virtualstoredir)
+cannot be shared between separate projects. Reuse packages through pnpm's store
+while keeping each repository's `node_modules` and `verifyDepsBeforeRun: error`.
+
+A temporary Git repository used to test hooks may copy `package.json`,
+`pnpm-lock.yaml`, and `pnpm-workspace.yaml` from an installed checkout and symlink
+that checkout's `node_modules` to reuse its tools. Even when the source install
+is current, `pnpm exec oxfmt` in the fixture can fail with
+`ERR_PNPM_VERIFY_DEPS_BEFORE_RUN: The workspace structure has changed since last install`.
+The shared installation belongs to the source workspace; copying its files to a
+different directory does not make it an installation of the relocated workspace.
+Verification stops the command before the formatter runs, so this error alone
+does not indicate an hk failure.
+
+Run this example from the root of an installed checkout. The
+[`--offline` install](https://pnpm.io/cli/install#--offline) reuses packages
+already available in pnpm's store; `--frozen-lockfile` keeps the copied lockfile
+unchanged. Copy the formatter configuration too so its behavior matches the
+source checkout:
+
+```bash
+source_repo="$(git rev-parse --show-toplevel)"
+fixture_repo="$(mktemp -d "${TMPDIR:-/tmp}/flip-x-hook-fixture.XXXXXX")"
+cp "$source_repo/package.json" "$source_repo/pnpm-lock.yaml" \
+  "$source_repo/pnpm-workspace.yaml" "$source_repo/.oxfmtrc.json" "$fixture_repo/"
+git -C "$fixture_repo" init --quiet
+pnpm --dir "$fixture_repo" install --offline --frozen-lockfile
+
+printf '{"fixture":true}\n' > "$fixture_repo/fixture.json"
+pnpm --dir "$fixture_repo" exec oxfmt --write fixture.json
+```
+
+If a package is missing from the store, rerun the install without `--offline`
+to fetch it. Copy configuration files as regular files, and include the tool
+configuration and supporting files required by any additional steps you test.
+This example validates formatter execution; a full hook check also needs its
+hook configuration, scripts, and other inputs.
+
+If an existing disposable fixture already symlinks `node_modules`, remove that
+symlink **before** installing so the fixture owns the resulting directory:
+
+```bash
+test -L "$fixture_repo/node_modules" &&
+  unlink "$fixture_repo/node_modules" &&
+  pnpm --dir "$fixture_repo" install --offline --frozen-lockfile
+```
+
+Setting `verifyDepsBeforeRun: false` only disables the check; it does not repair
+the relocated installation. Keep `error` in both checkouts and use the explicit
+install recovery above for an ordinary stale install. Remove the temporary
+repository when finished:
+
+```bash
+rm -rf "$fixture_repo"
+```
