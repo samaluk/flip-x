@@ -15,6 +15,14 @@ const spec: Spec.Spec<{
   readonly rounds: GroupSpec.NamedAt<typeof rounds, "rounds">;
   readonly settings: GroupSpec.NamedAt<typeof settings, "settings">;
   readonly turns: GroupSpec.NamedAt<typeof turns, "turns">;
-}> = Spec.make().addAt("admin", admin).addAt("matches", matches).addAt("migrations", migrations).addAt("presence", presence).addAt("rounds", rounds).addAt("settings", settings).addAt("turns", turns);
+}> = Spec.fromGroups({
+  ["admin"]: admin,
+  ["matches"]: matches,
+  ["migrations"]: migrations,
+  ["presence"]: presence,
+  ["rounds"]: rounds,
+  ["settings"]: settings,
+  ["turns"]: turns,
+}) as typeof spec;
 
 export default spec;

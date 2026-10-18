@@ -1,5 +1,5 @@
-import { RegisteredConvexFunction, RegisteredFunctions } from "@confect/server";
+import { RegisteredFunctions } from "@confect/server";
 import databaseSchema from "../schema";
-import presence from "../../presence.impl";
+import groupLayer from "../../presence.impl";
 
-export default RegisteredFunctions.buildForGroup<typeof import("../../presence.spec")["default"]>(databaseSchema, presence, RegisteredConvexFunction.make);
+export default RegisteredFunctions.buildForGroup<typeof import("../../presence.spec")["default"]>(databaseSchema, groupLayer);
