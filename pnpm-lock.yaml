@@ -253,7 +253,7 @@ importers:
         version: 10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@confect/server@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@effect/platform-node@4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6))(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1))
       '@confect/test':
         specifier: 10.3.2
-        version: 10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@confect/server@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@effect/platform-node@4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6))(convex-test@0.0.64(convex@1.48.0(react@19.3.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6)
+        version: 10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@confect/server@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@effect/platform-node@4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6))(convex-test@0.0.65(convex@1.48.0(react@19.3.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6)
       '@effect/vitest':
         specifier: 4.0.6
         version: 4.0.6(effect@4.0.6)(vitest@5.0.5)
@@ -309,8 +309,8 @@ importers:
         specifier: 5.0.5
         version: 5.0.5(@vitest/browser@5.0.5)(vitest@5.0.5)
       convex-test:
-        specifier: 0.0.64
-        version: 0.0.64(convex@1.48.0(react@19.3.1))
+        specifier: 0.0.65
+        version: 0.0.65(convex@1.48.0(react@19.3.1))
       eslint-plugin-i18next:
         specifier: 6.1.5
         version: 6.1.5
@@ -3455,8 +3455,8 @@ packages:
       zod:
         optional: true
 
-  convex-test@0.0.64:
-    resolution: {integrity: sha512-HvaFwCA7CO3i9sBWkP/+HUpCad49zXitDLheLpt+TUOHVWhsWQ7hbPAyPTOFhHZJrodzngkCP/tW9/8uDSOJqQ==}
+  convex-test@0.0.65:
+    resolution: {integrity: sha512-2FgHlLGraM2O3tEVpOfvoHSleK0x92J8xjQ/qClWzNJX3NcmgvuNeWBrmma7sLJ8lB3ENPxx6ykJTfvZmWg3BQ==}
     peerDependencies:
       convex: ^1.43.0
 
@@ -6255,12 +6255,12 @@ snapshots:
     optionalDependencies:
       '@effect/platform-node': 4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1))
 
-  '@confect/test@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@confect/server@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@effect/platform-node@4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6))(convex-test@0.0.64(convex@1.48.0(react@19.3.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6)':
+  '@confect/test@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@confect/server@10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@effect/platform-node@4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6))(convex-test@0.0.65(convex@1.48.0(react@19.3.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6)':
     dependencies:
       '@confect/core': 10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6)
       '@confect/server': 10.3.2(@confect/core@10.3.2(convex@1.48.0(react@19.3.1))(effect@4.0.6))(@effect/platform-node@4.0.5(effect@4.0.6)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.48.0(react@19.3.1))(effect@4.0.6)
       convex: 1.48.0(react@19.3.1)
-      convex-test: 0.0.64(convex@1.48.0(react@19.3.1))
+      convex-test: 0.0.65(convex@1.48.0(react@19.3.1))
       effect: 4.0.6
 
   '@convex-dev/batch-worker@0.2.0(convex@1.48.0(react@19.3.1))(react@19.3.1)':
@@ -7451,7 +7451,7 @@ snapshots:
 
   '@posthog/browser-common@0.9.3':
     dependencies:
-      '@posthog/core': 1.60.0
+      '@posthog/core': 1.60.1
       '@posthog/types': 1.416.0
 
   '@posthog/cli@0.18.12':
@@ -8429,7 +8429,7 @@ snapshots:
       typescript: 7.0.2
       zod: 4.4.3
 
-  convex-test@0.0.64(convex@1.48.0(react@19.3.1)):
+  convex-test@0.0.65(convex@1.48.0(react@19.3.1)):
     dependencies:
       convex: 1.48.0(react@19.3.1)
 
@@ -10151,7 +10151,7 @@ snapshots:
   posthog-js@1.438.5(@types/react@19.3.0)(react@19.3.1):
     dependencies:
       '@posthog/browser-common': 0.9.3
-      '@posthog/core': 1.60.0
+      '@posthog/core': 1.60.1
       '@posthog/types': 1.416.0
       core-js: 3.49.0
       dompurify: 3.4.14
