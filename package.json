@@ -56,7 +56,7 @@
     "@convex-dev/presence": "0.4.0",
     "@convex-dev/rate-limiter": "0.4.2",
     "@posthog/convex": "2.1.8",
-    "@posthog/next": "0.9.0",
+    "@posthog/next": "0.10.0",
     "@sholajegede/convex-cascading-deletes": "0.1.2",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
