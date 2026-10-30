@@ -54,7 +54,7 @@
     "@confect/server": "10.4.1",
     "@convex-dev/migrations": "0.3.7",
     "@convex-dev/presence": "0.4.0",
-    "@convex-dev/rate-limiter": "0.4.2",
+    "@convex-dev/rate-limiter": "0.4.3",
     "@posthog/convex": "2.1.8",
     "@posthog/next": "0.10.0",
     "@sholajegede/convex-cascading-deletes": "0.1.2",
