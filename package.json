@@ -62,7 +62,7 @@
     "clsx": "2.1.1",
     "convex": "1.48.0",
     "convex-helpers": "0.1.133",
-    "effect": "4.0.7",
+    "effect": "4.1.0",
     "lucide-react": "1.64.0",
     "motion": "14.8.0",
     "next": "16.4.3",
@@ -79,7 +79,7 @@
   "devDependencies": {
     "@confect/cli": "10.4.1",
     "@confect/test": "10.4.1",
-    "@effect/vitest": "4.0.7",
+    "@effect/vitest": "4.1.0",
     "@eloqnt/cli": "0.6.33",
     "@google/design.md": "0.4.0",
     "@next/playwright": "16.4.3",
