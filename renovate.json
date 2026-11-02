@@ -47,6 +47,11 @@
       "groupSingleUpdates": true
     },
     {
+      "description": "Keep Node API types on runtime major 26; update this bound with the next runtime major upgrade",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": ">=26 <27"
+    },
+    {
       "description": "Keep the Fallow package and GitHub Action together",
       "matchPackageNames": ["fallow", "fallow-rs/fallow"],
       "groupName": "Fallow",
