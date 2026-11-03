@@ -273,8 +273,8 @@ importers:
         specifier: 1.12.0
         version: 1.12.0(next@16.4.3(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.64.1)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(posthog-js@1.441.2(@types/react@19.3.0)(react@19.3.1))(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))
       '@shadcn/lint':
-        specifier: 0.2.3
-        version: 0.2.3(eslint@10.4.1(jiti@2.7.0)(supports-color@8.1.1))
+        specifier: 0.2.4
+        version: 0.2.4(eslint@10.4.1(jiti@2.7.0)(supports-color@8.1.1))
       '@tailwindcss/postcss':
         specifier: 4.3.3
         version: 4.3.3
@@ -2578,8 +2578,8 @@ packages:
       '@opentelemetry/sdk-trace-base': ^1.30.1 || ^2.1.0
       '@opentelemetry/semantic-conventions': ^1.39.0
 
-  '@shadcn/lint@0.2.3':
-    resolution: {integrity: sha512-N/eAXidyPYXpbUOzPCf6uX5UN/hhObMZbrURrHe71CLNvPio78agqBt4EW/V89KQyS1NTxXcqMsNfiLxsBh8sA==}
+  '@shadcn/lint@0.2.4':
+    resolution: {integrity: sha512-KEJTClV7g08Hp56cBJ+dg5F2PflKeh4HdL+/VlCaU2C2RTm6H931jYpB7Z3MVwOyKu8Z7ijuGuVYrCYg+pk1rg==}
     engines: {node: '>=20.19'}
     peerDependencies:
       '@typescript-eslint/parser': '>=8.40.0'
@@ -7377,7 +7377,7 @@ snapshots:
       '@opentelemetry/semantic-conventions': 1.41.1
       '@sentry/core': 10.55.0
 
-  '@shadcn/lint@0.2.3(eslint@10.4.1(jiti@2.7.0)(supports-color@8.1.1))':
+  '@shadcn/lint@0.2.4(eslint@10.4.1(jiti@2.7.0)(supports-color@8.1.1))':
     dependencies:
       '@eslint/core': 0.17.0
       cn: 0.4.0
