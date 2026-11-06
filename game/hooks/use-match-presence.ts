@@ -82,11 +82,10 @@ function usePresenceHeartbeat({
     const presenceSessionId = presenceSessionIdRef.current;
 
     const activePlayerId = playerId;
-    let ignore = false;
-    let timeoutId: number | undefined;
+    const lifecycle: { aborted: boolean; timeoutId?: number } = { aborted: false };
 
     const scheduleHeartbeat = () => {
-      timeoutId = window.setTimeout(
+      lifecycle.timeoutId = window.setTimeout(
         () => void sendHeartbeat().catch(() => {}),
         PRESENCE_INTERVAL_MS,
       );
@@ -101,13 +100,13 @@ function usePresenceHeartbeat({
           interval: PRESENCE_INTERVAL_MS,
         });
 
-        if (!ignore) {
+        if (!lifecycle.aborted) {
           sessionTokenRef.current = result.sessionToken;
           setRoomToken(result.roomToken);
         }
 
         await syncPresentPlayer({
-          aborted: ignore,
+          aborted: lifecycle.aborted,
           matchId,
           playerId: activePlayerId,
           sessionId,
@@ -117,7 +116,7 @@ function usePresenceHeartbeat({
         // heartbeat/sync failures are retried via the scheduled next tick
       }
 
-      if (!ignore) {
+      if (!lifecycle.aborted) {
         scheduleHeartbeat();
       }
     };
@@ -125,9 +124,9 @@ function usePresenceHeartbeat({
     void sendHeartbeat().catch(() => {});
 
     return () => {
-      ignore = true;
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
+      lifecycle.aborted = true;
+      if (lifecycle.timeoutId !== undefined) {
+        window.clearTimeout(lifecycle.timeoutId);
       }
     };
   }, [heartbeat, matchId, playerId, presenceSessionIdRef, sessionId, sessionTokenRef, syncPlayer]);
