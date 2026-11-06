@@ -108,4 +108,49 @@ describe("useMatchPresence", () => {
       await vi.advanceTimersByTimeAsync(0);
     });
   });
+
+  it("cancels the scheduled heartbeat on unmount", async () => {
+    heartbeat.mockResolvedValue({ roomToken: "room-1", sessionToken: "session-token-1" });
+    const { unmount } = renderHook(() => useMatchPresence("match-1", playerId));
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    expect(vi.getTimerCount()).toBe(1);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(30_000);
+    });
+
+    expect(heartbeat).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not schedule another heartbeat when an in-flight request finishes after unmount", async () => {
+    let resolveHeartbeat:
+      | ((value: { roomToken: string; sessionToken: string }) => void)
+      | undefined;
+    heartbeat.mockImplementation(
+      () =>
+        new Promise<{ roomToken: string; sessionToken: string }>((resolve) => {
+          resolveHeartbeat = resolve;
+        }),
+    );
+    const { unmount } = renderHook(() => useMatchPresence("match-1", playerId));
+
+    expect(heartbeat).toHaveBeenCalledTimes(1);
+    expect(syncPlayer).toHaveBeenCalledTimes(1);
+    unmount();
+
+    await act(async () => {
+      resolveHeartbeat?.({ roomToken: "room-1", sessionToken: "session-token-1" });
+      await vi.advanceTimersByTimeAsync(30_000);
+    });
+
+    expect(heartbeat).toHaveBeenCalledTimes(1);
+    expect(syncPlayer).toHaveBeenCalledTimes(1);
+    expect(vi.getTimerCount()).toBe(0);
+  });
 });
