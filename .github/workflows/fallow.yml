@@ -125,7 +125,7 @@ jobs:
           path: coverage
 
       - name: Fallow changed-code audit
-        uses: fallow-rs/fallow@90833be1e8d12202e6f6084c417585e3b78005ce # v3.40.0
+        uses: fallow-rs/fallow@34269241152fa2e7e6a9de1aba698dcae93035b3 # v3.41.0
         with:
           command: audit
           gate: all
