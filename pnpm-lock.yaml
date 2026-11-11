@@ -258,8 +258,8 @@ importers:
         specifier: 4.1.3
         version: 4.1.3(effect@4.1.3)(vitest@5.1.0)
       '@eloqnt/cli':
-        specifier: 0.6.33
-        version: 0.6.33(@swc/helpers@0.5.23)
+        specifier: 0.7.0
+        version: 0.7.0(@swc/helpers@0.5.23)
       '@google/design.md':
         specifier: 0.4.0
         version: 0.4.0(supports-color@8.1.1)
@@ -684,12 +684,9 @@ packages:
       effect: ^4.1.3
       vitest: '>=5.0.0 <6.0.0'
 
-  '@eloqnt/cli@0.6.33':
-    resolution: {integrity: sha512-4O5Eb7ebLJn0N1vLkKMHUeCWkpwlrFFTvA/hwhRgPJzNv74+UpiAH+26dbaUw1qktzjrvavJ7UyKChDDSa/unA==}
+  '@eloqnt/cli@0.7.0':
+    resolution: {integrity: sha512-35+g7Wpg9F1/DMM8FaZ820BP0kKf3qsbz7+luwN5BHJc0xOUkzUAVAFsJ7x+72kQMgkiUkyI2YxEnWsbENou1A==}
     hasBin: true
-
-  '@eloqnt/config@0.1.0':
-    resolution: {integrity: sha512-SLR6ZSHxu6XdZtmOz3xRmC3gsY/sCzqtLMD1gxbW2I3XXPBbupwL5RZbkLU/NcZm74AKZrIUPfz3CtEJfxUKqQ==}
 
   '@eloqnt/config@0.1.1':
     resolution: {integrity: sha512-YRDigSaiJEzKDfzTth5kG+L/PKfB3mo8h7yNzpXExPfvQmcD05WoZT57PdhJE0jI+Vva6eb0OCU8hnHHgdME3g==}
@@ -697,14 +694,11 @@ packages:
   '@eloqnt/format-json@0.1.0':
     resolution: {integrity: sha512-4Pkb+HyzgWNJXoU48aJhUyNZSjZvMGooPCNG1ZFmBm55xTiNNPQCNXH66Ob6sXS6RvbWZrRpCf+Uo/Jz9K9g+A==}
 
-  '@eloqnt/format-po@0.1.0':
-    resolution: {integrity: sha512-odgtuICWs67GdkNqY51/d2vaIukuOdlGalKASUGkI5c4cyWOmv/WIVyk5gZyn3xr614RzwWp57s9WB40lRLlBw==}
-
   '@eloqnt/format-po@0.1.1':
     resolution: {integrity: sha512-aLtmIoqXGEaeTT0RcsLN8sZ3aIrsT/c/dVs28zrLhDjO3+vA3KNP+r98N0xq8w/k36+/GIUt4uZNbqcA71GVWw==}
 
-  '@eloqnt/sdk@0.6.31':
-    resolution: {integrity: sha512-QDMxjApRJ3B9GcDzd36P0kaSmcGwKwFMkzjt2TH4jr3JnAPMJIlT4FnxTfoTDeYyRr/LWN6vvZ4r/rBWfuXHqw==}
+  '@eloqnt/sdk@0.7.0':
+    resolution: {integrity: sha512-gq4kxDs38t6t008RWXtxm+8aTmkjYc/lONWLUAAX98BLUfNwDSYvR0WfVpyMedxv2QmBLMfydZFzzf1OsGmk3A==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -3470,10 +3464,6 @@ packages:
     resolution: {integrity: sha512-x1VCxdX4t+8wVfd1so/9w+vQ4vx7lKd2Qp5tDRutErwmR85OgmfX7RlLRMWafRMY7hbEiXIbudNrjOAPa/hL8Q==}
     engines: {node: '>=18'}
 
-  default-browser@5.5.0:
-    resolution: {integrity: sha512-H9LMLr5zwIbSxrmvikGuI/5KGhZ8E2zH3stkMgM5LpOWDutGM2JZaj460Udnf1a+946zc7YBgrqEWwbk7zHvGw==}
-    engines: {node: '>=18'}
-
   default-browser@5.5.1:
     resolution: {integrity: sha512-m1pAzaJgZ/gssEqlOhJkPJp8Xly7QyW6xcrkUa2KKcDeDSEMP7X8xipU3snUcfisTQx0w1AGae+9UtJSfVnXGw==}
     engines: {node: '>=18'}
@@ -4459,9 +4449,6 @@ packages:
   next-intl-swc-plugin-extractor@4.14.10:
     resolution: {integrity: sha512-e89472WWtdFJkm2XEmbeIU6YhPfGvZGErJ6Lm2KnSOQubcT2f/sAm2nrAmd1DIeqzy5LIAALN2QnnYrqrqmvWw==}
 
-  next-intl-swc-plugin-extractor@4.14.7:
-    resolution: {integrity: sha512-0KUc8helXuJfyXVUQDolz0wnRnaW+dkJf6ozX6A+O9x1dd1+cb4PpZqj6FfcDdJagMuIxtnDmeRT7yUhllMYKA==}
-
   next-intl@4.14.10:
     resolution: {integrity: sha512-Kx8kW1cazFisd3iofy6wVnsSfYq2DVUTw/B/FE+xZ2FOY31GX1Y6JoQ6dr7oDnf64qaQ74CXw6uuaAZE3JhYNw==}
     peerDependencies:
@@ -4654,10 +4641,6 @@ packages:
   onetime@7.0.0:
     resolution: {integrity: sha512-VXJjc87FScF88uafS3JllDgvAm+c/Slfz06lorj2uAY34rlUu0Nt+v8wreiImcrgAjjIHp1rXpTDlLOGw29WwQ==}
     engines: {node: '>=18'}
-
-  open@11.0.0:
-    resolution: {integrity: sha512-smsWv2LzFjP03xmvFoJ331ss6h+jixfA4UUV/Bsiyuu4YJPfN+FIQGOIiv4w9/+MoHkfkJ22UIaQWRVFRfH6Vw==}
-    engines: {node: '>=20'}
 
   open@11.0.4:
     resolution: {integrity: sha512-++Zlftm0kVLPmzC06t6epuWmcRMDbI4z5P3NNX979WA/k23+NtSOynEGzsVfZwguKw2mi5umVgnBlJQMwRz4Pg==}
@@ -4862,10 +4845,6 @@ packages:
         optional: true
       rxjs:
         optional: true
-
-  powershell-utils@0.1.0:
-    resolution: {integrity: sha512-dM0jVuXJPsDN6DvRpea484tCUaMiXWjuCn++HGTqUWzGDjv5tZkEZldAJ/UMlqRYGFrD/etByo4/xOuC/snX2A==}
-    engines: {node: '>=20'}
 
   powershell-utils@0.2.1:
     resolution: {integrity: sha512-C+y9x90UElAddDZmV4qOx9W53B61PO7cIqWz2dQsWlwswuq4mr8NEwytdGKboYbQlGZ3awrkTeNvcZiZNHnQ8A==}
@@ -5317,10 +5296,6 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
-  undici@7.28.0:
-    resolution: {integrity: sha512-cRZYrTDwWznlnRiPjggAGxZXanty6M8RV1ff8Wm4LWXBp7/IG8v5DnOm74DtUBp9OONpK75YlPnIjQqX0dBDtA==}
-    engines: {node: '>=20.18.1'}
-
   undici@7.30.1:
     resolution: {integrity: sha512-03KrMbjIFDWQR5RNPrSw3bd1r12JpyFQl9/yxjUbJtqkjmllqC5lFjZh6ujeuJCKr8EOQvRW872Oy/az+nLYxg==}
     engines: {node: '>=20.18.1'}
@@ -5575,10 +5550,6 @@ packages:
       utf-8-validate:
         optional: true
 
-  wsl-utils@0.3.1:
-    resolution: {integrity: sha512-g/eziiSUNBSsdDJtCLB8bdYEUMj4jR7AGeUo96p/3dTafgjHhpF4RiCFPiRILwjQoDXx5MqkBr4fwWtR3Ky4Wg==}
-    engines: {node: '>=20'}
-
   wsl-utils@1.0.1:
     resolution: {integrity: sha512-c16PKLIRxBYpR3jSWsdS7SFp0COm5SOQdiFjY818dYFHJbMGuLBszpF07LBWmOS1uzrHa9VGdynsEgoeKy0oOQ==}
     engines: {node: '>=20'}
@@ -5661,7 +5632,7 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.1
-      undici: 7.28.0
+      undici: 7.30.1
       zod: 4.4.3
 
   '@ai-sdk/provider@4.0.8':
@@ -6038,17 +6009,15 @@ snapshots:
       effect: 4.1.3
       vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.0(@noble/hashes@1.8.0))(msw@2.13.2(@types/node@26.6.6)(typescript@7.0.2))(vite@8.0.8(@types/node@26.6.6)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
-  '@eloqnt/cli@0.6.33(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.7.0(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.6.31(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.7.0(@swc/helpers@0.5.23)
       citty: 0.1.6
-      open: 11.0.0
+      open: 11.0.4
       picocolors: 1.1.1
     transitivePeerDependencies:
       - '@swc/helpers'
-
-  '@eloqnt/config@0.1.0': {}
 
   '@eloqnt/config@0.1.1': {}
 
@@ -6056,27 +6025,22 @@ snapshots:
     dependencies:
       '@eloqnt/config': 0.1.1
 
-  '@eloqnt/format-po@0.1.0':
-    dependencies:
-      '@eloqnt/config': 0.1.0
-      po-parser: 2.2.0
-
   '@eloqnt/format-po@0.1.1':
     dependencies:
       '@eloqnt/config': 0.1.1
       po-parser: 2.2.0
 
-  '@eloqnt/sdk@0.6.31(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.7.0(@swc/helpers@0.5.23)':
     dependencies:
-      '@eloqnt/config': 0.1.0
+      '@eloqnt/config': 0.1.1
       '@eloqnt/format-json': 0.1.0
-      '@eloqnt/format-po': 0.1.0
+      '@eloqnt/format-po': 0.1.1
       '@formatjs/icu-messageformat-parser': 3.5.17
       '@swc/core': 1.16.1(@swc/helpers@0.5.23)
       ai: 7.0.79(zod@4.4.3)
       jiti: 2.7.0
       magic-string: 0.30.21
-      next-intl-swc-plugin-extractor: 4.14.7
+      next-intl-swc-plugin-extractor: 4.14.10
       tinyglobby: 0.2.17
       yaml: 2.9.0
       zod: 4.4.3
@@ -8116,11 +8080,6 @@ snapshots:
 
   default-browser-id@5.0.1: {}
 
-  default-browser@5.5.0:
-    dependencies:
-      bundle-name: 4.1.0
-      default-browser-id: 5.0.1
-
   default-browser@5.5.1:
     dependencies:
       bundle-name: 4.1.0
@@ -9244,8 +9203,6 @@ snapshots:
 
   next-intl-swc-plugin-extractor@4.14.10: {}
 
-  next-intl-swc-plugin-extractor@4.14.7: {}
-
   next-intl@4.14.10(@swc/helpers@0.5.23)(@types/react@19.3.0)(next@16.4.6(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.65.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1):
     dependencies:
       '@eloqnt/config': 0.1.1
@@ -9325,15 +9282,6 @@ snapshots:
   onetime@7.0.0:
     dependencies:
       mimic-function: 5.0.1
-
-  open@11.0.0:
-    dependencies:
-      default-browser: 5.5.0
-      define-lazy-prop: 3.0.0
-      is-in-ssh: 1.0.0
-      is-inside-container: 1.0.0
-      powershell-utils: 0.1.0
-      wsl-utils: 0.3.1
 
   open@11.0.4:
     dependencies:
@@ -9614,8 +9562,6 @@ snapshots:
       '@posthog/core': 1.67.1
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
-
-  powershell-utils@0.1.0: {}
 
   powershell-utils@0.2.1: {}
 
@@ -10117,8 +10063,6 @@ snapshots:
 
   undici-types@8.9.0: {}
 
-  undici@7.28.0: {}
-
   undici@7.30.1: {}
 
   undici@8.12.3: {}
@@ -10342,11 +10286,6 @@ snapshots:
   ws@8.21.0: {}
 
   ws@8.22.0: {}
-
-  wsl-utils@0.3.1:
-    dependencies:
-      is-wsl: 3.1.1
-      powershell-utils: 0.1.0
 
   wsl-utils@1.0.1:
     dependencies:

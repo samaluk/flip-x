@@ -80,7 +80,7 @@
     "@confect/cli": "10.5.0",
     "@confect/test": "10.5.0",
     "@effect/vitest": "4.1.3",
-    "@eloqnt/cli": "0.6.33",
+    "@eloqnt/cli": "0.7.0",
     "@google/design.md": "0.4.0",
     "@next/playwright": "16.4.6",
     "@playwright/test": "1.65.0",
