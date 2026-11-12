@@ -179,8 +179,8 @@ importers:
         specifier: 10.5.0
         version: 10.5.0(@confect/core@10.5.0(convex@1.49.0(react@19.3.1))(effect@4.1.3))(@effect/platform-node@4.1.1(effect@4.1.3)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.49.0(react@19.3.1))(effect@4.1.3)
       '@convex-dev/migrations':
-        specifier: 0.3.7
-        version: 0.3.7(convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))
+        specifier: 0.3.8
+        version: 0.3.8(convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))
       '@convex-dev/presence':
         specifier: 0.4.0
         version: 0.4.0(convex@1.49.0(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -616,8 +616,8 @@ packages:
     peerDependencies:
       convex: ^1.43.0
 
-  '@convex-dev/migrations@0.3.7':
-    resolution: {integrity: sha512-B5psv+FhfFLu2ttusIMcWiHS2fpxOiqWrvHl9wOjgcCwTy1Lqhvn2rY7LBQ8O6hVF5dPm8uoEbaNKPSHxkiD7A==}
+  '@convex-dev/migrations@0.3.8':
+    resolution: {integrity: sha512-+wI5pHQzvcLxBEMLl7yhClfaz6jXppI5RsP/+UOFl0fmCfnbYXMKNelr8u08KZAmCGPUkEjMb4teZsyYJH9sWQ==}
     peerDependencies:
       convex: ^1.42.0
       convex-helpers: ^0.1.115
@@ -5935,7 +5935,7 @@ snapshots:
       - typescript
       - zod
 
-  '@convex-dev/migrations@0.3.7(convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))':
+  '@convex-dev/migrations@0.3.8(convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))':
     dependencies:
       convex: 1.49.0(react@19.3.1)
       convex-helpers: 0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
