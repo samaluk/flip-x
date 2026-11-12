@@ -180,7 +180,7 @@ importers:
         version: 10.5.0(@confect/core@10.5.0(convex@1.49.0(react@19.3.1))(effect@4.1.3))(@effect/platform-node@4.1.1(effect@4.1.3)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.49.0(react@19.3.1))(effect@4.1.3)
       '@convex-dev/migrations':
         specifier: 0.3.8
-        version: 0.3.8(convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))
+        version: 0.3.8(convex-helpers@0.1.135(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))
       '@convex-dev/presence':
         specifier: 0.4.0
         version: 0.4.0(convex@1.49.0(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -206,8 +206,8 @@ importers:
         specifier: 1.49.0
         version: 1.49.0(react@19.3.1)
       convex-helpers:
-        specifier: 0.1.134
-        version: 0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
+        specifier: 0.1.135
+        version: 0.1.135(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
       effect:
         specifier: 4.1.3
         version: 4.1.3
@@ -3351,8 +3351,8 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  convex-helpers@0.1.134:
-    resolution: {integrity: sha512-GPVj5HmRMOyd2PF/OxUYQlNS/HdmOo3pZ4iTyPXyEOxuXwvNeQcx7OUlvNFTTYnHhcuonsMx8UuqjVo5gCqpZA==}
+  convex-helpers@0.1.135:
+    resolution: {integrity: sha512-UX2f9j6pk90UyosPhnYQ1Q6nmUF/klUn/LZGp6BM8Ps5r+cZyY66ULhB1Vp3lUOY4EdjS3RLCKyaoTUg0BqhoA==}
     hasBin: true
     peerDependencies:
       '@standard-schema/spec': ^1.0.0
@@ -5926,7 +5926,7 @@ snapshots:
   '@convex-dev/batch-worker@0.3.5(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)':
     dependencies:
       convex: 1.49.0(react@19.3.1)
-      convex-helpers: 0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
+      convex-helpers: 0.1.135(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
     transitivePeerDependencies:
       - '@standard-schema/spec'
       - hono
@@ -5935,10 +5935,10 @@ snapshots:
       - typescript
       - zod
 
-  '@convex-dev/migrations@0.3.8(convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))':
+  '@convex-dev/migrations@0.3.8(convex-helpers@0.1.135(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3))(convex@1.49.0(react@19.3.1))':
     dependencies:
       convex: 1.49.0(react@19.3.1)
-      convex-helpers: 0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
+      convex-helpers: 0.1.135(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
 
   '@convex-dev/presence@0.4.0(convex@1.49.0(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -8006,7 +8006,7 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  convex-helpers@0.1.134(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3):
+  convex-helpers@0.1.135(@standard-schema/spec@1.1.0)(convex@1.49.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3):
     dependencies:
       convex: 1.49.0(react@19.3.1)
     optionalDependencies:
