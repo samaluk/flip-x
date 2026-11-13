@@ -35,6 +35,11 @@ jobs:
 
       - uses: ./.github/actions/setup-toolchain
 
+      - name: Check Confect codegen drift
+        run: |
+          pnpm confect:codegen
+          git diff --exit-code || { echo "::error::Confect generated files are stale. Run pnpm confect:codegen and commit the changes."; exit 1; }
+
       - name: Lint DESIGN.md
         run: pnpm design:lint
 
