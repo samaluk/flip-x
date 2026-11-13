@@ -35,6 +35,9 @@ jobs:
 
       - uses: ./.github/actions/setup-toolchain
 
+      - name: Check Confect codegen drift
+        run: pnpm confect:codegen:check
+
       - name: Lint DESIGN.md
         run: pnpm design:lint
 
