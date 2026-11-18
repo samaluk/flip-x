@@ -82,7 +82,7 @@
     "@confect/cli": "10.6.0",
     "@confect/test": "10.6.0",
     "@effect/vitest": "4.1.4",
-    "@eloqnt/cli": "0.7.1",
+    "@eloqnt/cli": "0.7.2",
     "@google/design.md": "0.4.0",
     "@interfere/landmines": "0.0.0",
     "@next/playwright": "16.4.6",
