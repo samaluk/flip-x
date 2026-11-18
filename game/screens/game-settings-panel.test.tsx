@@ -1,3 +1,4 @@
+/* oxlint-disable landmines-testing/no-test-doubles -- TODO(landmines): replace 3 existing test doubles with real dependencies. */
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 

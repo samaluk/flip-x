@@ -1,3 +1,4 @@
+/* oxlint-disable landmines-testing/no-test-doubles -- TODO(landmines): replace 15 existing test doubles with real dependencies. */
 import { PrefetchKind } from "next/dist/client/components/router-reducer/router-reducer-types";
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as Result from "effect/Result";
