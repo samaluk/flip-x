@@ -267,8 +267,8 @@ importers:
         specifier: 4.1.4
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
       '@eloqnt/cli':
-        specifier: 0.7.1
-        version: 0.7.1(@swc/helpers@0.5.23)
+        specifier: 0.7.2
+        version: 0.7.2(@swc/helpers@0.5.23)
       '@google/design.md':
         specifier: 0.4.0
         version: 0.4.0(supports-color@8.1.1)
@@ -716,8 +716,8 @@ packages:
       effect: ^4.1.4
       vitest: '>=5.0.0 <6.0.0'
 
-  '@eloqnt/cli@0.7.1':
-    resolution: {integrity: sha512-2zWGzdT7tdY9KUKtsVcc561JNGGYm99FVOT+GzjD17Uxkl0lUhL4VnUx+9BQHHx5TPj80rocs+pGDr5OgxTUtw==}
+  '@eloqnt/cli@0.7.2':
+    resolution: {integrity: sha512-EY2WjexansqVWnNm52/ALcqJeH3c7uvRgPDSOiZMzhLDPJnztisiseyqCNzqrnpnAVtXtoHaK+vYcsjqU/Ur2A==}
     hasBin: true
 
   '@eloqnt/config@0.1.1':
@@ -729,8 +729,8 @@ packages:
   '@eloqnt/format-po@0.1.1':
     resolution: {integrity: sha512-aLtmIoqXGEaeTT0RcsLN8sZ3aIrsT/c/dVs28zrLhDjO3+vA3KNP+r98N0xq8w/k36+/GIUt4uZNbqcA71GVWw==}
 
-  '@eloqnt/sdk@0.7.0':
-    resolution: {integrity: sha512-gq4kxDs38t6t008RWXtxm+8aTmkjYc/lONWLUAAX98BLUfNwDSYvR0WfVpyMedxv2QmBLMfydZFzzf1OsGmk3A==}
+  '@eloqnt/sdk@0.7.1':
+    resolution: {integrity: sha512-17SNWChiOVlugnMr9X65NYq1HtWremCSjqqSwPi6qIsR7YXB5aKOBQLELhDWo0DzK/o+8qOiUauNTqBZGK2auQ==}
 
   '@emnapi/core@1.11.2':
     resolution: {integrity: sha512-TC8MkTuZUtcTSiFeuC0ksCh9QIJ5+F21MvZ4Wn4ORfYaFJ/0dsiudv5tVkejgwZlwQ39jL9WWDe2lz8x0WglOA==}
@@ -5587,21 +5587,21 @@ snapshots:
 
   '@adobe/css-tools@4.4.4': {}
 
-  '@ai-sdk/gateway@4.0.64(zod@4.4.3)':
+  '@ai-sdk/gateway@4.0.64(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 4.0.8
-      '@ai-sdk/provider-utils': 5.0.30(zod@4.4.3)
+      '@ai-sdk/provider-utils': 5.0.30(zod@4.6.6)
       '@vercel/oidc': 3.2.0
-      zod: 4.4.3
+      zod: 4.6.6
 
-  '@ai-sdk/provider-utils@5.0.30(zod@4.4.3)':
+  '@ai-sdk/provider-utils@5.0.30(zod@4.6.6)':
     dependencies:
       '@ai-sdk/provider': 4.0.8
       '@standard-schema/spec': 1.1.0
       '@workflow/serde': 4.1.0
       eventsource-parser: 3.1.1
       undici: 7.30.1
-      zod: 4.4.3
+      zod: 4.6.6
 
   '@ai-sdk/provider@4.0.8':
     dependencies:
@@ -5990,10 +5990,10 @@ snapshots:
       effect: 4.1.4
       vitest: 5.1.0(@opentelemetry/api@1.9.1)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/coverage-v8@5.1.0)(@vitest/ui@5.1.0)(jsdom@31.0.1(@noble/hashes@1.8.0))(msw@2.13.2(@types/node@26.6.6)(typescript@7.0.2))(vite@8.0.8(@types/node@26.6.6)(esbuild@0.27.7)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
 
-  '@eloqnt/cli@0.7.1(@swc/helpers@0.5.23)':
+  '@eloqnt/cli@0.7.2(@swc/helpers@0.5.23)':
     dependencies:
       '@clack/prompts': 1.7.0
-      '@eloqnt/sdk': 0.7.0(@swc/helpers@0.5.23)
+      '@eloqnt/sdk': 0.7.1(@swc/helpers@0.5.23)
       citty: 0.1.6
       open: 11.0.4
       picocolors: 1.1.1
@@ -6011,20 +6011,20 @@ snapshots:
       '@eloqnt/config': 0.1.1
       po-parser: 2.2.0
 
-  '@eloqnt/sdk@0.7.0(@swc/helpers@0.5.23)':
+  '@eloqnt/sdk@0.7.1(@swc/helpers@0.5.23)':
     dependencies:
       '@eloqnt/config': 0.1.1
       '@eloqnt/format-json': 0.1.0
       '@eloqnt/format-po': 0.1.1
       '@formatjs/icu-messageformat-parser': 3.5.17
       '@swc/core': 1.16.1(@swc/helpers@0.5.23)
-      ai: 7.0.79(zod@4.4.3)
+      ai: 7.0.79(zod@4.6.6)
       jiti: 2.7.0
       magic-string: 0.30.21
       next-intl-swc-plugin-extractor: 4.14.10
       tinyglobby: 0.2.17
       yaml: 2.9.0
-      zod: 4.4.3
+      zod: 4.6.6
     transitivePeerDependencies:
       - '@swc/helpers'
 
@@ -7789,12 +7789,12 @@ snapshots:
       prompts: 2.4.2
       yaml: 2.9.0
 
-  ai@7.0.79(zod@4.4.3):
+  ai@7.0.79(zod@4.6.6):
     dependencies:
-      '@ai-sdk/gateway': 4.0.64(zod@4.4.3)
+      '@ai-sdk/gateway': 4.0.64(zod@4.6.6)
       '@ai-sdk/provider': 4.0.8
-      '@ai-sdk/provider-utils': 5.0.30(zod@4.4.3)
-      zod: 4.4.3
+      '@ai-sdk/provider-utils': 5.0.30(zod@4.6.6)
+      zod: 4.6.6
 
   ajv-formats@2.1.1:
     dependencies:
@@ -8720,7 +8720,7 @@ snapshots:
 
   magic-string@0.30.21:
     dependencies:
-      '@jridgewell/sourcemap-codec': 1.5.5
+      '@jridgewell/sourcemap-codec': 1.6.0
 
   magic-string@1.4.3:
     dependencies:
