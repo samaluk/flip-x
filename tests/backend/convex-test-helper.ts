@@ -1,3 +1,4 @@
+/* oxlint-disable landmines-testing/no-test-doubles -- TODO(landmines): replace 1 existing test double with real dependencies. */
 import { execFileSync } from "node:child_process";
 import path from "node:path";
 

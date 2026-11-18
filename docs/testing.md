@@ -148,6 +148,12 @@ pnpm test
 pnpm build
 ```
 
+`pnpm lint` includes a separate `lint:landmines` pass. The core Oxlint pass ignores
+test files; the Landmines pass uses `.oxlintrc.landmines.json` with only the five
+testing rules and scans those files without the core ignore list. Existing test
+doubles carry `TODO(landmines)` suppressions in their files; the existing timeout
+allowance is an exact per-file count that must decrease when fixed.
+
 Backend / E2E on your machine (default: **local** Convex — fast, no preview deploy key):
 
 ```bash

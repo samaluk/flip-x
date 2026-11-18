@@ -47,7 +47,13 @@
     }
   ],
   "ignoreUnresolvedImports": ["@/messages/**"],
-  "ignoreDependencies": ["@confect/test", "@next/playwright", "oxlint-tailwindcss", "tailwindcss"],
+  "ignoreDependencies": [
+    "@interfere/landmines",
+    "@confect/test",
+    "@next/playwright",
+    "oxlint-tailwindcss",
+    "tailwindcss"
+  ],
   "typeAware": {
     "enabled": true,
     "require": "complete",
