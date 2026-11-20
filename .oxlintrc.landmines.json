@@ -21,7 +21,13 @@
     "landmines-testing/no-unsignaled-poll": "error",
     "landmines-testing/no-flake-masking": [
       "error",
-      { "allow": { "tests/unit/shared/posthog-source-maps.test.ts": 1 } }
+      {
+        "allow": {
+          "tests/unit/shared/posthog-source-maps.test.ts": 1,
+          "vitest.config.ts": 3,
+          "vitest.convex.config.ts": 2
+        }
+      }
     ]
   }
 }
