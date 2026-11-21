@@ -110,6 +110,11 @@ jobs:
 
       - uses: ./.github/actions/setup-toolchain
 
+      # The Action invokes `fallow` directly; prefer the pinned project binary
+      # over a global npm installation and avoid runner-specific npm prefixes.
+      - name: Expose project Fallow binary
+        run: echo "$GITHUB_WORKSPACE/node_modules/.bin" >> "$GITHUB_PATH"
+
       # Same coverage evidence the test job produced, so audit CRAP scoring
       # matches — downloaded rather than regenerated to avoid a second
       # install + test run.
