@@ -14,9 +14,8 @@ advisory or blocking verdict, then remove each probe to restore a clean result.
 | Make semantic evidence unavailable while an unused export needs refinement | `pnpm fallow:dead-code` | Nonzero exit under `typeAware.require: "complete"`. |
 | Remove only a consumer line, leaving an unused export in the same changed file | `pnpm fallow:staged` | Exit `1`; deletion-only diffs cannot hide the finding. |
 
-`fallow:staged` uses native file scoping against HEAD. In pre-commit, hk stashes
-unstaged changes so the audited working tree matches the index. Direct invocations
-include unstaged changes too.
+`fallow:staged` uses the native `--staged` index snapshot against HEAD. Both
+the pre-commit hook and direct invocations exclude unstaged and untracked edits.
 
 Both duplication verdicts use the configured percentage ceiling;
 `--fail-on-issues` and `audit --gate all` do not reject every clone group.
