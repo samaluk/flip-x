@@ -61,7 +61,10 @@ The Action reads the CLI version from `package.json` and provisions its matching
 TypeScript companion from `typeAware.enabled`. Local and gate runs use the
 matching `fallow-type-aware` devDependency instead. Coverage comes from
 `health.coverage`; both consumers rebase its absolute paths using the producing
-job's checkout root. Renovate updates the CLI, companion, and Action together.
+job's checkout root. The review job exposes the Action's globally installed and
+verified CLI via `npm root -g` rather than shadowing it with the pnpm-local shim
+or relying on the runner's npm-prefix configuration. Renovate updates the CLI,
+companion, and Action together.
 
 The Action receives an explicit audit base SHA with `auto-changed-since: false`.
 Its automatic mode also supplies a line-diff filter, which would narrow the
