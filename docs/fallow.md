@@ -1,6 +1,8 @@
 # Fallow quality gates
 
-Flip-x pins Fallow in `package.json` and the GitHub Action by release SHA.
+Flip-x pins Fallow and `fallow-type-aware` to `3.44.0` in `package.json`,
+and the GitHub Action to the matching release SHA. Update all three together
+when a release satisfies the workspace's supply-chain policy.
 `.fallowrc.json` owns the shared policy: complete type-aware evidence, architecture
 boundaries, reasoned suppressions, coverage, and `audit.gate: "all"`. Local
 commands and CI inherit it.
@@ -11,7 +13,7 @@ commands and CI inherit it.
 pnpm test:coverage
 pnpm fallow:audit        # Changed-file gate against the detected base
 pnpm fallow:full         # Full-repository dead-code, duplication, and health gates
-pnpm fallow:staged       # Changed-file gate against HEAD; used by hk
+pnpm fallow:staged       # Index-only gate against HEAD; used by hk
 ```
 
 The three repository gates remain individually runnable as
@@ -40,6 +42,10 @@ pnpm fallow fix --yes
 ```
 
 `review` is advisory and always exits zero; `audit` is the blocking command.
+Run `pnpm exec fallow agent install --without guide --without mcp --without hooks`
+after a version update to refresh the pointer-form skills, then check them with
+`pnpm exec fallow agent status`. The guide, MCP and commit hooks remain owned by
+the repo's existing setup; this command updates skills only.
 
 ## CI and hooks
 
@@ -66,15 +72,19 @@ The full gate runs on every PR and push to master/main, including dependency
 updates. A separate version-drift workflow would repeat the same tests and
 gates, so none is needed.
 
-`hk` remains the only hook manager. Pre-commit stashes unstaged changes and runs
-`fallow audit --base HEAD` against the staged snapshot. The audit deliberately
+`hk` remains the only hook manager. Pre-commit runs
+`pnpm exec fallow audit --staged --quiet` against the Git index. It sets
+`FALLOW_COVERAGE` to the checkout's absolute coverage path, because the
+staged snapshot does not contain ignored coverage files; run
+`pnpm test:coverage` first when the coverage file is missing. The audit deliberately
 checks whole changed files, including pre-existing findings in them. There is
 no line-diff pipe or empty-diff fallback to maintain; deletion-only changes use
 the same native path. Pre-push fetches the current base, generates coverage,
 and runs both the changed-file audit and the repository gates.
 
-Running `pnpm fallow:staged` directly does not stash: it examines working-tree
-changes against HEAD. Use `mise run pre-commit` when partial staging matters.
+Running `pnpm fallow:staged` directly reads the index, not the working tree:
+unstaged and untracked edits do not affect its verdict. Use `mise run pre-commit`
+to exercise the entire hook.
 
 ## Project-specific configuration
 
@@ -101,8 +111,21 @@ not a claim of zero clone debt or an exact current measurement. The changed-file
 to decide whether duplication warns or fails. A new clone below the ceiling can
 therefore warn without failing; `gate: all` does not change that threshold.
 Since Fallow 3.32, `dupes --fail-on-issues` fails on any clone group, so the
-`fallow:dupes` script gates with `--threshold 6.08` instead to keep enforcing
-the ceiling rather than demanding zero clones.
+`fallow:dupes` script relies on `duplicates.threshold: 6.08` in the config
+instead of demanding zero clones. The **6.08%** ceiling is a policy to revisit
+later, not a target to raise automatically or a claim that clone debt is gone.
+
+### Reviewed clone exceptions
+
+`duplicates.ignoredClones` in `.fallowrc.json` is count-locked at **12** entries.
+Before adding an exception, run `pnpm fallow dupes` and inspect its group with
+`pnpm fallow dupes --trace dup:<fingerprint>`. Record why the specific pair is
+intentional; do not add a blanket pattern or raise the ceiling. To add an entry,
+remove an obsolete one in the same change so the count stays 12. To remove an
+entry without replacement, first agree to tighten the count-lock policy and
+update this documentation in the same change. Re-run `pnpm fallow:dupes` and
+the changed-code audit after either edit; fingerprints and group ordering can
+shift when the ignored list changes. Do not use `--save-baseline` as a substitute.
 
 Fallow 3.23 replaced old numeric collision handles with report-scoped `-rN`
 handles ordered by canonical fragments and locations. Those handles can still
@@ -119,7 +142,8 @@ reports the duplication threshold as **not enforced**, so bare `fallow` cannot
 replace `fallow:full`. Keep `dupes` as a standalone gate and let the Action own
 the changed-code audit once.
 
-Upstream references: [CI setup](https://github.com/fallow-rs/fallow/tree/v3.27.0#ci),
-[Action inputs](https://github.com/fallow-rs/fallow/blob/v3.27.0/action.yml), and
-[configuration](https://docs.fallow.tools/configuration/overview).
+Upstream references: [CI setup](https://fallow.tools/docs/integrations/ci/),
+[Action inputs](https://fallow.tools/docs/integrations/ci-github/),
+[agent skills](https://fallow.tools/docs/integrations/agent-skills/), and
+[configuration](https://fallow.tools/docs/configuration/overview/).
 See [gate verification](fallow-zero-debt-proof.md) for regression probes.

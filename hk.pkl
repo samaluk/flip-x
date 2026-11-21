@@ -28,7 +28,7 @@ steps {
   }
   ["fallow-audit"] {
     check = new CommandSpec {
-      command = "pnpm fallow:staged"
+      command = "FALLOW_COVERAGE=\"$PWD/coverage/coverage-final.json\" pnpm exec fallow audit --staged --quiet"
       effect = "write"
     }
   }

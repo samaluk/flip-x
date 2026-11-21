@@ -110,11 +110,6 @@ jobs:
 
       - uses: ./.github/actions/setup-toolchain
 
-      # Fallow installs its CLI globally with npm. The runtime managed by
-      # pnpm/setup can use a different npm prefix, so expose that bin directory.
-      - name: Expose npm global binaries
-        run: echo "$(npm config get prefix)/bin" >> "$GITHUB_PATH"
-
       # Same coverage evidence the test job produced, so audit CRAP scoring
       # matches — downloaded rather than regenerated to avoid a second
       # install + test run.
