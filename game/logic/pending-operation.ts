@@ -53,6 +53,7 @@ export function advancePendingOperation(
       operation.resume,
       events,
     );
+    return "wait_for_input";
   } else if (isFlip3ActiveForPlayer(round, operation.playerId)) {
     advanceFlip3Hit(
       round,
