@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { PlayerLane } from "@/game/ui/player-lane";
@@ -78,6 +78,51 @@ describe("player lane", () => {
     );
 
     expect(screen.getByRole("button", { name: /select alex as target/i })).toBeInTheDocument();
+  });
+
+  it("exposes target selection to keyboard and only when actionable", () => {
+    const onSelectTarget = vi.fn();
+    const { rerender } = render(
+      withIntlEn(<PlayerLane player={player()} isActive={false} isTargetable />),
+    );
+    expect(
+      screen.queryByRole("button", { name: /select alex as target/i }),
+    ).not.toBeInTheDocument();
+
+    rerender(
+      withIntlEn(
+        <PlayerLane
+          player={player()}
+          isActive={false}
+          isSelfTargeting
+          onSelectTarget={onSelectTarget}
+        />,
+      ),
+    );
+    const target = screen.getByRole("button", { name: /select alex as target/i });
+    expect(target).toHaveAttribute("tabindex", "0");
+    fireEvent.keyDown(target, { key: "Enter" });
+    fireEvent.keyDown(target, { key: " " });
+    fireEvent.click(target);
+    expect(onSelectTarget).toHaveBeenCalledTimes(3);
+    expect(onSelectTarget).toHaveBeenCalledWith("p1");
+  });
+
+  it("updates status labels through bank, bust, and completed transitions", () => {
+    const { rerender } = render(withIntlEn(<PlayerLane player={player()} isActive={false} />));
+    expect(screen.queryByText("Banked")).not.toBeInTheDocument();
+    rerender(
+      withIntlEn(<PlayerLane player={player({ roundStatus: "stayed" })} isActive={false} />),
+    );
+    expect(screen.getByText("Banked")).toBeInTheDocument();
+    rerender(
+      withIntlEn(<PlayerLane player={player({ roundStatus: "busted" })} isActive={false} />),
+    );
+    expect(screen.getByText("Busted")).toBeInTheDocument();
+    rerender(
+      withIntlEn(<PlayerLane player={player({ roundStatus: "completed" })} isActive={false} />),
+    );
+    expect(screen.getByText("Scored")).toBeInTheDocument();
   });
 
   it("rerenders the Flip Three badge and received action cards", () => {

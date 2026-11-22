@@ -606,67 +606,67 @@ msgctxt "Cards.CuXNi7"
 msgid "No. {label}"
 msgstr "N.º {label}"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.1PCThj"
 msgid "Busted"
 msgstr "Eliminado"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.g7If5t"
 msgid "Banked"
 msgstr "Asegurado"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.rzZR_J"
 msgid "Frozen"
 msgstr "Congelado"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.ERnpdU"
 msgid "Scored"
 msgstr "Puntuado"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.dZd8H_"
 msgid "Waiting"
 msgstr "Esperando"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.xbovKX"
 msgid "Dealer"
 msgstr "Mano"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.kJ5W29"
 msgid "You"
 msgstr "Tú"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.ccU6l_"
 msgid "Online"
 msgstr "En línea"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.ErxWra"
 msgid "Self"
 msgstr "Yo"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.YDkqMJ"
 msgid "Incoming"
 msgstr "Entrante"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.oZTIL7"
 msgid "{count} to draw"
 msgstr "{count} por robar"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.yb45j-"
 msgid "Total score {score}"
 msgstr "Puntuación total {score}"
 
-#: game/ui/player-lane.tsx
+#: game/ui/player-lane-sections.tsx
 msgctxt "PlayerLane.PL2m0r"
 msgid "Points at risk"
 msgstr "Puntos en juego"

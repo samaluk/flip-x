@@ -13,20 +13,6 @@ import { cn } from "@/shared/lib/utils";
 /** Scales the default 8×10rem face to fit narrow sidebars without reflowing inner SVGs. */
 const COMPACT_CARD_SCALE_CLASS = "w-32 origin-top-left scale-compact-card";
 
-/**
- * Shared shape of the FlipXCard memo comparison: both cards only depend on
- * their label and their kind-specific payload, which the lane card stack
- * feeds from the same snapshot card fields. Exporting this type lets the
- * player-lane comparators type their card-pair predicates without reaching
- * into component-private types.
- */
-export type FlipXCardComparable = {
-  label: string;
-  numberValue?: number;
-  modifierValue?: number | "x2";
-  actionKind?: string;
-};
-
 export type FlipXCardProps = {
   label: string;
   faceDown?: boolean;
@@ -100,28 +86,34 @@ function ScreenReaderSummary(props: FlipXCardProps) {
 }
 
 export const FlipXCard = memo(function FlipXCard(props: FlipXCardProps) {
-  const isCompact = props.compact === true;
-
-  const shellClass = cn(
-    "flip-x-card-shell shrink-0",
-    isCompact ? "h-19 w-15 overflow-visible" : "w-32 sm:w-48",
-    props.dealing && "flip-x-card-deal",
-    props.stateAnimation === "bust" && "flip-x-card-bust",
-    props.stateAnimation === "stay" && "flip-x-card-stay",
-    props.active && "flip-x-card-active",
-    props.variant === "received" && "flip-x-card-received",
-    props.className,
-  );
-
-  const compactScaleWrap = (node: ReactNode) =>
-    isCompact ? <div className={COMPACT_CARD_SCALE_CLASS}>{node}</div> : node;
-
   const faceUp = (
     <div className="absolute inset-0 overflow-hidden rounded-2xl backface-hidden">
       <ScreenReaderSummary {...props} />
       <FaceContent {...props} />
     </div>
   );
+
+  return <CardShell props={props} faceUp={faceUp} />;
+}, areFlipXCardPropsEqual);
+
+function CardShell({ props, faceUp }: { props: FlipXCardProps; faceUp: ReactNode }) {
+  const isCompact = props.compact === true;
+
+  const shellClass = cn(
+    "flip-x-card-shell shrink-0",
+    isCompact ? "h-19 w-15 overflow-visible" : "w-32 sm:w-48",
+    {
+      "flip-x-card-deal": props.dealing,
+      "flip-x-card-bust": props.stateAnimation === "bust",
+      "flip-x-card-stay": props.stateAnimation === "stay",
+      "flip-x-card-active": props.active,
+      "flip-x-card-received": props.variant === "received",
+    },
+    props.className,
+  );
+
+  const compactScaleWrap = (node: ReactNode) =>
+    isCompact ? <div className={COMPACT_CARD_SCALE_CLASS}>{node}</div> : node;
 
   const faceDown = (
     <div className="absolute inset-0 overflow-hidden rounded-2xl border border-border bg-card p-3 text-primary shadow-2xl inset-shadow-2xs">
@@ -163,20 +155,22 @@ export const FlipXCard = memo(function FlipXCard(props: FlipXCardProps) {
       )}
     </m.div>
   );
-}, areFlipXCardPropsEqual);
+}
+
+const CARD_SHELL_KEYS = [
+  "label",
+  "faceDown",
+  "dealing",
+  "stateAnimation",
+  "className",
+  "compact",
+  "disableFlip3d",
+  "active",
+  "variant",
+] as const satisfies readonly (keyof FlipXCardProps)[];
 
 function flipXCardShellPropsEqual(left: FlipXCardProps, right: FlipXCardProps): boolean {
-  return (
-    left.label === right.label &&
-    left.faceDown === right.faceDown &&
-    left.dealing === right.dealing &&
-    left.stateAnimation === right.stateAnimation &&
-    left.className === right.className &&
-    left.compact === right.compact &&
-    left.disableFlip3d === right.disableFlip3d &&
-    left.active === right.active &&
-    left.variant === right.variant
-  );
+  return CARD_SHELL_KEYS.every((key) => left[key] === right[key]);
 }
 
 function flipXCardKindPayloadEqual(left: FlipXCardProps, right: FlipXCardProps): boolean {

@@ -1,5 +1,4 @@
 import type { Id } from "@/convex/_generated/dataModel";
-import type { FlipXCardComparable } from "@/game/ui/flip-x-card";
 import type { MatchSnapshot } from "@/game/logic/view-models";
 
 /**
@@ -11,18 +10,6 @@ import type { MatchSnapshot } from "@/game/logic/view-models";
 export type SnapshotPlayer = MatchSnapshot["players"][number];
 
 export type LaneRoundStatus = SnapshotPlayer["roundStatus"];
-
-/**
- * The status shown in the lane UI: a lingering bust card always reads as
- * "busted" even after the round moves to "completed", so the resolved badge
- * and card pose stay stable while the bust card is on the table.
- */
-export function getDisplayStatus(player: SnapshotPlayer): LaneRoundStatus {
-  if (player.bustCard !== null) {
-    return "busted";
-  }
-  return player.roundStatus;
-}
 
 const PLAYER_LANE_MEMO_SCALAR_KEYS = [
   "isActive",
@@ -82,7 +69,6 @@ export function arePlayersEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
   return arePlayerSnapshotScalarsEqual(left, right) && arePlayerSnapshotCardsEqual(left, right);
 }
 
-// fallow-ignore-next-line code-duplication -- reviewed: mirrors the FlipXCard memo's 8-field shell comparison; kept separate because the lane compares different prop keys (player fields, not card shell props)
 function arePlayerSnapshotScalarsEqual(left: SnapshotPlayer, right: SnapshotPlayer) {
   return (
     left.playerId === right.playerId &&
@@ -165,17 +151,20 @@ export function areActionCardsEqual(
   return areParallelSnapshotCardsEqual(left, right, (a, b) => areActionCardComparableEqual(a, b));
 }
 
-type NumberCardComparable = FlipXCardComparable & {
+type NumberCardComparable = {
+  label: string;
   id: string;
   numberValue: number;
 };
 
-type ModifierCardComparable = FlipXCardComparable & {
+type ModifierCardComparable = {
+  label: string;
   id: string;
   modifierValue: number | "x2";
 };
 
-type ActionCardComparable = FlipXCardComparable & {
+type ActionCardComparable = {
+  label: string;
   actionKind: string;
 };
 

@@ -49,46 +49,22 @@ describe("FlipXCard VRT", () => {
     await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip-x-number-face-down");
   });
 
-  test("number dealing (end of deal animation)", async () => {
+  test.each([
+    ["dealing", { dealing: true }],
+    ["bust", { stateAnimation: "bust" }],
+    ["stay", { stateAnimation: "stay" }],
+  ] as const)("number %s (end of animation)", async (state, animation) => {
     render(
       withIntlEn(
         cardShell(
-          <FlipXCard kind="number" numberValue={7} label="L" dealing disableFlip3d />,
+          <FlipXCard kind="number" numberValue={7} label="L" disableFlip3d {...animation} />,
           true,
         ),
       ),
     );
 
     await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip-x-state-dealing");
-  });
-
-  test("number bust (end of bust animation)", async () => {
-    render(
-      withIntlEn(
-        cardShell(
-          <FlipXCard kind="number" numberValue={7} label="L" stateAnimation="bust" disableFlip3d />,
-          true,
-        ),
-      ),
-    );
-
-    await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip-x-state-bust");
-  });
-
-  test("number stay (end of stay animation)", async () => {
-    render(
-      withIntlEn(
-        cardShell(
-          <FlipXCard kind="number" numberValue={7} label="L" stateAnimation="stay" disableFlip3d />,
-          true,
-        ),
-      ),
-    );
-
-    await page.viewport(480, 360);
-    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot("flip-x-state-stay");
+    await expect(page.getByTestId("vrt-card-preview")).toMatchScreenshot(`flip-x-state-${state}`);
   });
 
   test.each(REPRESENTATIVE_MODIFIER_VALUES)("modifier %s", async (modifierValue) => {

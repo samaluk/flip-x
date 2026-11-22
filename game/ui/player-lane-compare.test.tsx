@@ -7,10 +7,10 @@ import {
   areNumberCardsEqual,
   arePlayerLanePropsEqual,
   arePlayersEqual,
-  getDisplayStatus,
   type PlayerLaneProps,
   type SnapshotPlayer,
 } from "@/game/ui/player-lane-compare";
+import { getLaneStatus } from "@/game/ui/player-lane-status";
 
 function snapshotPlayer(overrides: Partial<SnapshotPlayer> = {}): SnapshotPlayer {
   const base: SnapshotPlayer = {
@@ -163,13 +163,13 @@ describe("card comparators", () => {
   });
 });
 
-describe("getDisplayStatus", () => {
+describe("getLaneStatus", () => {
   it("bustCard overrides roundStatus", () => {
     expect(
-      getDisplayStatus(
+      getLaneStatus(
         snapshotPlayer({ bustCard: { id: "n1", type: "number", label: "7", numberValue: 7 } }),
       ),
     ).toBe("busted");
-    expect(getDisplayStatus(snapshotPlayer({ roundStatus: "busted" }))).toBe("busted");
+    expect(getLaneStatus(snapshotPlayer({ roundStatus: "busted" }))).toBe("busted");
   });
 });
