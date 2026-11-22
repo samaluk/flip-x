@@ -38,7 +38,17 @@ describe("GameSettingsPanel", () => {
     expect(screen.getByText("Points to win")).toBeInTheDocument();
     expect(screen.getByText("0-12")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /classic/i })).not.toBeInTheDocument();
+    expect(screen.queryByText("Locked")).not.toBeInTheDocument();
     expect(screen.queryByText(/save settings/i)).not.toBeInTheDocument();
+  });
+
+  it("locks the summary without rendering editor controls after setup", () => {
+    render(withIntlEn(<GameSettingsPanel snapshot={buildTestMatchSnapshot()} />));
+
+    expect(screen.getByText("Locked")).toBeInTheDocument();
+    expect(screen.getByText("0-12")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /classic/i })).not.toBeInTheDocument();
+    expect(updateMatchSettings).not.toHaveBeenCalled();
   });
 
   it("lets the host apply a preset immediately", async () => {
@@ -57,6 +67,21 @@ describe("GameSettingsPanel", () => {
       },
     });
     expect(screen.queryByText(/save settings/i)).not.toBeInTheDocument();
+  });
+
+  it("lets the host change an advanced setting", async () => {
+    render(withIntlEn(<GameSettingsPanel snapshot={setupSnapshot(true)} />));
+
+    fireEvent.click(screen.getByRole("button", { name: "Advanced" }));
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText("Max number card"), { target: { value: "16" } });
+    });
+
+    expect(updateMatchSettings).toHaveBeenCalledWith({
+      matchId: "match-1",
+      expectedVersion: 7,
+      patch: { maxNumberCardValue: 16 },
+    });
   });
 
   it("disables preset controls while a settings update is pending", async () => {

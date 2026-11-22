@@ -81,8 +81,7 @@
       "dup:ec5a72c6:2",
       "dup:ec8638c4:2",
       "dup:7e870437:2",
-      "dup:776beb96:2",
-      "dup:c4c437ca:2"
+      "dup:776beb96:2"
     ]
   },
   "health": {
@@ -92,12 +91,6 @@
         "files": ["game/ui/round-history-table.tsx"],
         "maxUnitSize": 150,
         "reason": "The table renders every player column inline; this change only swapped raw palette classes for theme tokens."
-      },
-      {
-        "files": ["game/screens/game-settings-panel.tsx"],
-        "functions": ["GameSettingsPanel"],
-        "maxUnitSize": 170,
-        "reason": "Host preset picker and advanced accordion stay on one settings surface; this change only swapped className restyles for variants."
       },
       {
         "files": ["game/ui/flip-x-card.tsx"],

@@ -15,6 +15,7 @@ import type { PlayerColorId } from "@/shared/lib/player-colors";
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";
 import { toastResultMutationFailure } from "@/shared/lib/result-mutation-toast";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
+import { playerNameIssueMessage } from "@/shared/lib/player-name-issue-message";
 import {
   getTrimmedPlayerNameIssue,
   type TrimmedPlayerNameIssue,
@@ -23,20 +24,12 @@ import {
 function useGamePlayerNameIssueToast() {
   const t = useExtracted("Game");
 
-  return (issue: TrimmedPlayerNameIssue) => {
-    switch (issue) {
-      case "empty":
-        return t("Please enter your name.");
-      case "too_long":
-        return t("Name must be 20 characters or less.");
-      case "no_session":
-        return t("Session not available.");
-      default: {
-        const exhaustiveCheck: never = issue;
-        return exhaustiveCheck;
-      }
-    }
-  };
+  return (issue: TrimmedPlayerNameIssue) =>
+    playerNameIssueMessage(issue, {
+      empty: t("Please enter your name."),
+      too_long: t("Name must be 20 characters or less."),
+      no_session: t("Session not available."),
+    });
 }
 
 export function useGamePageJoin(matchId: string, players: MatchSnapshot["players"] | undefined) {

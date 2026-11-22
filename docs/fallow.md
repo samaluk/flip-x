@@ -120,11 +120,13 @@ later, not a target to raise automatically or a claim that clone debt is gone.
 
 ### Reviewed clone exceptions
 
-`duplicates.ignoredClones` in `.fallowrc.json` is count-locked at **9** entries.
+`duplicates.ignoredClones` in `.fallowrc.json` is count-locked at **8** entries.
+The create/join player-name message clone is shared now, so its `c4c437ca`
+exception is retired; the settings editor split also retires its size override.
 Before adding an exception, run `pnpm fallow dupes` and inspect its group with
 `pnpm fallow dupes --trace dup:<fingerprint>`. Record why the specific pair is
 intentional; do not add a blanket pattern or raise the ceiling. To add an entry,
-remove an obsolete one in the same change so the count stays 9. To remove an
+remove an obsolete one in the same change so the count stays 8. To remove an
 entry without replacement, tighten the count lock and update this documentation
 in the same change. Re-run `pnpm fallow:dupes` and
 the changed-code audit after either edit; fingerprints and group ordering can
