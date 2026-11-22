@@ -13,11 +13,34 @@ export function getPlayerBySeat<T extends OrderedPlayer>(
   return orderedPlayers(players)[normalized];
 }
 
-export function getPlayerById<T extends OrderedPlayer>(
+function getPlayerById<T extends OrderedPlayer>(
   players: readonly T[],
   playerId: string,
 ): T | undefined {
   return players.find((player) => player.playerId === playerId);
+}
+
+export function focusTurnOwner(
+  round: { turnSeatIndex: number; activePlayerId: string | null },
+  players: OrderedPlayer[],
+  playerId: string,
+) {
+  const player = getPlayerById(players, playerId);
+  if (player) {
+    round.turnSeatIndex = player.seatIndex;
+    round.activePlayerId = playerId;
+  }
+}
+
+export function restoreTurnAnchor(
+  round: { turnSeatIndex: number },
+  players: OrderedPlayer[],
+  playerId: string,
+) {
+  const player = getPlayerById(players, playerId);
+  if (player) {
+    round.turnSeatIndex = player.seatIndex;
+  }
 }
 
 export function nextActiveSeatIndex(

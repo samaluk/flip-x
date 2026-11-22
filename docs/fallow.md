@@ -76,9 +76,10 @@ updates. A separate version-drift workflow would repeat the same tests and
 gates, so none is needed.
 
 `hk` remains the only hook manager. Pre-commit runs
-`pnpm exec fallow audit --staged --quiet` against the Git index. It sets
+`pnpm exec fallow audit --staged --coverage-root "$PWD" --quiet` against the Git index. It sets
 `FALLOW_COVERAGE` to the checkout's absolute coverage path, because the
-staged snapshot does not contain ignored coverage files; run
+staged snapshot does not contain ignored coverage files. The explicit coverage
+root maps absolute Vitest paths back onto the staged snapshot; run
 `pnpm test:coverage` first when the coverage file is missing. The audit deliberately
 checks whole changed files, including pre-existing findings in them. There is
 no line-diff pipe or empty-diff fallback to maintain; deletion-only changes use
@@ -133,6 +134,11 @@ entry without replacement, tighten the count lock and update this documentation
 in the same change. Re-run `pnpm fallow:dupes` and
 the changed-code audit after either edit; fingerprints and group ordering can
 shift when the ignored list changes. Do not use `--save-baseline` as a substitute.
+
+The target-action/Flip Three operation and named replay outcomes remove their
+unsuppressed rule and fixture clones. None of the nine reviewed clone exceptions
+match those files, so this change does not alter the count lock or add an
+exception.
 
 Fallow 3.23 replaced old numeric collision handles with report-scoped `-rN`
 handles ordered by canonical fragments and locations. Those handles can still

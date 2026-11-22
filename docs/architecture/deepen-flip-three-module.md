@@ -57,3 +57,9 @@ Do not introduce a new seam with multiple adapters unless something actually var
 
 - `pnpm test:unit -- tests/unit/engine/flip-three.test.ts` is stale in the current `package.json`; the focused equivalent is `pnpm exec vitest run --project engine tests/unit/engine/flip-three.test.ts`.
 - Flip Three progression now lives behind `advanceFlip3Hit` in `game/logic/flip-three.ts`. `command-handler.ts` still owns drawing the card and turn advancement, while `apply-card.ts` still owns applying card effects; the Flip Three module owns countdown, abort cleanup, completion, deferred target-action tracking, and deferred action replay.
+
+The follow-up pending-operation boundary now dispatches target offers, target
+confirmation, and each Flip Three hit together. It owns the post-resolution turn
+advance while the Flip Three rule keeps the source-seat anchor for the eventual
+return to normal turn order. Replay fixtures assert named game outcomes rather
+than repeating full projected state snapshots.

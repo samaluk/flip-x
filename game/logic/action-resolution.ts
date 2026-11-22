@@ -4,12 +4,7 @@ import { addEvent, type RoundEvent } from "./events";
 import { maybeFinishRound } from "./round-finalization";
 import { updatePointsAtRisk } from "./scoring";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
-import {
-  activePlayerIds,
-  advanceToNextActiveSeat,
-  getPlayerById,
-  orderedPlayers,
-} from "./turn-order";
+import { activePlayerIds, focusTurnOwner, orderedPlayers } from "./turn-order";
 
 export type TargetActionResolution = "continue_dealing" | "continue_turns" | "wait_for_input";
 
@@ -125,28 +120,7 @@ function focusPendingTurnOwner(round: RoundRuntime, players: OrderedPlayer[]) {
     return;
   }
 
-  const targetPlayer = getPlayerById(players, targetPlayerId);
-  if (!targetPlayer) {
-    return;
-  }
-
-  round.turnSeatIndex = targetPlayer.seatIndex;
-  round.activePlayerId = targetPlayerId;
-}
-
-function maybeAdvanceTurnIfActivePlayerInactive(
-  round: RoundRuntime,
-  players: OrderedPlayer[],
-  playerStates: Record<string, PlayerRoundState>,
-) {
-  if (round.phase !== "player_turns" || round.pendingAction || round.pendingFlip3) {
-    return;
-  }
-  const currentPlayerState = round.activePlayerId ? playerStates[round.activePlayerId] : null;
-  if (currentPlayerState?.status === "active") {
-    return;
-  }
-  advanceToNextActiveSeat(round, players, playerStates);
+  focusTurnOwner(round, players, targetPlayerId);
 }
 
 export function resolvePendingTargetAction(
@@ -175,7 +149,6 @@ export function resolvePendingTargetAction(
 
   ensurePlayerTurnsWhenFlip3Pending(round);
   focusPendingTurnOwner(round, players);
-  maybeAdvanceTurnIfActivePlayerInactive(round, players, playerStates);
   maybeFinishRound(round, players, playerStates);
 
   if (round.pendingAction || round.pendingFlip3 || round.phase === "scoring") {

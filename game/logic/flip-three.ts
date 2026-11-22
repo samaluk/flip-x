@@ -3,7 +3,7 @@ import { resolveHeldTargetAction } from "./action-resolution";
 import { discardCard } from "./draw";
 import { addEvent, cardEventPayload, type RoundEvent } from "./events";
 import type { OrderedPlayer, PendingAction, PlayerRoundState, RoundRuntime } from "./round-state";
-import { getPlayerById } from "./turn-order";
+import { restoreTurnAnchor } from "./turn-order";
 
 export function isTargetActionCard(
   card: ActionCard,
@@ -60,12 +60,7 @@ function restoreFlip3SourceTurnAnchor(round: RoundRuntime, players: OrderedPlaye
     return;
   }
 
-  const sourcePlayer = getPlayerById(players, sourcePlayerId);
-  if (!sourcePlayer) {
-    return;
-  }
-
-  round.turnSeatIndex = sourcePlayer.seatIndex;
+  restoreTurnAnchor(round, players, sourcePlayerId);
 }
 
 function resolveDeferredFlip3Actions(

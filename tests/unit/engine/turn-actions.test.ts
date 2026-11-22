@@ -138,6 +138,25 @@ describe("turn actions", () => {
     );
   });
 
+  it("advances only once when the current player freezes themselves", () => {
+    const playerStates = createActivePlayerStates();
+    playerStates.p1.heldActionCards = [actionCard("freeze-self", "freeze")];
+    const round = createTurnRound();
+    round.phase = "resolving_action";
+    round.pendingAction = {
+      sourcePlayerId: "p1",
+      actionKind: "freeze",
+      eligibleTargetIds: ["p1", "p2", "p3"],
+      resume: "turns",
+    };
+
+    const resolved = resolvePendingAction(testPlayers3P, round, playerStates, "p1");
+
+    expect(resolved.playerStates.p1.status).toBe("frozen");
+    expect(resolved.round.activePlayerId).toBe("p2");
+    expect(resolved.round.turnSeatIndex).toBe(1);
+  });
+
   it("advances the turn after resolving a pending turn action with no follow-up input", () => {
     const playerStates = createActivePlayerStates();
     playerStates.p1.heldActionCards = [actionCard("freeze", "freeze")];
