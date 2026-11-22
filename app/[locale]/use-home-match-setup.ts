@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import refs from "@/confect/_generated/refs";
 import { useAppErrors } from "@/shared/lib/errors/use-app-errors";
 import { resolvePlayerColorId } from "@/shared/lib/player-local-prefs";
+import { playerNameIssueMessage } from "@/shared/lib/player-name-issue-message";
 import type { TrimmedPlayerNameIssue } from "@/shared/lib/player-name-validation";
 import { usePlayerLocalPrefs } from "@/shared/lib/use-player-local-prefs";
 import { prefetchAndPushGameMatch } from "@/shared/i18n/match-navigation";
@@ -55,20 +56,12 @@ function useHomeMutations() {
 function useMatchSetupPlayerNameIssueToast() {
   const t = useExtracted("MatchSetup");
 
-  return (issue: TrimmedPlayerNameIssue) => {
-    switch (issue) {
-      case "empty":
-        return t("Please enter your name.");
-      case "too_long":
-        return t("Name must be 20 characters or less.");
-      case "no_session":
-        return t("Session not available.");
-      default: {
-        const exhaustiveCheck: never = issue;
-        return exhaustiveCheck;
-      }
-    }
-  };
+  return (issue: TrimmedPlayerNameIssue) =>
+    playerNameIssueMessage(issue, {
+      empty: t("Please enter your name."),
+      too_long: t("Name must be 20 characters or less."),
+      no_session: t("Session not available."),
+    });
 }
 
 function useHomeMatchSetupLabels() {

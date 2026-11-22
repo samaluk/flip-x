@@ -331,95 +331,96 @@ msgctxt "Game.7rG3A8"
 msgid "Player color"
 msgstr "Player color"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.HJEJo0"
 msgid "Classic"
 msgstr "Classic"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.fUDl2h"
 msgid "Extended"
 msgstr "Extended"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.59CWbw"
 msgid "Big Table"
 msgstr "Big Table"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.V5yUQX"
 msgid "Official baseline. Best for 2-4 players."
 msgstr "Official baseline. Best for 2-4 players."
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.fkQcQo"
 msgid "Better for 4-5 players. More cards and a slightly longer match."
 msgstr "Better for 4-5 players. More cards and a slightly longer match."
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.12G277"
 msgid "Better for 6+ players. Larger deck, higher ceiling, longer match."
 msgstr "Better for 6+ players. Larger deck, higher ceiling, longer match."
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.GY8bVw"
 msgid "Could not update game settings."
 msgstr "Could not update game settings."
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.LlUFYE"
+msgid "Recommended for this lobby: {preset}"
+msgstr "Recommended for this lobby: {preset}"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.VKfWR3"
+msgid "Recommended"
+msgstr "Recommended"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.3Rx6Qo"
+msgid "Advanced"
+msgstr "Advanced"
+
+#: game/screens/game-settings-editor.tsx
+#: game/screens/game-settings-summary.tsx
+msgctxt "GameSettings.37dv3i"
+msgid "Points to win"
+msgstr "Points to win"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.zM-PPA"
+msgid "Max number card"
+msgstr "Max number card"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.gAhnbT"
+msgid "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
+msgstr "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
 
 #: game/screens/game-settings-panel.tsx
 msgctxt "GameSettings.ixKAYF"
 msgid "Game settings"
 msgstr "Game settings"
 
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.LlUFYE"
-msgid "Recommended for this lobby: {preset}"
-msgstr "Recommended for this lobby: {preset}"
-
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.oL0rU6"
 msgid "Locked"
 msgstr "Locked"
 
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.37dv3i"
-msgid "Points to win"
-msgstr "Points to win"
-
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.d9iNyj"
 msgid "Cards"
 msgstr "Cards"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.BIAFqd"
 msgid "Modifiers"
 msgstr "Modifiers"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.mrOnjM"
 msgid "Mode"
 msgstr "Mode"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.VKfWR3"
-msgid "Recommended"
-msgstr "Recommended"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.3Rx6Qo"
-msgid "Advanced"
-msgstr "Advanced"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.zM-PPA"
-msgid "Max number card"
-msgstr "Max number card"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.gAhnbT"
-msgid "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
-msgstr "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
 
 #: game/screens/game-table-view.tsx
 msgctxt "GameTable.LdEa65"
@@ -447,6 +448,11 @@ msgid "Waiting for the next resolution."
 msgstr "Waiting for the next resolution."
 
 #: game/screens/game-table-view.tsx
+msgctxt "GameTable.FFCYOk"
+msgid "Match {id}"
+msgstr "Match {id}"
+
+#: game/screens/game-table-view.tsx
 msgctxt "GameTable.zXFNiG"
 msgid "setup"
 msgstr "setup"
@@ -460,11 +466,6 @@ msgstr "in progress"
 msgctxt "GameTable.fT7uau"
 msgid "completed"
 msgstr "completed"
-
-#: game/screens/game-table-view.tsx
-msgctxt "GameTable.FFCYOk"
-msgid "Match {id}"
-msgstr "Match {id}"
 
 #: game/screens/game-table-view.tsx
 msgctxt "GameTable.O7eTPh"

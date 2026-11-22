@@ -331,95 +331,96 @@ msgctxt "Game.7rG3A8"
 msgid "Player color"
 msgstr "Color del jugador"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.HJEJo0"
 msgid "Classic"
 msgstr "Clásico"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.fUDl2h"
 msgid "Extended"
 msgstr "Extendido"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.59CWbw"
 msgid "Big Table"
 msgstr "Mesa grande"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.V5yUQX"
 msgid "Official baseline. Best for 2-4 players."
 msgstr "Base oficial. Mejor para 2-4 jugadores."
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.fkQcQo"
 msgid "Better for 4-5 players. More cards and a slightly longer match."
 msgstr "Mejor para 4-5 jugadores. Más cartas y una partida un poco más larga."
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.12G277"
 msgid "Better for 6+ players. Larger deck, higher ceiling, longer match."
 msgstr "Mejor para 6+ jugadores. Mazo más grande, techo más alto y partida más larga."
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-editor.tsx
 msgctxt "GameSettings.GY8bVw"
 msgid "Could not update game settings."
 msgstr "No se pudo actualizar la configuración."
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.LlUFYE"
+msgid "Recommended for this lobby: {preset}"
+msgstr "Recomendado para este lobby: {preset}"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.VKfWR3"
+msgid "Recommended"
+msgstr "Recomendado"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.3Rx6Qo"
+msgid "Advanced"
+msgstr "Avanzado"
+
+#: game/screens/game-settings-editor.tsx
+#: game/screens/game-settings-summary.tsx
+msgctxt "GameSettings.37dv3i"
+msgid "Points to win"
+msgstr "Puntos para ganar"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.zM-PPA"
+msgid "Max number card"
+msgstr "Carta numérica máxima"
+
+#: game/screens/game-settings-editor.tsx
+msgctxt "GameSettings.gAhnbT"
+msgid "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
+msgstr "Las cartas incluirán números 0-{maxNumberCardValue}. Los modificadores llegarán hasta +{maxModifierValue}, más x2."
 
 #: game/screens/game-settings-panel.tsx
 msgctxt "GameSettings.ixKAYF"
 msgid "Game settings"
 msgstr "Configuración de partida"
 
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.LlUFYE"
-msgid "Recommended for this lobby: {preset}"
-msgstr "Recomendado para este lobby: {preset}"
-
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.oL0rU6"
 msgid "Locked"
 msgstr "Bloqueada"
 
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.37dv3i"
-msgid "Points to win"
-msgstr "Puntos para ganar"
-
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.d9iNyj"
 msgid "Cards"
 msgstr "Cartas"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.BIAFqd"
 msgid "Modifiers"
 msgstr "Modificadores"
 
-#: game/screens/game-settings-panel.tsx
+#: game/screens/game-settings-summary.tsx
 msgctxt "GameSettings.mrOnjM"
 msgid "Mode"
 msgstr "Modo"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.VKfWR3"
-msgid "Recommended"
-msgstr "Recomendado"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.3Rx6Qo"
-msgid "Advanced"
-msgstr "Avanzado"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.zM-PPA"
-msgid "Max number card"
-msgstr "Carta numérica máxima"
-
-#: game/screens/game-settings-panel.tsx
-msgctxt "GameSettings.gAhnbT"
-msgid "Cards will include numbers 0-{maxNumberCardValue}. Modifiers will go up to +{maxModifierValue}, plus x2."
-msgstr "Las cartas incluirán números 0-{maxNumberCardValue}. Los modificadores llegarán hasta +{maxModifierValue}, más x2."
 
 #: game/screens/game-table-view.tsx
 msgctxt "GameTable.LdEa65"
@@ -447,6 +448,11 @@ msgid "Waiting for the next resolution."
 msgstr "Esperando la siguiente resolución."
 
 #: game/screens/game-table-view.tsx
+msgctxt "GameTable.FFCYOk"
+msgid "Match {id}"
+msgstr "Partida {id}"
+
+#: game/screens/game-table-view.tsx
 msgctxt "GameTable.zXFNiG"
 msgid "setup"
 msgstr "preparación"
@@ -460,11 +466,6 @@ msgstr "en curso"
 msgctxt "GameTable.fT7uau"
 msgid "completed"
 msgstr "terminada"
-
-#: game/screens/game-table-view.tsx
-msgctxt "GameTable.FFCYOk"
-msgid "Match {id}"
-msgstr "Partida {id}"
 
 #: game/screens/game-table-view.tsx
 msgctxt "GameTable.O7eTPh"
