@@ -120,13 +120,13 @@ later, not a target to raise automatically or a claim that clone debt is gone.
 
 ### Reviewed clone exceptions
 
-`duplicates.ignoredClones` in `.fallowrc.json` is count-locked at **12** entries.
+`duplicates.ignoredClones` in `.fallowrc.json` is count-locked at **9** entries.
 Before adding an exception, run `pnpm fallow dupes` and inspect its group with
 `pnpm fallow dupes --trace dup:<fingerprint>`. Record why the specific pair is
 intentional; do not add a blanket pattern or raise the ceiling. To add an entry,
-remove an obsolete one in the same change so the count stays 12. To remove an
-entry without replacement, first agree to tighten the count-lock policy and
-update this documentation in the same change. Re-run `pnpm fallow:dupes` and
+remove an obsolete one in the same change so the count stays 9. To remove an
+entry without replacement, tighten the count lock and update this documentation
+in the same change. Re-run `pnpm fallow:dupes` and
 the changed-code audit after either edit; fingerprints and group ordering can
 shift when the ignored list changes. Do not use `--save-baseline` as a substitute.
 

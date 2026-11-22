@@ -76,16 +76,13 @@
     "ignoredClones": [
       "dup:2e174d80:2",
       "dup:33a7c5c4:2",
-      "dup:8691c349:2",
-      "dup:9ed7c5ca:2",
-      "dup:146daa20:2",
+      "dup:84e17243:2",
+      "dup:d229393d:2",
       "dup:ec5a72c6:2",
-      "dup:65e19125:2",
-      "dup:66964408:2",
+      "dup:ec8638c4:2",
+      "dup:7e870437:2",
       "dup:776beb96:2",
-      "dup:dd04a2c5:2",
-      "dup:ce28b3f5:2",
-      "dup:af8ca3cf:2"
+      "dup:c4c437ca:2"
     ]
   },
   "health": {
@@ -107,12 +104,6 @@
         "functions": ["FlipXCard"],
         "maxUnitSize": 70,
         "reason": "Face-up/face-down wrap stays in one memoized card; this change replaced an inline transform with a scale class."
-      },
-      {
-        "files": ["game/ui/turn-controls.tsx"],
-        "functions": ["ActiveTurnControls"],
-        "maxCrap": 40,
-        "reason": "Hit/stay copy branches are status text, not new control flow; this change only switched to the pill size."
       },
       {
         "files": ["game/ui/player-lane.tsx"],
