@@ -1,10 +1,10 @@
 import { createDeck, type Card } from "./card-types";
 import { invalidAction, invalidTurn } from "../../shared/lib/errors/domain";
-import { resolvePendingTargetAction } from "./action-resolution";
 import { applyCardToPlayer } from "./apply-card";
 import { addEvent, cardEventPayload, type RoundEvent } from "./events";
 import { drawCard } from "./draw";
-import { advanceFlip3Hit, isFlip3ActiveForPlayer } from "./flip-three";
+import { isFlip3ActiveForPlayer } from "./flip-three";
+import { advancePendingOperation, advanceTurnWhenQueueClear } from "./pending-operation";
 import type { RngService } from "./rng";
 import { finishRoundAsAllInactive, maybeFinishRound } from "./round-finalization";
 import {
@@ -17,7 +17,7 @@ import {
   type PlayerRoundState,
   type RoundRuntime,
 } from "./round-state";
-import { advanceToNextActiveSeat, getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
+import { getPlayerBySeat, nextActiveSeatIndex } from "./turn-order";
 
 export type CreateRoundRuntimeOptions = {
   drawPile?: Card[];
@@ -241,42 +241,20 @@ function executeHitTurn(
     return;
   }
 
-  const isFlip3Turn = isFlip3ActiveForPlayer(round, playerId);
-
-  if (isFlip3Turn) {
-    advanceFlip3Hit(
-      round,
-      players,
-      playerStates,
+  advancePendingOperation(
+    round,
+    players,
+    playerStates,
+    {
+      kind: "hit",
       playerId,
       card,
-      (drawnCard) => {
+      applyCard: (drawnCard) => {
         applyCardToPlayer(round, players, playerStates, playerId, drawnCard, "turns", events);
       },
-      events,
-    );
-    return;
-  }
-
-  addEvent(events, {
-    eventType: "hit",
-    actorPlayerId: playerId,
-    targetPlayerId: playerId,
-    payload: cardEventPayload(card),
-  });
-
-  applyCardToPlayer(round, players, playerStates, playerId, card, "turns", events);
-}
-
-function advanceTurnWhenQueueClear(
-  round: RoundRuntime,
-  players: OrderedPlayer[],
-  playerStates: Record<string, PlayerRoundState>,
-) {
-  if (round.phase === "player_turns" && !round.pendingAction && !round.pendingFlip3) {
-    advanceToNextActiveSeat(round, players, playerStates);
-    maybeFinishRound(round, players, playerStates);
-  }
+    },
+    events,
+  );
 }
 
 export function takeTurnAction(
@@ -298,17 +276,11 @@ export function takeTurnAction(
   }
 
   maybeFinishRound(round, players, playerStates);
-  advanceTurnWhenQueueClear(round, players, playerStates);
+  if (action === "stay") {
+    advanceTurnWhenQueueClear(round, players, playerStates);
+  }
 
   return { round, playerStates, events } satisfies ResolveResult;
-}
-
-function requirePendingActionFromRound(round: RoundRuntime): PendingAction {
-  const pending = round.pendingAction;
-  if (!pending) {
-    throw invalidAction();
-  }
-  return pending;
 }
 
 export function resolvePendingAction(
@@ -324,14 +296,11 @@ export function resolvePendingAction(
   const round = cloneRoundRuntime(roundInput);
   const playerStates = clonePlayerStates(playerStatesInput);
   const events: RoundEvent[] = [];
-  const pendingAction = requirePendingActionFromRound(round);
-
-  const targetResolution = resolvePendingTargetAction(
+  const targetResolution = advancePendingOperation(
     round,
     players,
     playerStates,
-    pendingAction,
-    targetPlayerId,
+    { kind: "target", targetPlayerId },
     events,
   );
 
@@ -342,10 +311,6 @@ export function resolvePendingAction(
       playerStates: continued.playerStates,
       events: [...events, ...continued.events],
     } satisfies ResolveResult;
-  }
-
-  if (targetResolution === "continue_turns") {
-    advanceTurnWhenQueueClear(round, players, playerStates);
   }
 
   return { round, playerStates, events } satisfies ResolveResult;

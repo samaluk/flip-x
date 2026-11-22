@@ -6,7 +6,7 @@ import {
   type ModifierCard,
   type NumberCard,
 } from "./card-types";
-import { resolveHeldTargetAction } from "./action-resolution";
+import { advancePendingOperation } from "./pending-operation";
 import { discardCard } from "./draw";
 import { addEvent, type RoundEvent } from "./events";
 import { deferFlip3TargetAction, isFlip3ActiveForPlayer, isTargetActionCard } from "./flip-three";
@@ -195,7 +195,13 @@ function applyFlipThreeOrHeldTargetAction(
     return { pending: false };
   }
 
-  resolveHeldTargetAction(round, players, playerStates, playerId, card, resume, events);
+  advancePendingOperation(
+    round,
+    players,
+    playerStates,
+    { kind: "offer", playerId, card, resume },
+    events,
+  );
 
   return { pending: Boolean(round.pendingAction) };
 }

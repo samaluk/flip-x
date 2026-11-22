@@ -3,9 +3,74 @@ import type { DeterministicReplayScenario, ReplayExpectedState } from "./scenari
 import { withReplayFillerCards } from "./fillers";
 import { cloneDeterministicStartOptions } from "./scenario-runner";
 
-function expectState(snapshot: ReplayExpectedState): ReplayExpectedState {
-  return snapshot;
-}
+const replayOutcomes = {
+  hostStays: {
+    activePlayer: "Guest",
+    roundStatus: "player_turns",
+    players: { Host: { roundStatus: "stayed" }, Guest: { roundStatus: "active" } },
+    latestEvent: { type: "stay", payload: {}, playerNames: "Host" },
+  },
+  matchScores: {
+    activePlayer: null,
+    roundStatus: "completed",
+    endedBy: "all_inactive",
+    players: {
+      Host: { totalScore: 1, roundStatus: "completed" },
+      Guest: { totalScore: 7, roundStatus: "completed" },
+    },
+    latestEvent: {
+      type: "round_scored",
+      payload: { finalRoundScore: 7 },
+      playerNames: "Guest",
+    },
+  },
+  freezeNeedsTarget: {
+    activePlayer: "Guest",
+    roundStatus: "resolving_action",
+    pendingAction: {
+      actionKind: "freeze",
+      sourcePlayer: "Guest",
+      eligibleTargets: ["Host", "Guest", "Third"],
+      resume: "turns",
+    },
+    players: { Guest: { heldActionCards: ["freeze"] } },
+    latestEvent: {
+      type: "pending_action",
+      payload: { actionKind: "freeze" },
+      playerNames: "Guest",
+    },
+  },
+  freezeTargetsThird: {
+    activePlayer: "Host",
+    roundStatus: "player_turns",
+    pendingAction: null,
+    players: {
+      Guest: { heldActionCards: [] },
+      Third: { roundStatus: "frozen", receivedActionCards: ["freeze"] },
+    },
+    latestEvent: { type: "freeze_applied", payload: {}, playerNames: "Guest → Third" },
+  },
+  hostStaysAfterFreeze: {
+    activePlayer: "Guest",
+    players: { Host: { roundStatus: "stayed" }, Third: { roundStatus: "frozen" } },
+    latestEvent: { type: "stay", payload: {}, playerNames: "Host" },
+  },
+  frozenRoundScores: {
+    activePlayer: null,
+    roundStatus: "completed",
+    endedBy: "all_inactive",
+    players: {
+      Host: { totalScore: 7, roundStatus: "completed" },
+      Guest: { totalScore: 6, roundStatus: "completed" },
+      Third: { totalScore: 8, roundStatus: "completed", receivedActionCards: ["freeze"] },
+    },
+    latestEvent: {
+      type: "round_scored",
+      payload: { finalRoundScore: 5 },
+      playerNames: "Third",
+    },
+  },
+} satisfies Record<string, ReplayExpectedState>;
 
 export const MATCH_REPLAY_SCENARIO: DeterministicReplayScenario = {
   name: "match-replay-stays",
@@ -20,53 +85,7 @@ export const MATCH_REPLAY_SCENARIO: DeterministicReplayScenario = {
     { stepNumber: 1, actor: "Host", decisionType: "turn_action", choice: "stay" },
     { stepNumber: 2, actor: "Guest", decisionType: "turn_action", choice: "stay" },
   ],
-  expectedStates: [
-    expectState({
-      activePlayer: "Guest",
-      roundStatus: "player_turns",
-      players: {
-        Host: {
-          roundStatus: "stayed",
-          pointsAtRisk: 1,
-          numberCards: [1],
-        },
-        Guest: {
-          roundStatus: "active",
-          pointsAtRisk: 7,
-          numberCards: [7],
-        },
-      },
-      latestEvent: {
-        type: "stay",
-        payload: {},
-        playerNames: "Host",
-      },
-    }),
-    expectState({
-      activePlayer: null,
-      roundStatus: "completed",
-      endedBy: "all_inactive",
-      players: {
-        Host: {
-          totalScore: 1,
-          roundStatus: "completed",
-          pointsAtRisk: 1,
-          numberCards: [1],
-        },
-        Guest: {
-          totalScore: 7,
-          roundStatus: "completed",
-          pointsAtRisk: 7,
-          numberCards: [7],
-        },
-      },
-      latestEvent: {
-        type: "round_scored",
-        payload: { finalRoundScore: 7 },
-        playerNames: "Guest",
-      },
-    }),
-  ],
+  expectedStates: [replayOutcomes.hostStays, replayOutcomes.matchScores],
 };
 
 export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
@@ -105,140 +124,10 @@ export const ROUND_REPLAY_SCENARIO: DeterministicReplayScenario = {
     { stepNumber: 4, actor: "Guest", decisionType: "turn_action", choice: "stay" },
   ],
   expectedStates: [
-    expectState({
-      currentRoundNumber: 2,
-      activePlayer: "Guest",
-      roundStatus: "resolving_action",
-      pendingAction: {
-        actionKind: "freeze",
-        sourcePlayer: "Guest",
-        eligibleTargets: ["Host", "Guest", "Third"],
-        resume: "turns",
-      },
-      pendingFlip3: null,
-      players: {
-        Host: {
-          totalScore: 1,
-          roundStatus: "active",
-          pointsAtRisk: 6,
-          numberCards: [6],
-        },
-        Guest: {
-          totalScore: 2,
-          roundStatus: "active",
-          pointsAtRisk: 4,
-          numberCards: [4],
-          heldActionCards: ["freeze"],
-        },
-        Third: {
-          totalScore: 3,
-          roundStatus: "active",
-          pointsAtRisk: 5,
-          numberCards: [5],
-        },
-      },
-      latestEvent: {
-        type: "pending_action",
-        payload: { actionKind: "freeze" },
-        playerNames: "Guest",
-      },
-    }),
-    expectState({
-      currentRoundNumber: 2,
-      activePlayer: "Host",
-      roundStatus: "player_turns",
-      pendingAction: null,
-      pendingFlip3: null,
-      players: {
-        Host: {
-          totalScore: 1,
-          roundStatus: "active",
-          pointsAtRisk: 6,
-          numberCards: [6],
-        },
-        Guest: {
-          totalScore: 2,
-          roundStatus: "active",
-          pointsAtRisk: 4,
-          numberCards: [4],
-        },
-        Third: {
-          totalScore: 3,
-          roundStatus: "frozen",
-          pointsAtRisk: 5,
-          numberCards: [5],
-          receivedActionCards: ["freeze"],
-        },
-      },
-      latestEvent: {
-        type: "freeze_applied",
-        payload: {},
-        playerNames: "Guest → Third",
-      },
-    }),
-    expectState({
-      currentRoundNumber: 2,
-      activePlayer: "Guest",
-      roundStatus: "player_turns",
-      players: {
-        Host: {
-          totalScore: 1,
-          roundStatus: "stayed",
-          pointsAtRisk: 6,
-          numberCards: [6],
-        },
-        Guest: {
-          totalScore: 2,
-          roundStatus: "active",
-          pointsAtRisk: 4,
-          numberCards: [4],
-        },
-        Third: {
-          totalScore: 3,
-          roundStatus: "frozen",
-          pointsAtRisk: 5,
-          numberCards: [5],
-          receivedActionCards: ["freeze"],
-        },
-      },
-      latestEvent: {
-        type: "stay",
-        payload: {},
-        playerNames: "Host",
-      },
-    }),
-    expectState({
-      currentRoundNumber: 2,
-      activePlayer: null,
-      roundStatus: "completed",
-      endedBy: "all_inactive",
-      players: {
-        Host: {
-          totalScore: 7,
-          roundStatus: "completed",
-          pointsAtRisk: 6,
-          numberCards: [6],
-        },
-        Guest: {
-          totalScore: 6,
-          roundStatus: "completed",
-          pointsAtRisk: 4,
-          numberCards: [4],
-        },
-        Third: {
-          totalScore: 8,
-          roundStatus: "completed",
-          pointsAtRisk: 5,
-          numberCards: [5],
-          receivedActionCards: ["freeze"],
-        },
-      },
-      latestEvent: {
-        type: "round_scored",
-        payload: { finalRoundScore: 5 },
-        playerNames: "Third",
-      },
-    }),
+    replayOutcomes.freezeNeedsTarget,
+    replayOutcomes.freezeTargetsThird,
+    replayOutcomes.hostStaysAfterFreeze,
+    replayOutcomes.frozenRoundScores,
   ],
 };
 

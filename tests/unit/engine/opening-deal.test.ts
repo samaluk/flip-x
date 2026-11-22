@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { ActionCard } from "@/game/logic/card-types";
-import { continueRound } from "@/game/logic/command-handler";
+import { continueRound, takeTurnAction } from "@/game/logic/command-handler";
 import { resolvePendingAction } from "@/game/logic/command-handler";
 import { actionCard, numberCard } from "@/tests/builders/cards";
 import {
@@ -133,6 +133,36 @@ describe("opening deal", () => {
     );
     expect(resolved.playerStates.p1.status).toBe("active");
     expect(resolved.playerStates.p1.receivedActionCards).toHaveLength(0);
+  });
+
+  it("keeps an auto-targeted Flip Three pending during the opening deal", () => {
+    const playerStates = createPlayerRoundStates();
+    playerStates.p2.status = "frozen";
+    playerStates.p3.status = "frozen";
+    const round = createRoundRuntime();
+    round.drawPile = [actionCard("flip3-opening", "flip_three"), numberCard("next", 2)];
+
+    const resolved = continueRound(testPlayers3P, round, playerStates);
+
+    expect(resolved.round.phase).toBe("player_turns");
+    expect(resolved.round.activePlayerId).toBe("p1");
+    expect(resolved.round.pendingFlip3).toMatchObject({
+      sourcePlayerId: "p1",
+      targetPlayerId: "p1",
+      cardsRemaining: 3,
+    });
+    expect(resolved.round.drawPile).toEqual([numberCard("next", 2)]);
+
+    const nextDraw = takeTurnAction(
+      testPlayers3P,
+      resolved.round,
+      resolved.playerStates,
+      "p1",
+      "hit",
+    );
+    expect(nextDraw.round.pendingFlip3?.cardsRemaining).toBe(2);
+    expect(nextDraw.playerStates.p1.numberCards).toEqual([numberCard("next", 2)]);
+    expect(nextDraw.round.activePlayerId).toBe("p1");
   });
 
   it("creates pending action when first player gets Flip Three as their first card", () => {
