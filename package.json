@@ -106,7 +106,7 @@
     "fallow-type-aware": "3.47.0",
     "jsdom": "31.0.1",
     "oxfmt": "0.80.0",
-    "oxlint": "1.94.0",
+    "oxlint": "1.95.0",
     "oxlint-tailwindcss": "1.17.2",
     "oxlint-tsgolint": "7.0.2008",
     "portless": "0.18.1",
