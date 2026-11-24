@@ -1,4 +1,4 @@
-/* oxlint-disable landmines-testing/no-test-doubles -- TODO(landmines): replace 2 existing test doubles with real dependencies. */
+/* oxlint-disable landmines/no-test-doubles -- TODO(landmines): replace 2 existing test doubles with real dependencies. */
 import { renderHook } from "@testing-library/react";
 
 import { useSessionConfectMutation } from "@/shared/lib/confect-hooks";

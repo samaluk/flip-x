@@ -1,4 +1,4 @@
-/* oxlint-disable landmines-testing/no-test-doubles -- TODO(landmines): replace 9 existing test doubles with real dependencies. */
+/* oxlint-disable landmines/no-test-doubles -- TODO(landmines): replace 9 existing test doubles with real dependencies. */
 import { act, renderHook } from "@testing-library/react";
 
 import type { Id } from "@/convex/_generated/dataModel";
