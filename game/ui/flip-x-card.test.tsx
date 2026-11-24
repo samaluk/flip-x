@@ -1,4 +1,4 @@
-/* oxlint-disable landmines-testing/no-test-doubles -- TODO(landmines): replace 1 existing test double with real dependencies. */
+/* oxlint-disable landmines/no-test-doubles -- TODO(landmines): replace 1 existing test double with real dependencies. */
 import { render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
