@@ -8,11 +8,11 @@ import type {
   ReplayResult,
 } from "./scenario-types";
 
-export function cloneCard<T extends Card>(card: T): T {
+function cloneCard<T extends Card>(card: T): T {
   return structuredClone(card);
 }
 
-export function cloneCards(cards: readonly Card[]): Card[] {
+function cloneCards(cards: readonly Card[]): Card[] {
   return cards.map((card) => cloneCard(card));
 }
 

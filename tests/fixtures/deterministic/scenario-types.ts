@@ -118,7 +118,7 @@ export type ReplayResult =
       validationError: string;
     };
 
-export type CanonicalSetupSnapshot = Pick<
+type CanonicalSetupSnapshot = Pick<
   ConfectMatchSnapshot,
   "status" | "currentRoundNumber" | "dealerSeat" | "activePlayerId" | "roundStatus" | "endedBy"
 > & {

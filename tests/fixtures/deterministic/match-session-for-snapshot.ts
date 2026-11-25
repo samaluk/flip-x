@@ -107,7 +107,7 @@ export function classifyRoundBoundaryAdvanceStepOrThrow<
   return step;
 }
 
-export function classifyRoundBoundaryAdvanceStep<
+function classifyRoundBoundaryAdvanceStep<
   Snap extends SnapshotForRoundBoundaryAdvance,
   S extends { name: string; sessionId: unknown },
 >(snapshot: Snap | null | undefined, sessions: S[]): RoundBoundaryAdvanceClassification<Snap, S> {

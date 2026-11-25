@@ -64,7 +64,7 @@ export function canonicalizeSnapshot(snapshot: ConfectMatchSnapshot): CanonicalR
   };
 }
 
-export function expectSnapshotToMatchExpected(
+function expectSnapshotToMatchExpected(
   snapshot: ConfectMatchSnapshot,
   expected: ReplayExpectedState,
   message?: string,
@@ -116,7 +116,7 @@ export function describeReplayResult(result: ReplayResult) {
   }
 }
 
-export function expectReplayToMatch(result: ReplayResult) {
+function expectReplayToMatch(result: ReplayResult) {
   expect(result.status, describeReplayResult(result)).toBe("matched");
 }
 
