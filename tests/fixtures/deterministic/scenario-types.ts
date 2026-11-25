@@ -117,32 +117,3 @@ export type ReplayResult =
       stepsConsumed: number;
       validationError: string;
     };
-
-type CanonicalSetupSnapshot = Pick<
-  ConfectMatchSnapshot,
-  "status" | "currentRoundNumber" | "dealerSeat" | "activePlayerId" | "roundStatus" | "endedBy"
-> & {
-  players: Array<{
-    displayName: string;
-    seatIndex: number;
-    roundStatus: ConfectMatchSnapshot["players"][number]["roundStatus"];
-    totalScore: number;
-    pointsAtRisk: number;
-    numberCards: number[];
-    modifierCards: Array<
-      ConfectMatchSnapshot["players"][number]["modifierCards"][number]["modifierValue"]
-    >;
-    heldActionKinds: string[];
-    receivedActionKinds: string[];
-  }>;
-  latestEvent: ConfectMatchSnapshot["latestEvent"] extends infer T
-    ? T extends null
-      ? null
-      : {
-          type: string;
-          actorPlayerId?: string | null;
-          targetPlayerId?: string | null;
-          payload: Record<string, unknown>;
-        }
-    : never;
-};

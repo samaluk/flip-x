@@ -64,15 +64,6 @@ export function canonicalizeSnapshot(snapshot: ConfectMatchSnapshot): CanonicalR
   };
 }
 
-function expectSnapshotToMatchExpected(
-  snapshot: ConfectMatchSnapshot,
-  expected: ReplayExpectedState,
-  message?: string,
-) {
-  const actual = canonicalizeSnapshot(snapshot);
-  expect(projectExpectedReplayState(actual, expected), message).toEqual(expected);
-}
-
 export function projectExpectedReplayState(
   actual: CanonicalReplaySnapshot,
   expected: ReplayExpectedState,
@@ -114,10 +105,6 @@ export function describeReplayResult(result: ReplayResult) {
     default:
       return assertNever(result);
   }
-}
-
-function expectReplayToMatch(result: ReplayResult) {
-  expect(result.status, describeReplayResult(result)).toBe("matched");
 }
 
 export function expectSnapshotsToMatch(
