@@ -84,7 +84,7 @@
     "@effect/vitest": "4.1.5",
     "@eloqnt/cli": "0.8.0",
     "@google/design.md": "0.4.0",
-    "@interfere/landmines": "0.2.1",
+    "@interfere/landmines": "0.3.0",
     "@next/playwright": "16.4.6",
     "@playwright/test": "1.65.1",
     "@posthog/nextjs-config": "1.12.2",
