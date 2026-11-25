@@ -100,7 +100,7 @@
     "@vitest/browser": "5.1.1",
     "@vitest/browser-playwright": "5.1.1",
     "@vitest/coverage-v8": "5.1.1",
-    "convex-test": "0.0.73",
+    "convex-test": "0.0.75",
     "eslint-plugin-i18next": "6.1.5",
     "fallow": "3.47.0",
     "fallow-type-aware": "3.47.0",
