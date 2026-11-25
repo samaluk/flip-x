@@ -272,7 +272,7 @@ importers:
         version: 10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@confect/server@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@effect/platform-node@4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5))(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1))
       '@confect/test':
         specifier: 10.6.0
-        version: 10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@confect/server@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@effect/platform-node@4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5))(convex-test@0.0.73(convex@1.51.0(react@19.3.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5)
+        version: 10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@confect/server@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@effect/platform-node@4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5))(convex-test@0.0.75(convex@1.51.0(react@19.3.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5)
       '@effect/vitest':
         specifier: 4.1.5
         version: 4.1.5(effect@4.1.5)(vitest@5.1.1)
@@ -331,8 +331,8 @@ importers:
         specifier: 5.1.1
         version: 5.1.1(@vitest/browser@5.1.1)(vitest@5.1.1)
       convex-test:
-        specifier: 0.0.73
-        version: 0.0.73(convex@1.51.0(react@19.3.1))
+        specifier: 0.0.75
+        version: 0.0.75(convex@1.51.0(react@19.3.1))
       eslint-plugin-i18next:
         specifier: 6.1.5
         version: 6.1.5
@@ -3439,8 +3439,8 @@ packages:
       zod:
         optional: true
 
-  convex-test@0.0.73:
-    resolution: {integrity: sha512-4VAuW26Iy/6mMKsmWfS3e97golfO0mPGd/qDcN5IT4uCeXHP1a3tYIaOPgXhOKaEuBIw93qLa2URB9uH3Mqo0Q==}
+  convex-test@0.0.75:
+    resolution: {integrity: sha512-gdy/Hbk9ElB0cc8YDMUsNaI1b1sJlCAkgg1e8nUAzMHuJQWjrErs53IFsyWHene+Grbhi/S9s8lK5WE81/CFoA==}
     peerDependencies:
       convex: ^1.46.0
 
@@ -5917,12 +5917,12 @@ snapshots:
     optionalDependencies:
       '@effect/platform-node': 4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1))
 
-  '@confect/test@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@confect/server@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@effect/platform-node@4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5))(convex-test@0.0.73(convex@1.51.0(react@19.3.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5)':
+  '@confect/test@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@confect/server@10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@effect/platform-node@4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5))(convex-test@0.0.75(convex@1.51.0(react@19.3.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5)':
     dependencies:
       '@confect/core': 10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5)
       '@confect/server': 10.6.0(@confect/core@10.6.0(convex@1.51.0(react@19.3.1))(effect@4.1.5))(@effect/platform-node@4.1.1(effect@4.1.5)(redis@6.3.0(@opentelemetry/api@1.9.1)))(convex@1.51.0(react@19.3.1))(effect@4.1.5)
       convex: 1.51.0(react@19.3.1)
-      convex-test: 0.0.73(convex@1.51.0(react@19.3.1))
+      convex-test: 0.0.75(convex@1.51.0(react@19.3.1))
       effect: 4.1.5
 
   '@convex-dev/batch-worker@0.2.0(convex@1.51.0(react@19.3.1))(react@19.3.1)':
@@ -8044,7 +8044,7 @@ snapshots:
       typescript: 7.0.2
       zod: 4.4.3
 
-  convex-test@0.0.73(convex@1.51.0(react@19.3.1)):
+  convex-test@0.0.75(convex@1.51.0(react@19.3.1)):
     dependencies:
       convex: 1.51.0(react@19.3.1)
 
