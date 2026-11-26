@@ -97,9 +97,9 @@
     "@types/react": "19.3.1",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.3.0",
-    "@vitest/browser": "5.1.1",
-    "@vitest/browser-playwright": "5.1.1",
-    "@vitest/coverage-v8": "5.1.1",
+    "@vitest/browser": "5.1.2",
+    "@vitest/browser-playwright": "5.1.2",
+    "@vitest/coverage-v8": "5.1.2",
     "convex-test": "0.0.75",
     "eslint-plugin-i18next": "6.1.5",
     "fallow": "3.48.0",
@@ -113,7 +113,7 @@
     "react-doctor": "0.9.23",
     "tailwindcss": "4.3.5",
     "typescript": "7.0.2",
-    "vitest": "5.1.1"
+    "vitest": "5.1.2"
   },
   "devEngines": {
     "runtime": {
