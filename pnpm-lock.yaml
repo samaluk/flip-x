@@ -207,8 +207,8 @@ importers:
         specifier: 0.4.3
         version: 0.4.3(@standard-schema/spec@1.1.0)(convex@1.51.0(react@19.3.1))(hono@4.12.12)(prettier@3.8.2)(react@19.3.1)(typescript@7.0.2)(zod@4.4.3)
       '@posthog/convex':
-        specifier: 2.1.9
-        version: 2.1.9(@opentelemetry/api@1.9.1)(convex@1.51.0(react@19.3.1))
+        specifier: 2.2.0
+        version: 2.2.0(@opentelemetry/api@1.9.1)(convex@1.51.0(react@19.3.1))
       '@posthog/next':
         specifier: 0.11.1
         version: 0.11.1(@opentelemetry/api@1.9.1)(@types/react@19.3.2)(next@16.4.6(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@26.6.11)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -2353,8 +2353,8 @@ packages:
     engines: {node: '>=14.14', npm: '>=6'}
     hasBin: true
 
-  '@posthog/convex@2.1.9':
-    resolution: {integrity: sha512-NSNn8cuPHV3TniZgmwRpMZt83dWIpVWRFD2i6x1YfXWhJNxpqihAuAYVRMCugYydhCxmP9jOmRulVa/d10fCZA==}
+  '@posthog/convex@2.2.0':
+    resolution: {integrity: sha512-EVwfHaxqlFCHsD0dSm5Go5VsljqNBfLZiakEZ5/NU0cZS0gNv4JxkWwzjkcSJQ80CpF8S6BTb0Np+OsVRjut5w==}
     peerDependencies:
       convex: ^1.39.0
 
@@ -2363,6 +2363,9 @@ packages:
 
   '@posthog/core@1.69.0':
     resolution: {integrity: sha512-Dbzuba/INtfyXTaPFsNeVcXjZM2WWjwFmqNobOwuIEEp9HGMy/dEsxJB37r4rvlu0F4gBbYlTft2nWFcjK/cHQ==}
+
+  '@posthog/core@1.69.2':
+    resolution: {integrity: sha512-toMfPKklwLW+a4ZY3/EzM3GNMVXmk2ylGb8NPJXRH4igXMoI8wgNL2jqXOiglWAXqFBLZGYFN1oQx6LVmUTxTg==}
 
   '@posthog/next@0.11.1':
     resolution: {integrity: sha512-eRGeG2Z2WD2+BzS174zJT9l+CWnXZE1fz1n1gA3dHxDFC0ZkRHHWgeyFyZfd5c6n8zs9tNPZ44q3VXUQaxy8IA==}
@@ -2403,6 +2406,9 @@ packages:
 
   '@posthog/types@1.425.1':
     resolution: {integrity: sha512-mh7jyQ5lN+XCeOnMdYkBEFtO/G0TxeLOKTWNH6E6OZjxS4nVM0Tb2xQt+FG5DCFM9qzL2HmuX6A793TwlJVDvw==}
+
+  '@posthog/types@1.427.2':
+    resolution: {integrity: sha512-86GJtdFt7zkk6tDpCFKfxyTtuXyLpiWPmTn5nlLDGlxGeky4s4l2fiWSRvYi6Lfn5MRrjiHE24RgKR4A75K+xA==}
 
   '@posthog/webpack-plugin@1.8.1':
     resolution: {integrity: sha512-dV91fUcS41iAKXLiP1Dk/H9qHwE2v+RflfoMT6HVZ69pBY2aoLiW53DcKy1r75cx2KXWEpQhstUiy3G0w4kJwg==}
@@ -7113,9 +7119,9 @@ snapshots:
     dependencies:
       detect-libc: 2.1.2
 
-  '@posthog/convex@2.1.9(@opentelemetry/api@1.9.1)(convex@1.51.0(react@19.3.1))':
+  '@posthog/convex@2.2.0(@opentelemetry/api@1.9.1)(convex@1.51.0(react@19.3.1))':
     dependencies:
-      '@posthog/core': 1.67.1
+      '@posthog/core': 1.69.2
       convex: 1.51.0(react@19.3.1)
       posthog-node: 5.68.2(@opentelemetry/api@1.9.1)
     transitivePeerDependencies:
@@ -7129,6 +7135,10 @@ snapshots:
   '@posthog/core@1.69.0':
     dependencies:
       '@posthog/types': 1.425.1
+
+  '@posthog/core@1.69.2':
+    dependencies:
+      '@posthog/types': 1.427.2
 
   '@posthog/next@0.11.1(@opentelemetry/api@1.9.1)(@types/react@19.3.2)(next@16.4.6(@babel/core@7.29.0(supports-color@8.1.1))(@opentelemetry/api@1.9.1)(@playwright/test@1.65.1)(@types/node@26.6.11)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
     dependencies:
@@ -7172,6 +7182,8 @@ snapshots:
   '@posthog/types@1.423.0': {}
 
   '@posthog/types@1.425.1': {}
+
+  '@posthog/types@1.427.2': {}
 
   '@posthog/webpack-plugin@1.8.1(webpack@5.107.1(@swc/core@1.16.1(@swc/helpers@0.5.23))(esbuild@0.27.7)(lightningcss@1.33.0)(postcss@8.5.23))':
     dependencies:
@@ -9554,7 +9566,7 @@ snapshots:
 
   posthog-node@5.68.2(@opentelemetry/api@1.9.1):
     dependencies:
-      '@posthog/core': 1.67.1
+      '@posthog/core': 1.69.2
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
 
