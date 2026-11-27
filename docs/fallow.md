@@ -1,7 +1,7 @@
 # Fallow quality gates
 
-Flip-x pins Fallow and `fallow-type-aware` to `3.44.0` in `package.json`,
-and the GitHub Action to the matching release SHA. Update all three together
+Flip-x pins Fallow and `fallow-type-aware` to the same version in `package.json`,
+and the GitHub Action to the matching release commit SHA. Update all three together
 when a release satisfies the workspace's supply-chain policy.
 `.fallowrc.json` owns the shared policy: complete type-aware evidence, architecture
 boundaries, reasoned suppressions, coverage, and `audit.gate: "all"`. Local
