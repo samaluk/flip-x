@@ -1,6 +1,7 @@
 ---
 title: 'Pre-commit Fallow audit requires pre-generated coverage in fresh worktrees'
 severity: 'minor'
+issue: 'samaluk/flip-x#1174'
 ---
 
 ## Expected Behavior
